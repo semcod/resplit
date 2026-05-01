@@ -1,5 +1,5 @@
 """
-retrodep.git_walker — iteracja po historii git dzień po dniu.
+resplit.git_walker — iteracja po historii git dzień po dniu.
 
 Dla każdego dnia w zadanym przedziale znajduje najwcześniejszy (lub
 najnowszy) commit i zwraca CommitInfo. Nie modyfikuje working tree —

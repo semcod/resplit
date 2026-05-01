@@ -1,8 +1,8 @@
 """
-retrodep.reporter — generuje raport HTML + JSON dla wyników dnia.
+resplit.reporter — generuje raport HTML + JSON dla wyników dnia.
 
 Wyjście per dzień:
-  .retrodep/YYYY-MM-DD/
+  .resplit/YYYY-MM-DD/
     report.html
     endpoints.json
     commit.txt
@@ -120,7 +120,7 @@ def save_html(result: DayResult) -> None:
 <html lang="pl">
 <head>
 <meta charset="utf-8">
-<title>retrodep — {result.day}</title>
+<title>resplit — {result.day}</title>
 <style>
   body {{ font-family: system-ui, sans-serif; margin: 0; padding: 24px; background: #f8fafc; color: #1e293b; }}
   h1 {{ font-size: 1.5rem; margin-bottom: 4px; }}
@@ -136,7 +136,7 @@ def save_html(result: DayResult) -> None:
 </style>
 </head>
 <body>
-<h1>📋 retrodep — {result.day}</h1>
+<h1>📋 resplit — {result.day}</h1>
 <div class="meta">
   Deploy: {deploy_badge} &nbsp;·&nbsp;
   Endpointów: {len(result.endpoints)} &nbsp;·&nbsp;
@@ -186,7 +186,7 @@ def save_day(result: DayResult) -> None:
 # ──────────────────────────────────────────────
 
 def save_timeline_index(results: list[DayResult], output_dir: Path) -> None:
-    """Generuje .retrodep/index.html z timelineą wszystkich dni."""
+    """Generuje .resplit/index.html z timelineą wszystkich dni."""
     output_dir.mkdir(parents=True, exist_ok=True)
 
     rows = ""
@@ -210,7 +210,7 @@ def save_timeline_index(results: list[DayResult], output_dir: Path) -> None:
 <html lang="pl">
 <head>
 <meta charset="utf-8">
-<title>retrodep — timeline</title>
+<title>resplit — timeline</title>
 <style>
   body {{ font-family: system-ui, sans-serif; margin: 0; padding: 24px; background: #f8fafc; }}
   h1 {{ font-size: 1.6rem; }}
@@ -222,7 +222,7 @@ def save_timeline_index(results: list[DayResult], output_dir: Path) -> None:
 </style>
 </head>
 <body>
-<h1>📅 retrodep — timeline ({len(results)} dni)</h1>
+<h1>📅 resplit — timeline ({len(results)} dni)</h1>
 <table>
   <thead>
     <tr><th>Dzień</th><th>Commit</th><th>Health</th><th>OK/Total</th><th>FAIL</th><th>Deploy</th><th>Czas</th></tr>

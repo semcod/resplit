@@ -1,5 +1,5 @@
 """
-retrodep.restorer — przywraca działający endpoint z historii git.
+resplit.restorer — przywraca działający endpoint z historii git.
 
 Workflow:
   1. Znajdź ostatni dzień, w którym endpoint zwracał status OK
@@ -112,7 +112,8 @@ def _find_backend_files(repo: Path, endpoint_path: str) -> list[Path]:
     Szuka plików Python/JS zawierających ścieżkę endpointu.
     Zwraca listę plików (router + bezpośrednie importy).
     """
-    pattern = re.compile(re.escape(endpoint_path.replace("/", r"[/\"]?")))
+    literal = endpoint_path
+    pattern = re.compile(re.escape(literal))
     candidates: list[Path] = []
 
     for ext in ("*.py", "*.js", "*.ts", "*.jsx", "*.tsx"):
@@ -148,7 +149,7 @@ def _write_readme(
 
 Wyodrębniony z historii git — ostatni działający dzień: **{working_day}**
 
-Wygenerowany przez [retrodep](https://github.com/softreck/retrodep).
+Wygenerowany przez [resplit](https://github.com/semcod/resplit).
 
 ## Struktura
 
@@ -177,7 +178,7 @@ pip install -r requirements.txt
 uvicorn server:app --reload --port 8003
 ```
 
-## Endpint
+## Endpoint
 
 ```
 GET http://localhost:8003{endpoint_path}

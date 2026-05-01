@@ -1,0 +1,40 @@
+# SCENARIO: Auto-generated from Python Tests
+# TYPE: integration
+# GENERATED: true
+
+CONFIG[2]{key, value}:
+  base_url, ${api_url:-http://localhost:8101}
+  timeout_ms, 10000
+
+# Converted 30 assertions from pytest
+ASSERT[30]{field, operator, expected}:
+  len(endpoints), ==, 3
+  len(endpoints), ==, 3
+  all(e.service, ==, "backend" for e in endpoints)
+  len(endpoints), ==, 1
+  endpoints[0].path, ==, "/api"
+  endpoints[0].service, ==, "backend"
+  len(data), ==, 1
+  data[0].status, ==, "ok"
+  data[0].http_status, ==, 200
+  ep.url, ==, "http://localhost:8003/api/health"
+  ep.url, ==, "http://localhost:8003/api/health"
+  ep.slug, ==, "GET_api_health"
+  result.ok_count, ==, 2
+  result.fail_count, ==, 2
+  result.health_pct, ==, 50.0
+  len(endpoints), ==, 3
+  len(endpoints), ==, 3
+  all(e.service, ==, "backend" for e in endpoints)
+  len(endpoints), ==, 1
+  endpoints[0].path, ==, "/api"
+  endpoints[0].service, ==, "backend"
+  len(data), ==, 1
+  data[0].status, ==, "ok"
+  data[0].http_status, ==, 200
+  ep.url, ==, "http://localhost:8003/api/health"
+  ep.url, ==, "http://localhost:8003/api/health"
+  ep.slug, ==, "GET_api_health"
+  result.ok_count, ==, 2
+  result.fail_count, ==, 2
+  result.health_pct, ==, 50.0

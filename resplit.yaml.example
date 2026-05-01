@@ -1,0 +1,24 @@
+project:
+  name: "myproject"
+  repo: "."
+
+deploy:
+  method: docker-compose          # docker-compose | uvicorn | custom | none
+  compose_file: docker-compose.yml
+  health_url: http://localhost:8003/api/health
+  health_timeout: 60
+  health_interval: 2
+
+scan:
+  days: 30                        # ile dni wstecz
+  earliest_commit_per_day: true   # najwcześniejszy commit per dzień
+
+testql:
+  scenarios_dir: scenarios/
+  base_url: http://localhost:8003
+  timeout: 10
+
+output:
+  dir: .resplit
+  screenshots: true
+  html_report: true

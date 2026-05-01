@@ -1,0 +1,153 @@
+# code2llm call graph | /home/tom/github/semcod/resplit
+# nodes: 51 | edges: 43 | modules: 10
+# CC̄=1.2
+
+HUBS[20]:
+  resplit.cli.report
+    CC=13  in:0  out:31  total:31
+  resplit.cli.dashboard
+    CC=6  in:0  out:22  total:22
+  resplit.restorer.extract_endpoint
+    CC=9  in:0  out:19  total:19
+  resplit.tester._run_http_probe
+    CC=6  in:4  out:12  total:16
+  resplit.cli.restore
+    CC=2  in:0  out:16  total:16
+  resplit.screenshotter._batch_playwright
+    CC=5  in:1  out:15  total:16
+  resplit.tester._parse_testql_results
+    CC=6  in:1  out:15  total:16
+  resplit.endpoint_scanner._scan_via_compose_labels
+    CC=9  in:1  out:14  total:15
+  resplit.reporter.save_timeline_index
+    CC=8  in:2  out:8  total:10
+  resplit.screenshotter.take_screenshot
+    CC=5  in:1  out:9  total:10
+  resplit.dashboard.generate_dashboard
+    CC=5  in:1  out:9  total:10
+  resplit.reporter.save_json
+    CC=6  in:1  out:9  total:10
+  resplit.endpoint_scanner.scan_endpoints
+    CC=8  in:1  out:9  total:10
+  resplit.tester._run_via_testql
+    CC=5  in:1  out:9  total:10
+  resplit.endpoint_scanner._parse_openapi
+    CC=4  in:1  out:8  total:9
+  resplit.git_walker.get_commit_for_day
+    CC=7  in:1  out:8  total:9
+  resplit.screenshotter._playwright_shot
+    CC=1  in:1  out:7  total:8
+  resplit.reporter.save_html
+    CC=9  in:1  out:7  total:8
+  resplit.restorer._find_backend_files
+    CC=7  in:1  out:7  total:8
+  resplit.deployer._wait_healthy
+    CC=4  in:2  out:6  total:8
+
+MODULES:
+  project.map.toon  [2 funcs]
+    extract_endpoint  CC=0  out:0
+    find_last_working_day  CC=0  out:0
+  resplit.cli  [4 funcs]
+    _attach_screenshots  CC=4  out:2
+    dashboard  CC=6  out:22
+    report  CC=13  out:31
+    restore  CC=2  out:16
+  resplit.dashboard  [4 funcs]
+    _extract_avg_cc  CC=5  out:6
+    _render_html  CC=5  out:4
+    generate_dashboard  CC=5  out:9
+    get_cc_for_day  CC=3  out:5
+  resplit.deployer  [8 funcs]
+    _compose_down  CC=2  out:4
+    _compose_file  CC=4  out:3
+    _compose_up  CC=2  out:6
+    _uvicorn_start  CC=3  out:5
+    _uvicorn_stop  CC=3  out:3
+    _wait_healthy  CC=4  out:6
+    start  CC=5  out:3
+    stop  CC=5  out:2
+  resplit.endpoint_scanner  [6 funcs]
+    _parse_openapi  CC=4  out:8
+    _ports_to_endpoints  CC=5  out:6
+    _scan_via_compose_labels  CC=9  out:14
+    _scan_via_deta  CC=3  out:4
+    _scan_via_openapi  CC=4  out:4
+    scan_endpoints  CC=8  out:9
+  resplit.git_walker  [6 funcs]
+    _run_git  CC=1  out:2
+    checkout  CC=1  out:1
+    days_with_commits  CC=3  out:1
+    get_commit_for_day  CC=7  out:8
+    iter_days  CC=4  out:4
+    restore_head  CC=4  out:2
+  resplit.reporter  [6 funcs]
+    _screenshot_html  CC=3  out:2
+    _status_badge  CC=1  out:1
+    save_day  CC=1  out:2
+    save_html  CC=9  out:7
+    save_json  CC=6  out:9
+    save_timeline_index  CC=8  out:8
+  resplit.restorer  [4 funcs]
+    _find_backend_files  CC=7  out:7
+    _is_page_endpoint  CC=2  out:0
+    _write_readme  CC=4  out:4
+    extract_endpoint  CC=9  out:19
+  resplit.screenshotter  [5 funcs]
+    _batch_playwright  CC=5  out:15
+    _playwright_shot  CC=1  out:7
+    screenshot_endpoint  CC=2  out:2
+    take_screenshot  CC=5  out:9
+    take_screenshots_batch  CC=5  out:5
+  resplit.tester  [6 funcs]
+    _fallback_all_timeout  CC=2  out:1
+    _parse_testql_results  CC=6  out:15
+    _run_http_probe  CC=6  out:12
+    _run_via_testql  CC=5  out:9
+    _testql_available  CC=2  out:1
+    run_tests  CC=4  out:4
+
+EDGES:
+  resplit.git_walker.get_commit_for_day → resplit.git_walker._run_git
+  resplit.git_walker.iter_days → resplit.git_walker.get_commit_for_day
+  resplit.git_walker.checkout → resplit.git_walker._run_git
+  resplit.git_walker.restore_head → resplit.git_walker._run_git
+  resplit.git_walker.days_with_commits → resplit.git_walker.iter_days
+  resplit.reporter.save_html → resplit.reporter._screenshot_html
+  resplit.reporter.save_html → resplit.reporter._status_badge
+  resplit.reporter.save_day → resplit.reporter.save_json
+  resplit.reporter.save_day → resplit.reporter.save_html
+  resplit.deployer.start → resplit.deployer._compose_up
+  resplit.deployer.start → resplit.deployer._uvicorn_start
+  resplit.deployer.stop → resplit.deployer._compose_down
+  resplit.deployer.stop → resplit.deployer._uvicorn_stop
+  resplit.deployer._compose_up → resplit.deployer._compose_file
+  resplit.deployer._compose_up → resplit.deployer._wait_healthy
+  resplit.deployer._compose_down → resplit.deployer._compose_file
+  resplit.deployer._uvicorn_start → resplit.deployer._wait_healthy
+  resplit.endpoint_scanner.scan_endpoints → resplit.endpoint_scanner._scan_via_deta
+  resplit.endpoint_scanner.scan_endpoints → resplit.endpoint_scanner._scan_via_openapi
+  resplit.endpoint_scanner.scan_endpoints → resplit.endpoint_scanner._scan_via_compose_labels
+  resplit.endpoint_scanner._scan_via_deta → resplit.endpoint_scanner._ports_to_endpoints
+  resplit.endpoint_scanner._scan_via_openapi → resplit.endpoint_scanner._parse_openapi
+  resplit.tester.run_tests → resplit.tester._run_http_probe
+  resplit.tester.run_tests → resplit.tester._testql_available
+  resplit.tester.run_tests → resplit.tester._run_via_testql
+  resplit.tester._run_via_testql → resplit.tester._parse_testql_results
+  resplit.tester._run_via_testql → resplit.tester._run_http_probe
+  resplit.tester._run_via_testql → resplit.tester._fallback_all_timeout
+  resplit.tester._parse_testql_results → resplit.tester._run_http_probe
+  resplit.dashboard.get_cc_for_day → resplit.dashboard._extract_avg_cc
+  resplit.dashboard.generate_dashboard → resplit.dashboard._render_html
+  resplit.dashboard.generate_dashboard → resplit.dashboard.get_cc_for_day
+  resplit.restorer.extract_endpoint → resplit.restorer._find_backend_files
+  resplit.restorer.extract_endpoint → resplit.restorer._write_readme
+  resplit.restorer.extract_endpoint → resplit.restorer._is_page_endpoint
+  resplit.cli.restore → project.map.toon.find_last_working_day
+  resplit.cli.restore → project.map.toon.extract_endpoint
+  resplit.cli.report → resplit.reporter.save_timeline_index
+  resplit.cli.dashboard → resplit.dashboard.generate_dashboard
+  resplit.cli._attach_screenshots → resplit.screenshotter.screenshot_endpoint
+  resplit.screenshotter.take_screenshot → resplit.screenshotter._playwright_shot
+  resplit.screenshotter.take_screenshots_batch → resplit.screenshotter._batch_playwright
+  resplit.screenshotter.screenshot_endpoint → resplit.screenshotter.take_screenshot

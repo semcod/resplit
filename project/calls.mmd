@@ -1,0 +1,115 @@
+flowchart LR
+    subgraph project__map
+        project__map__toon__find_last_working_day["find_last_working_day"]
+        project__map__toon__extract_endpoint["extract_endpoint"]
+    end
+    subgraph resplit__cli
+        resplit__cli__report["report"]
+        resplit__cli__dashboard["dashboard"]
+        resplit__cli__restore["restore"]
+        resplit__cli___attach_screenshots["_attach_screenshots"]
+    end
+    subgraph resplit__dashboard
+        resplit__dashboard___extract_avg_cc["_extract_avg_cc"]
+        resplit__dashboard__generate_dashboard["generate_dashboard"]
+        resplit__dashboard__get_cc_for_day["get_cc_for_day"]
+        resplit__dashboard___render_html["_render_html"]
+    end
+    subgraph resplit__deployer
+        resplit__deployer___compose_file["_compose_file"]
+        resplit__deployer___uvicorn_stop["_uvicorn_stop"]
+        resplit__deployer___uvicorn_start["_uvicorn_start"]
+        resplit__deployer__start["start"]
+        resplit__deployer___compose_up["_compose_up"]
+        resplit__deployer___wait_healthy["_wait_healthy"]
+        resplit__deployer__stop["stop"]
+        resplit__deployer___compose_down["_compose_down"]
+    end
+    subgraph resplit__endpoint_scanner
+        resplit__endpoint_scanner___ports_to_endpoints["_ports_to_endpoints"]
+        resplit__endpoint_scanner___scan_via_compose_labels["_scan_via_compose_labels"]
+        resplit__endpoint_scanner___parse_openapi["_parse_openapi"]
+        resplit__endpoint_scanner___scan_via_deta["_scan_via_deta"]
+        resplit__endpoint_scanner___scan_via_openapi["_scan_via_openapi"]
+        resplit__endpoint_scanner__scan_endpoints["scan_endpoints"]
+    end
+    subgraph resplit__git_walker
+        resplit__git_walker___run_git["_run_git"]
+        resplit__git_walker__get_commit_for_day["get_commit_for_day"]
+        resplit__git_walker__iter_days["iter_days"]
+        resplit__git_walker__checkout["checkout"]
+        resplit__git_walker__restore_head["restore_head"]
+        resplit__git_walker__days_with_commits["days_with_commits"]
+    end
+    subgraph resplit__reporter
+        resplit__reporter__save_html["save_html"]
+        resplit__reporter__save_timeline_index["save_timeline_index"]
+        resplit__reporter__save_day["save_day"]
+        resplit__reporter__save_json["save_json"]
+        resplit__reporter___status_badge["_status_badge"]
+        resplit__reporter___screenshot_html["_screenshot_html"]
+    end
+    subgraph resplit__restorer
+        resplit__restorer___is_page_endpoint["_is_page_endpoint"]
+        resplit__restorer___find_backend_files["_find_backend_files"]
+        resplit__restorer__extract_endpoint["extract_endpoint"]
+        resplit__restorer___write_readme["_write_readme"]
+    end
+    subgraph resplit__screenshotter
+        resplit__screenshotter___playwright_shot["_playwright_shot"]
+        resplit__screenshotter__take_screenshot["take_screenshot"]
+        resplit__screenshotter___batch_playwright["_batch_playwright"]
+        resplit__screenshotter__screenshot_endpoint["screenshot_endpoint"]
+        resplit__screenshotter__take_screenshots_batch["take_screenshots_batch"]
+    end
+    subgraph resplit__tester
+        resplit__tester___testql_available["_testql_available"]
+        resplit__tester__run_tests["run_tests"]
+        resplit__tester___run_http_probe["_run_http_probe"]
+        resplit__tester___fallback_all_timeout["_fallback_all_timeout"]
+        resplit__tester___run_via_testql["_run_via_testql"]
+        resplit__tester___parse_testql_results["_parse_testql_results"]
+    end
+    resplit__git_walker__get_commit_for_day --> resplit__git_walker___run_git
+    resplit__git_walker__iter_days --> resplit__git_walker__get_commit_for_day
+    resplit__git_walker__checkout --> resplit__git_walker___run_git
+    resplit__git_walker__restore_head --> resplit__git_walker___run_git
+    resplit__git_walker__days_with_commits --> resplit__git_walker__iter_days
+    resplit__reporter__save_html --> resplit__reporter___screenshot_html
+    resplit__reporter__save_html --> resplit__reporter___status_badge
+    resplit__reporter__save_day --> resplit__reporter__save_json
+    resplit__reporter__save_day --> resplit__reporter__save_html
+    resplit__deployer__start --> resplit__deployer___compose_up
+    resplit__deployer__start --> resplit__deployer___uvicorn_start
+    resplit__deployer__stop --> resplit__deployer___compose_down
+    resplit__deployer__stop --> resplit__deployer___uvicorn_stop
+    resplit__deployer___compose_up --> resplit__deployer___compose_file
+    resplit__deployer___compose_up --> resplit__deployer___wait_healthy
+    resplit__deployer___compose_down --> resplit__deployer___compose_file
+    resplit__deployer___uvicorn_start --> resplit__deployer___wait_healthy
+    resplit__endpoint_scanner__scan_endpoints --> resplit__endpoint_scanner___scan_via_deta
+    resplit__endpoint_scanner__scan_endpoints --> resplit__endpoint_scanner___scan_via_openapi
+    resplit__endpoint_scanner__scan_endpoints --> resplit__endpoint_scanner___scan_via_compose_labels
+    resplit__endpoint_scanner___scan_via_deta --> resplit__endpoint_scanner___ports_to_endpoints
+    resplit__endpoint_scanner___scan_via_openapi --> resplit__endpoint_scanner___parse_openapi
+    resplit__tester__run_tests --> resplit__tester___run_http_probe
+    resplit__tester__run_tests --> resplit__tester___testql_available
+    resplit__tester__run_tests --> resplit__tester___run_via_testql
+    resplit__tester___run_via_testql --> resplit__tester___parse_testql_results
+    resplit__tester___run_via_testql --> resplit__tester___run_http_probe
+    resplit__tester___run_via_testql --> resplit__tester___fallback_all_timeout
+    resplit__tester___parse_testql_results --> resplit__tester___run_http_probe
+    resplit__dashboard__get_cc_for_day --> resplit__dashboard___extract_avg_cc
+    resplit__dashboard__generate_dashboard --> resplit__dashboard___render_html
+    resplit__dashboard__generate_dashboard --> resplit__dashboard__get_cc_for_day
+    resplit__restorer__extract_endpoint --> resplit__restorer___find_backend_files
+    resplit__restorer__extract_endpoint --> resplit__restorer___write_readme
+    resplit__restorer__extract_endpoint --> resplit__restorer___is_page_endpoint
+    resplit__cli__restore --> project__map__toon__find_last_working_day
+    resplit__cli__restore --> project__map__toon__extract_endpoint
+    resplit__cli__report --> resplit__reporter__save_timeline_index
+    resplit__cli__dashboard --> resplit__dashboard__generate_dashboard
+    resplit__cli___attach_screenshots --> resplit__screenshotter__screenshot_endpoint
+    resplit__screenshotter__take_screenshot --> resplit__screenshotter___playwright_shot
+    resplit__screenshotter__take_screenshots_batch --> resplit__screenshotter___batch_playwright
+    resplit__screenshotter__screenshot_endpoint --> resplit__screenshotter__take_screenshot
