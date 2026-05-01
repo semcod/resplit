@@ -18,6 +18,7 @@ from .. import __version__
 from ..domain.models import DeployMethod, WalkConfig
 from ..domain.day_result import DayResult
 from ..application.pipeline import Pipeline
+from ..application.accelerated_pipeline import AcceleratedPipeline
 from ..application.services.history_service import HistoryService
 from ..application.services.reporter_service import ReporterService
 from ..application.services.deploy_service import DeployService
@@ -80,16 +81,14 @@ def walk(
     base_url: str = typer.Option("http://localhost:8003", help="Bazowy URL usługi"),
     screenshots: bool = typer.Option(True, help="Rób zrzuty ekranu (wymaga playwright)"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Tylko skanuj, bez deploy"),
+    serve: bool = typer.Option(False, "--serve", help="Uruchom serwer HTTP po zakończeniu i otwórz przeglądarkę"),
+    port: int = typer.Option(7821, "--port", help="Port serwera HTTP (--serve)"),
 ) -> None:
     """Przejdź historię git dzień po dniu, deployuj i testuj endpointy."""
     repo = repo.resolve()
     if not (repo / ".git").exists():
         console.print(f"[red]✗ {repo} nie jest repozytorium git[/red]")
         raise typer.Exit(1)
-
-    if not (repo / "rebuild.yaml").exists():
-        console.print("[dim]rebuild.yaml nie istnieje. Generowanie domyślnej konfiguracji...[/dim]")
-        init(repo)
 
     deploy_svc = DeployService(WalkConfig(repo_path=repo))
     if deploy == "auto":
@@ -122,8 +121,13 @@ def walk(
     all_results = pipeline.run()
 
     if all_results:
-        console.print(f"\n[bold green]✓ Gotowe![/bold green]  Raport: {output / 'index.html'}")
+        console.print(f"\n[bold green]✓ Gotowe![/bold green]")
+        from .dashboard import generate_dashboard
+        generate_dashboard(all_results, output, repo=repo)
+        _print_report_links(output, port if serve else None)
         _print_summary_table(all_results)
+        if serve:
+            _serve_reports(output, port)
     else:
         console.print("[yellow]Brak wyników do wyświetlenia.[/yellow]")
 
@@ -181,6 +185,103 @@ def dashboard(
 
     out = generate_dashboard(all_results, results_dir, repo=repo)
     console.print(f"[green]✓ Dashboard: {out}[/green]")
+
+
+@app.command()
+def accelerator(
+    repo: Path = typer.Argument(Path("."), help="Ścieżka do repozytorium"),
+    days: int = typer.Option(30, help="Ile dni wstecz"),
+    date_from: Optional[str] = typer.Option(None, "--from", help="Data od YYYY-MM-DD"),
+    date_to: Optional[str] = typer.Option(None, "--to", help="Data do YYYY-MM-DD"),
+    output: Path = typer.Option(Path(".rebuild"), help="Katalog wyjściowy"),
+    service: str = typer.Option("backend", help="Nazwa serwisu Docker (do przeładowania)"),
+    db_container: str = typer.Option("db", help="Nazwa kontenera bazy danych"),
+    db_type: str = typer.Option("postgres", help="Typ bazy: postgres|mysql|sqlite"),
+    parallel: int = typer.Option(10, help="Maksymalna liczba równoległych testów"),
+    smart: bool = typer.Option(True, help="Inteligentny wybór testów na podstawie git diff"),
+    health_url: str = typer.Option("http://localhost:8003/api/health", help="URL health check"),
+    base_url: str = typer.Option("http://localhost:8003", help="Bazowy URL usługi"),
+    screenshots: bool = typer.Option(True, help="Rób zrzuty ekranu"),
+    shutdown: bool = typer.Option(False, "--shutdown", help="Wyłącz infrastrukturę po zakończeniu"),
+    serve: bool = typer.Option(False, "--serve", help="Uruchom serwer HTTP po zakończeniu"),
+    port: int = typer.Option(7821, "--port", help="Port serwera HTTP"),
+) -> None:
+    """⚡ Ultra-szybki tryb 10x - worktree + hot reload + parallel testing.
+    
+    Zamiast restartować Docker per commit:
+    - Kontenery działają cały czas
+    - Kod podmieniany via git worktree + bind mount
+    - Hot reload bez restartu procesów
+    - Baza danycH przywracana z snapshotu
+    - Testy równoległe z dependency graph
+    """
+    repo = repo.resolve()
+    if not (repo / ".git").exists():
+        console.print(f"[red]✗ {repo} nie jest repozytorium git[/red]")
+        raise typer.Exit(1)
+
+    config = WalkConfig(
+        repo_path=repo,
+        output_dir=output,
+        days=days,
+        date_from=date.fromisoformat(date_from) if date_from else None,
+        date_to=date.fromisoformat(date_to) if date_to else None,
+        deploy_method=DeployMethod.DOCKER_COMPOSE,
+        health_url=health_url,
+        base_url=base_url,
+        screenshots=screenshots,
+        dry_run=False,
+        replay=False,
+        app_service=service,
+        accelerator=True,
+        db_container=db_container,
+        db_type=db_type,
+        max_parallel_tests=parallel,
+        smart_select=smart,
+        keep_alive=not shutdown,
+        shutdown_after=shutdown,
+    )
+
+    console.print(f"\n[bold cyan]⚡ REBUILD ACCELERATOR[/bold cyan] v{__version__}")
+    console.print(f"  repo:     {repo}")
+    console.print(f"  output:   {output}")
+    console.print(f"  service:  {service}")
+    console.print(f"  db:       {db_container} ({db_type})")
+    console.print(f"  parallel: {parallel} concurrent tests")
+    console.print(f"  smart:    {'✓' if smart else '✗'} git-diff selection")
+    console.print("")
+
+    pipeline = AcceleratedPipeline(config, console=console)
+    
+    try:
+        all_results = pipeline.run()
+    finally:
+        if shutdown:
+            pipeline.cleanup()
+
+    if all_results:
+        console.print(f"\n[bold green]✓ Accelerator done![/bold green]")
+        from .dashboard import generate_dashboard
+        generate_dashboard(all_results, output, repo=repo)
+        _print_report_links(output, port if serve else None)
+        _print_summary_table(all_results)
+        if serve:
+            _serve_reports(output, port)
+    else:
+        console.print("[yellow]Brak wyników.[/yellow]")
+
+
+@app.command()
+def serve(
+    results_dir: Path = typer.Option(Path(".rebuild"), help="Katalog z wynikami walk"),
+    port: int = typer.Option(7821, help="Port HTTP"),
+) -> None:
+    """Uruchom lokalny serwer HTTP z raportami i otwórz przeglądarkę."""
+    if not results_dir.exists():
+        console.print(f"[red]✗ Katalog {results_dir} nie istnieje. Uruchom najpierw 'rebuild walk'.[/red]")
+        raise typer.Exit(1)
+    _print_report_links(results_dir, port)
+    _serve_reports(results_dir, port)
 
 
 @app.command()
@@ -409,6 +510,36 @@ def _generate_refactor_plan(path: Path):
 # ──────────────────────────────────────────────
 # Helpers
 # ──────────────────────────────────────────────
+
+def _print_report_links(output: Path, port: Optional[int]) -> None:
+    base = f"http://localhost:{port}" if port else str(output.resolve())
+    console.print("")
+    console.print(f"  [bold cyan]Timeline:[/bold cyan]   {base}/index.html")
+    console.print(f"  [bold cyan]Dashboard:[/bold cyan]  {base}/dashboard.html")
+    console.print(f"  [dim]Per-day:     {base}/YYYY-MM-DD/report.html[/dim]")
+
+
+def _serve_reports(output: Path, port: int) -> None:
+    import http.server
+    import socketserver
+    import threading
+    import webbrowser
+    import os
+
+    os.chdir(output)
+    handler = http.server.SimpleHTTPRequestHandler
+    handler.log_message = lambda *a: None
+
+    with socketserver.TCPServer(("", port), handler) as httpd:
+        url = f"http://localhost:{port}/index.html"
+        console.print(f"\n[bold green]Serwer HTTP uruchomiony:[/bold green] {url}")
+        console.print("  [dim]Ctrl+C aby zatrzymać[/dim]\n")
+        threading.Timer(0.4, lambda: webbrowser.open(url)).start()
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            console.print("\n[dim]Serwer zatrzymany.[/dim]")
+
 
 def _print_summary_table(results: list[DayResult]) -> None:
     table = Table(title="Podsumowanie walk", show_header=True)

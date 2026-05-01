@@ -1,0 +1,51 @@
+# frontend/Dockerfile
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source
+COPY . .
+
+# Build application (validates TypeScript + Zod schemas)
+ARG NODE_ENV=production
+ARG VITE_API_URL
+ARG VITE_WS_URL
+ARG VITE_CDN_URL
+ARG VITE_CQL_IFRAME_URL
+ARG VITE_ENABLE_CONNECT_ID_IFRAME_PILOT=false
+ARG VITE_ENABLE_CONNECT_MANAGER_IFRAME_PILOT=false
+ARG VITE_ENABLE_CONNECT_SCENARIO_IFRAME_PILOT=true
+# Expose as env so Vite picks them up at build time
+ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_WS_URL=${VITE_WS_URL}
+ENV VITE_CDN_URL=${VITE_CDN_URL}
+ENV VITE_CQL_IFRAME_URL=${VITE_CQL_IFRAME_URL}
+ENV VITE_ENABLE_CONNECT_ID_IFRAME_PILOT=${VITE_ENABLE_CONNECT_ID_IFRAME_PILOT}
+ENV VITE_ENABLE_CONNECT_MANAGER_IFRAME_PILOT=${VITE_ENABLE_CONNECT_MANAGER_IFRAME_PILOT}
+ENV VITE_ENABLE_CONNECT_SCENARIO_IFRAME_PILOT=${VITE_ENABLE_CONNECT_SCENARIO_IFRAME_PILOT}
+ARG VITE_SERVICE_VERSION
+ENV VITE_SERVICE_VERSION=${VITE_SERVICE_VERSION}
+RUN npx vite build
+
+# Production stage
+FROM nginx:alpine
+
+# Copy built files
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copy nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
+  CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -38,7 +38,10 @@ class RestoreService(Service[Tuple[str, Path], Optional[date]]):
             except ValueError:
                 continue
 
-            results = json.loads(rf.read_text())
+            data = json.loads(rf.read_text())
+            # Handle both old (list) and new (dict) schemas
+            results = data.get("results", []) if isinstance(data, dict) else data
+            
             for r in results:
                 if r.get("path") == endpoint_path and r.get("status") == "ok":
                     best = day_date

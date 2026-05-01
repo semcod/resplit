@@ -40,6 +40,19 @@ testql:
   base_url: http://localhost:8003
   timeout: 10
 
+# ⚡ Accelerator Mode (10x Speed)
+# ------------------------------------------------------------------------------
+# Ultra-fast execution using worktrees + hot reload + parallel testing.
+# Use: rebuild accelerator --days 30
+#
+accelerator:
+  enabled: false                # Enable 10x mode (separate CLI command preferred)
+  db_container: db              # Name of DB container for snapshots
+  db_type: postgres               # postgres | mysql | sqlite
+  max_parallel_tests: 10          # Concurrent endpoint tests
+  smart_select: true              # Only test endpoints affected by git diff
+  keep_alive: true                # Keep containers running after walk
+
 # 🖼️ Output & Reports
 # ------------------------------------------------------------------------------
 output:

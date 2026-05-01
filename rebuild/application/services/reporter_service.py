@@ -251,8 +251,8 @@ class ReporterService(Service[DayResult, None]):
 <body>
 <nav>
   <strong style="color:#38bdf8">rebuild</strong>
-  <span style="color:#fff">Timeline</span>
-  <a href="dashboard.html">&#9650; Dashboard</a>
+  <span style="color:#fff;font-size:1rem;font-weight:600">&#128197; timeline ({len(results)} dni)</span>
+  <a href="dashboard.html" style="margin-left:auto">&#9650; Dashboard</a>
 </nav>
 <div class="toolbar">
   <span style="align-self:center;margin-right:10px;font-weight:600;font-size:13px">Eksportuj:</span>
@@ -264,7 +264,6 @@ class ReporterService(Service[DayResult, None]):
   <button class="btn btn-primary" onclick="dlFmt('toon')">&#8595; Pobierz TOON</button>
 </div>
 <div class="content">
-  <h1>&#128197; rebuild — timeline ({len(results)} dni)</h1>
   <table>
     <thead><tr><th>Dzień</th><th>Commit</th><th>Health</th><th>OK/Total</th><th>Deploy</th><th>Czas</th></tr></thead>
     <tbody>{rows}</tbody>

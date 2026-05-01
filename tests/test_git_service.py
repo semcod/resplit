@@ -56,18 +56,34 @@ def test_days_with_commits_empty_on_error(tmp_path):
 
 def test_checkout_calls_git(tmp_path):
     service = GitService(tmp_path)
-    
     with patch.object(service, "_run_git") as mock_run:
         service.checkout("abc123")
-        mock_run.assert_called_once_with(["checkout", "abc123", "--quiet"])
+        mock_run.assert_called_once_with(["checkout", "--force", "--quiet", "abc123"])
 
 
 def test_restore_head_calls_git(tmp_path):
     service = GitService(tmp_path)
-    
     with patch.object(service, "_run_git") as mock_run:
         service.restore_head()
-        mock_run.assert_called_once_with(["checkout", "-", "--quiet"])
+        mock_run.assert_called_once_with(["checkout", "--force", "--quiet", "HEAD"])
+
+
+def test_restore_head_with_sha(tmp_path):
+    service = GitService(tmp_path)
+    with patch.object(service, "_run_git") as mock_run:
+        service.restore_head("deadbeef")
+        mock_run.assert_called_once_with(["checkout", "--force", "--quiet", "deadbeef"])
+
+
+def test_clone_for_walk_creates_clone(tmp_path):
+    src = tmp_path / "src"
+    src.mkdir()
+    out = tmp_path / "out"
+    service = GitService(src)
+    with patch.object(service.shell, "run") as mock_run:
+        mock_run.return_value = type("R", (), {"returncode": 0, "stderr": "", "stdout": ""})() 
+        clone_svc = service.clone_for_walk(out)
+    assert clone_svc.repo_path == out / "repo"
 
 
 def test_execute_delegates_to_days_with_commits(tmp_path):

@@ -76,10 +76,17 @@ class Pipeline:
         self._emit("PIPELINE_STARTED", days=len(commits), repo=str(self.config.repo_path), replay=self.config.replay)
         self.log(f"Znaleziono [bold]{len(commits)}[/bold] dni z commitami.\n")
         
+        # Clone repo into output_dir/repo/ so original is never modified
+        if not self.config.dry_run:
+            self.log("[dim]Klonowanie repo do .rebuild/repo/ ...[/dim]")
+            self._walk_git = self.git.clone_for_walk(self.config.output_dir)
+        else:
+            self._walk_git = self.git
+
         if self.config.replay:
             self.log("[bold magenta]⚡ Replay Mode: Utrzymywanie stałej infrastruktury.[/bold magenta]")
             self.deploy.start(self.config.repo_path)
-            
+
         all_results: List[DayResult] = []
 
         try:
@@ -87,15 +94,13 @@ class Pipeline:
                 if commit.sha in self._processed_shas:
                     self.log(f"--- [bold]{day}[/bold]  {commit.sha[:8]}  [dim](skipped — already processed)[/dim]")
                     continue
-                    
+
                 result = self.run_day(day, commit)
                 all_results.append(result)
                 self._processed_shas.add(commit.sha)
                 self._save_state()
         finally:
             self.deploy.stop(self.config.repo_path)
-            if not self.config.dry_run:
-                self.git.restore_head()
 
         self._emit("PIPELINE_FINISHED", total_days=len(all_results))
         self.reporter.save_timeline_index(all_results, self.config.output_dir)
@@ -115,11 +120,16 @@ class Pipeline:
             is_dry_run=self.config.dry_run
         )
 
+        walk_git = getattr(self, "_walk_git", self.git)
+
         try:
-            # 1. Checkout
+            # 1. Checkout in clone (original repo untouched)
             if not self.config.dry_run:
-                self.git.checkout(commit.sha)
+                walk_git.checkout(commit.sha)
                 self._emit("COMMIT_CHECKOUT", sha=commit.sha, day=str(day))
+
+            # Clone path for static file scanning; original path for docker
+            scan_repo = walk_git.repo_path
 
             # 2. Deploy/Reload
             if self.config.replay:
@@ -130,15 +140,15 @@ class Pipeline:
                 self._emit("DEPLOY_STARTED", method=self.config.deploy_method.value)
                 result.deploy_success = self.deploy.start(self.config.repo_path)
                 self._emit("DEPLOY_FINISHED", success=result.deploy_success)
-            
+
             if not result.deploy_success and not self.config.dry_run:
                 self.log("  [red]✗ deploy/reload failed — skip endpoints[/red]")
                 result.duration_seconds = time.perf_counter() - t0
                 self.reporter.save_day(result)
                 return result
 
-            # 3. Scan endpoints
-            result.endpoints = self.scanner.execute(self.config.repo_path)
+            # 3. Scan endpoints (uses clone for static openapi.json lookup)
+            result.endpoints = self.scanner.execute(scan_repo)
             self._emit("SCAN_FINISHED", endpoint_count=len(result.endpoints))
             self.log(f"  Endpointów: [bold]{len(result.endpoints)}[/bold]")
 

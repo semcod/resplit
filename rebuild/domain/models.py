@@ -30,3 +30,12 @@ class WalkConfig:
     # Phase 12: Replay Engine
     replay: bool = False
     app_service: Optional[str] = None  # Docker service to restart (e.g. 'backend')
+    
+    # Phase 13: 10x Accelerator Mode
+    accelerator: bool = False  # Enable ultra-fast mode with worktrees + hot reload
+    db_container: str = "db"  # Name of DB container for snapshots
+    db_type: str = "postgres"  # postgres | mysql | sqlite
+    max_parallel_tests: int = 10  # Max concurrent endpoint tests
+    smart_select: bool = True  # Use git diff to select only affected tests
+    keep_alive: bool = True  # Keep infrastructure running after walk
+    shutdown_after: bool = False  # Override keep_alive and shutdown

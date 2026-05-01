@@ -1,5 +1,45 @@
 # TODO: rebuild Roadmap
 
+## Phase 10: c2004 Testing & Improvements (AKTYWNY)
+
+### ✅ Zrobione (sesja 2026-05-01)
+- [x] **Clone for walk**: Pipeline klonuje repo do `.rebuild/repo/` — oryginał nienaruszony
+- [x] **git checkout --force**: Bezpieczne przełączanie commitów w klonie
+- [x] **Replay mode fix**: `start()` w replay tylko sprawdza health, nie uruchamia nowego compose
+- [x] **Replay reload**: `docker restart <name>` bezpośrednio po nazwie kontenera
+- [x] **history_service**: Obsługa nowego formatu `results.json` (dict z kluczem `results`)
+- [x] **index.html**: Eksport JSON/YAML/TOON + toolbar w nawigacji
+- [x] **rebuild serve**: Komenda do serwowania raportów na HTTP
+
+### 🔴 Krytyczne
+- [ ] **Replay + volume mount**: W replay mode Docker używa aktualnego obrazu, nie kodu z checkoutu. Rozwiązanie: w clone podmontować katalog kodu jako volume lub budować obraz per commit.
+- [ ] **init tworzy rebuild.yaml w oryginalnym repo**: `init()` wywołany z `walk` tworzy pliki w `repo_path`. Powinno trafiać do klona lub być pomijane.
+- [ ] **Deploy Log Details**: Ulepszyć raportowanie przyczyn nieudanego deploy (exit code, stderr, timeout info).
+- [ ] **Deploy Retry**: Dodać mechanizm retry z backoff dla niestabilnych deployów.
+- [ ] **Health Check Verbose**: Pokaż szczegółowy log health-check (curl output) gdy serwis nie odpowiada.
+
+### 🟠 Wysokie — Template Path Testing
+- [ ] **Param Substitution**: W skanerze OpenAPI/FastAPI — zastępuj `{param}` testowymi wartościami zamiast dosłownego testowania.
+- [ ] **Fixture Seed**: Dodać obsługę `test_fixtures:` w `rebuild.yaml` — testowe ID/slug dla każdego zasobu.
+- [ ] **CRUD Chain**: Auto-create zasobu (POST) → test GET/PATCH/DELETE → cleanup DELETE.
+
+### 🟠 Wysokie — Autoryzacja
+- [ ] **Auth Config**: Dodać sekcję `auth:` do `rebuild.yaml` (basic/bearer/session).
+- [ ] **Token Propagation**: Zaloguj się raz przed testem, propaguj token Bearer do wszystkich requestów.
+- [ ] **Per-Endpoint Body**: Opcjonalne `body:` dla POST/PUT/PATCH w konfiguracji testów.
+
+### 🟡 Średnie — Raporty c2004
+- [ ] **Failure Grouping**: W raporcie HTML grupuj błędy wg kategorii (auth, template, missing).
+- [ ] **Trend Chart**: Wykres trendu health% w czasie (Chart.js / SVG inline).
+- [ ] **Endpoint Diff**: Pokaż endpointy które znikły lub pojawiły się między commitami.
+- [ ] **Response Time Tracking**: Zmierz i wyświetl `time_ms` dla wszystkich requestów.
+
+### 🟢 Niskie — Analyze na c2004
+- [ ] Uruchomić `rebuild analyze duplicates` na c2004 i zapisać wyniki.
+- [ ] Uruchomić `rebuild analyze services` na c2004 i zapisać wyniki.
+- [ ] Uruchomić `rebuild analyze truth` na wybrane moduły c2004.
+
+
 ## Phase 11: Deep Semantic Analysis
 - [ ] **Semantic Embeddings**: Integrate `sentence-transformers` for conceptual similarity detection in `duplication_engine`.
 - [ ] **Vector Search**: Store code fragments in a vector database for rapid semantic lookup across large repos.
