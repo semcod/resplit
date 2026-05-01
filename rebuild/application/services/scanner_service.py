@@ -28,7 +28,7 @@ class ScannerService(Service[Path, List[Endpoint]]):
             endpoints.extend(deta_endpoints)
 
         # 2. OpenAPI
-        openapi_endpoints = self._scan_via_openapi(self.config.base_url)
+        openapi_endpoints = self._scan_via_openapi(self.config.base_url, repo)
         if openapi_endpoints:
             existing = {(e.method, e.path) for e in endpoints}
             for ep in openapi_endpoints:
@@ -78,10 +78,10 @@ class ScannerService(Service[Path, List[Endpoint]]):
                         ))
         return endpoints
 
-    def _scan_via_openapi(self, base_url: str) -> List[Endpoint]:
+    def _scan_via_openapi(self, base_url: str, repo: Path) -> List[Endpoint]:
         # In dry-run: prefer static file in repo (reproducible per commit)
         if self.config.dry_run:
-            static = self._scan_via_openapi_file(self.config.repo_path)
+            static = self._scan_via_openapi_file(repo)
             if static:
                 return static
             # Fallback: probe live URL for endpoint list only (no tests will run)
@@ -114,13 +114,23 @@ class ScannerService(Service[Path, List[Endpoint]]):
     def _parse_openapi(self, spec: dict, base_url: str) -> List[Endpoint]:
         endpoints = []
         paths = spec.get("paths", {})
-        for path, methods in paths.items():
+        fixtures = self.config.test_fixtures
+        
+        for path_template, methods in paths.items():
+            # Substitute {params}
+            actual_path = path_template
+            params = re.findall(r"\{([^}]+)\}", path_template)
+            for p in params:
+                if p in fixtures:
+                    actual_path = actual_path.replace(f"{{{p}}}", str(fixtures[p]))
+            
             for method, details in methods.items():
                 if method.upper() in ("GET", "POST", "PUT", "DELETE", "PATCH"):
                     desc = details.get("summary", "")
                     endpoints.append(Endpoint(
                         method=method.upper(),
-                        path=path,
+                        path=actual_path,
+                        template_path=path_template if actual_path != path_template else None,
                         base_url=base_url,
                         description=desc,
                     ))

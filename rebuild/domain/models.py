@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from datetime import date
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict
+from dataclasses import dataclass, field
 
 class DeployMethod(Enum):
     AUTO = "auto"
@@ -26,6 +27,8 @@ class WalkConfig:
     screenshots: bool = True
     dry_run: bool = False
     compose_file: str = "docker-compose.yml"
+    test_fixtures: Dict[str, str] = field(default_factory=dict)
+    auth: Dict[str, str] = field(default_factory=dict)
     
     # Phase 12: Replay Engine
     replay: bool = False

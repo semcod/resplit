@@ -44,6 +44,9 @@ class AcceleratorDeployService(DeployService):
         self._current_sha: Optional[str] = None
         self._initial_setup_done = False
         self._volume_name = f"rebuild-code-{self._project_name}"
+        self._live_bind_swap_enabled = False
+        self._runtime_compose_file: Optional[Path] = None
+        self._runtime_marker_filename = ".rebuild_runtime_sha"
     
     def start(self, repo: Path) -> bool:
         """
@@ -61,13 +64,33 @@ class AcceleratorDeployService(DeployService):
         
         # Fallback to parent for UVICORN
         return super().start(repo)
+
+    def prepare_runtime(self, repo: Path, code_path: Path) -> bool:
+        """
+        Prepare a long-running runtime that mounts a stable "active" path.
+        """
+        if self.config.deploy_method != DeployMethod.DOCKER_COMPOSE:
+            return False
+
+        compose_file = self._compose_file(repo)
+        self._set_active_path(code_path)
+        runtime_compose = self.setup_mount_compose(repo, compose_file)
+
+        if runtime_compose == compose_file:
+            self._runtime_compose_file = None
+            self._live_bind_swap_enabled = False
+            return False
+
+        self._runtime_compose_file = runtime_compose
+        self._live_bind_swap_enabled = True
+        return True
     
     def _accelerated_compose_up(self, repo: Path) -> bool:
         """
         Start containers WITHOUT building or recreating.
         Use pre-built images, mount code as volume.
         """
-        cf = self._compose_file(repo)
+        cf = self._runtime_compose_file or self._compose_file(repo)
         
         # Start infrastructure first (DB, cache - these don't change)
         self.console.print(f"  [bold cyan]Starting persistent infrastructure...[/bold cyan]")
@@ -106,15 +129,19 @@ class AcceleratorDeployService(DeployService):
         
         # 1. Ensure worktree exists
         wt_info = self.worktrees.get_or_create(sha)
+        self._write_runtime_marker(wt_info.path, sha)
         
         # 2. Update container bind mount
         service = self.config.app_service or "backend"
-        
-        # Method A: Update volume mount (if using named volume with bind)
-        success = self._update_bind_mount(service, wt_info.path)
-        
+
+        success = False
+        if self._live_bind_swap_enabled:
+            success = self._update_bind_mount(service, wt_info.path)
+
         if not success:
-            # Method B: rsync into container (slower but more compatible)
+            # Fallback/default: copy code into the running container.
+            # This keeps infra alive and avoids false-positive "switches"
+            # when no live bind-swap runtime is actually configured.
             success = self._sync_code_to_container(service, wt_info.path)
         
         if not success:
@@ -123,12 +150,21 @@ class AcceleratorDeployService(DeployService):
             return self.reload(repo)
         
         # 3. Trigger hot reload
-        self._trigger_reload(service)
-        
         self._current_sha = sha
-        
+        self._trigger_reload(service)
+
         # 4. Wait for health
-        return self._wait_healthy()
+        if not self._wait_healthy():
+            return False
+
+        # 5. Verify runtime really points to requested commit
+        if not self._verify_runtime_commit(service, sha):
+            self.console.print(
+                f"  [red]Runtime verification failed:[/red] expected {sha[:8]} in /app/{self._runtime_marker_filename}"
+            )
+            return False
+
+        return True
     
     def _update_bind_mount(self, service: str, code_path: Path) -> bool:
         """
@@ -141,13 +177,8 @@ class AcceleratorDeployService(DeployService):
         - Mount /rebuild-active-code → container:/app
         - Update symlink /rebuild-active-code → actual worktree
         """
-        active_link = self.worktrees.base_dir / "active"
-        
         try:
-            # Create/update symlink to new worktree
-            if active_link.exists() or active_link.is_symlink():
-                active_link.unlink()
-            active_link.symlink_to(code_path, target_is_directory=True)
+            self._set_active_path(code_path)
             
             # Touch reload trigger file if app supports it
             trigger_file = code_path / ".reload"
@@ -234,6 +265,32 @@ class AcceleratorDeployService(DeployService):
         
         # Small delay to let reload start
         time.sleep(0.5)
+
+    def _write_runtime_marker(self, code_path: Path, sha: str) -> None:
+        code_path.mkdir(parents=True, exist_ok=True)
+        marker = code_path / self._runtime_marker_filename
+        marker.write_text(sha, encoding="utf-8")
+
+    def _verify_runtime_commit(self, service: str, expected_sha: str) -> bool:
+        container_name = self._get_container_name(service)
+        marker_path = f"/app/{self._runtime_marker_filename}"
+        result = self.shell.run(["docker", "exec", container_name, "cat", marker_path])
+
+        if result.returncode != 0:
+            self.console.print(
+                f"  [yellow]Runtime verification marker not readable:[/yellow] {marker_path} in {container_name}"
+            )
+            return False
+
+        actual_sha = result.stdout.strip()
+        if actual_sha != expected_sha:
+            self.console.print(
+                f"  [yellow]Runtime SHA mismatch:[/yellow] expected {expected_sha[:8]}, got {actual_sha[:8] if actual_sha else 'none'}"
+            )
+            return False
+
+        self.console.print(f"  [green]✓ runtime commit verified[/green] ({expected_sha[:8]})")
+        return True
     
     def reload(self, repo: Path) -> bool:
         """
@@ -288,4 +345,12 @@ class AcceleratorDeployService(DeployService):
         modified_path = compose_file.parent / "docker-compose.rebuild.yml"
         modified_path.write_text(yaml.dump(compose_data, default_flow_style=False))
         
-        return modified_path
+        return modified_path if service in compose_data["services"] else compose_file
+
+    def _set_active_path(self, code_path: Path) -> Path:
+        active_link = self.worktrees.base_dir / "active"
+        active_link.parent.mkdir(parents=True, exist_ok=True)
+        if active_link.exists() or active_link.is_symlink():
+            active_link.unlink()
+        active_link.symlink_to(code_path, target_is_directory=True)
+        return active_link

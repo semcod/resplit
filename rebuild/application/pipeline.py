@@ -85,7 +85,7 @@ class Pipeline:
 
         if self.config.replay:
             self.log("[bold magenta]⚡ Replay Mode: Utrzymywanie stałej infrastruktury.[/bold magenta]")
-            self.deploy.start(self.config.repo_path)
+            self.deploy.start(self._walk_git.repo_path)
 
         all_results: List[DayResult] = []
 
@@ -100,7 +100,8 @@ class Pipeline:
                 self._processed_shas.add(commit.sha)
                 self._save_state()
         finally:
-            self.deploy.stop(self.config.repo_path)
+            walk_git = getattr(self, "_walk_git", self.git)
+            self.deploy.stop(walk_git.repo_path)
 
         self._emit("PIPELINE_FINISHED", total_days=len(all_results))
         self.reporter.save_timeline_index(all_results, self.config.output_dir)
@@ -134,11 +135,12 @@ class Pipeline:
             # 2. Deploy/Reload
             if self.config.replay:
                 self._emit("DEPLOY_RELOAD_STARTED", service=self.config.app_service)
-                result.deploy_success = self.deploy.reload(self.config.repo_path)
+                result.deploy_success = self.deploy.reload(walk_git.repo_path)
+                result.deploy_log = self.deploy.last_log
                 self._emit("DEPLOY_RELOAD_FINISHED", success=result.deploy_success)
             else:
-                self._emit("DEPLOY_STARTED", method=self.config.deploy_method.value)
-                result.deploy_success = self.deploy.start(self.config.repo_path)
+                result.deploy_success = self.deploy.start(walk_git.repo_path)
+                result.deploy_log = self.deploy.last_log
                 self._emit("DEPLOY_FINISHED", success=result.deploy_success)
 
             if not result.deploy_success and not self.config.dry_run:
@@ -173,7 +175,7 @@ class Pipeline:
             self.log(f"  [red]Błąd: {exc}[/red]")
         finally:
             if not self.config.replay:
-                self.deploy.stop(self.config.repo_path)
+                self.deploy.stop(walk_git.repo_path)
             result.duration_seconds = time.perf_counter() - t0
 
         return result

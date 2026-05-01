@@ -41,7 +41,9 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
         db_type: str = "postgres",
         db_name: str = "app",
         db_user: str = "postgres",
-        shell: Optional[ShellAdapter] = None
+        shell: Optional[ShellAdapter] = None,
+        ready_timeout: int = 30,
+        ready_interval: float = 1.0,
     ):
         self.snapshot_dir = snapshot_dir
         self.db_container = db_container
@@ -49,6 +51,8 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
         self.db_name = db_name
         self.db_user = db_user
         self.shell = shell or ShellAdapter()
+        self.ready_timeout = ready_timeout
+        self.ready_interval = ready_interval
         self._metadata_file = snapshot_dir / "snapshots.json"
         self._snapshots: Dict[str, SnapshotInfo] = {}
         self._ensure_dirs()
@@ -155,16 +159,46 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
             raise FileNotFoundError(f"Snapshot file missing: {snapshot_path}")
         
         if quick and self.db_type == "postgres":
-            return self._quick_restore_postgres(snapshot_path)
-        
-        if self.db_type == "postgres":
-            return self._postgres_restore(snapshot_path)
+            restored = self._quick_restore_postgres(snapshot_path)
+        elif self.db_type == "postgres":
+            restored = self._postgres_restore(snapshot_path)
         elif self.db_type == "mysql":
-            return self._mysql_restore(snapshot_path)
+            restored = self._mysql_restore(snapshot_path)
         elif self.db_type == "sqlite":
-            return self._sqlite_restore(snapshot_path)
-        
+            restored = self._sqlite_restore(snapshot_path)
+        else:
+            restored = False
+
+        if not restored:
+            return False
+
+        return self._wait_until_ready()
+
+    def _wait_until_ready(self) -> bool:
+        """Wait until the restored database is ready to accept connections."""
+        if self.db_type == "sqlite":
+            return True
+
+        deadline = time.time() + self.ready_timeout
+        while time.time() < deadline:
+            result = self.shell.run(self._ready_check_command())
+            if result.returncode == 0:
+                return True
+            time.sleep(self.ready_interval)
         return False
+
+    def _ready_check_command(self) -> list[str]:
+        if self.db_type == "postgres":
+            return [
+                "docker", "exec", self.db_container,
+                "pg_isready", "-U", self.db_user, "-d", self.db_name,
+            ]
+        if self.db_type == "mysql":
+            return [
+                "docker", "exec", self.db_container,
+                "mysqladmin", "ping", "-u", self.db_user, "--silent",
+            ]
+        return ["true"]
     
     def _postgres_restore(self, snapshot_path: Path) -> bool:
         """Restore PostgreSQL from SQL dump."""

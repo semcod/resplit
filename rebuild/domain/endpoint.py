@@ -18,6 +18,7 @@ class Endpoint:
     base_url: str         # http://localhost:8003
     service: str = ""     # nazwa usługi z deta scan
     description: str = ""
+    template_path: Optional[str] = None # Oryginalna ścieżka z {param}
 
     @property
     def url(self) -> str:

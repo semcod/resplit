@@ -127,6 +127,11 @@ class AcceleratedPipeline:
         
         # Pre-create worktrees for all commits (parallel prep)
         self._prewarm_worktrees([c.sha for _, c in commits])
+
+        first_commit_path = self.worktrees.get_active_path(commits[0][1].sha)
+        runtime_ready = self.deploy.prepare_runtime(self.config.repo_path, first_commit_path)
+        if runtime_ready:
+            self.log("[dim]Accelerator runtime prepared with active worktree mount[/dim]")
         
         # Start infrastructure (once!)
         self.log("[dim]Starting persistent infrastructure...[/dim]")
@@ -137,7 +142,12 @@ class AcceleratedPipeline:
             return []
         
         # Create baseline DB snapshot
-        self._create_baseline_snapshot()
+        try:
+            self._create_baseline_snapshot()
+        except Exception as exc:
+            self._emit("ERROR_OCCURRED", stage="baseline_snapshot", error=str(exc))
+            self.log(f"[red]✗ Baseline snapshot failed:[/red] {exc}")
+            return []
         
         all_results: List[DayResult] = []
         
@@ -182,13 +192,10 @@ class AcceleratedPipeline:
     def _create_baseline_snapshot(self):
         """Create initial DB snapshot for fast restore between commits."""
         self.log("[dim]Creating baseline DB snapshot...[/dim]")
-        
-        try:
-            info = self.db_snapshots.create_baseline()
-            self._baseline_snapshot = info.name
-            self.log(f"  [green]✓ Snapshot: {info.name} ({info.size_bytes or 0} bytes)[/green]")
-        except Exception as e:
-            self.log(f"  [yellow]Snapshot creation failed (non-critical): {e}[/yellow]")
+
+        info = self.db_snapshots.create_baseline()
+        self._baseline_snapshot = info.name
+        self.log(f"  [green]✓ Snapshot: {info.name} ({info.size_bytes or 0} bytes)[/green]")
     
     def _run_day_fast(self, day: date, commit: CommitInfo) -> DayResult:
         """Execute single day analysis with maximum speed."""
@@ -222,7 +229,14 @@ class AcceleratedPipeline:
             
             # 2. Restore DB to baseline (INSTANT - no re-seed)
             if self._baseline_snapshot:
-                self._restore_db_fast()
+                try:
+                    self._restore_db_fast()
+                except Exception as exc:
+                    result.error = str(exc)
+                    self._emit("ERROR_OCCURRED", stage="db_restore", sha=commit.sha, error=str(exc))
+                    self.log(f"  [red]✗ {exc}[/red]")
+                    result.duration_seconds = time.perf_counter() - t0
+                    return result
             
             # 3. Scan endpoints
             wt_path = self.worktrees.get_active_path(commit.sha)
@@ -268,14 +282,11 @@ class AcceleratedPipeline:
     def _restore_db_fast(self):
         """Restore DB from snapshot (ultra-fast)."""
         if not self._baseline_snapshot:
-            return
-        
-        try:
-            # Use quick restore method
-            self.db_snapshots.restore(self._baseline_snapshot, quick=True)
-        except Exception:
-            # Non-critical - tests might still work
-            pass
+            raise RuntimeError("DB restore failed: baseline snapshot not available")
+
+        restored = self.db_snapshots.restore(self._baseline_snapshot, quick=True)
+        if not restored:
+            raise RuntimeError(f"DB restore failed: {self._baseline_snapshot}")
     
     def cleanup(self):
         """Clean up worktrees and resources."""

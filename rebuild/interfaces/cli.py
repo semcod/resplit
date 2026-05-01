@@ -23,6 +23,7 @@ from ..application.services.history_service import HistoryService
 from ..application.services.reporter_service import ReporterService
 from ..application.services.deploy_service import DeployService
 from ..application.services.restore_service import RestoreService
+from ..infrastructure.config_loader import ConfigLoader
 
 app = typer.Typer(
     name="rebuild",
@@ -86,6 +87,7 @@ def walk(
 ) -> None:
     """Przejdź historię git dzień po dniu, deployuj i testuj endpointy."""
     repo = repo.resolve()
+    output = output.resolve()
     if not (repo / ".git").exists():
         console.print(f"[red]✗ {repo} nie jest repozytorium git[/red]")
         raise typer.Exit(1)
@@ -110,6 +112,11 @@ def walk(
         replay=replay,
         app_service=service
     )
+
+    # Merge with rebuild.yaml if exists
+    yaml_data = ConfigLoader.load(repo / "rebuild.yaml")
+    if yaml_data:
+        ConfigLoader.apply_to_config(config, yaml_data)
 
     console.print(f"\n[bold]rebuild walk[/bold] v{__version__}")
     console.print(f"  repo:   {repo}")

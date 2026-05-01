@@ -131,6 +131,9 @@ class ReporterService(Service[DayResult, None]):
   th {{ background: #f8fafc; padding: 12px; text-align: left; font-size: 12px; color: #64748b; border-bottom: 1px solid #e2e8f0; }}
   td {{ padding: 12px; border-bottom: 1px solid #f1f5f9; }}
   .hidden-data {{ display: none; }}
+  .deploy-error {{ background: #fff1f2; border: 1px solid #fecdd3; padding: 20px; border-radius: 12px; margin-bottom: 24px; }}
+  .deploy-error h3 {{ color: #e11d48; margin-top: 0; font-size: 16px; }}
+  .log-box {{ background: #1e293b; color: #cbd5e1; padding: 16px; border-radius: 8px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; overflow-x: auto; white-space: pre-wrap; margin-top: 12px; }}
 </style>
 {self._get_js_helpers()}
 </head>
@@ -169,6 +172,14 @@ class ReporterService(Service[DayResult, None]):
        <div class="stat-label">Duration</div>
     </div>
   </div>
+
+  {f'''
+  <div class="deploy-error">
+    <h3>❌ Deployment Failed</h3>
+    <p style="font-size: 14px; color: #64748b;">The service failed to start or pass health check. Review the logs below:</p>
+    <div class="log-box">{result.deploy_log or "No logs captured."}</div>
+  </div>
+  ''' if not result.deploy_success and not result.is_dry_run else ""}
 
   <table>
     <thead><tr><th>Method</th><th>Path</th><th>Status</th><th>HTTP</th><th>Time</th></tr></thead>
