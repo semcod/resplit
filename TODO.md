@@ -22,14 +22,14 @@
 - [x] **Health Check Verbose**: Pokaż szczegółowy log health-check (curl output) gdy serwis nie odpowiada.
 - [x] **Manual Override**: Support a `patch/` directory in `.rebuild/` to automatically apply fixes to the cloned repo before walk.
 - [ ] **Health Recovery**: If a day fails, allow manual "fix" commit in the clone to see if health improves (without modifying source).
-- [ ] **Token Propagation**: Zaloguj się raz przed testem, propaguj token Bearer do wszystkich requestów.
+- [x] **Token Propagation**: Zaloguj się raz przed testem, propaguj token Bearer do wszystkich requestów.
 - [x] **Per-Endpoint Body**: Opcjonalne `body:` dla POST/PUT/PATCH w konfiguracji testów.
 
 ### 🟡 Średnie — Raporty c2004
 - [ ] **Failure Grouping**: W raporcie HTML grupuj błędy wg kategorii (auth, template, missing).
 - [ ] **Trend Chart**: Wykres trendu health% w czasie (Chart.js / SVG inline).
 - [ ] **Endpoint Diff**: Pokaż endpointy które znikły lub pojawiły się między commitami.
-- [ ] **Response Time Tracking**: Zmierz i wyświetl `time_ms` dla wszystkich requestów.
+- [x] **Response Time Tracking**: Zmierz i wyświetl `time_ms` dla wszystkich requestów.
 
 ### 🟢 Niskie — Analyze na c2004
 - [ ] Uruchomić `rebuild analyze duplicates` na c2004 i zapisać wyniki.
