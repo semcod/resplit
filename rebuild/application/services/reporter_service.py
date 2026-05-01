@@ -100,6 +100,8 @@ class ReporterService(Service[DayResult, None]):
         rows = ""
         for r in result.endpoint_results:
             rt = f"{r.response_time_ms:.0f} ms" if r.response_time_ms is not None else "—"
+            error_cat = self._classify_error(r)
+            cat_badge = f'<span style="background:#64748b;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px">{error_cat}</span>' if error_cat else ""
             rows += f"""
             <tr>
               <td><code>{r.endpoint.method}</code></td>
@@ -107,6 +109,7 @@ class ReporterService(Service[DayResult, None]):
               <td>{self._status_badge(r.status)}</td>
               <td>{r.http_status or "—"}</td>
               <td>{rt}</td>
+              <td>{cat_badge}</td>
             </tr>"""
 
         html = f"""<!DOCTYPE html>
@@ -182,7 +185,7 @@ class ReporterService(Service[DayResult, None]):
   ''' if not result.deploy_success and not result.is_dry_run else ""}
 
   <table>
-    <thead><tr><th>Method</th><th>Path</th><th>Status</th><th>HTTP</th><th>Time</th></tr></thead>
+    <thead><tr><th>Method</th><th>Path</th><th>Status</th><th>HTTP</th><th>Time</th><th>Category</th></tr></thead>
     <tbody>{rows}</tbody>
   </table>
 

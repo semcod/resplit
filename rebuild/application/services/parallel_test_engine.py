@@ -232,7 +232,9 @@ class ParallelTestEngine:
         sequential: bool = False
     ) -> List[EndpointResult]:
         """Run a batch of endpoint tests."""
-        headers = self.config.auth if getattr(self.config, "auth", None) else None
+        headers = dict(self.config.auth) if getattr(self.config, "auth", None) else {}
+        if self._auth_token:
+            headers["Authorization"] = f"Bearer {self._auth_token}"
         
         limits = httpx.Limits(
             max_connections=self.max_concurrent * 2,

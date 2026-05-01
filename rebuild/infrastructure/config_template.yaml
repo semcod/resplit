@@ -53,6 +53,12 @@ test_bodies:
     name: demo-item
     enabled: true
 
+# Token-based authentication (login once, propagate Bearer token to all requests)
+login_url: http://localhost:8003/api/auth/login
+login_payload:
+  username: admin
+  password: secret
+
 # ⚡ Accelerator Mode (10x Speed)
 # ------------------------------------------------------------------------------
 # Ultra-fast execution using worktrees + hot reload + parallel testing.
