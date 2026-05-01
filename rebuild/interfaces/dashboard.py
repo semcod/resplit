@@ -17,7 +17,7 @@ from datetime import date
 from pathlib import Path
 from typing import Optional
 
-from .models import DayResult
+from ..domain.day_result import DayResult
 
 
 # ──────────────────────────────────────────────
