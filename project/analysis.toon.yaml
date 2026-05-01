@@ -1,45 +1,70 @@
-# code2llm | 36f 3931L | md:13,yaml:10,shell:8,toml:1,yml:1,txt:1 | 2026-05-01
-# CC̄=0.0 | critical:0/183 | dups:0 | cycles:0
+# code2llm | 74f 188687L | md:18,yaml:17,txt:10,json:9,shell:8,python:4,yml:2,javascript:2,toml:1,backend:1 | 2026-05-01
+# CC̄=0.0 | critical:0/5492 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
 REFACTOR[0]: none needed
 
-PIPELINES[0]: none detected
+PIPELINES[55]:
+  [1] Src [health]: health
+      PURITY: 100% pure
+  [2] Src [get_manifest]: get_manifest
+      PURITY: 100% pure
+  [3] Src [list_pages]: list_pages
+      PURITY: 100% pure
+  [4] Src [serve_ui]: serve_ui
+      PURITY: 100% pure
+  [5] Src [serve_model]: serve_model
+      PURITY: 100% pure
 
 LAYERS:
+  restored_c2004_health/          CC̄=2.6    ←in:0  →out:0
+  │ !! main.js                    704L  0C   49m  CC=11     ←0
+  │ !! docker-compose.yml         507L  0C    0m  CC=0.0    ←0
+  │ main                        91L  0C    9m  CC=5      ←0
+  │ main                        86L  0C    9m  CC=5      ←0
+  │ main                        86L  0C    9m  CC=5      ←0
+  │ main                        86L  0C    9m  CC=5      ←0
+  │ README.md                   45L  0C    0m  CC=0.0    ←0
+  │ vite.config.js              29L  0C    0m  CC=0.0    ←0
+  │ Dockerfile.backend           0L  0C    0m  CC=0.0    ←0
+  │
   testql-scenarios/               CC̄=0.0    ←in:0  →out:0
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←0
   │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
   │
   docs/                           CC̄=0.0    ←in:0  →out:0
-  │ README.md                  365L  0C    1m  CC=0.0    ←0
+  │ !! README.md                  577L  0C    1m  CC=0.0    ←0
+  │ c2004.md                   228L  0C    0m  CC=0.0    ←0
+  │ usage.md                    73L  0C    0m  CC=0.0    ←0
+  │ case_study_c2004.md         56L  0C    0m  CC=0.0    ←0
   │ architecture.md             45L  0C    0m  CC=0.0    ←0
   │
-  project/                        CC̄=0.0    ←in:0  →out:0
-  │ README.md                  339L  0C    0m  CC=0.0    ←0
-  │ map.toon.yaml              258L  0C   90m  CC=0.0    ←0
-  │ context.md                 237L  0C    0m  CC=0.0    ←0
-  │ calls.yaml                 197L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml          65L  0C    0m  CC=0.0    ←0
-  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         44L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           29L  0C    0m  CC=0.0    ←0
-  │ calls.toon.yaml              9L  0C    0m  CC=0.0    ←0
-  │ duplication.toon.yaml        9L  0C    0m  CC=0.0    ←0
-  │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMD.md                    566L  0C   91m  CC=0.0    ←0
+  │ !! SUMD.md                  53104L  0C  2703m  CC=0.0    ←0
+  │ !! SUMR.md                  31923L  0C    0m  CC=0.0    ←0
+  │ !! infra-map.json            1373L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
-  │ SUMR.md                    330L  0C    0m  CC=0.0    ←0
   │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
-  │ README.md                  118L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             103L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             104L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md               100L  0C    0m  CC=0.0    ←0
+  │ README.md                   90L  0C    0m  CC=0.0    ←0
+  │ TODO.md                     51L  0C    0m  CC=0.0    ←0
   │ project.sh                  41L  0C    0m  CC=0.0    ←0
-  │ CHANGELOG.md                33L  0C    0m  CC=0.0    ←0
-  │ TODO.md                     22L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
   │ Makefile                     0L  0C    0m  CC=0.0    ←0
+  │
+  project/                        CC̄=0.0    ←in:0  →out:0
+  │ !! map.toon.yaml            62758L  0C  2702m  CC=0.0    ←0
+  │ !! duplication.toon.yaml    31151L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                 615L  0C    0m  CC=0.0    ←0
+  │ README.md                  339L  0C    0m  CC=0.0    ←0
+  │ context.md                 322L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         123L  0C    0m  CC=0.0    ←0
+  │ calls.toon.yaml            108L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         54L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=0.0    ←in:0  →out:0
   │ README.md                   61L  0C    0m  CC=0.0    ←0
@@ -54,9 +79,37 @@ LAYERS:
   │ restore_endpoint.sh         13L  0C    0m  CC=0.0    ←0
   │ Makefile                     0L  0C    0m  CC=0.0    ←0
   │
+  c2004/                          CC̄=0.0    ←in:0  →out:0
+  │ !! topology.json              588L  0C    0m  CC=0.0    ←0
+  │ !! topology.json              587L  0C    0m  CC=0.0    ←0
+  │ !! topology-iter6.json        587L  0C    0m  CC=0.0    ←0
+  │ generated-from-pytests.testql.toon.yaml   261L  0C    0m  CC=0.0    ←0
+  │ llm-decision.schema.json   113L  0C    0m  CC=0.0    ←0
+  │ stabilization-summary.md    81L  0C    0m  CC=0.0    ←0
+  │ autoloop-state.json         73L  0C    0m  CC=0.0    ←0
+  │ generated-api-smoke.testql.toon.yaml    52L  0C    0m  CC=0.0    ←0
+  │ pytest-iter1.txt            47L  0C    0m  CC=0.0    ←0
+  │ pytest-iter4.txt            41L  0C    0m  CC=0.0    ←0
+  │ generated-from-scenarios.testql.toon.yaml    39L  0C    0m  CC=0.0    ←0
+  │ llm-decision.json           33L  0C    0m  CC=0.0    ←0
+  │ generated-hardware-smoke.testql.toon.yaml    23L  0C    0m  CC=0.0    ←0
+  │ connect-manager-test-types-gui-smoke.testql.toon.yaml    18L  0C    0m  CC=0.0    ←0
+  │ connect-manager-test-types-gui-smoke-route2.testql.toon.yaml    17L  0C    0m  CC=0.0    ←0
+  │ testql-run-iter7.txt        17L  0C    0m  CC=0.0    ←0
+  │ connect-manager-test-types-fallback-api.testql.toon.yaml    16L  0C    0m  CC=0.0    ←0
+  │ iteration.json              16L  0C    0m  CC=0.0    ←0
+  │ result.json                 10L  0C    0m  CC=0.0    ←0
+  │ pytest-iter7.txt             9L  0C    0m  CC=0.0    ←0
+  │ testql-run-iter1.txt         7L  0C    0m  CC=0.0    ←0
+  │ testql-run-iter4.txt         6L  0C    0m  CC=0.0    ←0
+  │ testql-run-iter5.txt         6L  0C    0m  CC=0.0    ←0
+  │ pytest-iter6.txt             3L  0C    0m  CC=0.0    ←0
+  │ pytest-iter5.txt             3L  0C    0m  CC=0.0    ←0
+  │
   ── zero ──
      Makefile                                  0L
      examples/Makefile                         0L
+     restored_c2004_health/api-health/docker/Dockerfile.backend  0L
 
 COUPLING: no cross-package imports detected
 

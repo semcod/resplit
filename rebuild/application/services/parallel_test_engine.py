@@ -3,6 +3,8 @@ Parallel test execution with dependency graph and health-first strategy.
 """
 from __future__ import annotations
 import asyncio
+import concurrent.futures
+import threading
 import time
 from pathlib import Path
 from typing import List, Dict, Set, Optional, Tuple
@@ -118,8 +120,67 @@ class ParallelTestEngine:
         self.dependency_graph = EndpointDependencyGraph()
         self.day_dir: Optional[Path] = None
         self._auth_token: Optional[str] = None
+        # Persistent session state (set by open_session / close_session)
+        self._session_client: Optional[httpx.AsyncClient] = None
+        self._session_loop: Optional[asyncio.AbstractEventLoop] = None
+        self._session_thread: Optional[threading.Thread] = None
         self._setup_default_dependencies()
     
+    def open_session(self) -> None:
+        """
+        Start a persistent event loop in a background thread and create a
+        shared httpx.AsyncClient.  Call once before the commit loop.
+        """
+        if self._session_loop is not None:
+            return  # Already open
+
+        loop = asyncio.new_event_loop()
+        self._session_loop = loop
+
+        def _run_loop() -> None:
+            asyncio.set_event_loop(loop)
+            loop.run_forever()
+
+        thread = threading.Thread(target=_run_loop, daemon=True, name="tester-loop")
+        thread.start()
+        self._session_thread = thread
+
+        # Create shared client inside the loop
+        future = asyncio.run_coroutine_threadsafe(self._open_client(), loop)
+        future.result(timeout=10)
+
+    async def _open_client(self) -> None:
+        headers = dict(self.config.auth) if getattr(self.config, "auth", None) else {}
+        limits = httpx.Limits(
+            max_connections=self.max_concurrent * 2,
+            max_keepalive_connections=self.max_concurrent,
+        )
+        self._session_client = httpx.AsyncClient(
+            base_url=self.config.base_url,
+            timeout=self.timeout,
+            limits=limits,
+            headers=headers,
+            follow_redirects=True,
+        )
+
+    def close_session(self) -> None:
+        """Tear down the persistent event loop and shared client."""
+        if self._session_loop is None:
+            return
+        loop = self._session_loop
+        future = asyncio.run_coroutine_threadsafe(self._close_client(), loop)
+        future.result(timeout=10)
+        loop.call_soon_threadsafe(loop.stop)
+        if self._session_thread:
+            self._session_thread.join(timeout=5)
+        self._session_loop = None
+        self._session_thread = None
+
+    async def _close_client(self) -> None:
+        if self._session_client is not None:
+            await self._session_client.aclose()
+            self._session_client = None
+
     def set_day_dir(self, day_dir: Path):
         """Set the output directory for the current day (screenshots, logs)."""
         self.day_dir = day_dir
@@ -140,9 +201,10 @@ class ParallelTestEngine:
         self.dependency_graph.add_group("/metrics", "health")
         self.dependency_graph.add_group("/api/health", "health")
     
-    async def execute(self, endpoints: List[Endpoint]) -> List[EndpointResult]:
+    async def execute(self, endpoints: List[Endpoint], client: Optional[httpx.AsyncClient] = None) -> List[EndpointResult]:
         """
         Execute all endpoint tests with parallelization.
+        Pass *client* to reuse an existing httpx.AsyncClient (persistent session).
         """
         await self._login_if_configured()
         if not endpoints:
@@ -157,7 +219,7 @@ class ParallelTestEngine:
         
         # Phase 1: Health checks (sequential, critical)
         if self.health_first and health_eps:
-            health_results = await self._run_batch(health_eps, sequential=True)
+            health_results = await self._run_batch(health_eps, sequential=True, client=client)
             for r in health_results:
                 results[r.endpoint.path] = r
                 if r.status != EndpointStatus.OK:
@@ -194,7 +256,7 @@ class ParallelTestEngine:
                     to_run.append(ep)
             
             if to_run:
-                batch_results = await self._run_batch(to_run, sequential=False)
+                batch_results = await self._run_batch(to_run, sequential=False, client=client)
                 for r in batch_results:
                     results[r.endpoint.path] = r
                     if r.status != EndpointStatus.OK:
@@ -229,9 +291,17 @@ class ParallelTestEngine:
     async def _run_batch(
         self,
         endpoints: List[Endpoint],
-        sequential: bool = False
+        sequential: bool = False,
+        client: Optional[httpx.AsyncClient] = None,
     ) -> List[EndpointResult]:
         """Run a batch of endpoint tests."""
+        if client is not None:
+            # Persistent session: inject auth header if needed and run directly
+            if self._auth_token:
+                client.headers["Authorization"] = f"Bearer {self._auth_token}"
+            return await self._run_with_client(client, endpoints, sequential)
+
+        # One-shot: build a fresh client
         headers = dict(self.config.auth) if getattr(self.config, "auth", None) else {}
         if self._auth_token:
             headers["Authorization"] = f"Bearer {self._auth_token}"
@@ -247,27 +317,33 @@ class ParallelTestEngine:
             limits=limits,
             headers=headers,
             follow_redirects=True
-        ) as client:
-            
-            if sequential:
-                results = []
-                for ep in endpoints:
-                    result = await self._test_single(client, ep)
-                    results.append(result)
-                    # Early abort on critical failure
-                    if result.status != EndpointStatus.OK and self._is_health_endpoint(ep):
-                        return results
-                return results
-            else:
-                # Parallel execution
-                semaphore = asyncio.Semaphore(self.max_concurrent)
-                
-                async def run_with_limit(ep: Endpoint) -> EndpointResult:
-                    async with semaphore:
-                        return await self._test_single(client, ep)
-                
-                tasks = [run_with_limit(ep) for ep in endpoints]
-                return await asyncio.gather(*tasks)
+        ) as fresh_client:
+            return await self._run_with_client(fresh_client, endpoints, sequential)
+
+    async def _run_with_client(
+        self,
+        client: httpx.AsyncClient,
+        endpoints: List[Endpoint],
+        sequential: bool,
+    ) -> List[EndpointResult]:
+        """Execute endpoints against a given client."""
+        if sequential:
+            results = []
+            for ep in endpoints:
+                result = await self._test_single(client, ep)
+                results.append(result)
+                if result.status != EndpointStatus.OK and self._is_health_endpoint(ep):
+                    return results
+            return results
+        else:
+            semaphore = asyncio.Semaphore(self.max_concurrent)
+
+            async def run_with_limit(ep: Endpoint) -> EndpointResult:
+                async with semaphore:
+                    return await self._test_single(client, ep)
+
+            tasks = [run_with_limit(ep) for ep in endpoints]
+            return await asyncio.gather(*tasks)
     
     async def _test_single(self, client: httpx.AsyncClient, endpoint: Endpoint) -> EndpointResult:
         """Test a single endpoint."""
@@ -325,4 +401,11 @@ class ParallelTestEngine:
     
     def execute_sync(self, endpoints: List[Endpoint]) -> List[EndpointResult]:
         """Synchronous wrapper for execute."""
+        if self._session_loop is not None:
+            # Reuse persistent loop + connection pool
+            future = asyncio.run_coroutine_threadsafe(
+                self.execute(endpoints, client=self._session_client),
+                self._session_loop,
+            )
+            return future.result()
         return asyncio.run(self.execute(endpoints))

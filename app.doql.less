@@ -2,12 +2,147 @@
 
 app {
   name: rebuild;
-  version: 0.1.9;
+  version: 0.1.13;
 }
 
 dependencies {
   runtime: "typer>=0.12, rich>=13, gitpython>=3.1, httpx>=0.27, pyyaml>=6, pydantic>=2, deta>=0.1, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
   dev: "pytest>=8, pytest-cov, pytest-asyncio, ruff, mypy, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
+}
+
+entity[name="MenuItem"] {
+  item_id: string!;
+  title: string!;
+  description: str | None;
+  icon: str | None;
+  route: str | None;
+  target_module: str | None;
+  parent_main_id: str | None;
+  display_order: int!;
+  is_active: bool!;
+  is_visible: bool!;
+  navigate_on_select: bool!;
+  embed_on_select: bool!;
+  route_template: str | None;
+  properties: dict[str, Any] | None;
+}
+
+entity[name="MenuColumn"] {
+  column_id: string!;
+  title: str | None;
+  display_order: int!;
+  items: list[MenuItem]!;
+}
+
+entity[name="RouteMapping"] {
+  route: string!;
+  menu_config_id: str | None;
+  active_items: list[str]!;
+}
+
+entity[name="PressureData"] {
+  low: float!;
+  medium: float!;
+  high: float!;
+  timestamp: datetime!;
+}
+
+entity[name="SensorData"] {
+  temperature: float!;
+  humidity: float!;
+  uptime: string!;
+}
+
+entity[name="SensorConfiguration"] {
+
+}
+
+entity[name="SensorDevice"] {
+
+}
+
+entity[name="SensorCalibration"] {
+
+}
+
+entity[name="SensorReading"] {
+
+}
+
+entity[name="SensorAlarm"] {
+
+}
+
+entity[name="SensorMaintenanceLog"] {
+
+}
+
+entity[name="ProtocolBase"] {
+  device_id: string!;
+  component_id: str | None;
+  scenario_id: str | None;
+  type: ProtocolType!;
+  status: ProtocolStatus!;
+  technician_id: string!;
+  scheduled_date: datetime!;
+  notes: string!;
+}
+
+entity[name="Icon"] {
+
+}
+
+entity[name="TemplateDraft"] {
+
+}
+
+entity[name="ProtocolRecord"] {
+
+}
+
+entity[name="TestMeasurement"] {
+
+}
+
+entity[name="ReportTemplate"] {
+
+}
+
+entity[name="TemplateVariable"] {
+
+}
+
+entity[name="DeviceType"] {
+
+}
+
+entity[name="TemplateJsonData"] {
+
+}
+
+entity[name="Workshop"] {
+
+}
+
+entity[name="SeedHistory"] {
+
+}
+
+entity[name="EventRecord"] {
+
+}
+
+entity[name="AuthUser"] {
+
+}
+
+entity[name="ClientState"] {
+
+}
+
+interface[type="api"] {
+  type: rest;
+  framework: fastapi;
 }
 
 interface[type="cli"] {
@@ -86,8 +221,28 @@ workflow[name="clean"] {
   step-3: run cmd=rm -rf dist/ build/;
 }
 
+role[name="operator"] {
+
+}
+
+role[name="admin"] {
+
+}
+
+role[name="manager"] {
+
+}
+
+role[name="viewer"] {
+
+}
+
+role[name="editor"] {
+
+}
+
 deploy {
-  target: makefile;
+  target: docker;
 }
 
 environment[name="local"] {

@@ -1,29 +1,44 @@
-# resplit | 183 func | 4f | 9027L | md | 2026-05-01
+# resplit | 5492 func | 9f | 19960567L | md | 2026-05-01
 
 HEALTH:
-  CC̄=0.0  critical=0 (limit:10)  dup=0  cycles=0
+  CC̄=0.0  critical=3 (limit:10)  dup=0  cycles=0
 
-MODULES[36] (top by size):
-  M[SUMD.md] 566L C:0 F:91 CC↑0 D:0 (md)
+ALERTS[4]:
+  !   high_fan_out     renderDownloads = 11 (limit:10)
+  !   high_fan_out     renderArchitecture = 11 (limit:10)
+  !   high_fan_out     handleRoute = 10 (limit:10)
+  !   high_fan_out     runHealthCheck = 10 (limit:10)
+
+MODULES[74] (top by size):
+  M[project/map.toon.yaml] 62758L C:0 F:2702 CC↑0 D:0 (yaml)
+  M[SUMD.md] 53104L C:0 F:2703 CC↑0 D:0 (md)
+  M[SUMR.md] 31923L C:0 F:0 CC↑0 D:0 (md)
+  M[project/duplication.toon.yaml] 31151L C:0 F:0 CC↑0 D:0 (yaml)
+  M[infra-map.json] 1373L C:0 F:0 CC↑0 D:0 (json)
+  M[restored_c2004_health/api-health/backend/site/src/main.js] 704L C:0 F:49 CC↑11 D:0 (javascript)
+  M[project/calls.yaml] 615L C:0 F:0 CC↑0 D:0 (yaml)
+  M[c2004/repo/.testql/topology.json] 588L C:0 F:0 CC↑0 D:0 (json)
+  M[c2004/repo/.testql/reports/topology-iter6.json] 587L C:0 F:0 CC↑0 D:0 (json)
+  M[c2004/repo/.testql/reports/topology.json] 587L C:0 F:0 CC↑0 D:0 (json)
+  M[docs/README.md] 577L C:0 F:1 CC↑0 D:0 (md)
   M[goal.yaml] 513L C:0 F:0 CC↑0 D:0 (yaml)
-  M[docs/README.md] 365L C:0 F:1 CC↑0 D:0 (md)
+  M[restored_c2004_health/api-health/docker/docker-compose.yml] 507L C:0 F:0 CC↑0 D:0 (yml)
   M[project/README.md] 339L C:0 F:0 CC↑0 D:0 (md)
-  M[SUMR.md] 330L C:0 F:0 CC↑0 D:0 (md)
-  M[project/map.toon.yaml] 258L C:0 F:90 CC↑0 D:0 (yaml)
-  M[project/context.md] 237L C:0 F:0 CC↑0 D:0 (md)
-  M[PLAN.md] 198L C:0 F:0 CC↑0 D:0 (md)
-  M[project/calls.yaml] 197L C:0 F:0 CC↑0 D:0 (yaml)
-  M[README.md] 118L C:0 F:0 CC↑0 D:0 (md)
-  M[pyproject.toml] 103L C:0 F:0 CC↑0 D:0 (toml)
-  M[project/analysis.toon.yaml] 65L C:0 F:0 CC↑0 D:0 (yaml)
-  M[examples/03-restore-endpoint/README.md] 61L C:0 F:0 CC↑0 D:0 (md)
-  M[examples/02-docker-compose-project/README.md] 54L C:0 F:0 CC↑0 D:0 (md)
-  M[project/prompt.txt] 47L C:0 F:0 CC↑0 D:0 (txt)
-  LANGS: md:13/yaml:10/shell:8/other:2/yml:1/txt:1/toml:1
+  M[project/context.md] 322L C:0 F:0 CC↑0 D:0 (md)
+  LANGS: md:18/yaml:17/txt:10/json:9/shell:8/python:4/javascript:2/other:2/yml:2/toml:1/backend:1
 
-REFACTOR[2]:
-  [1] H/H Split god module SUMD.md (566L, 0 classes)
-  [2] H/H Split god module goal.yaml (513L, 0 classes)
+HOTSPOTS[4]:
+  ★ renderDownloads fan=11  // Orchestrates 11 calls
+  ★ renderArchitecture fan=11  // Orchestrates 11 calls
+  ★ handleRoute fan=10  // Orchestrates 10 calls
+  ★ runHealthCheck fan=10  // Orchestrates 10 calls
+
+REFACTOR[13]:
+  [1] H/H Split god module restored_c2004_health/api-health/backend/site/src/main.js (704L, 0 classes)
+  [2] H/H Split god module SUMD.md (53104L, 0 classes)
+  [3] H/H Split god module SUMR.md (31923L, 0 classes)
+  [4] H/H Split god module c2004/repo/.testql/reports/topology-iter6.json (587L, 0 classes)
+  [5] H/H Split god module c2004/repo/.testql/reports/topology.json (587L, 0 classes)
 
 EVOLUTION:
-  2026-05-01 CC̄=0.0 crit=0 9027L // Automated analysis
+  2026-05-01 CC̄=0.0 crit=3 19960567L // Automated analysis

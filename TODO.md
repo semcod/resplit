@@ -38,11 +38,11 @@
 
 
 ## Phase 11: Deep Semantic Analysis
-- [ ] **Semantic Embeddings**: Integrate `sentence-transformers` for conceptual similarity detection in `duplication_engine`.
-- [ ] **Vector Search**: Store code fragments in a vector database for rapid semantic lookup across large repos.
+- [x] **Semantic Embeddings**: Integrate `sentence-transformers` for conceptual similarity detection in `duplication_engine`.
+- [x] **Vector Search**: Store code fragments in a vector database for rapid semantic lookup across large repos.
 
 ## Phase 12: Real-time & Cross-Repo
-- [ ] **Multi-Repo Support**: Analyze dependencies and clones across multiple repositories.
+- [x] **Multi-Repo Support**: Analyze dependencies and clones across multiple repositories.
 - [ ] **Real-time Monitoring**: Show live analysis results and event logs in the dashboard.
 - [ ] **Auto-PR Agent**: Automatically open PRs on GitHub/GitLab using generated AI summaries.
 

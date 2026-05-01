@@ -189,6 +189,7 @@ class AcceleratedPipeline:
         
         all_results: List[DayResult] = []
         
+        self.tester.open_session()
         try:
             for day, commit in commits:
                 if commit.sha in self._processed_shas and not self.config.replay:
@@ -203,6 +204,7 @@ class AcceleratedPipeline:
                 self._previous_commit = commit.sha
                 
         finally:
+            self.tester.close_session()
             # In accelerator mode, keep infrastructure running by default
             if not getattr(self.config, 'shutdown_after', False):
                 self.log("[dim]Accelerator: keeping infrastructure running[/dim]")
