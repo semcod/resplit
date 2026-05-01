@@ -1,0 +1,8 @@
+{"event_type": "PIPELINE_STARTED", "timestamp": "2026-05-01T14:37:03.480730", "data": {"days": 1, "repo": "/home/tom/github/maskservice/c2004", "replay": false}}
+{"event_type": "DEPLOY_STARTED", "timestamp": "2026-05-01T14:37:03.481934", "data": {"method": "none"}}
+{"event_type": "DEPLOY_FINISHED", "timestamp": "2026-05-01T14:37:03.482115", "data": {"success": true}}
+{"event_type": "SCAN_FINISHED", "timestamp": "2026-05-01T14:37:10.035894", "data": {"endpoint_count": 1}}
+{"event_type": "TEST_FINISHED", "timestamp": "2026-05-01T14:37:10.036439", "data": {"ok": 0}}
+{"event_type": "SCREENSHOTS_FINISHED", "timestamp": "2026-05-01T14:37:10.036710", "data": {}}
+{"event_type": "DAY_FINISHED", "timestamp": "2026-05-01T14:37:10.037296", "data": {"day": "2026-04-30", "health": 0.0}}
+{"event_type": "PIPELINE_FINISHED", "timestamp": "2026-05-01T14:37:10.037467", "data": {"total_days": 1}}

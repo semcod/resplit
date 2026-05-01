@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## [0.1.13] - 2026-05-01
+
+### Docs
+- Update README.md
+
+### Other
+- Update .rebuild_c2004_test/2026-04-30/results.json
+- Update .rebuild_c2004_test/2026-04-30/results.toon
+- Update .rebuild_c2004_test/2026-04-30/results.yaml
+- Update .rebuild_c2004_test/history.json
+- Update .rebuild_c2004_test/history.jsonl
+- Update .rebuild_c2004_test/index.html
+- Update .rebuild_c2004_test/walk_state.json
+- Update architecture.html
+- Update infra-map.json
+
 ## [0.1.12] - 2026-05-01
 
 ### Docs

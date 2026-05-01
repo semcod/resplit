@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>rebuild — timeline</title>
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; margin: 0; background: #f8fafc; }
+  nav { background: #0f172a; color: #fff; padding: 12px 24px; display: flex; gap: 20px; align-items: center; }
+  nav a { color: #94a3b8; text-decoration: none; font-size: 14px; }
+  nav a:hover { color: #fff; }
+  .toolbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 12px 24px; display: flex; gap: 10px; }
+  .btn { padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+  .btn:hover { background: #f1f5f9; border-color: #94a3b8; }
+  .btn-primary { background: #6366f1; color: #fff; border: none; }
+  .btn-primary:hover { background: #4f46e5; }
+  .toast { display:none; position:fixed; bottom:24px; right:24px; background:#1e293b; color:#fff; padding:10px 18px; border-radius:8px; font-size:14px; z-index:999; }
+  .content { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
+  th { background: #f8fafc; padding: 12px; text-align: left; font-size: 12px; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+  td { padding: 12px; border-bottom: 1px solid #f1f5f9; }
+  a { color: #6366f1; text-decoration: none; font-weight: 500; }
+</style>
+
+        <script>
+        function copyToClipboard(format) {
+            const data = document.getElementById('data-' + format).textContent;
+            navigator.clipboard.writeText(data).then(() => {
+                alert('Copied ' + format.toUpperCase() + ' to clipboard!');
+            });
+        }
+        function downloadFile(format, filename) {
+            const data = document.getElementById('data-' + format).textContent;
+            const blob = new Blob([data], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        </script>
+        
+</head>
+<body>
+<nav>
+  <strong style="color:#38bdf8">rebuild</strong>
+  <span style="color:#fff">Timeline</span>
+  <a href="dashboard.html">&#9650; Dashboard</a>
+</nav>
+<div class="toolbar">
+  <span style="align-self:center;margin-right:10px;font-weight:600;font-size:13px">Eksportuj:</span>
+  <button class="btn" onclick="copyFmt('json')">&#128203; JSON</button>
+  <button class="btn" onclick="copyFmt('yaml')">&#128203; YAML</button>
+  <button class="btn" onclick="copyFmt('toon')">&#128203; TOON</button>
+  <button class="btn btn-primary" onclick="dlFmt('json')">&#8595; Pobierz JSON</button>
+  <button class="btn btn-primary" onclick="dlFmt('yaml')">&#8595; Pobierz YAML</button>
+  <button class="btn btn-primary" onclick="dlFmt('toon')">&#8595; Pobierz TOON</button>
+</div>
+<div class="content">
+  <h1>&#128197; rebuild — timeline (1 dni)</h1>
+  <table>
+    <thead><tr><th>Dzień</th><th>Commit</th><th>Health</th><th>OK/Total</th><th>Deploy</th><th>Czas</th></tr></thead>
+    <tbody>
+            <tr>
+              <td><a href="2026-04-30/report.html"><strong>2026-04-30</strong></a></td>
+              <td><code>f84e18da</code></td>
+              <td style="color:#ef4444"><strong>0.0%</strong></td>
+              <td>0 / 1</td>
+              <td>✓</td>
+              <td>6.56s</td>
+            </tr></tbody>
+  </table>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const DATA = [{"day": "2026-04-30", "commit": "f84e18da37590b99eeda2f7a56f86865d8da1d4b", "commit_message": "refactoring", "health_pct": 0.0, "ok": 0, "fail": 0, "total": 1, "deploy_success": true, "duration_seconds": 6.555482558000222}];
+function toYaml(d) {
+  return d.map(r => Object.entries(r).map(([k,v]) => k === Object.keys(r)[0] ? `- ${k}: ${v}` : `  ${k}: ${v}`).join('\n')).join('\n');
+}
+function toToon(d) {
+  return ['modules:', ...d.flatMap(r => [
+    `  - name: walk_${r.day}`, `    type: day_result`,
+    `    health_pct: ${r.health_pct}`, `    ok: ${r.ok}`,
+    `    fail: ${r.fail}`, `    commit: ${r.commit || 'null'}`,
+  ])].join('\n');
+}
+function getContent(fmt) {
+  if (fmt==='json') return JSON.stringify(DATA, null, 2);
+  if (fmt==='yaml') return toYaml(DATA);
+  if (fmt==='toon') return toToon(DATA);
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2000);
+}
+function copyFmt(fmt) {
+  navigator.clipboard.writeText(getContent(fmt)).then(() => showToast('Skopiowano ' + fmt.toUpperCase() + '!'));
+}
+function dlFmt(fmt) {
+  const ext = fmt === 'toon' ? 'yaml' : fmt;
+  const blob = new Blob([getContent(fmt)], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `rebuild-history.${ext}`; a.click();
+}
+</script>
+</body>
+</html>
