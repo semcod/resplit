@@ -79,12 +79,15 @@ class ScannerService(Service[Path, List[Endpoint]]):
         return endpoints
 
     def _scan_via_openapi(self, base_url: str, repo: Path) -> List[Endpoint]:
-        # In dry-run: prefer static file in repo (reproducible per commit)
-        if self.config.dry_run:
+        # In dry-run and accelerator mode prefer static OpenAPI from repo/worktree.
+        # This makes endpoint discovery reproducible per commit.
+        prefer_static = self.config.dry_run or getattr(self.config, "accelerator", False)
+        if prefer_static:
             static = self._scan_via_openapi_file(repo)
             if static:
                 return static
-            # Fallback: probe live URL for endpoint list only (no tests will run)
+
+        # Fallback: probe live URL when static OpenAPI is unavailable.
         for path in ("/openapi.json", "/docs/openapi.json", "/api/openapi.json"):
             try:
                 r = httpx.get(f"{base_url.rstrip('/')}{path}", timeout=5)
@@ -127,14 +130,30 @@ class ScannerService(Service[Path, List[Endpoint]]):
             for method, details in methods.items():
                 if method.upper() in ("GET", "POST", "PUT", "DELETE", "PATCH"):
                     desc = details.get("summary", "")
+                    resolved_body = self._resolve_test_body(method.upper(), actual_path, path_template)
                     endpoints.append(Endpoint(
                         method=method.upper(),
                         path=actual_path,
                         template_path=path_template if actual_path != path_template else None,
                         base_url=base_url,
                         description=desc,
+                        body=resolved_body,
                     ))
         return endpoints
+
+    def _resolve_test_body(self, method: str, actual_path: str, template_path: str) -> Optional[dict]:
+        bodies = getattr(self.config, "test_bodies", {}) or {}
+        candidates = [
+            f"{method} {actual_path}",
+            f"{method} {template_path}",
+            actual_path,
+            template_path,
+        ]
+        for key in candidates:
+            value = bodies.get(key)
+            if isinstance(value, dict):
+                return value
+        return None
 
     def _scan_via_compose_labels(self, repo: Path) -> List[Endpoint]:
         _TRAEFIK_RULE = re.compile(r"PathPrefix\(`([^`]+)`\)")

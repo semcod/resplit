@@ -47,6 +47,8 @@ class AcceleratorDeployService(DeployService):
         self._live_bind_swap_enabled = False
         self._runtime_compose_file: Optional[Path] = None
         self._runtime_marker_filename = ".rebuild_runtime_sha"
+        self._last_health_success_at: Optional[float] = None
+        self._container_name_cache: Dict[str, str] = {}
     
     def start(self, repo: Path) -> bool:
         """
@@ -108,7 +110,7 @@ class AcceleratorDeployService(DeployService):
             return False
         
         self._initial_setup_done = True
-        return self._wait_healthy()
+        return self.wait_healthy()
     
     def switch_commit(self, sha: str, repo: Path) -> bool:
         """
@@ -153,8 +155,8 @@ class AcceleratorDeployService(DeployService):
         self._current_sha = sha
         self._trigger_reload(service)
 
-        # 4. Wait for health
-        if not self._wait_healthy():
+        # 4. Wait for a short health confirmation after code swap.
+        if not self._wait_post_switch_healthy():
             return False
 
         # 5. Verify runtime really points to requested commit
@@ -213,6 +215,10 @@ class AcceleratorDeployService(DeployService):
     
     def _get_container_name(self, service: str) -> str:
         """Get full container name for service."""
+        cached_name = self._container_name_cache.get(service)
+        if cached_name:
+            return cached_name
+
         # Try common naming patterns
         candidates = [
             service,
@@ -223,6 +229,7 @@ class AcceleratorDeployService(DeployService):
         for name in candidates:
             result = self.shell.run(["docker", "inspect", "-f", "{{.State.Status}}", name])
             if result.returncode == 0:
+                self._container_name_cache[service] = name
                 return name
         
         # Fallback: try to get from compose
@@ -231,7 +238,9 @@ class AcceleratorDeployService(DeployService):
             "ps", "-q", service
         ])
         if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()[:12]  # Short container ID
+            container_name = result.stdout.strip()[:12]
+            self._container_name_cache[service] = container_name
+            return container_name
         
         return service  # Last resort
     
@@ -270,6 +279,31 @@ class AcceleratorDeployService(DeployService):
         code_path.mkdir(parents=True, exist_ok=True)
         marker = code_path / self._runtime_marker_filename
         marker.write_text(sha, encoding="utf-8")
+
+    def _post_switch_health_timeout(self) -> float:
+        return min(5.0, float(self.config.health_timeout))
+
+    def _post_switch_health_interval(self) -> float:
+        return min(1.0, float(self.config.health_interval))
+
+    def _post_switch_health_cache_ttl(self) -> float:
+        return min(2.0, self._post_switch_health_timeout())
+
+    def _wait_post_switch_healthy(self) -> bool:
+        now = time.monotonic()
+        if self._last_health_success_at is not None:
+            age = now - self._last_health_success_at
+            if age <= self._post_switch_health_cache_ttl():
+                self.console.print(f"  [dim]health cache hit[/dim] ({age:.2f}s old)")
+                return True
+
+        healthy = self.wait_healthy(
+            timeout=self._post_switch_health_timeout(),
+            interval=self._post_switch_health_interval(),
+        )
+        if healthy:
+            self._last_health_success_at = time.monotonic()
+        return healthy
 
     def _verify_runtime_commit(self, service: str, expected_sha: str) -> bool:
         container_name = self._get_container_name(service)

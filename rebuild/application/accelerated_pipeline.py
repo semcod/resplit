@@ -23,6 +23,7 @@ from .services.parallel_test_engine import ParallelTestEngine
 from .services.smart_test_selector import SmartTestSelector
 from .services.screenshot_service import ScreenshotService, ScreenshotConfig
 from .services.reporter_service import ReporterService
+from .services.patcher_service import PatcherService
 
 
 class AcceleratedPipeline:
@@ -66,6 +67,7 @@ class AcceleratedPipeline:
         self.smart_selector = SmartTestSelector(config.repo_path)
         self.screenshots = ScreenshotService(ScreenshotConfig(output_dir=config.output_dir))
         self.reporter = ReporterService()
+        self.patcher = PatcherService()
         
         # State tracking
         self._state_file = config.output_dir / "accelerator_state.json"
@@ -226,6 +228,13 @@ class AcceleratedPipeline:
             
             self._emit("CODE_SWITCH_FINISHED", sha=commit.sha)
             result.deploy_success = True
+
+            # Manual overrides from .rebuild/patch
+            patch_dir = self.output_dir / "patch"
+            overrides = self.patcher.apply_manual_overrides(patch_dir, wt_path)
+            if overrides:
+                self.log(f"  [dim]Manual override: applied {overrides} file(s) from {patch_dir}[/dim]")
+                self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(patch_dir))
             
             # 2. Restore DB to baseline (INSTANT - no re-seed)
             if self._baseline_snapshot:
@@ -287,6 +296,9 @@ class AcceleratedPipeline:
         restored = self.db_snapshots.restore(self._baseline_snapshot, quick=True)
         if not restored:
             raise RuntimeError(f"DB restore failed: {self._baseline_snapshot}")
+
+        if not self.deploy.wait_healthy():
+            raise RuntimeError("App health check failed after DB restore")
     
     def cleanup(self):
         """Clean up worktrees and resources."""

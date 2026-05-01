@@ -42,17 +42,21 @@ class DeployService(Service[Path, bool]):
         # In replay mode: infra is already up — just verify health
         if self.config.replay:
             self.console.print(f"  [dim]replay: checking existing infra health...[/dim]")
-            return self._wait_healthy()
+            return self._wait_healthy_with_retry()
 
         if method == DeployMethod.DOCKER_COMPOSE:
-            return self._compose_up(repo)
+            return self._run_with_retry(lambda: self._compose_up(repo), action_label="deploy")
         if method == DeployMethod.UVICORN:
-            return self._uvicorn_start(repo)
+            return self._run_with_retry(lambda: self._uvicorn_start(repo), action_label="deploy")
         return False
 
     def execute(self, repo: Path) -> bool:
         """Implements Service protocol."""
         return self.start(repo)
+
+    def wait_healthy(self, timeout: Optional[float] = None, interval: Optional[float] = None) -> bool:
+        """Public health gate for callers that need to re-check app readiness."""
+        return self._wait_healthy(timeout=timeout, interval=interval)
 
     def reload(self, repo: Path) -> bool:
         """
@@ -84,7 +88,7 @@ class DeployService(Service[Path, bool]):
         else:
             return self.start(repo)
 
-        return self._wait_healthy()
+        return self._wait_healthy_with_retry()
 
     def stop(self, repo: Path) -> None:
         if self.config.dry_run or self.config.deploy_method == DeployMethod.NONE:
@@ -115,7 +119,7 @@ class DeployService(Service[Path, bool]):
             self.last_log = result.stderr
             self.console.print(f"  [red]docker compose up failed:[/red]\n{result.stderr[:500]}")
             return False
-        return self._wait_healthy()
+        return self.wait_healthy()
 
     def _compose_down(self, repo: Path) -> None:
         try:
@@ -130,23 +134,80 @@ class DeployService(Service[Path, bool]):
         cmd = ["uvicorn", module, "--host", "0.0.0.0", "--port", "8003", "--reload"]
         self.console.print(f"  [bold cyan]uvicorn[/bold cyan] {module}")
         self._uvicorn_proc = self.shell.popen(cmd, cwd=repo)
-        return self._wait_healthy()
+        return self.wait_healthy()
 
     def _uvicorn_stop(self) -> None:
         if self._uvicorn_proc:
             self._uvicorn_proc.terminate()
             self._uvicorn_proc = None
 
-    def _wait_healthy(self) -> bool:
-        deadline = time.time() + self.config.health_timeout
+    def _run_with_retry(self, action, action_label: str) -> bool:
+        attempts = max(1, int(getattr(self.config, "deploy_retry_attempts", 1)))
+        backoff = float(getattr(self.config, "deploy_retry_backoff_seconds", 2.0))
+        multiplier = float(getattr(self.config, "deploy_retry_backoff_multiplier", 2.0))
+
+        for attempt in range(1, attempts + 1):
+            ok = action()
+            if ok:
+                if attempt > 1:
+                    self.console.print(f"  [green]✓ {action_label} recovered on retry {attempt}/{attempts}[/green]")
+                return True
+
+            if attempt < attempts:
+                sleep_seconds = max(0.0, backoff * (multiplier ** (attempt - 1)))
+                self.console.print(
+                    f"  [yellow]{action_label} failed[/yellow] (attempt {attempt}/{attempts}), retry in {sleep_seconds:.1f}s"
+                )
+                time.sleep(sleep_seconds)
+
+        return False
+
+    def _wait_healthy_with_retry(self) -> bool:
+        attempts = max(1, int(getattr(self.config, "deploy_retry_attempts", 1)))
+        backoff = float(getattr(self.config, "deploy_retry_backoff_seconds", 2.0))
+        multiplier = float(getattr(self.config, "deploy_retry_backoff_multiplier", 2.0))
+
+        for attempt in range(1, attempts + 1):
+            if self.wait_healthy():
+                if attempt > 1:
+                    self.console.print(f"  [green]✓ health recovered on retry {attempt}/{attempts}[/green]")
+                return True
+
+            if attempt < attempts:
+                sleep_seconds = max(0.0, backoff * (multiplier ** (attempt - 1)))
+                self.console.print(
+                    f"  [yellow]health check failed[/yellow] (attempt {attempt}/{attempts}), retry in {sleep_seconds:.1f}s"
+                )
+                time.sleep(sleep_seconds)
+
+        return False
+
+    def _wait_healthy(self, timeout: Optional[float] = None, interval: Optional[float] = None) -> bool:
+        health_timeout = self.config.health_timeout if timeout is None else timeout
+        health_interval = self.config.health_interval if interval is None else interval
+        deadline = time.time() + health_timeout
+        last_status: Optional[int] = None
+        last_body: Optional[str] = None
+        last_error: Optional[str] = None
         while time.time() < deadline:
             try:
                 r = self.http.get(self.config.health_url)
+                last_status = r.status_code
+                last_body = r.text[:500]
                 if r.status_code < 500:
                     self.console.print(f"  [green]✓ healthy[/green] ({self.config.health_url})")
                     return True
-            except Exception:
-                pass
-            time.sleep(self.config.health_interval)
-        self.console.print(f"  [red]✗ health timeout ({self.config.health_timeout}s)[/red]")
+            except Exception as exc:
+                last_error = str(exc)
+            time.sleep(health_interval)
+
+        if getattr(self.config, "health_verbose", False):
+            if last_status is not None:
+                self.console.print(
+                    f"  [dim]health last response:[/dim] status={last_status}, body={last_body or '<empty>'}"
+                )
+            if last_error:
+                self.console.print(f"  [dim]health last error:[/dim] {last_error}")
+
+        self.console.print(f"  [red]✗ health timeout ({health_timeout}s)[/red]")
         return False

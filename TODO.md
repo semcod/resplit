@@ -18,12 +18,12 @@
 ### 🔴 Krytyczne
 - [ ] **Replay + volume mount**: W replay mode Docker używa aktualnego obrazu, nie kodu z checkoutu. Rozwiązanie: w clone podmontować katalog kodu jako volume lub budować obraz per commit.
 - [ ] **init tworzy rebuild.yaml w oryginalnym repo**: `init()` wywołany z `walk` tworzy pliki w `repo_path`. Powinno trafiać do klona lub być pomijane.
-- [ ] **Deploy Retry**: Dodać mechanizm retry z backoff dla niestabilnych deployów.
-- [ ] **Health Check Verbose**: Pokaż szczegółowy log health-check (curl output) gdy serwis nie odpowiada.
+- [x] **Deploy Retry**: Dodać mechanizm retry z backoff dla niestabilnych deployów.
+- [x] **Health Check Verbose**: Pokaż szczegółowy log health-check (curl output) gdy serwis nie odpowiada.
 - [ ] **Manual Override**: Support a `patch/` directory in `.rebuild/` to automatically apply fixes to the cloned repo before walk.
 - [ ] **Health Recovery**: If a day fails, allow manual "fix" commit in the clone to see if health improves (without modifying source).
 - [ ] **Token Propagation**: Zaloguj się raz przed testem, propaguj token Bearer do wszystkich requestów.
-- [ ] **Per-Endpoint Body**: Opcjonalne `body:` dla POST/PUT/PATCH w konfiguracji testów.
+- [x] **Per-Endpoint Body**: Opcjonalne `body:` dla POST/PUT/PATCH w konfiguracji testów.
 
 ### 🟡 Średnie — Raporty c2004
 - [ ] **Failure Grouping**: W raporcie HTML grupuj błędy wg kategorii (auth, template, missing).

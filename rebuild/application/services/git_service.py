@@ -78,6 +78,24 @@ class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
             if result.returncode != 0:
                 raise RuntimeError(f"git clone failed: {result.stderr}")
         return GitService(clone_path, shell=self.shell)
+    
+    def sync_current_state(self, target_path: Path):
+        """
+        Copies all files (including untracked ones like node_modules)
+        from current repo to target_path using rsync or cp.
+        Used for Accelerator Mode.
+        """
+        target_path.mkdir(parents=True, exist_ok=True)
+        # Use rsync if available for efficiency, otherwise cp
+        try:
+            # --exclude .rebuild to avoid infinite recursion if output is inside repo
+            self.shell.run([
+                "rsync", "-av", "--exclude", ".rebuild", "--exclude", ".git",
+                str(self.repo_path) + "/", str(target_path) + "/"
+            ])
+        except Exception:
+            # Fallback to cp
+            self.shell.run(["cp", "-rn", str(self.repo_path) + "/.", str(target_path)])
 
     def checkout(self, sha: str):
         self._run_git(["checkout", "--force", "--quiet", sha])
