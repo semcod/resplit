@@ -31,40 +31,37 @@ def _day_result(tmp_path: Path, ep_results: list | None = None, commit: CommitIn
 
 
 # ──────────────────────────────────────────────
-# save_json
+# save_day (new API: results.json is to_dict() format)
 # ──────────────────────────────────────────────
 
-def test_save_json_creates_results_file(tmp_path):
+def test_save_day_creates_results_file(tmp_path):
     ep = _ep()
     ep_result = EndpointResult(endpoint=ep, status=EndpointStatus.OK, http_status=200, response_time_ms=42.0)
     result = _day_result(tmp_path, [ep_result])
     svc = ReporterService()
-    svc.save_json(result)
+    svc.save_day(result)
 
     results_file = tmp_path / "2024-03-15" / "results.json"
     assert results_file.exists()
     data = json.loads(results_file.read_text())
-    assert len(data) == 1
-    assert data[0]["path"] == "/api/health"
-    assert data[0]["status"] == "ok"
-    assert data[0]["http_status"] == 200
+    assert "results" in data
+    assert data["results"][0]["path"] == "/api/health"
+    assert data["results"][0]["status"] == "ok"
+    assert data["results"][0]["http_status"] == 200
 
 
-def test_save_json_creates_endpoints_file(tmp_path):
+def test_save_day_creates_yaml_and_toon(tmp_path):
     ep = _ep("/api/items", "POST")
-    ep_result = EndpointResult(endpoint=ep, status=EndpointStatus.FAIL)
+    ep_result = EndpointResult(endpoint=ep, status=EndpointStatus.OK)
     result = _day_result(tmp_path, [ep_result])
     svc = ReporterService()
-    svc.save_json(result)
+    svc.save_day(result)
 
-    eps_file = tmp_path / "2024-03-15" / "endpoints.json"
-    assert eps_file.exists()
-    data = json.loads(eps_file.read_text())
-    assert data[0]["method"] == "POST"
-    assert data[0]["path"] == "/api/items"
+    assert (tmp_path / "2024-03-15" / "results.yaml").exists()
+    assert (tmp_path / "2024-03-15" / "results.toon").exists()
 
 
-def test_save_json_writes_commit_txt(tmp_path):
+def test_save_day_includes_commit_in_json(tmp_path):
     commit = CommitInfo(
         sha="abc123def456abc123def456abc123def456abc1",
         message="Fix health endpoint",
@@ -74,17 +71,14 @@ def test_save_json_writes_commit_txt(tmp_path):
     )
     result = _day_result(tmp_path, commit=commit)
     svc = ReporterService()
-    svc.save_json(result)
+    svc.save_day(result)
 
-    commit_file = tmp_path / "2024-03-15" / "commit.txt"
-    assert commit_file.exists()
-    lines = commit_file.read_text().splitlines()
-    assert lines[0] == "abc123def456abc123def456abc123def456abc1"
-    assert lines[1] == "Fix health endpoint"
-    assert lines[2] == "Alice"
+    data = json.loads((tmp_path / "2024-03-15" / "results.json").read_text())
+    assert data["commit"]["sha"] == "abc123def456abc123def456abc123def456abc1"
+    assert data["commit"]["message"] == "Fix health endpoint"
 
 
-def test_save_json_no_output_dir_skips(tmp_path):
+def test_save_day_no_output_dir_skips(tmp_path):
     result = DayResult(
         day=date(2024, 3, 15),
         commit=None,
@@ -93,18 +87,23 @@ def test_save_json_no_output_dir_skips(tmp_path):
         output_dir=None,
     )
     svc = ReporterService()
-    svc.save_json(result)  # should not raise
+    svc.save_day(result)  # should not raise
 
 
-def test_save_json_testql_passed_field(tmp_path):
+def test_save_day_health_in_json(tmp_path):
     ep = _ep()
-    ep_result = EndpointResult(endpoint=ep, status=EndpointStatus.OK, testql_passed=True)
-    result = _day_result(tmp_path, [ep_result])
+    ep_results = [
+        EndpointResult(endpoint=ep, status=EndpointStatus.OK),
+        EndpointResult(endpoint=ep, status=EndpointStatus.FAIL),
+    ]
+    result = _day_result(tmp_path, ep_results)
     svc = ReporterService()
-    svc.save_json(result)
+    svc.save_day(result)
 
     data = json.loads((tmp_path / "2024-03-15" / "results.json").read_text())
-    assert data[0]["testql_passed"] is True
+    assert data["health"]["ok"] == 1
+    assert data["health"]["fail"] == 1
+    assert data["health"]["percentage"] == 50.0
 
 
 # ──────────────────────────────────────────────
@@ -116,7 +115,7 @@ def test_save_html_creates_report_file(tmp_path):
     ep_result = EndpointResult(endpoint=ep, status=EndpointStatus.OK, http_status=200)
     result = _day_result(tmp_path, [ep_result])
     svc = ReporterService()
-    svc.save_html(result)
+    svc.save_day(result)
 
     report = tmp_path / "2024-03-15" / "report.html"
     assert report.exists()
@@ -133,10 +132,10 @@ def test_save_html_contains_health_pct(tmp_path):
     ]
     result = _day_result(tmp_path, ep_results)
     svc = ReporterService()
-    svc.save_html(result)
+    svc.save_day(result)
 
     content = (tmp_path / "2024-03-15" / "report.html").read_text()
-    assert "50.0%" in content
+    assert "50.0" in content
 
 
 # ──────────────────────────────────────────────

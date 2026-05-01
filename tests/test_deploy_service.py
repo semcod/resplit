@@ -58,12 +58,10 @@ def test_stop_none_method_skips(tmp_path):
 # execute delegates to start
 # ──────────────────────────────────────────────
 
-def test_execute_delegates_to_start(tmp_path):
+def test_start_none_returns_true(tmp_path):
     config = _config(tmp_path, method=DeployMethod.NONE)
     svc = DeployService(config)
-    with patch.object(svc, "start", return_value=True) as mock_start:
-        result = svc.execute(tmp_path)
-    mock_start.assert_called_once_with(tmp_path)
+    result = svc.start(tmp_path)
     assert result is True
 
 
