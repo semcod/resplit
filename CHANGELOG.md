@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-05-01
+
+### Docs
+- Update README.md
+- Update docs/README.md
+
+### Test
+- Update tests/test_test_service.py
+
 ## [0.2.0] - 2026-05-01
 
 ### 🔥 Major: Full-Stack Testing & Intelligence Platform

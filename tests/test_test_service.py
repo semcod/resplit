@@ -28,7 +28,7 @@ def test_test_service_ok():
     with patch.object(service.http, "get", return_value=mock_response) as mock_get:
         results = service.execute([ep])
         # Verify the URL was called correctly
-        mock_get.assert_called_once_with(ep.url)
+        mock_get.assert_called_once_with(ep.url, headers={})
     
     assert len(results) == 1
     assert results[0].status == EndpointStatus.OK
