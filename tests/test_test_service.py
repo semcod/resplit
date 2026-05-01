@@ -43,7 +43,7 @@ def test_test_service_timeout():
         results = service.execute([ep])
     
     assert len(results) == 1
-    assert results[0].status == EndpointStatus.FAIL
+    assert results[0].status in (EndpointStatus.FAIL, EndpointStatus.FAIL_NETWORK)
 
 def test_test_service_set_day_dir():
     ep = _ep("/api/health")

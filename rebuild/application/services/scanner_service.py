@@ -228,31 +228,57 @@ class ScannerService(Service[Path, List[Endpoint]]):
                     continue
         return []
 
+    _PARAM_FALLBACKS: dict = {
+        "id": "1",
+        "pk": "1",
+        "uuid": "00000000-0000-0000-0000-000000000001",
+        "slug": "test",
+        "name": "test",
+        "table": "users",
+        "model": "test",
+        "version": "v1",
+        "format": "json",
+        "lang": "en",
+        "locale": "en",
+        "date": "2024-01-01",
+        "year": "2024",
+        "month": "01",
+        "day": "01",
+    }
+
+    def _substitute_params(self, path_template: str, fixtures: dict) -> str:
+        actual = path_template
+        for param in re.findall(r"\{([^}]+)\}", path_template):
+            value = fixtures.get(param) or self._PARAM_FALLBACKS.get(param.lower())
+            if value is None:
+                value = "1"
+            actual = actual.replace(f"{{{param}}}", str(value))
+        return actual
+
     def _parse_openapi(self, spec: dict, base_url: str) -> List[Endpoint]:
         endpoints = []
         paths = spec.get("paths", {})
         fixtures = self.config.test_fixtures
         
         for path_template, methods in paths.items():
-            # Substitute {params}
-            actual_path = path_template
-            params = re.findall(r"\{([^}]+)\}", path_template)
-            for p in params:
-                if p in fixtures:
-                    actual_path = actual_path.replace(f"{{{p}}}", str(fixtures[p]))
+            actual_path = self._substitute_params(path_template, fixtures)
+            has_unresolved = "{" in actual_path
             
             for method, details in methods.items():
                 if method.upper() in ("GET", "POST", "PUT", "DELETE", "PATCH"):
                     desc = details.get("summary", "")
                     resolved_body = self._resolve_test_body(method.upper(), actual_path, path_template)
-                    endpoints.append(Endpoint(
+                    ep = Endpoint(
                         method=method.upper(),
                         path=actual_path,
                         template_path=path_template if actual_path != path_template else None,
                         base_url=base_url,
                         description=desc,
                         body=resolved_body,
-                    ))
+                    )
+                    if has_unresolved:
+                        ep.template_path = path_template
+                    endpoints.append(ep)
         return endpoints
 
     def _resolve_test_body(self, method: str, actual_path: str, template_path: str) -> Optional[dict]:

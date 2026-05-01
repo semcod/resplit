@@ -7,8 +7,14 @@ from typing import Optional, Any, Dict
 class EndpointStatus(str, Enum):
     OK = "ok"
     FAIL = "fail"
+    FAIL_AUTH = "fail_auth"
+    FAIL_TEMPLATE = "fail_template"
+    FAIL_SERVER = "fail_server"
+    FAIL_NETWORK = "fail_network"
     TIMEOUT = "timeout"
     SKIP = "skip"
+    SKIP_METHOD = "skip_method"
+    SKIP_AUTH = "skip_auth"
     UNKNOWN = "unknown"
 
 @dataclass
@@ -40,3 +46,4 @@ class EndpointResult:
     screenshot_path: Optional[Path] = None
     testql_passed: Optional[bool] = None
     error: Optional[str] = None
+    fail_reason: Optional[str] = None

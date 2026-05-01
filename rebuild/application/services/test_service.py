@@ -46,9 +46,29 @@ class TestService(Service[List[Endpoint], List[EndpointResult]]):
         except Exception:
             pass  # Login failed, continue without token
 
+    def _classify_http_status(self, http_status: int, needs_auth: bool) -> EndpointStatus:
+        if http_status < 400:
+            return EndpointStatus.OK
+        if http_status in (401, 403):
+            return EndpointStatus.FAIL_AUTH
+        if http_status in (405,) and not needs_auth:
+            return EndpointStatus.SKIP_METHOD
+        if http_status >= 500:
+            return EndpointStatus.FAIL_SERVER
+        return EndpointStatus.FAIL
+
     def _test_endpoint(self, ep: Endpoint) -> EndpointResult:
         if self.config.dry_run:
             return EndpointResult(endpoint=ep, status=EndpointStatus.SKIP)
+
+        needs_auth = bool(self.config.auth or self.config.login_url)
+
+        if ep.template_path and "{" in ep.path:
+            return EndpointResult(
+                endpoint=ep,
+                status=EndpointStatus.FAIL_TEMPLATE,
+                fail_reason=f"Unresolved template params in path: {ep.path}",
+            )
 
         try:
             headers = dict(self.config.auth) if self.config.auth else {}
@@ -70,7 +90,7 @@ class TestService(Service[List[Endpoint], List[EndpointResult]]):
             else:
                 resp = self.http.get(ep.url, headers=headers)
 
-            status = EndpointStatus.OK if resp.status_code < 400 else EndpointStatus.FAIL
+            status = self._classify_http_status(resp.status_code, needs_auth)
             return EndpointResult(
                 endpoint=ep,
                 status=status,
@@ -78,8 +98,14 @@ class TestService(Service[List[Endpoint], List[EndpointResult]]):
                 response_time_ms=resp.elapsed.total_seconds() * 1000 if getattr(resp, "elapsed", None) else None,
             )
         except Exception as e:
+            err_str = str(e)
+            net_keywords = ("connect", "connection", "network", "refused", "timeout", "timed out", "name or service")
+            if any(k in err_str.lower() for k in net_keywords):
+                status = EndpointStatus.FAIL_NETWORK
+            else:
+                status = EndpointStatus.FAIL
             return EndpointResult(
                 endpoint=ep,
-                status=EndpointStatus.FAIL,
-                error=str(e)
+                status=status,
+                error=err_str,
             )

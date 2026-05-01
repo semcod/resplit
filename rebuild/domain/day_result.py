@@ -1,12 +1,22 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date
+from enum import Enum
 from pathlib import Path
 from typing import Optional, Dict, Any
 
 from .commit import CommitInfo
 from .endpoint import Endpoint, EndpointResult, EndpointStatus
 from .models import DeployMethod
+
+
+class DeployErrorCategory(str, Enum):
+    COMPOSE_BUILD_FAIL = "compose_build_fail"
+    PORT_CONFLICT = "port_conflict"
+    MIGRATION_FAIL = "migration_fail"
+    HEALTH_TIMEOUT = "health_timeout"
+    MISSING_ENV = "missing_env"
+    UNKNOWN = "unknown"
 
 @dataclass
 class DayResult:
@@ -19,6 +29,7 @@ class DayResult:
     output_dir: Optional[Path] = None
     error: Optional[str] = None
     deploy_log: Optional[str] = None
+    deploy_error_category: Optional[DeployErrorCategory] = None
     duration_seconds: float = 0.0
     is_dry_run: bool = False
 
@@ -28,7 +39,9 @@ class DayResult:
 
     @property
     def fail_count(self) -> int:
-        return sum(1 for r in self.endpoint_results if r.status == EndpointStatus.FAIL)
+        _fail = {EndpointStatus.FAIL, EndpointStatus.FAIL_AUTH, EndpointStatus.FAIL_SERVER,
+                 EndpointStatus.FAIL_NETWORK, EndpointStatus.FAIL_TEMPLATE}
+        return sum(1 for r in self.endpoint_results if r.status in _fail)
 
     @property
     def health_pct(self) -> float:
@@ -58,7 +71,8 @@ class DayResult:
                 "method": self.deploy_method.value,
                 "success": self.deploy_success,
                 "is_dry_run": self.is_dry_run,
-                "log": self.deploy_log
+                "log": self.deploy_log,
+                "error_category": self.deploy_error_category.value if self.deploy_error_category else None
             },
             "results": [
                 {
@@ -66,7 +80,9 @@ class DayResult:
                     "path": r.endpoint.path,
                     "status": r.status.value,
                     "http_status": r.http_status,
-                    "time_ms": r.response_time_ms
+                    "time_ms": r.response_time_ms,
+                    "fail_reason": r.fail_reason,
+                    "template_path": r.endpoint.template_path,
                 } for r in self.endpoint_results
             ]
         }

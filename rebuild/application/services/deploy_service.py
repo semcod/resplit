@@ -8,6 +8,7 @@ from typing import Optional, List, Any
 from rich.console import Console
 
 from ...domain.models import DeployMethod, WalkConfig
+from ...domain.day_result import DeployErrorCategory
 from .base import Service
 from ...infrastructure.shell_adapter import ShellAdapter
 from ...infrastructure.http_adapter import HttpAdapter
@@ -25,6 +26,8 @@ class DeployService(Service[Path, bool]):
         self._uvicorn_proc: Optional[Any] = None
         self._project_name = f"rebuild-{hashlib.md5(str(config.repo_path.resolve()).encode()).hexdigest()[:8]}"
         self.last_log: Optional[str] = None
+        self.last_error_category: Optional[DeployErrorCategory] = None
+        self.day_dir: Optional[Path] = None
 
     def detect_deploy_method(self, repo: Path) -> DeployMethod:
         for name in (self.config.compose_file, "docker-compose.yml", "docker-compose.yaml"):
@@ -125,11 +128,17 @@ class DeployService(Service[Path, bool]):
         cmd = ["docker", "compose", "-p", self._project_name, "-f", str(cf), "up", "-d", "--build", "--force-recreate"]
         self.console.print(f"  [bold cyan]docker compose up[/bold cyan] (project: {self._project_name})")
         result = self.shell.run(cmd, cwd=repo)
+        combined = (result.stdout or "") + (result.stderr or "")
         if result.returncode != 0:
-            self.last_log = result.stderr
-            self.console.print(f"  [red]docker compose up failed:[/red]\n{result.stderr[:500]}")
+            self.last_log = combined
+            self.last_error_category = self._classify_deploy_error(combined)
+            self.console.print(f"  [red]docker compose up failed:[/red]\n{combined[:500]}")
+            self._save_deploy_debug(repo, combined)
             return False
-        return self.wait_healthy()
+        ok = self.wait_healthy()
+        if not ok:
+            self.last_error_category = DeployErrorCategory.HEALTH_TIMEOUT
+        return ok
 
     def _compose_down(self, repo: Path) -> None:
         try:
@@ -151,10 +160,34 @@ class DeployService(Service[Path, bool]):
             self._uvicorn_proc.terminate()
             self._uvicorn_proc = None
 
+    def _classify_deploy_error(self, log: str) -> DeployErrorCategory:
+        log_lower = log.lower()
+        if any(p in log_lower for p in ("bind: address already in use", "port is already allocated", "address already in use")):
+            return DeployErrorCategory.PORT_CONFLICT
+        if any(p in log_lower for p in ("build failed", "dockerfile", "error building", "step ", "failed to build")):
+            return DeployErrorCategory.COMPOSE_BUILD_FAIL
+        if any(p in log_lower for p in ("migration", "alembic", "flyway", "migrate")):
+            return DeployErrorCategory.MIGRATION_FAIL
+        if any(p in log_lower for p in ("missing required env", "environment variable", "no such variable", "env not set", "keyerror")):
+            return DeployErrorCategory.MISSING_ENV
+        return DeployErrorCategory.UNKNOWN
+
+    def _save_deploy_debug(self, repo: Path, log: str) -> None:
+        try:
+            debug_file = self.config.output_dir / "deploy_debug.txt"
+            debug_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(debug_file, "a", encoding="utf-8") as f:
+                import datetime
+                f.write(f"\n=== {datetime.datetime.now().isoformat()} repo={repo} ===\n")
+                f.write(log[:5000])
+                f.write("\n")
+        except Exception:
+            pass
+
     def _run_with_retry(self, action, action_label: str) -> bool:
-        attempts = max(1, int(getattr(self.config, "deploy_retry_attempts", 1)))
-        backoff = float(getattr(self.config, "deploy_retry_backoff_seconds", 2.0))
-        multiplier = float(getattr(self.config, "deploy_retry_backoff_multiplier", 2.0))
+        attempts = max(1, int(getattr(self.config, "deploy_retry_attempts", 3)))
+        backoff = float(getattr(self.config, "deploy_retry_backoff_seconds", 5.0))  
+        multiplier = float(getattr(self.config, "deploy_retry_backoff_multiplier", 3.0))
 
         for attempt in range(1, attempts + 1):
             ok = action()
@@ -173,9 +206,9 @@ class DeployService(Service[Path, bool]):
         return False
 
     def _wait_healthy_with_retry(self) -> bool:
-        attempts = max(1, int(getattr(self.config, "deploy_retry_attempts", 1)))
-        backoff = float(getattr(self.config, "deploy_retry_backoff_seconds", 2.0))
-        multiplier = float(getattr(self.config, "deploy_retry_backoff_multiplier", 2.0))
+        attempts = max(1, int(getattr(self.config, "deploy_retry_attempts", 3)))
+        backoff = float(getattr(self.config, "deploy_retry_backoff_seconds", 5.0))
+        multiplier = float(getattr(self.config, "deploy_retry_backoff_multiplier", 3.0))
 
         for attempt in range(1, attempts + 1):
             if self.wait_healthy():
@@ -219,7 +252,22 @@ class DeployService(Service[Path, bool]):
             if last_error:
                 self.console.print(f"  [dim]health last error:[/dim] {last_error}")
 
+        if getattr(self.config, "health_verbose", False) and self.day_dir:
+            try:
+                debug_file = self.day_dir / "deploy_debug.txt"
+                debug_file.parent.mkdir(parents=True, exist_ok=True)
+                with open(debug_file, "a", encoding="utf-8") as f:
+                    import datetime
+                    f.write(f"\n=== health timeout {datetime.datetime.now().isoformat()} url={self.config.health_url} ===\n")
+                    if last_status is not None:
+                        f.write(f"status={last_status} body={last_body or '<empty>'}\n")
+                    if last_error:
+                        f.write(f"error={last_error}\n")
+            except Exception:
+                pass
+
         self.console.print(f"  [red]✗ health timeout ({health_timeout}s)[/red]")
+        self.last_error_category = DeployErrorCategory.HEALTH_TIMEOUT
         return False
 
     def _sync_code_to_runtime(self, repo: Path, service: str) -> bool:
