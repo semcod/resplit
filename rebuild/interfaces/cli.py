@@ -216,6 +216,7 @@ def accelerator(
     shutdown: bool = typer.Option(False, "--shutdown", help="Wyłącz infrastrukturę po zakończeniu"),
     serve: bool = typer.Option(False, "--serve", help="Uruchom serwer HTTP po zakończeniu"),
     port: int = typer.Option(7821, "--port", help="Port serwera HTTP"),
+    patch_dir: Optional[Path] = typer.Option(None, "--patch-dir", help="Folder z poprawkami do nałożenia na klon"),
 ) -> None:
     """⚡ Ultra-szybki tryb 10x - worktree + hot reload + parallel testing.
     
@@ -251,6 +252,7 @@ def accelerator(
         smart_select=smart,
         keep_alive=not shutdown,
         shutdown_after=shutdown,
+        patch_dir=patch_dir
     )
 
     console.print(f"\n[bold cyan]⚡ REBUILD ACCELERATOR[/bold cyan] v{__version__}")

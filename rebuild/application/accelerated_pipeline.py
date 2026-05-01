@@ -4,6 +4,7 @@
 from __future__ import annotations
 import time
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
 from typing import List, Optional, Set, Dict
@@ -24,6 +25,7 @@ from .services.smart_test_selector import SmartTestSelector
 from .services.screenshot_service import ScreenshotService, ScreenshotConfig
 from .services.reporter_service import ReporterService
 from .services.patcher_service import PatcherService
+from .services.override_service import OverrideService
 
 
 class AcceleratedPipeline:
@@ -68,6 +70,7 @@ class AcceleratedPipeline:
         self.screenshots = ScreenshotService(ScreenshotConfig(output_dir=config.output_dir))
         self.reporter = ReporterService()
         self.patcher = PatcherService()
+        self.overrider = OverrideService()
         
         # State tracking
         self._state_file = config.output_dir / "accelerator_state.json"
@@ -177,19 +180,34 @@ class AcceleratedPipeline:
         
         return all_results
     
+    # Maximum concurrent git-worktree-add calls.  More than ~4 risks ref-lock
+    # contention in repositories with many packed refs.
+    _PREWARM_WORKERS = 4
+
     def _prewarm_worktrees(self, shas: List[str]):
         """Pre-create worktrees for all commits to avoid delays during execution."""
-        self.log(f"[dim]Preparing {len(shas)} worktrees...[/dim]")
+        self.log(f"[dim]Preparing {len(shas)} worktrees (workers={self._PREWARM_WORKERS})...[/dim]")
         start = time.perf_counter()
-        
-        for sha in shas:
-            try:
-                self.worktrees.get_or_create(sha)
-            except Exception as e:
-                self.log(f"  [yellow]Warning: worktree for {sha[:8]}: {e}[/yellow]")
-        
+        errors: List[str] = []
+
+        def _create(sha: str) -> str:
+            self.worktrees.get_or_create(sha)
+            return sha
+
+        workers = min(self._PREWARM_WORKERS, len(shas)) if shas else 1
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = {pool.submit(_create, sha): sha for sha in shas}
+            for future in as_completed(futures):
+                sha = futures[future]
+                try:
+                    future.result()
+                except Exception as exc:
+                    errors.append(sha[:8])
+                    self.log(f"  [yellow]Warning: worktree for {sha[:8]}: {exc}[/yellow]")
+
         elapsed = time.perf_counter() - start
-        self.log(f"  [green]✓ Worktrees ready in {elapsed:.1f}s[/green]")
+        ok = len(shas) - len(errors)
+        self.log(f"  [green]✓ Worktrees ready:[/green] {ok}/{len(shas)} in {elapsed:.1f}s")
     
     def _create_baseline_snapshot(self):
         """Create initial DB snapshot for fast restore between commits."""
@@ -230,12 +248,13 @@ class AcceleratedPipeline:
             result.deploy_success = True
             wt_path = self.worktrees.get_active_path(commit.sha)
 
-            # Manual overrides from .rebuild/patch
-            patch_dir = self.output_dir / "patch"
-            overrides = self.patcher.apply_manual_overrides(patch_dir, wt_path)
-            if overrides:
-                self.log(f"  [dim]Manual override: applied {overrides} file(s) from {patch_dir}[/dim]")
-                self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(patch_dir))
+            # Manual overrides from patch_dir (configurable)
+            patch_dir = getattr(self.config, "patch_dir", None) or (self.output_dir / "patch")
+            if patch_dir.exists():
+                overrides = self.overrider.execute(wt_path, patch_dir)
+                if overrides:
+                    self.log(f"  [bold green]✓ Zastosowano {overrides} poprawek manualnych z {patch_dir}[/bold green]")
+                    self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(patch_dir))
             
             # 2. Restore DB to baseline (INSTANT - no re-seed)
             if self._baseline_snapshot:
