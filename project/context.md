@@ -4,22 +4,42 @@
 
 - **Project**: /home/tom/github/semcod/resplit
 - **Primary Language**: md
-- **Languages**: md: 13, yaml: 10, shell: 8, toml: 1, yml: 1
+- **Languages**: md: 18, yaml: 17, txt: 10, json: 9, shell: 8
 - **Analysis Mode**: static
-- **Total Functions**: 183
+- **Total Functions**: 5492
 - **Total Classes**: 0
-- **Modules**: 36
-- **Entry Points**: 183
+- **Modules**: 74
+- **Entry Points**: 5476
 
 ## Architecture by Module
 
+### project.map.toon
+- **Functions**: 20565
+- **File**: `map.toon.yaml`
+
 ### SUMD
-- **Functions**: 96
+- **Functions**: 17181
 - **File**: `SUMD.md`
 
-### project.map.toon
-- **Functions**: 94
-- **File**: `map.toon.yaml`
+### restored_c2004_health.api-health.backend.site.src.main
+- **Functions**: 52
+- **File**: `main.js`
+
+### restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+- **Functions**: 9
+- **File**: `main.py`
+
+### restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
+- **Functions**: 9
+- **File**: `main.py`
+
+### restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+- **Functions**: 9
+- **File**: `main.py`
+
+### restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+- **Functions**: 9
+- **File**: `main.py`
 
 ### testql-scenarios.generated-from-pytests.testql.toon
 - **Functions**: 2
@@ -33,188 +53,243 @@
 
 Main execution flows into the system:
 
-### testql-scenarios.generated-from-pytests.testql.toon.all
+### restored_c2004_health.api-health.backend.site.src.main.handleRoute
+- **Calls**: restored_c2004_health.api-health.backend.site.src.main.getRoute, restored_c2004_health.api-health.backend.site.src.main.updateActiveNav, restored_c2004_health.api-health.backend.site.src.main.renderHome, restored_c2004_health.api-health.backend.site.src.main.renderSidebar, restored_c2004_health.api-health.backend.site.src.main.renderDownloads, restored_c2004_health.api-health.backend.site.src.main.renderArchitecture, restored_c2004_health.api-health.backend.site.src.main.renderServices, restored_c2004_health.api-health.backend.site.src.main.startsWith
 
-### docs.README.generate_readme
+### restored_c2004_health.api-health.backend.site.src.main.route
+- **Calls**: restored_c2004_health.api-health.backend.site.src.main.renderHome, restored_c2004_health.api-health.backend.site.src.main.renderSidebar, restored_c2004_health.api-health.backend.site.src.main.renderDownloads, restored_c2004_health.api-health.backend.site.src.main.renderArchitecture, restored_c2004_health.api-health.backend.site.src.main.renderServices, restored_c2004_health.api-health.backend.site.src.main.startsWith, restored_c2004_health.api-health.backend.site.src.main.replace, restored_c2004_health.api-health.backend.site.src.main.renderDocs
 
-### project.map.toon.walk
+### restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.serve_ui
+- **Calls**: app.get, FileResponse, HTTPException, filename.endswith, file_path.exists, Path, Path
 
-### project.map.toon.restore
+### restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.serve_model
+- **Calls**: app.get, FileResponse, HTTPException, filename.endswith, file_path.exists, Path, Path
 
-### project.map.toon.report
+### restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.serve_ui
+- **Calls**: app.get, FileResponse, HTTPException, filename.endswith, file_path.exists, Path, Path
 
-### project.map.toon.dashboard
+### restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.serve_model
+- **Calls**: app.get, FileResponse, HTTPException, filename.endswith, file_path.exists, Path, Path
 
-### project.map.toon.tui
+### restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.serve_ui
+- **Calls**: app.get, FileResponse, HTTPException, filename.endswith, file_path.exists, Path, Path
 
-### project.map.toon.version
+### restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.serve_model
+- **Calls**: app.get, FileResponse, HTTPException, filename.endswith, file_path.exists, Path, Path
 
-### project.map.toon.duplicates
+### restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_ui
+- **Calls**: app.get, FileResponse, HTTPException, filename.endswith, file_path.exists, Path, Path
 
-### project.map.toon.services
+### restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_model
+- **Calls**: app.get, FileResponse, HTTPException, filename.endswith, file_path.exists, Path, Path
 
-### project.map.toon.truth
+### restored_c2004_health.api-health.backend.site.src.main.start
+- **Calls**: restored_c2004_health.api-health.backend.site.src.main.AbortController, restored_c2004_health.api-health.backend.site.src.main.setTimeout, restored_c2004_health.api-health.backend.site.src.main.abort, restored_c2004_health.api-health.backend.site.src.main.fetch, restored_c2004_health.api-health.backend.site.src.main.clearTimeout, restored_c2004_health.api-health.backend.site.src.main.round, restored_c2004_health.api-health.backend.site.src.main.now
 
-### project.map.toon.plan
+### restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.get_manifest
+- **Calls**: app.get, PlainTextResponse, MANIFEST_PATH.exists, HTTPException, MANIFEST_PATH.read_text
 
-### project.map.toon._print_summary_table
+### restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.list_models
+- **Calls**: app.get, model_dir.exists, Path, model_dir.iterdir, f.is_file
 
-### project.map.toon.get_cc_for_day
+### restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.get_manifest
+- **Calls**: app.get, PlainTextResponse, MANIFEST_PATH.exists, HTTPException, MANIFEST_PATH.read_text
 
-### project.map.toon._extract_avg_cc
+### restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.list_models
+- **Calls**: app.get, model_dir.exists, Path, model_dir.iterdir, f.is_file
 
-### project.map.toon.generate_dashboard
+### restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.get_manifest
+- **Calls**: app.get, PlainTextResponse, MANIFEST_PATH.exists, HTTPException, MANIFEST_PATH.read_text
 
-### project.map.toon._render_html
+### restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.list_models
+- **Calls**: app.get, model_dir.exists, Path, model_dir.iterdir, f.is_file
 
-### project.map.toon._load_day_results
+### restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.get_manifest
+- **Calls**: app.get, PlainTextResponse, MANIFEST_PATH.exists, HTTPException, MANIFEST_PATH.read_text
 
-### project.map.toon._endpoint_diff
+### restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.list_models
+- **Calls**: app.get, model_dir.exists, Path, model_dir.iterdir, f.is_file
 
-### project.map.toon._health_bar
+### restored_c2004_health.api-health.backend.site.src.main.summary
+- **Calls**: restored_c2004_health.api-health.backend.site.src.main.all, restored_c2004_health.api-health.backend.site.src.main.map, restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth, restored_c2004_health.api-health.backend.site.src.main.push, restored_c2004_health.api-health.backend.site.src.main.getElementById
 
-### project.map.toon._calc_health
+### restored_c2004_health.api-health.backend.site.src.main.healthyEl
+- **Calls**: restored_c2004_health.api-health.backend.site.src.main.all, restored_c2004_health.api-health.backend.site.src.main.map, restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth, restored_c2004_health.api-health.backend.site.src.main.push, restored_c2004_health.api-health.backend.site.src.main.getElementById
 
-### project.map.toon.launch_tui
+### restored_c2004_health.api-health.backend.site.src.main.unhealthyEl
+- **Calls**: restored_c2004_health.api-health.backend.site.src.main.all, restored_c2004_health.api-health.backend.site.src.main.map, restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth, restored_c2004_health.api-health.backend.site.src.main.push, restored_c2004_health.api-health.backend.site.src.main.getElementById
 
-### project.map.toon._config
+### restored_c2004_health.api-health.backend.site.src.main.table
+- **Calls**: restored_c2004_health.api-health.backend.site.src.main.all, restored_c2004_health.api-health.backend.site.src.main.map, restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth, restored_c2004_health.api-health.backend.site.src.main.push, restored_c2004_health.api-health.backend.site.src.main.getElementById
 
-### project.map.toon.test_detect_docker_compose_yml
+### restored_c2004_health.api-health.backend.site.src.main.allServices
+- **Calls**: restored_c2004_health.api-health.backend.site.src.main.all, restored_c2004_health.api-health.backend.site.src.main.map, restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth, restored_c2004_health.api-health.backend.site.src.main.push, restored_c2004_health.api-health.backend.site.src.main.getElementById
 
-### project.map.toon.test_detect_docker_compose_yaml
+### restored_c2004_health.api-health.backend.site.src.main.marked
+- **Calls**: restored_c2004_health.api-health.backend.site.src.main.markedHighlight, restored_c2004_health.api-health.backend.site.src.main.highlight, restored_c2004_health.api-health.backend.site.src.main.getLanguage, restored_c2004_health.api-health.backend.site.src.main.highlightAuto
 
-### project.map.toon.test_detect_uvicorn_via_server_py
+### restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
+- **Calls**: app.get, HTMLResponse, restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
 
-### project.map.toon.test_detect_uvicorn_via_backend_server_py
+### restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index
+- **Calls**: app.get, HTMLResponse, restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
 
-### project.map.toon.test_detect_none_fallback
+### restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index
+- **Calls**: app.get, HTMLResponse, restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
 
-### project.map.toon.test_start_dry_run_skips_deploy
+### restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index
+- **Calls**: app.get, HTMLResponse, restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
 
-### project.map.toon.test_start_none_method_returns_true
+### restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
+- **Calls**: app.get, HTMLResponse, restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
 
 ## Process Flows
 
 Key execution flows identified:
 
-### Flow 1: all
+### Flow 1: handleRoute
 ```
-all [testql-scenarios.generated-from-pytests.testql.toon]
-```
-
-### Flow 2: generate_readme
-```
-generate_readme [docs.README]
+handleRoute [restored_c2004_health.api-health.backend.site.src.main]
+  └─> getRoute
+  └─> updateActiveNav
 ```
 
-### Flow 3: walk
+### Flow 2: route
 ```
-walk [project.map.toon]
-```
-
-### Flow 4: restore
-```
-restore [project.map.toon]
+route [restored_c2004_health.api-health.backend.site.src.main]
+  └─> renderHome
+  └─> renderSidebar
+      └─> esc
 ```
 
-### Flow 5: report
+### Flow 3: serve_ui
 ```
-report [project.map.toon]
-```
-
-### Flow 6: dashboard
-```
-dashboard [project.map.toon]
+serve_ui [restored_c2004_health.api-health.backend.modules.connect-config-network.api.main]
 ```
 
-### Flow 7: tui
+### Flow 4: serve_model
 ```
-tui [project.map.toon]
-```
-
-### Flow 8: version
-```
-version [project.map.toon]
+serve_model [restored_c2004_health.api-health.backend.modules.connect-config-network.api.main]
 ```
 
-### Flow 9: duplicates
+### Flow 5: start
 ```
-duplicates [project.map.toon]
+start [restored_c2004_health.api-health.backend.site.src.main]
 ```
 
-### Flow 10: services
+### Flow 6: get_manifest
 ```
-services [project.map.toon]
+get_manifest [restored_c2004_health.api-health.backend.modules.connect-config-network.api.main]
+```
+
+### Flow 7: list_models
+```
+list_models [restored_c2004_health.api-health.backend.modules.connect-config-network.api.main]
+```
+
+### Flow 8: summary
+```
+summary [restored_c2004_health.api-health.backend.site.src.main]
 ```
 
 ## Data Transformation Functions
 
 Key functions that process and transform data:
 
-### project.map.toon.test_run_processes_all_days
+### SUMD._parse_numeric
 
-### project.map.toon.test_parse_openapi_returns_endpoints
+### SUMD.parse_date
 
-### project.map.toon.test_parse_openapi_ignores_unknown_methods
+### SUMD.parse_xml_protocol
 
-### project.map.toon.test_parse_openapi_empty_paths
+### SUMD._process_output_var
 
-### project.map.toon.test_testql_strategy_parse_ok
+### SUMD._process_param_var
 
-### SUMD.test_run_processes_all_days
+### SUMD._process_op_var
 
-### SUMD.test_parse_openapi_returns_endpoints
+### SUMD._process_output_keys
 
-### SUMD.test_parse_openapi_ignores_unknown_methods
+### SUMD._process_param_conditions
 
-### SUMD.test_parse_openapi_empty_paths
+### SUMD._process_alarms
 
-### SUMD.test_testql_strategy_parse_ok
+### SUMD._process_steps
+
+### SUMD._process_tasks
+
+### SUMD._process_goal
+
+### SUMD._process_scenario_data
+
+### SUMD._parse_content
+
+### SUMD._parse_units_list
+
+### SUMD._process_scenarios
+
+### SUMD._process_out_entity
+
+### SUMD._process_op_entity
+
+### SUMD._process_prm_entity
+
+### SUMD._process_output_tasks
+
+### SUMD._process_parameter_conditions
+
+### SUMD._convert_else_step
+
+### SUMD._process_goal_steps
+
+### SUMD._process_scenario
+
+### SUMD._process_message_step
 
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
-- `testql-scenarios.generated-from-pytests.testql.toon.all` - 0 calls
-- `docs.README.generate_readme` - 0 calls
-- `project.map.toon.walk` - 0 calls
-- `project.map.toon.restore` - 0 calls
-- `project.map.toon.report` - 0 calls
-- `project.map.toon.dashboard` - 0 calls
-- `project.map.toon.tui` - 0 calls
-- `project.map.toon.version` - 0 calls
-- `project.map.toon.duplicates` - 0 calls
-- `project.map.toon.services` - 0 calls
-- `project.map.toon.truth` - 0 calls
-- `project.map.toon.plan` - 0 calls
-- `project.map.toon.get_cc_for_day` - 0 calls
-- `project.map.toon.generate_dashboard` - 0 calls
-- `project.map.toon.launch_tui` - 0 calls
-- `project.map.toon.test_detect_docker_compose_yml` - 0 calls
-- `project.map.toon.test_detect_docker_compose_yaml` - 0 calls
-- `project.map.toon.test_detect_uvicorn_via_server_py` - 0 calls
-- `project.map.toon.test_detect_uvicorn_via_backend_server_py` - 0 calls
-- `project.map.toon.test_detect_none_fallback` - 0 calls
-- `project.map.toon.test_start_dry_run_skips_deploy` - 0 calls
-- `project.map.toon.test_start_none_method_returns_true` - 0 calls
-- `project.map.toon.test_stop_dry_run_skips` - 0 calls
-- `project.map.toon.test_stop_none_method_skips` - 0 calls
-- `project.map.toon.test_execute_delegates_to_start` - 0 calls
-- `project.map.toon.test_get_commit_for_day_ok` - 0 calls
-- `project.map.toon.test_get_commit_for_day_none` - 0 calls
-- `project.map.toon.test_days_with_commits` - 0 calls
-- `project.map.toon.test_load_history_empty_dir` - 0 calls
-- `project.map.toon.test_load_history_no_results_json` - 0 calls
-- `project.map.toon.test_load_history_single_day` - 0 calls
-- `project.map.toon.test_load_history_multiple_days_sorted` - 0 calls
-- `project.map.toon.test_load_history_health_pct` - 0 calls
-- `project.map.toon.test_load_history_skips_invalid_dir_name` - 0 calls
-- `project.map.toon.test_load_history_with_commit` - 0 calls
-- `project.map.toon.test_load_history_status_timeout` - 0 calls
-- `project.map.toon.test_load_history_testql_passed` - 0 calls
-- `project.map.toon.test_endpoint_url` - 0 calls
-- `project.map.toon.test_endpoint_url_strips_trailing_slash` - 0 calls
-- `project.map.toon.test_endpoint_slug` - 0 calls
+- `restored_c2004_health.api-health.backend.site.src.main.renderDownloads` - 11 calls
+- `restored_c2004_health.api-health.backend.site.src.main.renderArchitecture` - 11 calls
+- `restored_c2004_health.api-health.backend.site.src.main.handleRoute` - 10 calls
+- `restored_c2004_health.api-health.backend.site.src.main.runHealthCheck` - 10 calls
+- `restored_c2004_health.api-health.backend.site.src.main.renderDocs` - 9 calls
+- `restored_c2004_health.api-health.backend.site.src.main.route` - 8 calls
+- `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.serve_ui` - 7 calls
+- `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.serve_model` - 7 calls
+- `restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.serve_ui` - 7 calls
+- `restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.serve_model` - 7 calls
+- `restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.serve_ui` - 7 calls
+- `restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.serve_model` - 7 calls
+- `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_ui` - 7 calls
+- `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_model` - 7 calls
+- `restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth` - 7 calls
+- `restored_c2004_health.api-health.backend.site.src.main.start` - 7 calls
+- `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.get_manifest` - 5 calls
+- `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.list_models` - 5 calls
+- `restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.get_manifest` - 5 calls
+- `restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.list_models` - 5 calls
+- `restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.get_manifest` - 5 calls
+- `restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.list_models` - 5 calls
+- `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.get_manifest` - 5 calls
+- `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.list_models` - 5 calls
+- `restored_c2004_health.api-health.backend.site.src.main.summary` - 5 calls
+- `restored_c2004_health.api-health.backend.site.src.main.healthyEl` - 5 calls
+- `restored_c2004_health.api-health.backend.site.src.main.unhealthyEl` - 5 calls
+- `restored_c2004_health.api-health.backend.site.src.main.table` - 5 calls
+- `restored_c2004_health.api-health.backend.site.src.main.allServices` - 5 calls
+- `restored_c2004_health.api-health.backend.site.src.main.marked` - 4 calls
+- `restored_c2004_health.api-health.backend.site.src.main.updateActiveNav` - 4 calls
+- `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index` - 3 calls
+- `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index` - 3 calls
+- `restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index` - 3 calls
+- `restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index` - 3 calls
+- `restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index` - 3 calls
+- `restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index` - 3 calls
+- `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index` - 3 calls
+- `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index` - 3 calls
+- `restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid` - 3 calls
 
 ## System Interactions
 
@@ -222,6 +297,36 @@ How components interact:
 
 ```mermaid
 graph TD
+    handleRoute --> getRoute
+    handleRoute --> updateActiveNav
+    handleRoute --> renderHome
+    handleRoute --> renderSidebar
+    handleRoute --> renderDownloads
+    route --> renderHome
+    route --> renderSidebar
+    route --> renderDownloads
+    route --> renderArchitecture
+    route --> renderServices
+    serve_ui --> get
+    serve_ui --> FileResponse
+    serve_ui --> HTTPException
+    serve_ui --> endswith
+    serve_ui --> exists
+    serve_model --> get
+    serve_model --> FileResponse
+    serve_model --> HTTPException
+    serve_model --> endswith
+    serve_model --> exists
+    start --> AbortController
+    start --> setTimeout
+    start --> abort
+    start --> fetch
+    start --> clearTimeout
+    get_manifest --> get
+    get_manifest --> PlainTextResponse
+    get_manifest --> exists
+    get_manifest --> HTTPException
+    get_manifest --> read_text
 ```
 
 ## Reverse Engineering Guidelines

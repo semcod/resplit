@@ -1,4 +1,5 @@
 from __future__ import annotations
+import ast
 import json
 import re
 import subprocess
@@ -36,11 +37,20 @@ class ScannerService(Service[Path, List[Endpoint]]):
                     endpoints.append(ep)
                     existing.add((ep.method, ep.path))
 
-        # 3. Fallback: docker-compose Traefik labels
+        # 3. Static FastAPI route scan (source-level fallback)
+        static_routes = self._scan_via_fastapi_routes(repo)
+        if static_routes:
+            existing = {(e.method, e.path) for e in endpoints}
+            for ep in static_routes:
+                if (ep.method, ep.path) not in existing:
+                    endpoints.append(ep)
+                    existing.add((ep.method, ep.path))
+
+        # 4. Fallback: docker-compose Traefik labels
         if not endpoints:
             endpoints.extend(self._scan_via_compose_labels(repo))
 
-        # 4. Minimalny fallback: /api/health
+        # 5. Minimalny fallback: /api/health
         if not endpoints:
             endpoints.append(Endpoint(method="GET", path="/api/health", base_url=self.config.base_url))
 
@@ -58,6 +68,110 @@ class ScannerService(Service[Path, List[Endpoint]]):
             return self._ports_to_endpoints(data, self.config.base_url)
         except (FileNotFoundError, subprocess.TimeoutExpired, json.JSONDecodeError):
             return []
+
+    def _scan_via_fastapi_routes(self, repo: Path) -> List[Endpoint]:
+        methods = {"get", "post", "put", "delete", "patch"}
+        endpoints: List[Endpoint] = []
+        seen = set()
+
+        for py_file in repo.rglob("*.py"):
+            if any(part in py_file.parts for part in (".git", ".venv", "venv", "__pycache__", "node_modules", "tests")):
+                continue
+
+            try:
+                tree = ast.parse(py_file.read_text(encoding="utf-8", errors="ignore"))
+            except Exception:
+                continue
+
+            router_prefixes = self._collect_router_prefixes(tree)
+            for node in ast.walk(tree):
+                if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    continue
+
+                for decorator in node.decorator_list:
+                    if not isinstance(decorator, ast.Call):
+                        continue
+                    if not isinstance(decorator.func, ast.Attribute):
+                        continue
+
+                    method_name = decorator.func.attr.lower()
+                    if method_name not in methods:
+                        continue
+
+                    raw_path = self._extract_route_path(decorator)
+                    if not raw_path or not raw_path.startswith("/"):
+                        continue
+
+                    router_name = decorator.func.value.id if isinstance(decorator.func.value, ast.Name) else None
+                    prefix = router_prefixes.get(router_name, "") if router_name else ""
+                    full_path = self._join_route_path(prefix, raw_path)
+
+                    key = (method_name.upper(), full_path)
+                    if key in seen:
+                        continue
+                    seen.add(key)
+
+                    endpoints.append(
+                        Endpoint(
+                            method=method_name.upper(),
+                            path=full_path,
+                            base_url=self.config.base_url,
+                            description=node.name,
+                        )
+                    )
+
+        return endpoints
+
+    def _collect_router_prefixes(self, tree: ast.AST) -> dict:
+        prefixes = {}
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Assign):
+                continue
+            if not isinstance(node.value, ast.Call):
+                continue
+
+            func = node.value.func
+            func_name = None
+            if isinstance(func, ast.Name):
+                func_name = func.id
+            elif isinstance(func, ast.Attribute):
+                func_name = func.attr
+
+            if func_name != "APIRouter":
+                continue
+
+            prefix = ""
+            for kw in node.value.keywords:
+                if kw.arg == "prefix" and isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
+                    prefix = kw.value.value
+                    break
+
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    prefixes[target.id] = prefix
+
+        return prefixes
+
+    def _extract_route_path(self, decorator: ast.Call) -> Optional[str]:
+        if decorator.args:
+            arg = decorator.args[0]
+            if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                return arg.value
+
+        for kw in decorator.keywords:
+            if kw.arg == "path" and isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
+                return kw.value.value
+
+        return None
+
+    def _join_route_path(self, prefix: str, route: str) -> str:
+        prefix = (prefix or "").strip()
+        route = route.strip()
+        if not prefix:
+            return route
+        if not prefix.startswith("/"):
+            prefix = "/" + prefix
+        return prefix.rstrip("/") + route
 
     def _ports_to_endpoints(self, data: dict, base_url: str) -> List[Endpoint]:
         endpoints = []

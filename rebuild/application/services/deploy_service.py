@@ -1,6 +1,7 @@
 from __future__ import annotations
 import time
 import hashlib
+import json
 from pathlib import Path
 from typing import Optional, List, Any
 
@@ -70,7 +71,17 @@ class DeployService(Service[Path, bool]):
         if self.config.deploy_method == DeployMethod.DOCKER_COMPOSE:
             # Ensure runtime gets code from current checkout (replay correctness)
             if not self._sync_code_to_runtime(repo, service):
-                self.console.print("  [yellow]Replay sync warning:[/yellow] failed to copy checkout into container")
+                self.console.print(
+                    "  [yellow]Replay sync fallback:[/yellow] recreating service from checked-out compose"
+                )
+                if self._recreate_service_from_checkout(repo, service):
+                    return self._wait_healthy_with_retry()
+
+                self.last_log = "Replay sync failed: runtime code not updated"
+                self.console.print(
+                    "  [red]Replay sync failed:[/red] checkout was not copied to runtime; aborting reload"
+                )
+                return False
 
             # Try restarting by container name directly (works regardless of compose project)
             self.console.print(f"  [bold cyan]docker restart {service}[/bold cyan]")
@@ -223,12 +234,108 @@ class DeployService(Service[Path, bool]):
         if not container:
             return False
 
+        # Replay sync cannot be trusted when runtime mounts code paths as read-only.
+        # In such case we must fail fast to avoid testing stale code.
+        mounts = self.shell.run(["docker", "inspect", "-f", "{{json .Mounts}}", container])
+        if mounts.returncode == 0:
+            try:
+                data = json.loads(mounts.stdout.strip() or "[]")
+                ro_app_mounts = [
+                    m.get("Destination", "")
+                    for m in data
+                    if not m.get("RW", True) and str(m.get("Destination", "")).startswith("/app")
+                ]
+                if ro_app_mounts:
+                    preview = ", ".join(ro_app_mounts[:3])
+                    self.console.print(
+                        f"  [yellow]Replay sync blocked by read-only mounts:[/yellow] {preview}"
+                    )
+                    return False
+            except Exception:
+                pass
+
         prep = self.shell.run(["docker", "exec", container, "mkdir", "-p", "/app"])
         if prep.returncode != 0:
             return False
 
         copy = self.shell.run(["docker", "cp", f"{repo}/.", f"{container}:/app/"])
         return copy.returncode == 0
+
+    def _recreate_service_from_checkout(self, repo: Path, service: str) -> bool:
+        """Recreate only the app service using compose file from checked-out repo."""
+        try:
+            cf = self._compose_file(repo)
+        except FileNotFoundError:
+            return False
+
+        project = self._resolve_compose_project_for_service(service)
+        base_cmd = ["docker", "compose"]
+        if project:
+            base_cmd.extend(["-p", project])
+        base_cmd.extend(["-f", str(cf)])
+
+        result = self.shell.run(
+            [*base_cmd,
+                "up",
+                "-d",
+                "--no-deps",
+                "--force-recreate",
+                "--no-build",
+                service,
+            ],
+            cwd=repo,
+        )
+
+        # If the target project's image tag does not exist for this service,
+        # retry with build enabled for the single service.
+        err_text = (result.stderr or "") + (result.stdout or "")
+        if result.returncode != 0 and "No such image" in err_text:
+            result = self.shell.run(
+                [*base_cmd,
+                    "up",
+                    "-d",
+                    "--no-deps",
+                    "--force-recreate",
+                    "--build",
+                    service,
+                ],
+                cwd=repo,
+            )
+
+        if result.returncode != 0:
+            self.last_log = result.stderr
+            return False
+        return True
+
+    def _resolve_compose_project_for_service(self, service: str) -> Optional[str]:
+        """Best-effort detection of active docker-compose project name for service."""
+        lookup = self.shell.run(
+            [
+                "docker",
+                "ps",
+                "--filter",
+                f"label=com.docker.compose.service={service}",
+                "--format",
+                "{{.Names}}",
+            ]
+        )
+        names = [line.strip() for line in lookup.stdout.splitlines() if line.strip()]
+        if not names:
+            return None
+
+        inspect = self.shell.run(
+            [
+                "docker",
+                "inspect",
+                "-f",
+                "{{ index .Config.Labels \"com.docker.compose.project\" }}",
+                names[0],
+            ]
+        )
+        if inspect.returncode != 0:
+            return None
+        value = inspect.stdout.strip()
+        return value or None
 
     def _resolve_container_name(self, repo: Path, service: str) -> Optional[str]:
         """Resolve runtime container name from direct name or compose service."""
@@ -246,4 +353,20 @@ class DeployService(Service[Path, bool]):
             cwd=repo,
         )
         cid = lookup.stdout.strip() if lookup.returncode == 0 else ""
-        return cid or None
+        if cid:
+            return cid
+
+        # Fallback for replay mode when compose project name differs from runtime
+        # (e.g., cloned repo path or custom project naming).
+        by_label = self.shell.run(
+            [
+                "docker",
+                "ps",
+                "--filter",
+                f"label=com.docker.compose.service={service}",
+                "--format",
+                "{{.Names}}",
+            ]
+        )
+        names = [line.strip() for line in by_label.stdout.splitlines() if line.strip()]
+        return names[0] if names else None

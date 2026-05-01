@@ -1,9 +1,108 @@
 # code2llm call graph | /home/tom/github/semcod/resplit
-# nodes: 0 | edges: 0 | modules: 0
+# nodes: 31 | edges: 32 | modules: 5
 # CC̄=0.0
 
 HUBS[20]:
+  restored_c2004_health.api-health.backend.site.src.main.renderDownloads
+    CC=4  in:2  out:11  total:13
+  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
+    CC=1  in:2  out:11  total:13
+  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+    CC=4  in:6  out:7  total:13
+  restored_c2004_health.api-health.backend.site.src.main.renderDocs
+    CC=6  in:2  out:9  total:11
+  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
+    CC=11  in:1  out:10  total:11
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute
+    CC=7  in:0  out:10  total:10
+  restored_c2004_health.api-health.backend.site.src.main.route
+    CC=7  in:0  out:8  total:8
+  restored_c2004_health.api-health.backend.site.src.main.allServices
+    CC=2  in:0  out:5  total:5
+  restored_c2004_health.api-health.backend.site.src.main.table
+    CC=2  in:0  out:5  total:5
+  restored_c2004_health.api-health.backend.site.src.main.summary
+    CC=2  in:0  out:5  total:5
+  restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
+    CC=10  in:1  out:4  total:5
+  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl
+    CC=2  in:0  out:5  total:5
+  restored_c2004_health.api-health.backend.site.src.main.healthyEl
+    CC=2  in:0  out:5  total:5
+  restored_c2004_health.api-health.backend.site.src.main.renderSidebar
+    CC=11  in:3  out:1  total:4
+  restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
+    CC=4  in:1  out:3  total:4
+  restored_c2004_health.api-health.backend.site.src.main.renderServices
+    CC=1  in:2  out:2  total:4
+  restored_c2004_health.api-health.backend.site.src.main.renderHome
+    CC=1  in:2  out:2  total:4
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
+    CC=1  in:0  out:3  total:3
 
 MODULES:
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
+    _index_html  CC=2  out:1
+    index  CC=1  out:3
+    module_index  CC=1  out:3
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main  [3 funcs]
+    _index_html  CC=2  out:1
+    index  CC=1  out:3
+    module_index  CC=1  out:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main  [3 funcs]
+    _index_html  CC=2  out:1
+    index  CC=1  out:3
+    module_index  CC=1  out:3
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main  [3 funcs]
+    _index_html  CC=2  out:1
+    index  CC=1  out:3
+    module_index  CC=1  out:3
+  restored_c2004_health.api-health.backend.site.src.main  [19 funcs]
+    allServices  CC=2  out:5
+    checkServiceHealth  CC=4  out:7
+    esc  CC=1  out:1
+    getRoute  CC=2  out:1
+    handleRoute  CC=7  out:10
+    healthyEl  CC=2  out:5
+    renderArchitecture  CC=1  out:11
+    renderDocs  CC=6  out:9
+    renderDownloads  CC=4  out:11
+    renderHome  CC=1  out:2
 
 EDGES:
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.getRoute
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderHome
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderDownloads
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderServices
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderDocs
+  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderHome
+  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
+  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderDownloads
+  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
+  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderServices
+  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderDocs
+  restored_c2004_health.api-health.backend.site.src.main.renderServices → restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
+  restored_c2004_health.api-health.backend.site.src.main.renderServices → restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
+  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+  restored_c2004_health.api-health.backend.site.src.main.summary → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+  restored_c2004_health.api-health.backend.site.src.main.healthyEl → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+  restored_c2004_health.api-health.backend.site.src.main.table → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+  restored_c2004_health.api-health.backend.site.src.main.allServices → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+  restored_c2004_health.api-health.backend.site.src.main.renderDocs → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
+  restored_c2004_health.api-health.backend.site.src.main.renderSidebar → restored_c2004_health.api-health.backend.site.src.main.esc

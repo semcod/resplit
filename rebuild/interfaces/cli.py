@@ -454,6 +454,79 @@ def vector_query(
 
     console.print(table)
 
+
+@analyze_app.command()
+def multi_repo(
+    repos: List[Path] = typer.Argument(..., help="Lista repozytoriów do analizy (min 2)"),
+    min_lines: int = typer.Option(6, help="Minimalna długość fragmentu dla clone detection"),
+    export: Optional[Path] = typer.Option(
+        None,
+        "--export",
+        help="Opcjonalny plik JSON z pełnym raportem",
+    ),
+) -> None:
+    """[Query] Analiza zależności i klonów kodu między wieloma repozytoriami."""
+    from ..analysis.service_graph import MultiRepoAnalyzer
+
+    if len(repos) < 2:
+        console.print("[red]✗ Podaj co najmniej 2 repozytoria.[/red]")
+        raise typer.Exit(1)
+
+    normalized = [p.resolve() for p in repos]
+    missing = [str(p) for p in normalized if not p.exists()]
+    if missing:
+        console.print("[red]✗ Nie znaleziono repozytoriów:[/red]")
+        for path in missing:
+            console.print(f"  - {path}")
+        raise typer.Exit(1)
+
+    analyzer = MultiRepoAnalyzer(normalized, min_lines=min_lines)
+    with console.status("[bold cyan]Analiza multi-repo...[/bold cyan]"):
+        report = analyzer.analyze()
+
+    console.print("\n[bold]Repositories[/bold]")
+    repo_table = Table(show_header=True)
+    repo_table.add_column("Key", style="cyan")
+    repo_table.add_column("Path", style="dim")
+    for key, path in report.repositories.items():
+        repo_table.add_row(key, path)
+    console.print(repo_table)
+
+    console.print("\n[bold]Cross-Repo Dependencies[/bold]")
+    if not report.dependencies:
+        console.print("[yellow]Brak wykrytych zależności cross-repo.[/yellow]")
+    else:
+        dep_table = Table(show_header=True)
+        dep_table.add_column("From", style="cyan")
+        dep_table.add_column("To", style="cyan")
+        dep_table.add_column("Imports", justify="right", style="green")
+        for dep in report.dependencies:
+            dep_table.add_row(dep.source_repo, dep.target_repo, str(dep.imports_count))
+        console.print(dep_table)
+
+    console.print("\n[bold]Shared Structural Clones[/bold]")
+    if not report.clone_groups:
+        console.print("[yellow]Brak współdzielonych klonów strukturalnych.[/yellow]")
+    else:
+        clone_table = Table(show_header=True)
+        clone_table.add_column("Hash", style="dim")
+        clone_table.add_column("Repos", style="cyan")
+        clone_table.add_column("Fragments", justify="right", style="green")
+        for group in report.clone_groups[:20]:
+            clone_table.add_row(
+                group.structural_hash[:12],
+                ", ".join(group.repositories),
+                str(group.fragments_count),
+            )
+        console.print(clone_table)
+        if len(report.clone_groups) > 20:
+            console.print(f"[dim]... i {len(report.clone_groups) - 20} więcej grup[/dim]")
+
+    if export:
+        out = export.resolve()
+        analyzer.export_json(out, report)
+        console.print(f"\n[green]✓ Export:[/green] {out}")
+
 @analyze_app.command()
 def services(
     path: Path = typer.Argument(Path("rebuild/application/services"), help="Katalog z serwisami"),
