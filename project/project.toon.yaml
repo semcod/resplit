@@ -1,31 +1,29 @@
-# resplit | 242 func | 5f | 8475L | md | 2026-05-01
+# resplit | 183 func | 4f | 9027L | md | 2026-05-01
 
 HEALTH:
   CC̄=0.0  critical=0 (limit:10)  dup=0  cycles=0
 
-MODULES[32] (top by size):
-  M[project/calls.yaml] 729L C:0 F:0 CC↑0 D:0 (yaml)
-  M[SUMR.md] 664L C:0 F:35 CC↑0 D:0 (md)
-  M[SUMD.md] 645L C:0 F:103 CC↑0 D:0 (md)
+MODULES[36] (top by size):
+  M[SUMD.md] 566L C:0 F:91 CC↑0 D:0 (md)
   M[goal.yaml] 513L C:0 F:0 CC↑0 D:0 (yaml)
-  M[project/context.md] 380L C:0 F:0 CC↑0 D:0 (md)
-  M[docs/README.md] 344L C:0 F:1 CC↑0 D:0 (md)
+  M[docs/README.md] 365L C:0 F:1 CC↑0 D:0 (md)
   M[project/README.md] 339L C:0 F:0 CC↑0 D:0 (md)
-  M[README.md] 270L C:0 F:0 CC↑0 D:0 (md)
+  M[SUMR.md] 330L C:0 F:0 CC↑0 D:0 (md)
+  M[project/map.toon.yaml] 258L C:0 F:90 CC↑0 D:0 (yaml)
+  M[project/context.md] 237L C:0 F:0 CC↑0 D:0 (md)
   M[PLAN.md] 198L C:0 F:0 CC↑0 D:0 (md)
-  M[project/map.toon.yaml] 182L C:0 F:102 CC↑0 D:0 (yaml)
-  M[project/calls.toon.yaml] 153L C:0 F:0 CC↑0 D:0 (yaml)
-  M[CHANGELOG.md] 115L C:0 F:0 CC↑0 D:0 (md)
-  M[pyproject.toml] 100L C:0 F:0 CC↑0 D:0 (toml)
-  M[project/analysis.toon.yaml] 78L C:0 F:0 CC↑0 D:0 (yaml)
+  M[project/calls.yaml] 197L C:0 F:0 CC↑0 D:0 (yaml)
+  M[README.md] 118L C:0 F:0 CC↑0 D:0 (md)
+  M[pyproject.toml] 103L C:0 F:0 CC↑0 D:0 (toml)
+  M[project/analysis.toon.yaml] 65L C:0 F:0 CC↑0 D:0 (yaml)
   M[examples/03-restore-endpoint/README.md] 61L C:0 F:0 CC↑0 D:0 (md)
-  LANGS: md:11/yaml:10/shell:8/yml:1/txt:1/toml:1
+  M[examples/02-docker-compose-project/README.md] 54L C:0 F:0 CC↑0 D:0 (md)
+  M[project/prompt.txt] 47L C:0 F:0 CC↑0 D:0 (txt)
+  LANGS: md:13/yaml:10/shell:8/other:2/yml:1/txt:1/toml:1
 
-REFACTOR[4]:
-  [1] H/H Split god module SUMD.md (645L, 0 classes)
-  [2] H/H Split god module SUMR.md (664L, 0 classes)
-  [3] H/H Split god module goal.yaml (513L, 0 classes)
-  [4] H/H Split god module project/calls.yaml (729L, 0 classes)
+REFACTOR[2]:
+  [1] H/H Split god module SUMD.md (566L, 0 classes)
+  [2] H/H Split god module goal.yaml (513L, 0 classes)
 
 EVOLUTION:
-  2026-05-01 CC̄=0.0 crit=0 8475L // Automated analysis
+  2026-05-01 CC̄=0.0 crit=0 9027L // Automated analysis

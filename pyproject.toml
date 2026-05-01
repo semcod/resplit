@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rebuild"
-version = "0.1.9"
+version = "0.1.10"
 description = "Historical deployment analysis — walk git history, deploy per day, test all endpoints, capture screenshots, restore working fragments"
 readme = "README.md"
 license = "Apache-2.0"
@@ -47,7 +47,7 @@ dev = ["pytest>=8", "pytest-cov", "pytest-asyncio", "ruff", "mypy",
 ]
 
 [project.scripts]
-rebuild = "rebuild.cli:app"
+rebuild = "rebuild.interfaces.cli:app"
 
 [project.urls]
 Homepage = "https://github.com/semcod/resplit"
@@ -61,6 +61,8 @@ include = ["rebuild*"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "--tb=short -q"
+norecursedirs = ["rebuild", "examples", ".rebuild", "dist", "build"]
+filterwarnings = ["ignore::pytest.PytestCollectionWarning"]
 
 [tool.ruff]
 line-length = 100

@@ -1,5 +1,5 @@
-# code2llm | 32f 5265L | md:11,yaml:10,shell:8,txt:1,toml:1,yml:1 | 2026-05-01
-# CC̄=0.0 | critical:0/242 | dups:0 | cycles:0
+# code2llm | 36f 3931L | md:13,yaml:10,shell:8,toml:1,yml:1,txt:1 | 2026-05-01
+# CC̄=0.0 | critical:0/183 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
@@ -12,44 +12,51 @@ LAYERS:
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←0
   │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
   │
-  ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMR.md                    664L  0C   35m  CC=0.0    ←0
-  │ !! SUMD.md                    645L  0C  103m  CC=0.0    ←0
-  │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
-  │ README.md                  270L  0C    0m  CC=0.0    ←0
-  │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
-  │ CHANGELOG.md               115L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             100L  0C    0m  CC=0.0    ←0
-  │ project.sh                  41L  0C    0m  CC=0.0    ←0
-  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
-  │
   docs/                           CC̄=0.0    ←in:0  →out:0
-  │ README.md                  344L  0C    1m  CC=0.0    ←0
+  │ README.md                  365L  0C    1m  CC=0.0    ←0
+  │ architecture.md             45L  0C    0m  CC=0.0    ←0
   │
   project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! calls.yaml                 729L  0C    0m  CC=0.0    ←0
-  │ context.md                 380L  0C    0m  CC=0.0    ←0
   │ README.md                  339L  0C    0m  CC=0.0    ←0
-  │ map.toon.yaml              182L  0C  102m  CC=0.0    ←0
-  │ calls.toon.yaml            153L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml          78L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           52L  0C    0m  CC=0.0    ←0
+  │ map.toon.yaml              258L  0C   90m  CC=0.0    ←0
+  │ context.md                 237L  0C    0m  CC=0.0    ←0
+  │ calls.yaml                 197L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml          65L  0C    0m  CC=0.0    ←0
   │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         43L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         44L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           29L  0C    0m  CC=0.0    ←0
+  │ calls.toon.yaml              9L  0C    0m  CC=0.0    ←0
   │ duplication.toon.yaml        9L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=0.0    ←in:0  →out:0
+  │ !! SUMD.md                    566L  0C   91m  CC=0.0    ←0
+  │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
+  │ SUMR.md                    330L  0C    0m  CC=0.0    ←0
+  │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
+  │ README.md                  118L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             103L  0C    0m  CC=0.0    ←0
+  │ project.sh                  41L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md                33L  0C    0m  CC=0.0    ←0
+  │ TODO.md                     22L  0C    0m  CC=0.0    ←0
+  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
+  │ Makefile                     0L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=0.0    ←in:0  →out:0
   │ README.md                   61L  0C    0m  CC=0.0    ←0
   │ README.md                   54L  0C    0m  CC=0.0    ←0
   │ mock_results.sh             37L  0C    0m  CC=0.0    ←0
   │ README.md                   36L  0C    0m  CC=0.0    ←0
-  │ run.sh                      30L  0C    0m  CC=0.0    ←0
-  │ run.sh                      25L  0C    0m  CC=0.0    ←0
-  │ run.sh                      18L  0C    0m  CC=0.0    ←0
+  │ run.sh                      32L  0C    0m  CC=0.0    ←0
+  │ run.sh                      21L  0C    0m  CC=0.0    ←0
+  │ run.sh                      20L  0C    0m  CC=0.0    ←0
   │ docker-compose.yml          15L  0C    0m  CC=0.0    ←0
   │ walk_dry_run.sh             13L  0C    0m  CC=0.0    ←0
   │ restore_endpoint.sh         13L  0C    0m  CC=0.0    ←0
+  │ Makefile                     0L  0C    0m  CC=0.0    ←0
   │
+  ── zero ──
+     Makefile                                  0L
+     examples/Makefile                         0L
 
 COUPLING: no cross-package imports detected
 

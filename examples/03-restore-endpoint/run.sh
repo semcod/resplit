@@ -1,30 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ENDPOINT="${1:-/api/health}"
-REPO="${2:-.}"
-OUTPUT="${3:-./restored}"
-RESULTS_DIR="${4:-.rebuild}"
+REPO="${1:-.}"
+ENDPOINT="${2:-/api/health}"
+RESULTS_DIR="${3:-.rebuild}"
 
-echo "rebuild restore: $ENDPOINT"
-echo "  repo:        $REPO"
-echo "  results-dir: $RESULTS_DIR"
-echo "  output:      $OUTPUT"
-echo ""
+echo "rebuild restore: $ENDPOINT from $RESULTS_DIR"
 
-rebuild restore "$ENDPOINT" "$REPO" \
-  --output "$OUTPUT" \
-  --results-dir "$RESULTS_DIR"
+# 1. Analyze "Truth" for this function/endpoint
+echo -e "\n--- Analysis: Historical Truth ---"
+# Assuming we want to analyze a handler in the repo
+python3 -m rebuild analyze truth rebuild/application/services/restore_service.py find_last_working_day --repo "$REPO"
 
-# Wyznacz katalog projektu
-SLUG="${ENDPOINT#/}"
-SLUG="${SLUG//\//-}"
-PROJECT_DIR="$OUTPUT/$SLUG"
+# 2. Execute restoration
+python3 -m rebuild restore "$ENDPOINT" "$REPO" \
+  --results-dir "$RESULTS_DIR" \
+  --output restored/
 
-if [ -d "$PROJECT_DIR/docker" ]; then
-  echo ""
-  echo "Uruchomienie przywróconego projektu:"
-  echo "  cd $PROJECT_DIR/docker"
-  echo "  docker compose up -d"
-  echo "  curl http://localhost:8003$ENDPOINT"
-fi
+echo -e "\n--- Done ---"
+echo "  Restored project: restored/$(echo $ENDPOINT | sed 's/\//-/g' | sed 's/^-//')"

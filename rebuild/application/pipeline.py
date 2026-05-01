@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import time
 from datetime import date
 from pathlib import Path
@@ -10,31 +9,53 @@ from ..domain.commit import CommitInfo
 from ..domain.endpoint import Endpoint, EndpointResult, EndpointStatus
 from ..domain.day_result import DayResult
 from ..domain.context import EndpointContext
+from ..domain.events import PipelineEvent
 
-# Tymczasowe importy ze starej struktury (do czasu przeniesienia do infrastructure/services)
-from ..git_walker import checkout, days_with_commits, restore_head
-from ..deployer import start, stop
-from ..endpoint_scanner import scan_endpoints
-from ..tester import run_tests
-from ..screenshotter import ScreenshotConfig, screenshot_endpoint
-from ..reporter import save_day, save_timeline_index
+from .services.git_service import GitService
+from .services.deploy_service import DeployService
+from .services.scanner_service import ScannerService
+from .services.test_service import TestService
+from .services.screenshot_service import ScreenshotService, ScreenshotConfig
+from .services.reporter_service import ReporterService
 
 class Pipeline:
+    """
+    Orchestrates the analysis process (Command).
+    Now emits PipelineEvents for Event Sourcing.
+    """
     def __init__(self, config: WalkConfig, console=None):
         self.config = config
         self.console = console
+        self._event_log: List[PipelineEvent] = []
+        
+        # Initialize services (Adapters injected)
+        self.git = GitService(config.repo_path)
+        self.deploy = DeployService(config)
+        self.scanner = ScannerService(config)
+        self.tester = TestService(config)
+        self.screenshots = ScreenshotService(ScreenshotConfig(output_dir=config.output_dir))
+        self.reporter = ReporterService()
+
+    def _emit(self, event_type: str, **kwargs):
+        event = PipelineEvent.create(event_type, **kwargs)
+        self._event_log.append(event)
+        # Persistent event store (Append-only)
+        log_file = self.config.output_dir / "history.jsonl"
+        self.config.output_dir.mkdir(parents=True, exist_ok=True)
+        with open(log_file, "a") as f:
+            f.write(event.to_json() + "\n")
 
     def log(self, message: str):
         if self.console:
             self.console.print(message)
 
     def run(self) -> List[DayResult]:
-        """Główna pętla pipeline'u."""
-        commits = days_with_commits(self.config)
+        commits = self.git.days_with_commits(self.config)
         if not commits:
             self.log("[yellow]Brak commitów w podanym przedziale.[/yellow]")
             return []
 
+        self._emit("PIPELINE_STARTED", days=len(commits), repo=str(self.config.repo_path))
         self.log(f"Znaleziono [bold]{len(commits)}[/bold] dni z commitami.\n")
         all_results: List[DayResult] = []
 
@@ -44,14 +65,13 @@ class Pipeline:
                 all_results.append(result)
         finally:
             if not self.config.dry_run:
-                restore_head(self.config.repo_path)
+                self.git.restore_head()
 
-        # Zbiorczy index
-        save_timeline_index(all_results, self.config.output_dir)
+        self._emit("PIPELINE_FINISHED", total_days=len(all_results))
+        self.reporter.save_timeline_index(all_results, self.config.output_dir)
         return all_results
 
     def run_day(self, day: date, commit: CommitInfo) -> DayResult:
-        """Przetwarzanie jednego dnia (jednego commita)."""
         day_dir = self.config.output_dir / str(day)
         self.log(f"--- [bold]{day}[/bold]  {commit.sha[:8]}  {commit.message[:60]}")
 
@@ -65,47 +85,48 @@ class Pipeline:
         )
 
         try:
-            # 1. Checkout
+            # 1. Checkout (Command)
             if not self.config.dry_run:
-                checkout(self.config.repo_path, commit.sha)
+                self.git.checkout(commit.sha)
+                self._emit("COMMIT_CHECKOUT", sha=commit.sha, day=str(day))
 
-            # 2. Deploy
-            result.deploy_success = start(self.config.repo_path, self.config)
+            # 2. Deploy (Command)
+            self._emit("DEPLOY_STARTED", method=self.config.deploy_method.value)
+            result.deploy_success = self.deploy.start(self.config.repo_path)
+            self._emit("DEPLOY_FINISHED", success=result.deploy_success)
+            
             if not result.deploy_success and not self.config.dry_run:
                 self.log("  [red]✗ deploy failed — skip endpoints[/red]")
                 result.duration_seconds = time.time() - t0
-                save_day(result)
+                self.reporter.save_day(result)
                 return result
 
-            # 3. Skanuj endpointy
-            result.endpoints = scan_endpoints(self.config.repo_path, self.config)
+            # 3. Scan endpoints (Query)
+            result.endpoints = self.scanner.execute(self.config.repo_path)
+            self._emit("SCAN_FINISHED", endpoint_count=len(result.endpoints))
             self.log(f"  Endpointów: [bold]{len(result.endpoints)}[/bold]")
 
-            # 4. Testuj endpointy
-            # W przyszłości: result.endpoint_results = [self.process_endpoint(EndpointContext(ep, commit, day)) for ep in result.endpoints]
-            result.endpoint_results = run_tests(result.endpoints, self.config, day_dir)
+            # 4. Test endpoints (Query)
+            self.tester.set_day_dir(day_dir)
+            result.endpoint_results = self.tester.execute(result.endpoints)
+            self._emit("TEST_FINISHED", ok=sum(1 for r in result.endpoint_results if r.status.value == "ok"))
 
-            # 4b. Screenshots
+            # 5. Screenshots
             if self.config.screenshots:
-                self._attach_screenshots(result, day_dir)
+                self.screenshots.config.output_dir = day_dir / "screenshots"
+                result.endpoint_results = self.screenshots.execute(result.endpoint_results)
+                self._emit("SCREENSHOTS_FINISHED")
 
-            # 5. Raport
-            save_day(result)
+            # 6. Report
+            self.reporter.save_day(result)
+            self._emit("DAY_FINISHED", day=str(day), health=result.health_pct)
 
         except Exception as exc:
             result.error = str(exc)
+            self._emit("ERROR_OCCURRED", error=str(exc))
             self.log(f"  [red]Błąd: {exc}[/red]")
         finally:
-            stop(self.config.repo_path, self.config)
+            self.deploy.stop(self.config.repo_path)
             result.duration_seconds = time.time() - t0
 
         return result
-
-    def _attach_screenshots(self, result: DayResult, day_dir: Path) -> None:
-        """Dodaje screenshoty do istniejących EndpointResult."""
-        screenshots_dir = day_dir / "screenshots"
-        for ep_result in result.endpoint_results:
-            ep = ep_result.endpoint
-            if ep.method != "GET" or ep_result.status not in (EndpointStatus.OK, EndpointStatus.FAIL):
-                continue
-            ep_result.screenshot_path = screenshot_endpoint(ep.url, ep.slug, screenshots_dir)

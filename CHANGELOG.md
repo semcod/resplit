@@ -7,142 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.9] - 2026-05-01
-
-### Docs
-- Update README.md
-
-### Other
-- Update rebuild/deployer.py
-- Update rebuild/endpoint_scanner.py
-- Update rebuild/interfaces/dashboard.py
-
-## [0.1.8] - 2026-05-01
-
-### Docs
-- Update README.md
-- Update SUMD.md
-- Update SUMR.md
-- Update docs/README.md
-- Update project/README.md
-- Update project/context.md
-
-### Other
-- Update app.doql.less
-- Update project/analysis.toon.yaml
-- Update project/calls.mmd
-- Update project/calls.png
-- Update project/calls.toon.yaml
-- Update project/calls.yaml
-- Update project/compact_flow.mmd
-- Update project/compact_flow.png
-- Update project/duplication.toon.yaml
-- Update project/evolution.toon.yaml
-- ... and 23 more files
-
-## [0.1.7] - 2026-05-01
+## [0.1.10] - 2026-05-01
 
 ### Docs
 - Update CHANGELOG.md
-- Update PLAN.md
 - Update README.md
 - Update SUMD.md
 - Update SUMR.md
-- Update examples/01-dry-run-walk/README.md
-- Update examples/02-docker-compose-project/README.md
-- Update examples/03-restore-endpoint/README.md
-
-### Test
-- Update tests/test_deployer.py
-- Update tests/test_endpoint_scanner.py
-- Update tests/test_git_walker.py
-- Update tests/test_models.py
-- Update tests/test_reporter.py
-- Update tests/test_restorer.py
-- Update tests/test_screenshotter.py
-- Update tests/test_tester.py
-
-### Other
-- Update examples/01-dry-run-walk/rebuild.yaml
-- Update examples/01-dry-run-walk/run.sh
-- Update examples/02-docker-compose-project/rebuild.yaml
-- Update examples/02-docker-compose-project/run.sh
-- Update examples/03-restore-endpoint/mock_results.sh
-- Update examples/03-restore-endpoint/rebuild.yaml
-- Update examples/03-restore-endpoint/run.sh
-- Update examples/rebuild.yaml
-- Update examples/restore_endpoint.sh
-- Update examples/walk_dry_run.sh
-- ... and 12 more files
-
-## [0.1.6] - 2026-05-01
-
-### Docs
-- Update README.md
-
-## [0.1.5] - 2026-05-01
-
-### Docs
-- Update README.md
-
-## [0.1.4] - 2026-05-01
-
-### Docs
-- Update README.md
-
-## [0.1.3] - 2026-05-01
-
-### Docs
-- Update README.md
-
-## [0.1.2] - 2026-05-01
-
-### Docs
-- Update README.md
-
-### Other
-- Update examples/01-dry-run-walk/run.sh
-- Update examples/02-docker-compose-project/run.sh
-- Update examples/03-restore-endpoint/mock_results.sh
-- Update examples/03-restore-endpoint/run.sh
-
-## [0.1.1] - 2026-05-01
-
-### Docs
-- Update PLAN.md
-- Update README.md
-- Update SUMD.md
-- Update SUMR.md
+- Update TODO.md
 - Update docs/README.md
-- Update examples/01-dry-run-walk/README.md
-- Update examples/02-docker-compose-project/README.md
-- Update examples/03-restore-endpoint/README.md
+- Update docs/architecture.md
 - Update project/README.md
 - Update project/context.md
 
 ### Test
-- Update testql-scenarios/generated-cli-tests.testql.toon.yaml
-- Update testql-scenarios/generated-from-pytests.testql.toon.yaml
-- Update tests/__init__.py
+- Update tests/test_deploy_service.py
 - Update tests/test_deployer.py
 - Update tests/test_endpoint_scanner.py
+- Update tests/test_git_service.py
 - Update tests/test_git_walker.py
+- Update tests/test_history_service.py
 - Update tests/test_models.py
+- Update tests/test_pipeline.py
 - Update tests/test_reporter.py
-- Update tests/test_restorer.py
-- Update tests/test_screenshotter.py
-- ... and 1 more files
+- Update tests/test_reporter_service.py
+- ... and 6 more files
 
 ### Other
-- Update .gitignore
-- Update VERSION
+- Update .rebuild_test/2026-05-01/commit.txt
+- Update .rebuild_test/2026-05-01/endpoints.json
+- Update .rebuild_test/2026-05-01/results.json
+- Update .rebuild_test/index.html
+- Update Makefile
 - Update app.doql.less
-- Update examples/01-dry-run-walk/rebuild.yaml
-- Update examples/01-dry-run-walk/run.sh
-- Update examples/02-docker-compose-project/docker-compose.yml
-- Update examples/02-docker-compose-project/rebuild.yaml
-- Update examples/02-docker-compose-project/run.sh
-- Update examples/03-restore-endpoint/mock_results.sh
-- Update examples/03-restore-endpoint/rebuild.yaml
-- ... and 34 more files
+- Update examples/01-dry-run-walk/.rebuild_dry/2026-05-01/commit.txt
+- Update examples/01-dry-run-walk/.rebuild_dry/2026-05-01/endpoints.json
+- Update examples/01-dry-run-walk/.rebuild_dry/2026-05-01/results.json
+- Update examples/01-dry-run-walk/.rebuild_dry/index.html
+- ... and 49 more files
 
+## [0.1.10] - 2026-05-01
+
+### Added
+- **Intelligence Layer**: New `rebuild/analysis/` package for deep codebase insights.
+- **Duplication Engine**: AST-based structural and semantic duplication detection.
+- **Service Graph**: Visual architectural dependency mapping and cycle detection in CLI.
+- **Truth Ranker**: Historical function quality ranking correlated with git and test results.
+- **Refactor Recommender**: Automated generation of refactoring plans (Merge/Extract/Split).
+- **New CLI Commands**: `rebuild analyze duplicates|services|truth` and `rebuild refactor plan`.
+
+### Changed
+- **Architectural Stabilization**: Transitioned to a strictly layered architecture (`CLI → Pipeline → Services → Infrastructure`).
+- **Unified Service Interface**: All core logic migrated to standardized `Service` classes in `application/services/`.
+- **Pipeline v2**: Refactored as a pure composer/orchestrator of injected services.
+- **Thin CLI**: Stripped business logic from `interfaces/cli.py` to act as a routing layer.
+
+### Removed
+- Legacy monolithic modules: `git_walker.py`, `deployer.py`, `endpoint_scanner.py`, `tester.py`, `screenshotter.py`, `reporter.py`, `restorer.py`.
+
+### Test
+- Standardized test suite with 65 passing tests across all service layers.
+
+## [0.1.9] - 2026-05-01
+...

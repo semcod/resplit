@@ -4,26 +4,22 @@
 
 - **Project**: /home/tom/github/semcod/resplit
 - **Primary Language**: md
-- **Languages**: md: 11, yaml: 10, shell: 8, txt: 1, toml: 1
+- **Languages**: md: 13, yaml: 10, shell: 8, toml: 1, yml: 1
 - **Analysis Mode**: static
-- **Total Functions**: 242
+- **Total Functions**: 183
 - **Total Classes**: 0
-- **Modules**: 32
-- **Entry Points**: 242
+- **Modules**: 36
+- **Entry Points**: 183
 
 ## Architecture by Module
 
 ### SUMD
-- **Functions**: 139
+- **Functions**: 96
 - **File**: `SUMD.md`
 
 ### project.map.toon
-- **Functions**: 102
+- **Functions**: 94
 - **File**: `map.toon.yaml`
-
-### SUMR
-- **Functions**: 35
-- **File**: `SUMR.md`
 
 ### testql-scenarios.generated-from-pytests.testql.toon
 - **Functions**: 2
@@ -39,63 +35,63 @@ Main execution flows into the system:
 
 ### testql-scenarios.generated-from-pytests.testql.toon.all
 
-### SUMR.detect_deploy_method
+### docs.README.generate_readme
 
-### SUMR._compose_file
+### project.map.toon.walk
 
-### SUMR.start
+### project.map.toon.restore
 
-### SUMR.stop
+### project.map.toon.report
 
-### SUMR._compose_up
+### project.map.toon.dashboard
 
-### SUMR._compose_down
+### project.map.toon.tui
 
-### SUMR._uvicorn_start
+### project.map.toon.version
 
-### SUMR._uvicorn_stop
+### project.map.toon.duplicates
 
-### SUMR._wait_healthy
+### project.map.toon.services
 
-### SUMR.walk
+### project.map.toon.truth
 
-### SUMR.restore
+### project.map.toon.plan
 
-### SUMR.report
+### project.map.toon._print_summary_table
 
-### SUMR.version
+### project.map.toon.get_cc_for_day
 
-### SUMR.dashboard
+### project.map.toon._extract_avg_cc
 
-### SUMR._attach_screenshots
+### project.map.toon.generate_dashboard
 
-### SUMR._print_day_summary
+### project.map.toon._render_html
 
-### SUMR._print_summary_table
+### project.map.toon._load_day_results
 
-### SUMR.scan_endpoints
+### project.map.toon._endpoint_diff
 
-### SUMR._scan_via_deta
+### project.map.toon._health_bar
 
-### SUMR._ports_to_endpoints
+### project.map.toon._calc_health
 
-### SUMR._scan_via_openapi
+### project.map.toon.launch_tui
 
-### SUMR._parse_openapi
+### project.map.toon._config
 
-### SUMR._scan_via_compose_labels
+### project.map.toon.test_detect_docker_compose_yml
 
-### SUMR._run_git
+### project.map.toon.test_detect_docker_compose_yaml
 
-### SUMR.get_commit_for_day
+### project.map.toon.test_detect_uvicorn_via_server_py
 
-### SUMR.iter_days
+### project.map.toon.test_detect_uvicorn_via_backend_server_py
 
-### SUMR.checkout
+### project.map.toon.test_detect_none_fallback
 
-### SUMR.restore_head
+### project.map.toon.test_start_dry_run_skips_deploy
 
-### SUMR.days_with_commits
+### project.map.toon.test_start_none_method_returns_true
 
 ## Process Flows
 
@@ -106,129 +102,119 @@ Key execution flows identified:
 all [testql-scenarios.generated-from-pytests.testql.toon]
 ```
 
-### Flow 2: detect_deploy_method
+### Flow 2: generate_readme
 ```
-detect_deploy_method [SUMR]
-```
-
-### Flow 3: _compose_file
-```
-_compose_file [SUMR]
+generate_readme [docs.README]
 ```
 
-### Flow 4: start
+### Flow 3: walk
 ```
-start [SUMR]
-```
-
-### Flow 5: stop
-```
-stop [SUMR]
+walk [project.map.toon]
 ```
 
-### Flow 6: _compose_up
+### Flow 4: restore
 ```
-_compose_up [SUMR]
-```
-
-### Flow 7: _compose_down
-```
-_compose_down [SUMR]
+restore [project.map.toon]
 ```
 
-### Flow 8: _uvicorn_start
+### Flow 5: report
 ```
-_uvicorn_start [SUMR]
-```
-
-### Flow 9: _uvicorn_stop
-```
-_uvicorn_stop [SUMR]
+report [project.map.toon]
 ```
 
-### Flow 10: _wait_healthy
+### Flow 6: dashboard
 ```
-_wait_healthy [SUMR]
+dashboard [project.map.toon]
+```
+
+### Flow 7: tui
+```
+tui [project.map.toon]
+```
+
+### Flow 8: version
+```
+version [project.map.toon]
+```
+
+### Flow 9: duplicates
+```
+duplicates [project.map.toon]
+```
+
+### Flow 10: services
+```
+services [project.map.toon]
 ```
 
 ## Data Transformation Functions
 
 Key functions that process and transform data:
 
-### SUMR._parse_openapi
+### project.map.toon.test_run_processes_all_days
 
-### SUMD._parse_openapi
+### project.map.toon.test_parse_openapi_returns_endpoints
 
-### SUMD._parse_testql_results
+### project.map.toon.test_parse_openapi_ignores_unknown_methods
 
-### SUMD.test_parse_openapi
+### project.map.toon.test_parse_openapi_empty_paths
 
-### SUMD.test_get_commit_for_day_parses_output
+### project.map.toon.test_testql_strategy_parse_ok
 
-### SUMD.test_parse_testql_results_ok
+### SUMD.test_run_processes_all_days
 
-### SUMD.test_parse_testql_results_fail
+### SUMD.test_parse_openapi_returns_endpoints
 
-### SUMD.test_parse_testql_results_missing_endpoint
+### SUMD.test_parse_openapi_ignores_unknown_methods
 
-### project.map.toon._parse_openapi
+### SUMD.test_parse_openapi_empty_paths
 
-### project.map.toon._parse_testql_results
-
-### project.map.toon.test_parse_openapi
-
-### project.map.toon.test_get_commit_for_day_parses_output
-
-### project.map.toon.test_parse_testql_results_ok
-
-### project.map.toon.test_parse_testql_results_fail
-
-### project.map.toon.test_parse_testql_results_missing_endpoint
+### SUMD.test_testql_strategy_parse_ok
 
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
 - `testql-scenarios.generated-from-pytests.testql.toon.all` - 0 calls
-- `SUMR.detect_deploy_method` - 0 calls
-- `SUMR.start` - 0 calls
-- `SUMR.stop` - 0 calls
-- `SUMR.walk` - 0 calls
-- `SUMR.restore` - 0 calls
-- `SUMR.report` - 0 calls
-- `SUMR.version` - 0 calls
-- `SUMR.dashboard` - 0 calls
-- `SUMR.scan_endpoints` - 0 calls
-- `SUMR.get_commit_for_day` - 0 calls
-- `SUMR.iter_days` - 0 calls
-- `SUMR.checkout` - 0 calls
-- `SUMR.restore_head` - 0 calls
-- `SUMR.days_with_commits` - 0 calls
-- `SUMR.save_json` - 0 calls
-- `SUMR.save_html` - 0 calls
-- `SUMR.save_day` - 0 calls
-- `SUMR.save_timeline_index` - 0 calls
 - `docs.README.generate_readme` - 0 calls
-- `SUMD.all` - 0 calls
-- `SUMD.walk` - 0 calls
-- `SUMD.restore` - 0 calls
-- `SUMD.report` - 0 calls
-- `SUMD.version` - 0 calls
-- `SUMD.dashboard` - 0 calls
-- `SUMD.get_cc_for_day` - 0 calls
-- `SUMD.generate_dashboard` - 0 calls
-- `SUMD.detect_deploy_method` - 0 calls
-- `SUMD.start` - 0 calls
-- `SUMD.stop` - 0 calls
-- `SUMD.scan_endpoints` - 0 calls
-- `SUMD.get_commit_for_day` - 0 calls
-- `SUMD.iter_days` - 0 calls
-- `SUMD.checkout` - 0 calls
-- `SUMD.restore_head` - 0 calls
-- `SUMD.days_with_commits` - 0 calls
-- `SUMD.save_json` - 0 calls
-- `SUMD.save_html` - 0 calls
-- `SUMD.save_day` - 0 calls
+- `project.map.toon.walk` - 0 calls
+- `project.map.toon.restore` - 0 calls
+- `project.map.toon.report` - 0 calls
+- `project.map.toon.dashboard` - 0 calls
+- `project.map.toon.tui` - 0 calls
+- `project.map.toon.version` - 0 calls
+- `project.map.toon.duplicates` - 0 calls
+- `project.map.toon.services` - 0 calls
+- `project.map.toon.truth` - 0 calls
+- `project.map.toon.plan` - 0 calls
+- `project.map.toon.get_cc_for_day` - 0 calls
+- `project.map.toon.generate_dashboard` - 0 calls
+- `project.map.toon.launch_tui` - 0 calls
+- `project.map.toon.test_detect_docker_compose_yml` - 0 calls
+- `project.map.toon.test_detect_docker_compose_yaml` - 0 calls
+- `project.map.toon.test_detect_uvicorn_via_server_py` - 0 calls
+- `project.map.toon.test_detect_uvicorn_via_backend_server_py` - 0 calls
+- `project.map.toon.test_detect_none_fallback` - 0 calls
+- `project.map.toon.test_start_dry_run_skips_deploy` - 0 calls
+- `project.map.toon.test_start_none_method_returns_true` - 0 calls
+- `project.map.toon.test_stop_dry_run_skips` - 0 calls
+- `project.map.toon.test_stop_none_method_skips` - 0 calls
+- `project.map.toon.test_execute_delegates_to_start` - 0 calls
+- `project.map.toon.test_get_commit_for_day_ok` - 0 calls
+- `project.map.toon.test_get_commit_for_day_none` - 0 calls
+- `project.map.toon.test_days_with_commits` - 0 calls
+- `project.map.toon.test_load_history_empty_dir` - 0 calls
+- `project.map.toon.test_load_history_no_results_json` - 0 calls
+- `project.map.toon.test_load_history_single_day` - 0 calls
+- `project.map.toon.test_load_history_multiple_days_sorted` - 0 calls
+- `project.map.toon.test_load_history_health_pct` - 0 calls
+- `project.map.toon.test_load_history_skips_invalid_dir_name` - 0 calls
+- `project.map.toon.test_load_history_with_commit` - 0 calls
+- `project.map.toon.test_load_history_status_timeout` - 0 calls
+- `project.map.toon.test_load_history_testql_passed` - 0 calls
+- `project.map.toon.test_endpoint_url` - 0 calls
+- `project.map.toon.test_endpoint_url_strips_trailing_slash` - 0 calls
+- `project.map.toon.test_endpoint_slug` - 0 calls
 
 ## System Interactions
 

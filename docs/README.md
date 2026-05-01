@@ -1,7 +1,7 @@
 <!-- code2docs:start --># resplit
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-244-green)
-> **244** functions | **0** classes | **32** files | CC̄ = 0.0
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-185-green)
+> **185** functions | **0** classes | **36** files | CC̄ = 0.0
 
 > Auto-generated project documentation from source code analysis.
 
@@ -29,6 +29,7 @@ pip install -e .
 
 ```bash
 pip install resplit[screenshots]    # screenshots features
+pip install resplit[tui]    # tui features
 pip install resplit[full]    # full features
 pip install resplit[dev]    # development tools
 ```
@@ -76,15 +77,19 @@ docs = generate_docs("./my-project", config=config)
 resplit/
 ├── SUMR
 ├── goal
+├── Makefile
 ├── SUMD
 ├── PLAN
 ├── pyproject
 ├── tree
+├── TODO
 ├── CHANGELOG
 ├── project
 ├── README
+    ├── architecture
     ├── README
     ├── walk_dry_run
+    ├── Makefile
     ├── restore_endpoint
         ├── run
         ├── mock_results
@@ -95,16 +100,16 @@ resplit/
         ├── run
         ├── README
         ├── toon
-            ├── toon
-            ├── toon
-    ├── context
     ├── prompt
         ├── toon
+            ├── toon
+            ├── toon
     ├── calls
-        ├── toon
-        ├── toon
-        ├── toon
     ├── README
+    ├── context
+        ├── toon
+        ├── toon
+        ├── toon
         ├── toon
 ```
 
@@ -112,179 +117,180 @@ resplit/
 
 ### Functions
 
-- `detect_deploy_method()` — —
-- `start()` — —
-- `stop()` — —
-- `walk()` — —
-- `restore()` — —
-- `report()` — —
-- `version()` — —
-- `dashboard()` — —
-- `scan_endpoints()` — —
-- `get_commit_for_day()` — —
-- `iter_days()` — —
-- `checkout()` — —
-- `restore_head()` — —
-- `days_with_commits()` — —
-- `save_json()` — —
-- `save_html()` — —
-- `save_day()` — —
-- `save_timeline_index()` — —
 - `all()` — —
 - `walk()` — —
 - `restore()` — —
 - `report()` — —
-- `version()` — —
 - `dashboard()` — —
+- `tui()` — —
+- `version()` — —
+- `duplicates()` — —
+- `services()` — —
+- `truth()` — —
+- `plan()` — —
 - `get_cc_for_day()` — —
 - `generate_dashboard()` — —
-- `detect_deploy_method()` — —
-- `start()` — —
-- `stop()` — —
-- `scan_endpoints()` — —
-- `get_commit_for_day()` — —
-- `iter_days()` — —
-- `checkout()` — —
-- `restore_head()` — —
-- `days_with_commits()` — —
-- `save_json()` — —
-- `save_html()` — —
-- `save_day()` — —
-- `save_timeline_index()` — —
-- `find_last_working_day()` — —
-- `extract_endpoint()` — —
-- `take_screenshot()` — —
-- `take_screenshots_batch()` — —
-- `screenshot_endpoint()` — —
-- `run_tests()` — —
+- `launch_tui()` — —
 - `test_detect_docker_compose_yml()` — —
 - `test_detect_docker_compose_yaml()` — —
-- `test_detect_uvicorn_server()` — —
-- `test_detect_uvicorn_backend_server()` — —
-- `test_detect_none()` — —
-- `test_parse_openapi()` — —
-- `test_ports_to_endpoints()` — —
-- `test_scan_via_compose_labels()` — —
-- `test_scan_endpoints_minimal_fallback()` — —
-- `test_get_commit_for_day_parses_output()` — —
-- `test_get_commit_for_day_no_output()` — —
-- `test_get_commit_for_day_git_error()` — —
-- `test_days_with_commits_filters_none()` — —
+- `test_detect_uvicorn_via_server_py()` — —
+- `test_detect_uvicorn_via_backend_server_py()` — —
+- `test_detect_none_fallback()` — —
+- `test_start_dry_run_skips_deploy()` — —
+- `test_start_none_method_returns_true()` — —
+- `test_stop_dry_run_skips()` — —
+- `test_stop_none_method_skips()` — —
+- `test_execute_delegates_to_start()` — —
+- `test_get_commit_for_day_ok()` — —
+- `test_get_commit_for_day_none()` — —
+- `test_days_with_commits()` — —
+- `test_load_history_empty_dir()` — —
+- `test_load_history_no_results_json()` — —
+- `test_load_history_single_day()` — —
+- `test_load_history_multiple_days_sorted()` — —
+- `test_load_history_health_pct()` — —
+- `test_load_history_skips_invalid_dir_name()` — —
+- `test_load_history_with_commit()` — —
+- `test_load_history_status_timeout()` — —
+- `test_load_history_testql_passed()` — —
 - `test_endpoint_url()` — —
 - `test_endpoint_url_strips_trailing_slash()` — —
 - `test_endpoint_slug()` — —
 - `test_day_result_health_pct_empty()` — —
 - `test_day_result_health_pct()` — —
 - `test_walk_config_defaults()` — —
-- `test_save_json_creates_files()` — —
-- `test_save_json_results_content()` — —
-- `test_save_html_creates_report()` — —
-- `test_save_timeline_index()` — —
+- `test_run_returns_empty_when_no_commits()` — —
+- `test_run_day_dry_run_skips_checkout()` — —
+- `test_run_day_returns_day_result()` — —
+- `test_run_day_deploy_failure_skips_scan()` — —
+- `test_run_day_stop_always_called()` — —
+- `test_run_processes_all_days()` — —
+- `test_save_json_creates_results_file()` — —
+- `test_save_json_creates_endpoints_file()` — —
+- `test_save_json_writes_commit_txt()` — —
+- `test_save_json_no_output_dir_skips()` — —
+- `test_save_json_testql_passed_field()` — —
+- `test_save_html_creates_report_file()` — —
+- `test_save_html_contains_health_pct()` — —
+- `test_save_timeline_index_creates_index()` — —
+- `test_save_timeline_index_multiple_days_sorted()` — —
 - `test_find_last_working_day_found()` — —
-- `test_find_last_working_day_not_found()` — —
-- `test_find_backend_files()` — —
-- `test_is_page_endpoint()` — —
-- `test_take_screenshot_playwright_not_installed()` — —
-- `test_take_screenshot_success()` — —
-- `test_take_screenshot_retry_then_succeed()` — —
-- `test_take_screenshot_all_retries_fail()` — —
-- `test_screenshot_endpoint_returns_path_on_success()` — —
-- `test_screenshot_endpoint_returns_none_on_failure()` — —
-- `test_take_screenshots_batch_playwright_missing()` — —
-- `test_testql_available_missing()` — —
-- `test_testql_available_ok()` — —
-- `test_parse_testql_results_ok()` — —
-- `test_parse_testql_results_fail()` — —
-- `test_parse_testql_results_missing_endpoint()` — —
-- `test_run_http_probe_skip_non_get()` — —
-- `test_run_http_probe_ok()` — —
-- `test_run_http_probe_timeout()` — —
-- `test_run_tests_uses_http_probe_when_no_testql_dir()` — —
-- `test_fallback_all_timeout()` — —
+- `test_find_last_working_day_picks_most_recent()` — —
+- `test_find_last_working_day_none_when_always_fail()` — —
+- `test_find_last_working_day_missing_dir()` — —
+- `test_find_last_working_day_ignores_other_endpoints()` — —
+- `test_find_last_working_day_skips_invalid_dirs()` — —
+- `test_execute_returns_date()` — —
+- `test_parse_openapi_returns_endpoints()` — —
+- `test_parse_openapi_ignores_unknown_methods()` — —
+- `test_parse_openapi_empty_paths()` — —
+- `test_scan_via_compose_labels_finds_traefik_prefix()` — —
+- `test_scan_via_compose_labels_no_compose_file()` — —
+- `test_scan_via_compose_labels_dict_labels()` — —
+- `test_ports_to_endpoints()` — —
+- `test_ports_to_endpoints_no_services()` — —
+- `test_execute_falls_back_to_health()` — —
+- `test_execute_deta_takes_priority()` — —
+- `test_execute_deduplicates_openapi_vs_deta()` — —
+- `test_http_probe_ok()` — —
+- `test_http_probe_timeout()` — —
+- `test_testql_strategy_parse_ok()` — —
+- `test_test_service_delegates_to_strategy()` — —
 - `generate_readme()` — —
 - `all()` — —
 - `all()` — —
-- `detect_deploy_method()` — —
-- `start()` — —
-- `stop()` — —
+- `generate_readme()` — —
 - `walk()` — —
 - `restore()` — —
 - `report()` — —
-- `version()` — —
 - `dashboard()` — —
-- `scan_endpoints()` — —
-- `get_commit_for_day()` — —
-- `iter_days()` — —
-- `checkout()` — —
-- `restore_head()` — —
-- `days_with_commits()` — —
-- `save_json()` — —
-- `save_html()` — —
-- `save_day()` — —
-- `save_timeline_index()` — —
-- `generate_readme()` — —
+- `tui()` — —
+- `version()` — —
+- `duplicates()` — —
+- `services()` — —
+- `truth()` — —
+- `plan()` — —
 - `get_cc_for_day()` — —
 - `generate_dashboard()` — —
-- `find_last_working_day()` — —
-- `extract_endpoint()` — —
-- `take_screenshot()` — —
-- `take_screenshots_batch()` — —
-- `screenshot_endpoint()` — —
-- `run_tests()` — —
+- `launch_tui()` — —
 - `test_detect_docker_compose_yml()` — —
 - `test_detect_docker_compose_yaml()` — —
-- `test_detect_uvicorn_server()` — —
-- `test_detect_uvicorn_backend_server()` — —
-- `test_detect_none()` — —
-- `test_parse_openapi()` — —
-- `test_ports_to_endpoints()` — —
-- `test_scan_via_compose_labels()` — —
-- `test_scan_endpoints_minimal_fallback()` — —
-- `test_get_commit_for_day_parses_output()` — —
-- `test_get_commit_for_day_no_output()` — —
-- `test_get_commit_for_day_git_error()` — —
-- `test_days_with_commits_filters_none()` — —
+- `test_detect_uvicorn_via_server_py()` — —
+- `test_detect_uvicorn_via_backend_server_py()` — —
+- `test_detect_none_fallback()` — —
+- `test_start_dry_run_skips_deploy()` — —
+- `test_start_none_method_returns_true()` — —
+- `test_stop_dry_run_skips()` — —
+- `test_stop_none_method_skips()` — —
+- `test_execute_delegates_to_start()` — —
+- `test_get_commit_for_day_ok()` — —
+- `test_get_commit_for_day_none()` — —
+- `test_days_with_commits()` — —
+- `test_load_history_empty_dir()` — —
+- `test_load_history_no_results_json()` — —
+- `test_load_history_single_day()` — —
+- `test_load_history_multiple_days_sorted()` — —
+- `test_load_history_health_pct()` — —
+- `test_load_history_skips_invalid_dir_name()` — —
+- `test_load_history_with_commit()` — —
+- `test_load_history_status_timeout()` — —
+- `test_load_history_testql_passed()` — —
 - `test_endpoint_url()` — —
 - `test_endpoint_url_strips_trailing_slash()` — —
 - `test_endpoint_slug()` — —
 - `test_day_result_health_pct_empty()` — —
 - `test_day_result_health_pct()` — —
 - `test_walk_config_defaults()` — —
-- `test_save_json_creates_files()` — —
-- `test_save_json_results_content()` — —
-- `test_save_html_creates_report()` — —
-- `test_save_timeline_index()` — —
+- `test_run_returns_empty_when_no_commits()` — —
+- `test_run_day_dry_run_skips_checkout()` — —
+- `test_run_day_returns_day_result()` — —
+- `test_run_day_deploy_failure_skips_scan()` — —
+- `test_run_day_stop_always_called()` — —
+- `test_run_processes_all_days()` — —
+- `test_save_json_creates_results_file()` — —
+- `test_save_json_creates_endpoints_file()` — —
+- `test_save_json_writes_commit_txt()` — —
+- `test_save_json_no_output_dir_skips()` — —
+- `test_save_json_testql_passed_field()` — —
+- `test_save_html_creates_report_file()` — —
+- `test_save_html_contains_health_pct()` — —
+- `test_save_timeline_index_creates_index()` — —
+- `test_save_timeline_index_multiple_days_sorted()` — —
 - `test_find_last_working_day_found()` — —
-- `test_find_last_working_day_not_found()` — —
-- `test_find_backend_files()` — —
-- `test_is_page_endpoint()` — —
-- `test_take_screenshot_playwright_not_installed()` — —
-- `test_take_screenshot_success()` — —
-- `test_take_screenshot_retry_then_succeed()` — —
-- `test_take_screenshot_all_retries_fail()` — —
-- `test_screenshot_endpoint_returns_path_on_success()` — —
-- `test_screenshot_endpoint_returns_none_on_failure()` — —
-- `test_take_screenshots_batch_playwright_missing()` — —
-- `test_testql_available_missing()` — —
-- `test_testql_available_ok()` — —
-- `test_parse_testql_results_ok()` — —
-- `test_parse_testql_results_fail()` — —
-- `test_parse_testql_results_missing_endpoint()` — —
-- `test_run_http_probe_skip_non_get()` — —
-- `test_run_http_probe_ok()` — —
-- `test_run_http_probe_timeout()` — —
-- `test_run_tests_uses_http_probe_when_no_testql_dir()` — —
-- `test_fallback_all_timeout()` — —
+- `test_find_last_working_day_picks_most_recent()` — —
+- `test_find_last_working_day_none_when_always_fail()` — —
+- `test_find_last_working_day_missing_dir()` — —
+- `test_find_last_working_day_ignores_other_endpoints()` — —
+- `test_find_last_working_day_skips_invalid_dirs()` — —
+- `test_execute_returns_date()` — —
+- `test_parse_openapi_returns_endpoints()` — —
+- `test_parse_openapi_ignores_unknown_methods()` — —
+- `test_parse_openapi_empty_paths()` — —
+- `test_scan_via_compose_labels_finds_traefik_prefix()` — —
+- `test_scan_via_compose_labels_no_compose_file()` — —
+- `test_scan_via_compose_labels_dict_labels()` — —
+- `test_ports_to_endpoints()` — —
+- `test_ports_to_endpoints_no_services()` — —
+- `test_execute_falls_back_to_health()` — —
+- `test_execute_deta_takes_priority()` — —
+- `test_execute_deduplicates_openapi_vs_deta()` — —
+- `test_http_probe_ok()` — —
+- `test_http_probe_timeout()` — —
+- `test_testql_strategy_parse_ok()` — —
+- `test_test_service_delegates_to_strategy()` — —
 
 
 ## Project Structure
 
 📄 `CHANGELOG`
+📄 `Makefile`
 📄 `PLAN`
 📄 `README`
-📄 `SUMD` (139 functions)
-📄 `SUMR` (35 functions)
+📄 `SUMD` (96 functions)
+📄 `SUMR`
+📄 `TODO`
 📄 `docs.README` (1 functions)
+📄 `docs.architecture`
 📄 `examples.01-dry-run-walk.README`
 📄 `examples.01-dry-run-walk.run`
 📄 `examples.02-docker-compose-project.README`
@@ -293,6 +299,7 @@ resplit/
 📄 `examples.03-restore-endpoint.README`
 📄 `examples.03-restore-endpoint.mock_results`
 📄 `examples.03-restore-endpoint.run`
+📄 `examples.Makefile`
 📄 `examples.restore_endpoint`
 📄 `examples.walk_dry_run`
 📄 `goal`
@@ -304,7 +311,7 @@ resplit/
 📄 `project.context`
 📄 `project.duplication.toon`
 📄 `project.evolution.toon`
-📄 `project.map.toon` (279 functions)
+📄 `project.map.toon` (193 functions)
 📄 `project.project.toon`
 📄 `project.prompt`
 📄 `pyproject`
@@ -340,6 +347,7 @@ pytest
 
 ## Documentation
 
+- 🏛️ [Architecture](./docs/architecture.md) — Architecture with diagrams
 - 💡 [Examples](./examples) — Usage examples and code samples
 
 ### Generated Files
@@ -347,6 +355,7 @@ pytest
 | Output | Description | Link |
 |--------|-------------|------|
 | `README.md` | Project overview (this file) | — |
+| `docs/architecture.md` | Architecture with diagrams | [View](./docs/architecture.md) |
 | `examples` | Usage examples and code samples | [View](./examples) |
 
 <!-- code2docs:end -->
