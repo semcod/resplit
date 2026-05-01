@@ -104,6 +104,14 @@ class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
         target = sha or "HEAD"
         self._run_git(["checkout", "--force", "--quiet", target])
 
+    def diff_names(self, from_sha: str, to_sha: str) -> Optional[List[str]]:
+        """Return list of file paths changed between two commits, or None on error."""
+        cmd = ["git", "diff", "--name-only", from_sha, to_sha]
+        result = self.shell.run(cmd, cwd=self.repo_path)
+        if result.returncode != 0:
+            return None
+        return [f for f in result.stdout.strip().splitlines() if f]
+
     def _run_git(self, args: List[str]) -> str:
         cmd = ["git"] + args
         result = self.shell.run(cmd, cwd=self.repo_path)
