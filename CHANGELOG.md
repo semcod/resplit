@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-01
+
+### Docs
+- Update README.md
+
+### Other
+- Update examples/01-dry-run-walk/run.sh
+- Update examples/02-docker-compose-project/run.sh
+- Update examples/03-restore-endpoint/mock_results.sh
+- Update examples/03-restore-endpoint/run.sh
+
 ## [0.1.1] - 2026-05-01
 
 ### Docs
