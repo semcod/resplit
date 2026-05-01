@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "retrodep"
+version = "0.1.0"
+description = "Historical deployment analysis — walk git history, deploy per day, test all endpoints, capture screenshots, restore working fragments"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Tom Sapletta", email = "tom@sapletta.com" }]
+requires-python = ">=3.10"
+keywords = ["deployment", "regression", "git", "testing", "endpoints", "history"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Version Control",
+]
+dependencies = [
+    "typer>=0.12",
+    "rich>=13",
+    "gitpython>=3.1",
+    "httpx>=0.27",
+    "pyyaml>=6",
+    "pydantic>=2",
+    "deta>=0.1",         # infra scanning
+    # "wup>=0.1",        # optional: regression watcher
+    # "regres>=0.1",     # optional: regression analysis
+    # "testql>=1.2",     # optional: endpoint testing DSL
+]
+
+[project.optional-dependencies]
+screenshots = ["playwright>=1.44"]
+full = ["playwright>=1.44", "wup", "regres", "testql"]
+dev = ["pytest>=8", "pytest-cov", "pytest-asyncio", "ruff", "mypy"]
+
+[project.scripts]
+retrodep = "retrodep.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/softreck/retrodep"
+Repository = "https://github.com/softreck/retrodep"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["retrodep*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "--tb=short -q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+ignore_missing_imports = true
