@@ -38,6 +38,11 @@ class DeployService(Service[Path, bool]):
         if method == DeployMethod.NONE or self.config.dry_run:
             return True
 
+        # In replay mode: infra is already up — just verify health
+        if self.config.replay:
+            self.console.print(f"  [dim]replay: checking existing infra health...[/dim]")
+            return self._wait_healthy()
+
         if method == DeployMethod.DOCKER_COMPOSE:
             return self._compose_up(repo)
         if method == DeployMethod.UVICORN:
@@ -47,25 +52,40 @@ class DeployService(Service[Path, bool]):
     def reload(self, repo: Path) -> bool:
         """
         Performs a fast reload of the application in Replay Mode.
-        Restarts only the specified app service.
+        Restarts only the specified app service container by name.
+        Does NOT use compose project name — works with externally started infra.
         """
-        if self.config.deploy_method != DeployMethod.DOCKER_COMPOSE:
+        service = self.config.app_service or "backend"
+
+        if self.config.deploy_method == DeployMethod.DOCKER_COMPOSE:
+            # Try restarting by container name directly (works regardless of compose project)
+            self.console.print(f"  [bold cyan]docker restart {service}[/bold cyan]")
+            result = self.shell.run(["docker", "restart", service])
+            if result.returncode != 0:
+                # Fallback: compose restart with explicit file
+                self.console.print(f"  [dim]Fallback: compose restart...[/dim]")
+                try:
+                    cf = self._compose_file(repo)
+                    result = self.shell.run(
+                        ["docker", "compose", "-f", str(cf), "restart", service],
+                        cwd=repo
+                    )
+                except FileNotFoundError:
+                    pass
+            if result.returncode != 0:
+                self.console.print(f"  [red]Restart failed:[/red] {result.stderr[:200]}")
+                return False
+        else:
             return self.start(repo)
 
-        service = self.config.app_service or "backend"
-        self.console.print(f"  [bold cyan]docker compose restart {service}[/bold cyan]")
-        cf = self._compose_file(repo)
-        cmd = ["docker", "compose", "-p", self._project_name, "-f", str(cf), "restart", service]
-        result = self.shell.run(cmd, cwd=repo)
-        
-        if result.returncode != 0:
-            self.console.print(f"  [red]Restart failed:[/red] {result.stderr[:200]}")
-            return False
-            
         return self._wait_healthy()
 
     def stop(self, repo: Path) -> None:
         if self.config.dry_run or self.config.deploy_method == DeployMethod.NONE:
+            return
+        # In replay mode: leave infrastructure running — don't tear down
+        if self.config.replay:
+            self.console.print("  [dim]replay: leaving infra running[/dim]")
             return
         if self.config.deploy_method == DeployMethod.DOCKER_COMPOSE:
             self._compose_down(repo)

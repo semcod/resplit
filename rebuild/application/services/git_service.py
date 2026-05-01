@@ -58,11 +58,33 @@ class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
         
         return sorted(results, key=lambda x: x[0])
 
-    def checkout(self, sha: str):
-        self._run_git(["checkout", sha, "--quiet"])
+    def get_current_sha(self) -> str:
+        return self._run_git(["rev-parse", "HEAD"]).strip()
 
-    def restore_head(self):
-        self._run_git(["checkout", "-", "--quiet"])
+    def clone_for_walk(self, output_dir: Path) -> "GitService":
+        """
+        Creates a local clone inside output_dir/repo/ for safe checkouts.
+        The original repo is never modified.
+        Returns a new GitService pointed at the clone.
+        """
+        clone_path = output_dir / "repo"
+        if clone_path.exists():
+            self.shell.run(["git", "fetch", "--quiet"], cwd=clone_path)
+        else:
+            clone_path.mkdir(parents=True, exist_ok=True)
+            result = self.shell.run(
+                ["git", "clone", "--local", "--no-hardlinks", str(self.repo_path), str(clone_path)]
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"git clone failed: {result.stderr}")
+        return GitService(clone_path, shell=self.shell)
+
+    def checkout(self, sha: str):
+        self._run_git(["checkout", "--force", "--quiet", sha])
+
+    def restore_head(self, sha: Optional[str] = None):
+        target = sha or "HEAD"
+        self._run_git(["checkout", "--force", "--quiet", target])
 
     def _run_git(self, args: List[str]) -> str:
         cmd = ["git"] + args

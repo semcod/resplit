@@ -1,0 +1,88 @@
+# backend/Dockerfile
+FROM python:3.11-slim
+
+# Build argument to skip Playwright browser download during build
+ARG PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=${PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD}
+
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
+
+WORKDIR /app
+
+# Install system dependencies for Playwright
+RUN apt-get update -qq && apt-get install -y -qq \
+    build-essential \
+    gcc \
+    curl \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY backend/requirements.txt .
+
+# Copy reusable backend shared package for install from local path (no symlink dependency)
+COPY packages/backend-shared-py /packages/backend-shared-py
+COPY connect-data/backend /packages/connect-data-backend
+
+# Install reusable backend shared package explicitly (path-stable, independent of requirements cwd)
+RUN pip install --no-cache-dir /packages/backend-shared-py \
+    && pip install --no-cache-dir /packages/connect-data-backend
+
+# Install Python dependencies for Docker.
+# requirements.txt contains local editable host paths for developer workspaces
+# (e.g. ../packages/backend-shared-py, ../../../semcod/protos/...), which are
+# not valid inside the image build context.
+RUN grep -vE '^-e (\.\./packages/backend-shared-py|\.\./\.\./\.\./semcod/protos/packages/protos-runtime-py)$' requirements.txt > requirements.docker.txt
+
+# Install Python dependencies and Playwright browsers (skip if PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD is set)
+RUN pip install --no-cache-dir -r requirements.docker.txt \
+    && if [ -z "$PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD" ]; then playwright install chromium; fi
+
+# Copy application
+COPY backend/app/ ./app/
+
+# Copy API module (implementation now lives inside backend/api)
+COPY backend/api/ ./api/
+
+# Copy shared models package expected by backend imports.
+# Source lives in _archive to preserve project structure while keeping runtime compatibility.
+COPY _archive/models/python ./models/python
+
+# Copy shared types
+COPY shared/ ./shared/
+
+# Copy release metadata for runtime version resolution
+COPY VERSION ./VERSION
+
+# Copy Alembic configuration for in-container migrations
+COPY backend/alembic.ini ./alembic.ini
+COPY backend/alembic/ ./alembic/
+
+# Validate settings on build (fails if .env invalid)
+RUN python -c "from app.config.settings import settings; print('Settings validated')" || true
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
+  CMD curl -f http://localhost:8000/api/v3/health || exit 1
+
+EXPOSE 8000
+
+# Run with uvicorn (workers configurable via API_WORKERS)
+ENV API_WORKERS=1
+CMD ["/bin/sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${API_WORKERS:-1}"]
