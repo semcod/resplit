@@ -21,14 +21,14 @@
 - [x] **Deploy Retry**: Dodać mechanizm retry z backoff dla niestabilnych deployów.
 - [x] **Health Check Verbose**: Pokaż szczegółowy log health-check (curl output) gdy serwis nie odpowiada.
 - [x] **Manual Override**: Support a `patch/` directory in `.rebuild/` to automatically apply fixes to the cloned repo before walk.
-- [ ] **Health Recovery**: If a day fails, allow manual "fix" commit in the clone to see if health improves (without modifying source).
+- [x] **Health Recovery**: If a day fails, allow manual "fix" commit in the clone to see if health improves (without modifying source).
 - [x] **Token Propagation**: Zaloguj się raz przed testem, propaguj token Bearer do wszystkich requestów.
 - [x] **Per-Endpoint Body**: Opcjonalne `body:` dla POST/PUT/PATCH w konfiguracji testów.
 
 ### 🟡 Średnie — Raporty c2004
 - [x] **Failure Grouping**: W raporcie HTML grupuj błędy wg kategorii (auth, template, missing).
 - [x] **Trend Chart**: Wykres trendu health% w czasie (Chart.js / SVG inline).
-- [ ] **Endpoint Diff**: Pokaż endpointy które znikły lub pojawiły się między commitami.
+- [x] **Endpoint Diff**: Pokaż endpointy które znikły lub pojawiły się między commitami.
 - [x] **Response Time Tracking**: Zmierz i wyświetl `time_ms` dla wszystkich requestów.
 
 ### 🟢 Niskie — Analyze na c2004

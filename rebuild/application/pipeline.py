@@ -71,29 +71,43 @@ class Pipeline:
         if self.console:
             self.console.print(message)
 
-    def _check_for_manual_fix(self, repo: Path, original_sha: str) -> Optional[str]:
+    def _check_for_manual_fix(self, walk_git: GitService, original_sha: str) -> Optional[str]:
         """
-        Check for manual fix commits in the clone that target the original commit.
-        Fix commits should have a message like "fix for <sha>" or reference the original SHA.
+        Check for manual recovery commits in the clone that target the original commit.
+        Expected commit subject marker: rebuild-fix:<sha>
         """
-        try:
-            # Get commits after the original SHA
-            result = self.shell.run(
-                ["git", "log", "--oneline", f"{original_sha}..HEAD"],
-                cwd=repo
-            )
-            if result.returncode != 0:
-                return None
+        markers = (
+            f"rebuild-fix:{original_sha}".lower(),
+            f"rebuild-fix:{original_sha[:8]}".lower(),
+        )
+        commands = [
+            ["git", "log", "--all", "--format=%H%x09%s"],
+            ["git", "reflog", "--all", "--format=%H%x09%gs"],
+        ]
+        seen: Set[str] = set()
 
-            for line in result.stdout.strip().split("\n"):
-                if not line:
+        for cmd in commands:
+            try:
+                result = walk_git.shell.run(cmd, cwd=walk_git.repo_path)
+                if result.returncode != 0:
                     continue
-                # Look for commits that reference the original SHA or have "fix" in message
-                if original_sha[:8] in line or "fix" in line.lower():
-                    sha = line.split()[0]
-                    return sha
-        except Exception:
-            pass
+
+                for line in result.stdout.splitlines():
+                    if "\t" not in line:
+                        continue
+                    sha, message = line.split("\t", 1)
+                    if not sha or sha in seen:
+                        continue
+                    seen.add(sha)
+
+                    normalized = message.lower()
+                    if "rebuild-fix:" not in normalized:
+                        continue
+                    if any(marker in normalized for marker in markers):
+                        return sha
+            except Exception:
+                continue
+
         return None
 
     def run(self) -> List[DayResult]:
@@ -132,6 +146,15 @@ class Pipeline:
 
                 result = self.run_day(day, commit)
                 all_results.append(result)
+
+                failed = bool(result.error) or (not result.deploy_success and not self.config.dry_run)
+                if failed:
+                    self.log(
+                        f"  [yellow]Recovery pending for {commit.sha[:8]}[/yellow] "
+                        f"(commit fix in clone with message 'rebuild-fix:{commit.sha[:8]}' and rerun)"
+                    )
+                    continue
+
                 self._processed_shas.add(commit.sha)
                 self._save_state()
         finally:
@@ -171,7 +194,7 @@ class Pipeline:
                     self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(manual_patch_dir))
 
                 # Check for manual fix commit in clone (for health recovery)
-                fix_sha = self._check_for_manual_fix(walk_git.repo_path, commit.sha)
+                fix_sha = self._check_for_manual_fix(walk_git, commit.sha)
                 if fix_sha:
                     self.log(f"  [cyan]Manual fix detected: {fix_sha[:8]}, applying...[/cyan]")
                     walk_git.checkout(fix_sha)

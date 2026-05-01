@@ -77,6 +77,21 @@ class AcceleratedPipeline:
         self._processed_shas: Set[str] = self._load_state()
         self._baseline_snapshot: Optional[str] = None
         self._previous_commit: Optional[str] = None
+        # Patterns that indicate a commit affects the DB schema/data.
+        # Any file path containing one of these substrings triggers a restore.
+        self._db_patterns: List[str] = list(
+            getattr(config, "db_patterns", None)
+            or [
+                "migration",
+                "fixture",
+                "seed",
+                "schema.sql",
+                ".sql",
+                "conftest",
+                "initial_data",
+                "factories",
+            ]
+        )
     
     def _load_state(self) -> Set[str]:
         """Load processed commit SHAs from state file."""
@@ -258,14 +273,20 @@ class AcceleratedPipeline:
             
             # 2. Restore DB to baseline (INSTANT - no re-seed)
             if self._baseline_snapshot:
-                try:
-                    self._restore_db_fast()
-                except Exception as exc:
-                    result.error = str(exc)
-                    self._emit("ERROR_OCCURRED", stage="db_restore", sha=commit.sha, error=str(exc))
-                    self.log(f"  [red]✗ {exc}[/red]")
-                    result.duration_seconds = time.perf_counter() - t0
-                    return result
+                needs_restore = self._needs_db_restore(
+                    self._previous_commit, commit.sha
+                )
+                if needs_restore:
+                    try:
+                        self._restore_db_fast()
+                    except Exception as exc:
+                        result.error = str(exc)
+                        self._emit("ERROR_OCCURRED", stage="db_restore", sha=commit.sha, error=str(exc))
+                        self.log(f"  [red]✗ {exc}[/red]")
+                        result.duration_seconds = time.perf_counter() - t0
+                        return result
+                else:
+                    self.log("  [dim]DB restore skipped (no schema/data changes)[/dim]")
             
             # 3. Scan endpoints
             result.endpoints = self.scanner.execute(wt_path)
@@ -307,6 +328,26 @@ class AcceleratedPipeline:
         result.duration_seconds = time.perf_counter() - t0
         return result
     
+    def _needs_db_restore(self, from_sha: Optional[str], to_sha: str) -> bool:
+        """
+        Return True when the diff between *from_sha* and *to_sha* touches any
+        file that matches one of `_db_patterns`.  Falls back to True (safe) on
+        any error or when there is no previous commit to compare against.
+        """
+        if from_sha is None:
+            return True  # First commit - always restore
+
+        changed = self.git.diff_names(from_sha, to_sha)
+        if changed is None:
+            return True  # Can't determine diff - safe fallback
+
+        for path in changed:
+            path_lower = path.lower()
+            if any(pat in path_lower for pat in self._db_patterns):
+                self.log(f"  [dim]DB restore required: {path}[/dim]")
+                return True
+        return False
+
     def _restore_db_fast(self):
         """Restore DB from snapshot (ultra-fast)."""
         if not self._baseline_snapshot:
