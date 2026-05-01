@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-05-01
+
+### Docs
+- Update README.md
+- Update examples/09-mvp-protocol/README.md
+
+### Test
+- Update tests/test_accelerator_extra.py
+- Update tests/test_db_snapshot_extra.py
+- Update tests/test_domain_infra.py
+- Update tests/test_git_helpers_extra.py
+- Update tests/test_interfaces_smoke.py
+- Update tests/test_pipeline_extra.py
+- Update tests/test_restore_override.py
+- Update tests/test_smart_screenshot.py
+- Update tests/test_worktree_db.py
+
+### Other
+- Update project/map.toon.yaml
+
 ## [0.1.15] - 2026-05-01
 
 ### Docs

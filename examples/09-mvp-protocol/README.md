@@ -1,6 +1,7 @@
 # MVP (Minimum Viable Protocol) Examples
 
-This directory contains examples of using the Rebuild MVP protocol for programmatic communication with the rebuild system.
+This directory contains examples of using the Rebuild MVP protocol for
+programmatic communication with the rebuild system.
 
 ## Starting the MVP Server
 
