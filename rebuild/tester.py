@@ -18,7 +18,8 @@ from typing import Optional
 
 import httpx
 
-from .models import Endpoint, EndpointResult, EndpointStatus, WalkConfig
+from .domain.models import WalkConfig
+from .domain.endpoint import Endpoint, EndpointResult, EndpointStatus
 
 
 # ──────────────────────────────────────────────

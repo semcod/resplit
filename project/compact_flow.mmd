@@ -1,18 +1,6 @@
 flowchart TD
-    project__map["project.map<br/>64 funcs"]
-    resplit__cli["resplit.cli<br/>8 funcs"]
-    resplit__dashboard["resplit.dashboard<br/>4 funcs"]
-    resplit__deployer["resplit.deployer<br/>9 funcs"]
-    resplit__endpoint_scanner["resplit.endpoint_scanner<br/>6 funcs"]
-    resplit__git_walker["resplit.git_walker<br/>6 funcs"]
-    resplit__reporter["resplit.reporter<br/>6 funcs"]
-    resplit__screenshotter["resplit.screenshotter<br/>5 funcs"]
-    resplit__tester["resplit.tester<br/>6 funcs"]
-    resplit__cli ==>|4| resplit__reporter
-    resplit__cli ==>|4| resplit__deployer
-    resplit__cli -->|3| resplit__git_walker
-    resplit__cli -->|2| project__map
-    resplit__cli -->|1| resplit__endpoint_scanner
-    resplit__cli -->|1| resplit__tester
-    resplit__cli -->|1| resplit__dashboard
-    resplit__cli -->|1| resplit__screenshotter
+    SUMD["SUMD<br/>103 funcs"]
+    SUMR["SUMR<br/>35 funcs"]
+    docs__README["docs.README<br/>1 funcs"]
+    project__map["project.map<br/>102 funcs"]
+    testql_scenarios__generated_from_pytests["testql-scenarios.generated-from-pytests<br/>1 funcs"]

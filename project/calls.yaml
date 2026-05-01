@@ -1,600 +1,70 @@
 project: /home/tom/github/semcod/resplit
 generated_from: code2llm call graph analysis
 stats:
-  total_nodes: 51
-  total_edges: 43
-  modules_count: 10
-nodes:
-  resplit.restorer._is_page_endpoint:
-    name: _is_page_endpoint
-    module: resplit.restorer
-    line: 134
-    cyclomatic_complexity: 2
-    calls_out: 0
-    calls_in: 1
-  project.map.toon.find_last_working_day:
-    name: find_last_working_day
-    module: project.map.toon
-    line: 151
-    cyclomatic_complexity: 0
-    calls_out: 0
-    calls_in: 1
-  resplit.dashboard._extract_avg_cc:
-    name: _extract_avg_cc
-    module: resplit.dashboard
-    line: 45
-    cyclomatic_complexity: 5
-    calls_out: 6
-    calls_in: 1
-  resplit.screenshotter._playwright_shot:
-    name: _playwright_shot
-    module: resplit.screenshotter
-    line: 104
-    cyclomatic_complexity: 1
-    calls_out: 7
-    calls_in: 1
-  resplit.reporter.save_html:
-    name: save_html
-    module: resplit.reporter
-    line: 82
-    cyclomatic_complexity: 9
-    calls_out: 7
-    calls_in: 1
-  resplit.cli.report:
-    name: report
-    module: resplit.cli
-    line: 201
-    cyclomatic_complexity: 13
-    calls_out: 31
-    calls_in: 0
-  resplit.deployer._compose_file:
-    name: _compose_file
-    module: resplit.deployer
-    line: 38
-    cyclomatic_complexity: 4
-    calls_out: 3
-    calls_in: 2
-  resplit.restorer._find_backend_files:
-    name: _find_backend_files
-    module: resplit.restorer
-    line: 110
-    cyclomatic_complexity: 7
-    calls_out: 7
-    calls_in: 1
-  resplit.endpoint_scanner._ports_to_endpoints:
-    name: _ports_to_endpoints
-    module: resplit.endpoint_scanner
-    line: 76
-    cyclomatic_complexity: 5
-    calls_out: 6
-    calls_in: 1
-  resplit.git_walker._run_git:
-    name: _run_git
-    module: resplit.git_walker
-    line: 18
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 4
-  resplit.endpoint_scanner._scan_via_compose_labels:
-    name: _scan_via_compose_labels
-    module: resplit.endpoint_scanner
-    line: 136
-    cyclomatic_complexity: 9
-    calls_out: 14
-    calls_in: 1
-  project.map.toon.extract_endpoint:
-    name: extract_endpoint
-    module: project.map.toon
-    line: 152
-    cyclomatic_complexity: 0
-    calls_out: 0
-    calls_in: 1
-  resplit.tester._testql_available:
-    name: _testql_available
-    module: resplit.tester
-    line: 48
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 1
-  resplit.endpoint_scanner._parse_openapi:
-    name: _parse_openapi
-    module: resplit.endpoint_scanner
-    line: 113
-    cyclomatic_complexity: 4
-    calls_out: 8
-    calls_in: 1
-  resplit.reporter.save_timeline_index:
-    name: save_timeline_index
-    module: resplit.reporter
-    line: 188
-    cyclomatic_complexity: 8
-    calls_out: 8
-    calls_in: 2
-  resplit.tester.run_tests:
-    name: run_tests
-    module: resplit.tester
-    line: 28
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 1
-  resplit.deployer._uvicorn_stop:
-    name: _uvicorn_stop
-    module: resplit.deployer
-    line: 126
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 1
-  resplit.screenshotter.take_screenshot:
-    name: take_screenshot
-    module: resplit.screenshotter
-    line: 43
-    cyclomatic_complexity: 5
-    calls_out: 9
-    calls_in: 1
-  resplit.reporter.save_day:
-    name: save_day
-    module: resplit.reporter
-    line: 178
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 2
-  resplit.git_walker.get_commit_for_day:
-    name: get_commit_for_day
-    module: resplit.git_walker
-    line: 29
-    cyclomatic_complexity: 7
-    calls_out: 8
-    calls_in: 1
-  resplit.git_walker.iter_days:
-    name: iter_days
-    module: resplit.git_walker
-    line: 83
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 1
-  resplit.deployer._uvicorn_start:
-    name: _uvicorn_start
-    module: resplit.deployer
-    line: 114
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 1
-  resplit.endpoint_scanner._scan_via_deta:
-    name: _scan_via_deta
-    module: resplit.endpoint_scanner
-    line: 61
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 1
-  resplit.dashboard.generate_dashboard:
-    name: generate_dashboard
-    module: resplit.dashboard
-    line: 60
-    cyclomatic_complexity: 5
-    calls_out: 9
-    calls_in: 1
-  resplit.restorer.extract_endpoint:
-    name: extract_endpoint
-    module: resplit.restorer
-    line: 57
-    cyclomatic_complexity: 9
-    calls_out: 19
-    calls_in: 0
-  resplit.deployer.start:
-    name: start
-    module: resplit.deployer
-    line: 53
-    cyclomatic_complexity: 5
-    calls_out: 3
-    calls_in: 1
-  resplit.tester._run_http_probe:
-    name: _run_http_probe
-    module: resplit.tester
-    line: 151
-    cyclomatic_complexity: 6
-    calls_out: 12
-    calls_in: 4
-  resplit.dashboard.get_cc_for_day:
-    name: get_cc_for_day
-    module: resplit.dashboard
-    line: 27
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 1
-  resplit.tester._fallback_all_timeout:
-    name: _fallback_all_timeout
-    module: resplit.tester
-    line: 186
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 1
-  resplit.reporter.save_json:
-    name: save_json
-    module: resplit.reporter
-    line: 23
-    cyclomatic_complexity: 6
-    calls_out: 9
-    calls_in: 1
-  resplit.endpoint_scanner._scan_via_openapi:
-    name: _scan_via_openapi
-    module: resplit.endpoint_scanner
-    line: 101
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 1
-  resplit.cli.dashboard:
-    name: dashboard
-    module: resplit.cli
-    line: 275
-    cyclomatic_complexity: 6
-    calls_out: 22
-    calls_in: 0
-  resplit.endpoint_scanner.scan_endpoints:
-    name: scan_endpoints
-    module: resplit.endpoint_scanner
-    line: 27
-    cyclomatic_complexity: 8
-    calls_out: 9
-    calls_in: 1
-  resplit.git_walker.checkout:
-    name: checkout
-    module: resplit.git_walker
-    line: 104
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  resplit.tester._run_via_testql:
-    name: _run_via_testql
-    module: resplit.tester
-    line: 60
-    cyclomatic_complexity: 5
-    calls_out: 9
-    calls_in: 1
-  resplit.deployer._compose_up:
-    name: _compose_up
-    module: resplit.deployer
-    line: 87
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 1
-  resplit.git_walker.restore_head:
-    name: restore_head
-    module: resplit.git_walker
-    line: 109
-    cyclomatic_complexity: 4
-    calls_out: 2
-    calls_in: 1
-  resplit.cli.restore:
-    name: restore
-    module: resplit.cli
-    line: 176
-    cyclomatic_complexity: 2
-    calls_out: 16
-    calls_in: 0
-  resplit.deployer._wait_healthy:
-    name: _wait_healthy
-    module: resplit.deployer
-    line: 141
-    cyclomatic_complexity: 4
-    calls_out: 6
-    calls_in: 2
-  resplit.screenshotter._batch_playwright:
-    name: _batch_playwright
-    module: resplit.screenshotter
-    line: 118
-    cyclomatic_complexity: 5
-    calls_out: 15
-    calls_in: 1
-  resplit.restorer._write_readme:
-    name: _write_readme
-    module: resplit.restorer
-    line: 139
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 1
-  resplit.deployer.stop:
-    name: stop
-    module: resplit.deployer
-    line: 70
-    cyclomatic_complexity: 5
-    calls_out: 2
-    calls_in: 2
-  resplit.dashboard._render_html:
-    name: _render_html
-    module: resplit.dashboard
-    line: 93
-    cyclomatic_complexity: 5
-    calls_out: 4
-    calls_in: 1
-  resplit.screenshotter.screenshot_endpoint:
-    name: screenshot_endpoint
-    module: resplit.screenshotter
-    line: 164
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 1
-  resplit.reporter._status_badge:
-    name: _status_badge
-    module: resplit.reporter
-    line: 63
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  resplit.cli._attach_screenshots:
-    name: _attach_screenshots
-    module: resplit.cli
-    line: 327
-    cyclomatic_complexity: 4
-    calls_out: 2
-    calls_in: 1
-  resplit.reporter._screenshot_html:
-    name: _screenshot_html
-    module: resplit.reporter
-    line: 75
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 1
-  resplit.screenshotter.take_screenshots_batch:
-    name: take_screenshots_batch
-    module: resplit.screenshotter
-    line: 76
-    cyclomatic_complexity: 5
-    calls_out: 5
-    calls_in: 0
-  resplit.deployer._compose_down:
-    name: _compose_down
-    module: resplit.deployer
-    line: 98
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 1
-  resplit.git_walker.days_with_commits:
-    name: days_with_commits
-    module: resplit.git_walker
-    line: 125
-    cyclomatic_complexity: 3
-    calls_out: 1
-    calls_in: 1
-  resplit.tester._parse_testql_results:
-    name: _parse_testql_results
-    module: resplit.tester
-    line: 99
-    cyclomatic_complexity: 6
-    calls_out: 15
-    calls_in: 1
-edges:
-- caller: resplit.git_walker.get_commit_for_day
-  callee: resplit.git_walker._run_git
-  call_type: resolved
-- caller: resplit.git_walker.iter_days
-  callee: resplit.git_walker.get_commit_for_day
-  call_type: resolved
-- caller: resplit.git_walker.checkout
-  callee: resplit.git_walker._run_git
-  call_type: resolved
-- caller: resplit.git_walker.restore_head
-  callee: resplit.git_walker._run_git
-  call_type: resolved
-- caller: resplit.git_walker.days_with_commits
-  callee: resplit.git_walker.iter_days
-  call_type: resolved
-- caller: resplit.reporter.save_html
-  callee: resplit.reporter._screenshot_html
-  call_type: resolved
-- caller: resplit.reporter.save_html
-  callee: resplit.reporter._status_badge
-  call_type: resolved
-- caller: resplit.reporter.save_day
-  callee: resplit.reporter.save_json
-  call_type: resolved
-- caller: resplit.reporter.save_day
-  callee: resplit.reporter.save_html
-  call_type: resolved
-- caller: resplit.deployer.start
-  callee: resplit.deployer._compose_up
-  call_type: resolved
-- caller: resplit.deployer.start
-  callee: resplit.deployer._uvicorn_start
-  call_type: resolved
-- caller: resplit.deployer.stop
-  callee: resplit.deployer._compose_down
-  call_type: resolved
-- caller: resplit.deployer.stop
-  callee: resplit.deployer._uvicorn_stop
-  call_type: resolved
-- caller: resplit.deployer._compose_up
-  callee: resplit.deployer._compose_file
-  call_type: resolved
-- caller: resplit.deployer._compose_up
-  callee: resplit.deployer._wait_healthy
-  call_type: resolved
-- caller: resplit.deployer._compose_down
-  callee: resplit.deployer._compose_file
-  call_type: resolved
-- caller: resplit.deployer._uvicorn_start
-  callee: resplit.deployer._wait_healthy
-  call_type: resolved
-- caller: resplit.endpoint_scanner.scan_endpoints
-  callee: resplit.endpoint_scanner._scan_via_deta
-  call_type: resolved
-- caller: resplit.endpoint_scanner.scan_endpoints
-  callee: resplit.endpoint_scanner._scan_via_openapi
-  call_type: resolved
-- caller: resplit.endpoint_scanner.scan_endpoints
-  callee: resplit.endpoint_scanner._scan_via_compose_labels
-  call_type: resolved
-- caller: resplit.endpoint_scanner._scan_via_deta
-  callee: resplit.endpoint_scanner._ports_to_endpoints
-  call_type: resolved
-- caller: resplit.endpoint_scanner._scan_via_openapi
-  callee: resplit.endpoint_scanner._parse_openapi
-  call_type: resolved
-- caller: resplit.tester.run_tests
-  callee: resplit.tester._run_http_probe
-  call_type: resolved
-- caller: resplit.tester.run_tests
-  callee: resplit.tester._testql_available
-  call_type: resolved
-- caller: resplit.tester.run_tests
-  callee: resplit.tester._run_via_testql
-  call_type: resolved
-- caller: resplit.tester._run_via_testql
-  callee: resplit.tester._parse_testql_results
-  call_type: resolved
-- caller: resplit.tester._run_via_testql
-  callee: resplit.tester._run_http_probe
-  call_type: resolved
-- caller: resplit.tester._run_via_testql
-  callee: resplit.tester._fallback_all_timeout
-  call_type: resolved
-- caller: resplit.tester._parse_testql_results
-  callee: resplit.tester._run_http_probe
-  call_type: resolved
-- caller: resplit.dashboard.get_cc_for_day
-  callee: resplit.dashboard._extract_avg_cc
-  call_type: resolved
-- caller: resplit.dashboard.generate_dashboard
-  callee: resplit.dashboard._render_html
-  call_type: resolved
-- caller: resplit.dashboard.generate_dashboard
-  callee: resplit.dashboard.get_cc_for_day
-  call_type: resolved
-- caller: resplit.restorer.extract_endpoint
-  callee: resplit.restorer._find_backend_files
-  call_type: resolved
-- caller: resplit.restorer.extract_endpoint
-  callee: resplit.restorer._write_readme
-  call_type: resolved
-- caller: resplit.restorer.extract_endpoint
-  callee: resplit.restorer._is_page_endpoint
-  call_type: resolved
-- caller: resplit.cli.restore
-  callee: project.map.toon.find_last_working_day
-  call_type: resolved
-- caller: resplit.cli.restore
-  callee: project.map.toon.extract_endpoint
-  call_type: resolved
-- caller: resplit.cli.report
-  callee: resplit.reporter.save_timeline_index
-  call_type: resolved
-- caller: resplit.cli.dashboard
-  callee: resplit.dashboard.generate_dashboard
-  call_type: resolved
-- caller: resplit.cli._attach_screenshots
-  callee: resplit.screenshotter.screenshot_endpoint
-  call_type: resolved
-- caller: resplit.screenshotter.take_screenshot
-  callee: resplit.screenshotter._playwright_shot
-  call_type: resolved
-- caller: resplit.screenshotter.take_screenshots_batch
-  callee: resplit.screenshotter._batch_playwright
-  call_type: resolved
-- caller: resplit.screenshotter.screenshot_endpoint
-  callee: resplit.screenshotter.take_screenshot
-  call_type: resolved
-modules:
-  project.map.toon:
-  - project.map.toon.extract_endpoint
-  - project.map.toon.find_last_working_day
-  resplit.cli:
-  - resplit.cli._attach_screenshots
-  - resplit.cli.dashboard
-  - resplit.cli.report
-  - resplit.cli.restore
-  resplit.dashboard:
-  - resplit.dashboard._extract_avg_cc
-  - resplit.dashboard._render_html
-  - resplit.dashboard.generate_dashboard
-  - resplit.dashboard.get_cc_for_day
-  resplit.deployer:
-  - resplit.deployer._compose_down
-  - resplit.deployer._compose_file
-  - resplit.deployer._compose_up
-  - resplit.deployer._uvicorn_start
-  - resplit.deployer._uvicorn_stop
-  - resplit.deployer._wait_healthy
-  - resplit.deployer.start
-  - resplit.deployer.stop
-  resplit.endpoint_scanner:
-  - resplit.endpoint_scanner._parse_openapi
-  - resplit.endpoint_scanner._ports_to_endpoints
-  - resplit.endpoint_scanner._scan_via_compose_labels
-  - resplit.endpoint_scanner._scan_via_deta
-  - resplit.endpoint_scanner._scan_via_openapi
-  - resplit.endpoint_scanner.scan_endpoints
-  resplit.git_walker:
-  - resplit.git_walker._run_git
-  - resplit.git_walker.checkout
-  - resplit.git_walker.days_with_commits
-  - resplit.git_walker.get_commit_for_day
-  - resplit.git_walker.iter_days
-  - resplit.git_walker.restore_head
-  resplit.reporter:
-  - resplit.reporter._screenshot_html
-  - resplit.reporter._status_badge
-  - resplit.reporter.save_day
-  - resplit.reporter.save_html
-  - resplit.reporter.save_json
-  - resplit.reporter.save_timeline_index
-  resplit.restorer:
-  - resplit.restorer._find_backend_files
-  - resplit.restorer._is_page_endpoint
-  - resplit.restorer._write_readme
-  - resplit.restorer.extract_endpoint
-  resplit.screenshotter:
-  - resplit.screenshotter._batch_playwright
-  - resplit.screenshotter._playwright_shot
-  - resplit.screenshotter.screenshot_endpoint
-  - resplit.screenshotter.take_screenshot
-  - resplit.screenshotter.take_screenshots_batch
-  resplit.tester:
-  - resplit.tester._fallback_all_timeout
-  - resplit.tester._parse_testql_results
-  - resplit.tester._run_http_probe
-  - resplit.tester._run_via_testql
-  - resplit.tester._testql_available
-  - resplit.tester.run_tests
+  total_nodes: 0
+  total_edges: 0
+  modules_count: 0
+nodes: {}
+edges: []
+modules: {}
 entry_points:
+- SUMD._attach_screenshots
+- SUMD._batch_playwright
 - SUMD._compose_down
 - SUMD._compose_file
 - SUMD._compose_up
+- SUMD._ep
+- SUMD._extract_avg_cc
+- SUMD._fallback_all_timeout
 - SUMD._find_backend_files
 - SUMD._is_page_endpoint
 - SUMD._make_result
+- SUMD._make_results_dir
 - SUMD._parse_openapi
+- SUMD._parse_testql_results
+- SUMD._playwright_shot
 - SUMD._ports_to_endpoints
 - SUMD._print_day_summary
 - SUMD._print_summary_table
-- SUMD._probe_endpoints
+- SUMD._render_html
 - SUMD._run_git
+- SUMD._run_http_probe
+- SUMD._run_via_testql
 - SUMD._scan_via_compose_labels
 - SUMD._scan_via_deta
 - SUMD._scan_via_openapi
 - SUMD._screenshot_html
 - SUMD._status_badge
-- SUMD._take_screenshot
+- SUMD._testql_available
 - SUMD._uvicorn_start
 - SUMD._uvicorn_stop
 - SUMD._wait_healthy
 - SUMD._write_readme
 - SUMD.all
 - SUMD.checkout
+- SUMD.dashboard
 - SUMD.days_with_commits
 - SUMD.detect_deploy_method
 - SUMD.extract_endpoint
 - SUMD.find_last_working_day
+- SUMD.generate_dashboard
+- SUMD.get_cc_for_day
 - SUMD.get_commit_for_day
 - SUMD.iter_days
 - SUMD.report
 - SUMD.restore
 - SUMD.restore_head
+- SUMD.run_tests
 - SUMD.save_day
 - SUMD.save_html
 - SUMD.save_json
 - SUMD.save_timeline_index
 - SUMD.scan_endpoints
+- SUMD.screenshot_endpoint
 - SUMD.start
 - SUMD.stop
+- SUMD.take_screenshot
+- SUMD.take_screenshots_batch
 - SUMD.test_day_result_health_pct
 - SUMD.test_day_result_health_pct_empty
 - SUMD.test_days_with_commits_filters_none
@@ -606,20 +76,42 @@ entry_points:
 - SUMD.test_endpoint_slug
 - SUMD.test_endpoint_url
 - SUMD.test_endpoint_url_strips_trailing_slash
+- SUMD.test_fallback_all_timeout
+- SUMD.test_find_backend_files
+- SUMD.test_find_last_working_day_found
+- SUMD.test_find_last_working_day_not_found
 - SUMD.test_get_commit_for_day_git_error
 - SUMD.test_get_commit_for_day_no_output
 - SUMD.test_get_commit_for_day_parses_output
+- SUMD.test_is_page_endpoint
 - SUMD.test_parse_openapi
+- SUMD.test_parse_testql_results_fail
+- SUMD.test_parse_testql_results_missing_endpoint
+- SUMD.test_parse_testql_results_ok
 - SUMD.test_ports_to_endpoints
+- SUMD.test_run_http_probe_ok
+- SUMD.test_run_http_probe_skip_non_get
+- SUMD.test_run_http_probe_timeout
+- SUMD.test_run_tests_uses_http_probe_when_no_testql_dir
 - SUMD.test_save_html_creates_report
 - SUMD.test_save_json_creates_files
 - SUMD.test_save_json_results_content
 - SUMD.test_save_timeline_index
 - SUMD.test_scan_endpoints_minimal_fallback
 - SUMD.test_scan_via_compose_labels
+- SUMD.test_screenshot_endpoint_returns_none_on_failure
+- SUMD.test_screenshot_endpoint_returns_path_on_success
+- SUMD.test_take_screenshot_all_retries_fail
+- SUMD.test_take_screenshot_playwright_not_installed
+- SUMD.test_take_screenshot_retry_then_succeed
+- SUMD.test_take_screenshot_success
+- SUMD.test_take_screenshots_batch_playwright_missing
+- SUMD.test_testql_available_missing
+- SUMD.test_testql_available_ok
 - SUMD.test_walk_config_defaults
 - SUMD.version
 - SUMD.walk
+- SUMR._attach_screenshots
 - SUMR._compose_down
 - SUMR._compose_file
 - SUMR._compose_up
@@ -627,18 +119,17 @@ entry_points:
 - SUMR._ports_to_endpoints
 - SUMR._print_day_summary
 - SUMR._print_summary_table
-- SUMR._probe_endpoints
 - SUMR._run_git
 - SUMR._scan_via_compose_labels
 - SUMR._scan_via_deta
 - SUMR._scan_via_openapi
 - SUMR._screenshot_html
 - SUMR._status_badge
-- SUMR._take_screenshot
 - SUMR._uvicorn_start
 - SUMR._uvicorn_stop
 - SUMR._wait_healthy
 - SUMR.checkout
+- SUMR.dashboard
 - SUMR.days_with_commits
 - SUMR.detect_deploy_method
 - SUMR.get_commit_for_day
@@ -656,43 +147,62 @@ entry_points:
 - SUMR.version
 - SUMR.walk
 - docs.README.generate_readme
+- project.map.toon._attach_screenshots
+- project.map.toon._batch_playwright
 - project.map.toon._compose_down
 - project.map.toon._compose_file
 - project.map.toon._compose_up
+- project.map.toon._ep
+- project.map.toon._extract_avg_cc
+- project.map.toon._fallback_all_timeout
 - project.map.toon._find_backend_files
 - project.map.toon._is_page_endpoint
 - project.map.toon._make_result
+- project.map.toon._make_results_dir
 - project.map.toon._parse_openapi
+- project.map.toon._parse_testql_results
+- project.map.toon._playwright_shot
 - project.map.toon._ports_to_endpoints
 - project.map.toon._print_day_summary
 - project.map.toon._print_summary_table
-- project.map.toon._probe_endpoints
+- project.map.toon._render_html
 - project.map.toon._run_git
+- project.map.toon._run_http_probe
+- project.map.toon._run_via_testql
 - project.map.toon._scan_via_compose_labels
 - project.map.toon._scan_via_deta
 - project.map.toon._scan_via_openapi
 - project.map.toon._screenshot_html
 - project.map.toon._status_badge
-- project.map.toon._take_screenshot
+- project.map.toon._testql_available
 - project.map.toon._uvicorn_start
 - project.map.toon._uvicorn_stop
 - project.map.toon._wait_healthy
 - project.map.toon._write_readme
 - project.map.toon.checkout
+- project.map.toon.dashboard
 - project.map.toon.days_with_commits
 - project.map.toon.detect_deploy_method
+- project.map.toon.extract_endpoint
+- project.map.toon.find_last_working_day
+- project.map.toon.generate_dashboard
+- project.map.toon.get_cc_for_day
 - project.map.toon.get_commit_for_day
 - project.map.toon.iter_days
 - project.map.toon.report
 - project.map.toon.restore
 - project.map.toon.restore_head
+- project.map.toon.run_tests
 - project.map.toon.save_day
 - project.map.toon.save_html
 - project.map.toon.save_json
 - project.map.toon.save_timeline_index
 - project.map.toon.scan_endpoints
+- project.map.toon.screenshot_endpoint
 - project.map.toon.start
 - project.map.toon.stop
+- project.map.toon.take_screenshot
+- project.map.toon.take_screenshots_batch
 - project.map.toon.test_day_result_health_pct
 - project.map.toon.test_day_result_health_pct_empty
 - project.map.toon.test_days_with_commits_filters_none
@@ -704,26 +214,39 @@ entry_points:
 - project.map.toon.test_endpoint_slug
 - project.map.toon.test_endpoint_url
 - project.map.toon.test_endpoint_url_strips_trailing_slash
+- project.map.toon.test_fallback_all_timeout
+- project.map.toon.test_find_backend_files
+- project.map.toon.test_find_last_working_day_found
+- project.map.toon.test_find_last_working_day_not_found
 - project.map.toon.test_get_commit_for_day_git_error
 - project.map.toon.test_get_commit_for_day_no_output
 - project.map.toon.test_get_commit_for_day_parses_output
+- project.map.toon.test_is_page_endpoint
 - project.map.toon.test_parse_openapi
+- project.map.toon.test_parse_testql_results_fail
+- project.map.toon.test_parse_testql_results_missing_endpoint
+- project.map.toon.test_parse_testql_results_ok
 - project.map.toon.test_ports_to_endpoints
+- project.map.toon.test_run_http_probe_ok
+- project.map.toon.test_run_http_probe_skip_non_get
+- project.map.toon.test_run_http_probe_timeout
+- project.map.toon.test_run_tests_uses_http_probe_when_no_testql_dir
 - project.map.toon.test_save_html_creates_report
 - project.map.toon.test_save_json_creates_files
 - project.map.toon.test_save_json_results_content
 - project.map.toon.test_save_timeline_index
 - project.map.toon.test_scan_endpoints_minimal_fallback
 - project.map.toon.test_scan_via_compose_labels
+- project.map.toon.test_screenshot_endpoint_returns_none_on_failure
+- project.map.toon.test_screenshot_endpoint_returns_path_on_success
+- project.map.toon.test_take_screenshot_all_retries_fail
+- project.map.toon.test_take_screenshot_playwright_not_installed
+- project.map.toon.test_take_screenshot_retry_then_succeed
+- project.map.toon.test_take_screenshot_success
+- project.map.toon.test_take_screenshots_batch_playwright_missing
+- project.map.toon.test_testql_available_missing
+- project.map.toon.test_testql_available_ok
 - project.map.toon.test_walk_config_defaults
 - project.map.toon.version
 - project.map.toon.walk
-- resplit.cli.dashboard
-- resplit.cli.report
-- resplit.cli.restore
-- resplit.cli.version
-- resplit.cli.walk
-- resplit.restorer.extract_endpoint
-- resplit.restorer.find_last_working_day
-- resplit.screenshotter.take_screenshots_batch
 - testql-scenarios.generated-from-pytests.testql.toon.all

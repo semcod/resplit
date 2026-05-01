@@ -12,7 +12,8 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Iterator, Optional
 
-from .models import CommitInfo, WalkConfig
+from .domain.models import WalkConfig
+from .domain.commit import CommitInfo
 
 
 def _run_git(args: list[str], cwd: Path) -> str:

@@ -1,77 +1,57 @@
-# code2llm | 34f 6604L | python:11,yaml:10,md:7,shell:4,txt:1,toml:1 | 2026-05-01
-# CC̄=1.2 | critical:1/221 | dups:0 | cycles:0
+# code2llm | 32f 5265L | md:11,yaml:10,shell:8,txt:1,toml:1,yml:1 | 2026-05-01
+# CC̄=0.0 | critical:0/242 | dups:0 | cycles:0
 
-HEALTH[1]:
-  🟡 CC    walk CC=15 (limit:15)
+HEALTH[0]: ok
 
-REFACTOR[1]:
-  1. split 1 high-CC methods  (CC>15)
+REFACTOR[0]: none needed
 
-PIPELINES[8]:
-  [1] Src [find_last_working_day]: find_last_working_day
-      PURITY: 100% pure
-  [2] Src [extract_endpoint]: extract_endpoint → _find_backend_files
-      PURITY: 100% pure
-  [3] Src [walk]: walk → days_with_commits → iter_days → get_commit_for_day → ...(1 more)
-      PURITY: 100% pure
-  [4] Src [restore]: restore → find_last_working_day
-      PURITY: 100% pure
-  [5] Src [report]: report → save_timeline_index
-      PURITY: 100% pure
+PIPELINES[0]: none detected
 
 LAYERS:
-  resplit/                        CC̄=4.6    ←in:0  →out:2
-  │ !! cli                        365L  0C    8m  CC=15     ←0
-  │ reporter                   235L  0C    6m  CC=9      ←1
-  │ dashboard                  188L  0C    4m  CC=5      ←1
-  │ tester                     187L  0C    6m  CC=6      ←1
-  │ restorer                   187L  0C    5m  CC=9      ←0
-  │ screenshotter              171L  2C    5m  CC=5      ←1
-  │ endpoint_scanner           164L  0C    6m  CC=9      ←1
-  │ deployer                   154L  0C    9m  CC=5      ←1
-  │ git_walker                 131L  0C    6m  CC=7      ←1
-  │ models                     109L  7C    0m  CC=0.0    ←0
-  │ __init__                    10L  0C    0m  CC=0.0    ←0
-  │
-  docs/                           CC̄=0.0    ←in:0  →out:0
-  │ README.md                  247L  0C    1m  CC=0.0    ←0
-  │
   testql-scenarios/               CC̄=0.0    ←in:0  →out:0
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←0
   │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
   │
-  project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! calls.yaml                 759L  0C    0m  CC=0.0    ←0
-  │ context.md                 381L  0C    0m  CC=0.0    ←0
-  │ README.md                  339L  0C    0m  CC=0.0    ←0
-  │ duplication.toon.yaml      313L  0C    0m  CC=0.0    ←0
-  │ map.toon.yaml              190L  0C   64m  CC=0.0    ←1
-  │ calls.toon.yaml            179L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml          64L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           52L  0C    0m  CC=0.0    ←0
-  │ prompt.txt                  49L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         39L  0C    0m  CC=0.0    ←0
-  │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMR.md                    999L  0C   35m  CC=0.0    ←0
-  │ !! SUMD.md                    676L  0C   65m  CC=0.0    ←0
+  │ !! SUMR.md                    664L  0C   35m  CC=0.0    ←0
+  │ !! SUMD.md                    645L  0C  103m  CC=0.0    ←0
+  │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
+  │ README.md                  270L  0C    0m  CC=0.0    ←0
   │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml              65L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md               115L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             100L  0C    0m  CC=0.0    ←0
   │ project.sh                  41L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
-  │ README.md                    1L  0C    0m  CC=0.0    ←0
+  │
+  docs/                           CC̄=0.0    ←in:0  →out:0
+  │ README.md                  344L  0C    1m  CC=0.0    ←0
+  │
+  project/                        CC̄=0.0    ←in:0  →out:0
+  │ !! calls.yaml                 729L  0C    0m  CC=0.0    ←0
+  │ context.md                 380L  0C    0m  CC=0.0    ←0
+  │ README.md                  339L  0C    0m  CC=0.0    ←0
+  │ map.toon.yaml              182L  0C  102m  CC=0.0    ←0
+  │ calls.toon.yaml            153L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml          78L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           52L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         43L  0C    0m  CC=0.0    ←0
+  │ duplication.toon.yaml        9L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=0.0    ←in:0  →out:0
-  │ resplit.yaml                24L  0C    0m  CC=0.0    ←0
+  │ README.md                   61L  0C    0m  CC=0.0    ←0
+  │ README.md                   54L  0C    0m  CC=0.0    ←0
+  │ mock_results.sh             37L  0C    0m  CC=0.0    ←0
+  │ README.md                   36L  0C    0m  CC=0.0    ←0
+  │ run.sh                      30L  0C    0m  CC=0.0    ←0
+  │ run.sh                      25L  0C    0m  CC=0.0    ←0
+  │ run.sh                      18L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          15L  0C    0m  CC=0.0    ←0
   │ walk_dry_run.sh             13L  0C    0m  CC=0.0    ←0
   │ restore_endpoint.sh         13L  0C    0m  CC=0.0    ←0
   │
 
-COUPLING:
-               project.map      resplit
-  project.map           ──           ←2
-      resplit            2           ──
-  CYCLES: none
+COUPLING: no cross-package imports detected
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
