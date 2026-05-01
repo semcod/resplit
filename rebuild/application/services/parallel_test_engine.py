@@ -117,6 +117,7 @@ class ParallelTestEngine:
         self.health_first = health_first
         self.dependency_graph = EndpointDependencyGraph()
         self.day_dir: Optional[Path] = None
+        self._auth_token: Optional[str] = None
         self._setup_default_dependencies()
     
     def set_day_dir(self, day_dir: Path):
@@ -143,6 +144,7 @@ class ParallelTestEngine:
         """
         Execute all endpoint tests with parallelization.
         """
+        await self._login_if_configured()
         if not endpoints:
             return []
         
@@ -204,6 +206,25 @@ class ParallelTestEngine:
         """Check if endpoint is a health check."""
         path_lower = ep.path.lower()
         return any(h in path_lower for h in ['/health', '/ping', '/ready', '/alive', '/status'])
+
+    async def _login_if_configured(self) -> None:
+        """Perform login to obtain Bearer token if configured."""
+        if not self.config.login_url or not self.config.login_payload:
+            return
+        if self._auth_token:
+            return  # Already logged in
+
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                resp = await client.post(self.config.login_url, json=self.config.login_payload)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    # Try common token field names
+                    token = data.get("access_token") or data.get("token") or data.get("auth_token")
+                    if token:
+                        self._auth_token = token
+        except Exception:
+            pass  # Login failed, continue without token
     
     async def _run_batch(
         self,
