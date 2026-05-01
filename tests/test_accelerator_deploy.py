@@ -226,3 +226,39 @@ def test_get_container_name_caches_compose_ps_fallback_result(tmp_path):
     assert first == "1234567890ab"
     assert second == "1234567890ab"
     assert svc.shell.run.call_count == 4
+
+
+def test_trigger_reload_caches_signal_strategy_after_first_success(tmp_path):
+    worktrees = MagicMock()
+    worktrees.get_active_path.return_value = tmp_path
+
+    svc = AcceleratorDeployService(_config(tmp_path), worktrees)
+    svc._current_sha = "deadbeefcafebabe"
+    svc._get_container_name = MagicMock(return_value="backend")
+    svc._send_hup_signal = MagicMock(return_value=SimpleNamespace(returncode=0))
+    svc._send_exec_hup = MagicMock(return_value=SimpleNamespace(returncode=0))
+
+    svc._trigger_reload("backend")
+    svc._trigger_reload("backend")
+
+    assert svc._reload_strategy_cache["backend"] == "signal"
+    assert svc._send_hup_signal.call_count == 2
+    svc._send_exec_hup.assert_not_called()
+
+
+def test_trigger_reload_caches_exec_strategy_after_signal_failure(tmp_path):
+    worktrees = MagicMock()
+    worktrees.get_active_path.return_value = tmp_path
+
+    svc = AcceleratorDeployService(_config(tmp_path), worktrees)
+    svc._current_sha = "feedface12345678"
+    svc._get_container_name = MagicMock(return_value="backend")
+    svc._send_hup_signal = MagicMock(return_value=SimpleNamespace(returncode=1))
+    svc._send_exec_hup = MagicMock(return_value=SimpleNamespace(returncode=0))
+
+    svc._trigger_reload("backend")
+    svc._trigger_reload("backend")
+
+    assert svc._reload_strategy_cache["backend"] == "exec"
+    svc._send_hup_signal.assert_called_once_with("backend")
+    assert svc._send_exec_hup.call_count == 2

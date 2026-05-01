@@ -16,23 +16,44 @@ class TestService(Service[List[Endpoint], List[EndpointResult]]):
         self.config = config
         self.http = http or HttpAdapter()
         self.day_dir: Optional[Path] = None
+        self._auth_token: Optional[str] = None
 
     def set_day_dir(self, day_dir: Path):
         self.day_dir = day_dir
 
     def execute(self, endpoints: List[Endpoint]) -> List[EndpointResult]:
+        self._login_if_configured()
         results = []
         for ep in endpoints:
             result = self._test_endpoint(ep)
             results.append(result)
         return results
 
+    def _login_if_configured(self) -> None:
+        if not self.config.login_url or not self.config.login_payload:
+            return
+        if self._auth_token:
+            return  # Already logged in
+
+        try:
+            resp = self.http.post(self.config.login_url, json=self.config.login_payload)
+            if resp.status_code == 200:
+                data = resp.json()
+                # Try common token field names
+                token = data.get("access_token") or data.get("token") or data.get("auth_token")
+                if token:
+                    self._auth_token = token
+        except Exception:
+            pass  # Login failed, continue without token
+
     def _test_endpoint(self, ep: Endpoint) -> EndpointResult:
         if self.config.dry_run:
             return EndpointResult(endpoint=ep, status=EndpointStatus.SKIP)
 
         try:
-            headers = self.config.auth
+            headers = dict(self.config.auth) if self.config.auth else {}
+            if self._auth_token:
+                headers["Authorization"] = f"Bearer {self._auth_token}"
             method = (ep.method or "GET").upper()
             body = ep.body if isinstance(ep.body, dict) else None
 
