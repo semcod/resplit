@@ -83,6 +83,16 @@ class ConfigLoader:
         elif "auth" in project:
             config.auth.update(project["auth"])
 
+        # Login for token propagation
+        if "login_url" in yaml_data:
+            config.login_url = yaml_data["login_url"]
+        elif "login_url" in project:
+            config.login_url = project["login_url"]
+        if "login_payload" in yaml_data and isinstance(yaml_data["login_payload"], dict):
+            config.login_payload = yaml_data["login_payload"]
+        elif "login_payload" in project and isinstance(project["login_payload"], dict):
+            config.login_payload = project["login_payload"]
+
         # Per-endpoint request bodies
         if "test_bodies" in yaml_data and isinstance(yaml_data["test_bodies"], dict):
             config.test_bodies.update(yaml_data["test_bodies"])

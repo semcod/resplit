@@ -33,6 +33,8 @@ class WalkConfig:
     test_fixtures: Dict[str, str] = field(default_factory=dict)
     auth: Dict[str, str] = field(default_factory=dict)
     test_bodies: Dict[str, Dict] = field(default_factory=dict)
+    login_url: Optional[str] = None  # URL to perform login and obtain token
+    login_payload: Optional[Dict[str, str]] = None  # POST payload for login request
     
     # Phase 12: Replay Engine
     replay: bool = False
