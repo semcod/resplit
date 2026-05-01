@@ -117,10 +117,14 @@ def walk(
         patch_dir=patch_dir
     )
 
-    # Merge with rebuild.yaml if exists
-    yaml_data = ConfigLoader.load(repo / "rebuild.yaml")
-    if yaml_data:
-        ConfigLoader.apply_to_config(config, yaml_data)
+    # Merge with rebuild.yaml only when present (walk never auto-runs init)
+    config_path = repo / "rebuild.yaml"
+    if config_path.exists():
+        yaml_data = ConfigLoader.load(config_path)
+        if yaml_data:
+            ConfigLoader.apply_to_config(config, yaml_data)
+    else:
+        console.print("  [dim]Brak rebuild.yaml — używam tylko opcji CLI (bez auto-init).[/dim]")
 
     console.print(f"\n[bold]rebuild walk[/bold] v{__version__}")
     console.print(f"  repo:   {repo}")
