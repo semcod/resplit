@@ -1,0 +1,8 @@
+type: rebuild_report
+day: 2026-04-30
+health: 0.0%
+stats: 0/1
+deploy: success
+mode: dry-run
+---
+GET /api/health [skip] 
