@@ -34,7 +34,9 @@ def test_switch_commit_syncs_code_when_live_bind_swap_is_disabled(tmp_path):
 
     assert result is True
     svc._update_bind_mount.assert_not_called()
-    svc._sync_code_to_container.assert_called_once_with("backend", worktree_path)
+    svc._sync_code_to_container.assert_called_once_with(
+        "backend", worktree_path, sha="deadbeefcafebabe", repo=tmp_path
+    )
     svc._trigger_reload.assert_called_once_with("backend")
     svc.wait_healthy.assert_called_once_with(timeout=5.0, interval=1.0)
     svc._verify_runtime_commit.assert_called_once_with("backend", "deadbeefcafebabe")
@@ -244,6 +246,52 @@ def test_trigger_reload_caches_signal_strategy_after_first_success(tmp_path):
     assert svc._reload_strategy_cache["backend"] == "signal"
     assert svc._send_hup_signal.call_count == 2
     svc._send_exec_hup.assert_not_called()
+
+
+def test_sync_code_incremental_when_diff_is_small(tmp_path):
+    worktrees = MagicMock()
+    svc = AcceleratorDeployService(_config(tmp_path), worktrees)
+    svc._current_sha = "prevsha0011223344"
+    svc._get_container_name = MagicMock(return_value="mycontainer")
+    svc._get_changed_files = MagicMock(return_value=["app.py", "utils/helpers.py"])
+    svc._copy_changed_files = MagicMock(return_value=True)
+    svc.shell.run = MagicMock()
+
+    code_path = tmp_path / "wt_new"
+    result = svc._sync_code_to_container(
+        "backend", code_path, sha="newsha0011223344", repo=tmp_path
+    )
+
+    assert result is True
+    svc._get_changed_files.assert_called_once_with(tmp_path, "prevsha0011223344", "newsha0011223344")
+    svc._copy_changed_files.assert_called_once_with("mycontainer", code_path, ["app.py", "utils/helpers.py"])
+    svc.shell.run.assert_not_called()  # full docker cp must NOT be invoked
+
+
+def test_sync_code_falls_back_to_full_copy_when_diff_exceeds_threshold(tmp_path):
+    from types import SimpleNamespace
+
+    worktrees = MagicMock()
+    svc = AcceleratorDeployService(_config(tmp_path), worktrees)
+    svc._current_sha = "prevsha0011223344"
+    svc._get_container_name = MagicMock(return_value="mycontainer")
+    svc._get_changed_files = MagicMock(
+        return_value=[f"file_{i}.py" for i in range(svc._INCREMENTAL_FILE_THRESHOLD + 1)]
+    )
+    svc._copy_changed_files = MagicMock(return_value=True)
+    svc.shell.run = MagicMock(
+        return_value=SimpleNamespace(returncode=0, stdout="", stderr="")
+    )
+
+    code_path = tmp_path / "wt_new"
+    result = svc._sync_code_to_container(
+        "backend", code_path, sha="newsha0011223344", repo=tmp_path
+    )
+
+    assert result is True
+    svc._copy_changed_files.assert_not_called()
+    cp_calls = [c.args[0] for c in svc.shell.run.call_args_list]
+    assert any(c[0] == "docker" and c[1] == "cp" for c in cp_calls)
 
 
 def test_trigger_reload_caches_exec_strategy_after_signal_failure(tmp_path):

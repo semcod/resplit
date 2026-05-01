@@ -129,36 +129,83 @@ def _render_html(
 <html lang="pl">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>rebuild — dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
-  body {{ font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f8fafc; color: #1e293b; }}
-  nav {{ background: #1e293b; color: #fff; padding: 10px 24px; display: flex; gap: 20px; align-items: center; font-size: 0.9rem; }}
-  nav a {{ color: #94a3b8; text-decoration: none; }}
-  nav a:hover {{ color: #fff; }}
-  nav .active {{ color: #fff; font-weight: 600; }}
-  .content {{ padding: 24px; }}
-  h1 {{ font-size: 1.6rem; margin-bottom: 4px; }}
-  .meta {{ color: #64748b; font-size: 0.9rem; margin-bottom: 24px; }}
-  .chart-wrap {{ background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.07); max-width: 1100px; }}
-  .hint {{ color: #94a3b8; font-size: 0.8rem; margin-top: 8px; }}
+  :root {{
+    --bg: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --border: rgba(255, 255, 255, 0.1);
+    --text: #f8fafc;
+    --text-dim: #94a3b8;
+    --primary: #6366f1;
+    --success: #10b981;
+    --fail: #ef4444;
+  }}
+  body {{ 
+    font-family: 'Outfit', sans-serif; 
+    margin: 0; 
+    background: var(--bg); 
+    background-image: radial-gradient(circle at 0% 100%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+    color: var(--text); 
+    min-height: 100vh;
+  }}
+  nav {{ 
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+    padding: 16px 32px; 
+    display: flex; 
+    align-items: center; 
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }}
+  .brand {{ font-weight: 800; font-size: 1.4rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }}
+  .brand-dot {{ width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 12px var(--primary); }}
+  
+  nav a {{ color: var(--text-dim); text-decoration: none; font-size: 0.9rem; margin-left: 24px; font-weight: 600; }}
+  nav a:hover {{ color: var(--text); }}
+  
+  .content {{ padding: 32px; max-width: 1200px; margin: 0 auto; }}
+  h1 {{ font-size: 2.2rem; font-weight: 800; margin: 0 0 8px 0; letter-spacing: -0.02em; }}
+  .meta {{ color: var(--text-dim); font-size: 0.95rem; margin-bottom: 32px; }}
+  
+  .chart-container {{ 
+    background: var(--card-bg); 
+    border-radius: 32px; 
+    border: 1px solid var(--border); 
+    padding: 32px; 
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  }}
+  .hint {{ color: var(--text-dim); font-size: 0.85rem; margin-top: 16px; text-align: center; }}
 </style>
 </head>
 <body>
 <nav>
-  <span style="color:#6366f1;font-weight:700">rebuild</span>
-  <a href="index.html">&#9776; Timeline</a>
-  <span class="active">&#9650; Dashboard</span>
+  <div class="brand"><div class="brand-dot"></div> REBUILD</div>
+  <a href="index.html">Timeline</a>
+  <a href="#" style="color:var(--text)">Dashboard</a>
 </nav>
+
 <div class="content">
-<h1>📊 rebuild — dashboard</h1>
-<div class="meta">{total_days} dni &nbsp;·&nbsp; health% (lewa oś){"&nbsp;·&nbsp; Avg CC (prawa oś)" if has_cc else ""}</div>
-<div class="chart-wrap">
-  <canvas id="chart" height="80" style="cursor:pointer"></canvas>
-  <div class="hint">Kliknij punkt na wykresie → otworzy raport dnia</div>
+  <h1>Performance Analytics</h1>
+  <div class="meta">{total_days} days analyzed &nbsp;·&nbsp; Health score & Complexity trend</div>
+  
+  <div class="chart-container">
+    <canvas id="chart" height="100"></canvas>
+    <div class="hint">💡 Pro-tip: Click on a data point to jump to that day's detailed report</div>
+  </div>
 </div>
+
 <script>
 const ctx = document.getElementById('chart');
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.font.family = "'Outfit', sans-serif";
+
 new Chart(ctx, {{
   type: 'line',
   data: {{
@@ -170,8 +217,10 @@ new Chart(ctx, {{
         borderColor: '#6366f1',
         backgroundColor: 'rgba(99,102,241,0.1)',
         yAxisID: 'y',
-        tension: 0.3,
-        pointRadius: 4,
+        tension: 0.4,
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        pointBackgroundColor: '#6366f1',
         fill: true,
       }},{cc_dataset}
     ]
@@ -184,20 +233,26 @@ new Chart(ctx, {{
         type: 'linear',
         display: true,
         position: 'left',
-        min: 0, max: 100,
+        min: 0, max: 105,
+        grid: {{ color: 'rgba(255,255,255,0.05)' }},
         title: {{ display: true, text: 'Health %' }},
       }},{cc_axis}
     }},
     plugins: {{
-      legend: {{ position: 'top' }},
-      tooltip: {{ callbacks: {{
-        label: ctx => ctx.dataset.label + ': ' + (ctx.parsed.y ?? '—')
-      }} }}
+      legend: {{ position: 'top', align: 'end' }},
+      tooltip: {{ 
+        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+        padding: 12,
+        titleFont: {{ size: 14, weight: 'bold' }},
+        bodyFont: {{ size: 13 }},
+        cornerRadius: 8,
+      }}
     }}
   }}
 }});
-const chart = Chart.getChart('chart');
-document.getElementById('chart').addEventListener('click', function(e) {{
+
+ctx.addEventListener('click', function(e) {{
+  const chart = Chart.getChart(ctx);
   const points = chart.getElementsAtEventForMode(e, 'nearest', {{ intersect: true }}, true);
   if (points.length) {{
     const day = {days_js}[points[0].index];
@@ -205,6 +260,5 @@ document.getElementById('chart').addEventListener('click', function(e) {{
   }}
 }});
 </script>
-</div>
 </body>
 </html>"""

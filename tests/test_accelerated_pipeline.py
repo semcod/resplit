@@ -99,3 +99,31 @@ def test_run_day_fast_uses_full_health_gate_after_db_restore(tmp_path):
 
     assert result.error is None
     mock_health.assert_called_once_with()
+
+
+def test_prewarm_worktrees_calls_get_or_create_for_every_sha(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+
+    created = []
+
+    def _fake_get_or_create(sha):
+        created.append(sha)
+
+    with patch.object(pipeline.worktrees, "get_or_create", side_effect=_fake_get_or_create):
+        pipeline._prewarm_worktrees(["aaa111", "bbb222", "ccc333"])
+
+    assert sorted(created) == ["aaa111", "bbb222", "ccc333"]
+
+
+def test_prewarm_worktrees_continues_after_individual_failure(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+
+    def _flaky(sha):
+        if sha == "bad000":
+            raise RuntimeError("lock contention")
+
+    with patch.object(pipeline.worktrees, "get_or_create", side_effect=_flaky):
+        # should not raise
+        pipeline._prewarm_worktrees(["good111", "bad000", "good222"])

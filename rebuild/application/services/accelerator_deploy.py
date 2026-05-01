@@ -145,7 +145,7 @@ class AcceleratorDeployService(DeployService):
             # Fallback/default: copy code into the running container.
             # This keeps infra alive and avoids false-positive "switches"
             # when no live bind-swap runtime is actually configured.
-            success = self._sync_code_to_container(service, wt_info.path)
+            success = self._sync_code_to_container(service, wt_info.path, sha=sha, repo=repo)
         
         if not success:
             self.console.print(f"  [yellow]Switch failed, falling back to restart...[/yellow]")
@@ -192,27 +192,73 @@ class AcceleratorDeployService(DeployService):
             self.console.print(f"  [dim]Symlink update: {e}[/dim]")
             return False
     
-    def _sync_code_to_container(self, service: str, code_path: Path) -> bool:
+    _INCREMENTAL_FILE_THRESHOLD = 20
+
+    def _sync_code_to_container(
+        self,
+        service: str,
+        code_path: Path,
+        sha: Optional[str] = None,
+        repo: Optional[Path] = None,
+    ) -> bool:
         """
-        Fallback: rsync code into running container.
-        Slower than bind mount swap but works everywhere.
+        Copy code into running container.
+        Uses incremental per-file copy when git diff is small (<= threshold),
+        falls back to full docker cp otherwise.
         """
         container_name = self._get_container_name(service)
-        
-        # Use docker cp for initial sync (faster for large changes)
-        # Then use rsync via exec for incremental
-        
-        # First, ensure target directory exists
-        self.shell.run([
-            "docker", "exec", container_name, "mkdir", "-p", "/app"
-        ])
-        
-        # Use rsync if available in container, else docker cp
-        result = self.shell.run([
-            "docker", "cp", str(code_path) + "/.", f"{container_name}:/app/"
-        ])
-        
+
+        # Incremental path: git diff to find exactly what changed
+        if sha and repo and self._current_sha and self._current_sha != sha:
+            changed = self._get_changed_files(repo, self._current_sha, sha)
+            if changed is not None and len(changed) <= self._INCREMENTAL_FILE_THRESHOLD:
+                self.console.print(
+                    f"  [dim]incremental sync: {len(changed)} file(s)[/dim]"
+                )
+                return self._copy_changed_files(container_name, code_path, changed)
+
+        # Full copy fallback
+        self.shell.run(["docker", "exec", container_name, "mkdir", "-p", "/app"])
+        result = self.shell.run(
+            ["docker", "cp", str(code_path) + "/.", f"{container_name}:/app/"]
+        )
         return result.returncode == 0
+
+    def _get_changed_files(
+        self, repo: Path, from_sha: str, to_sha: str
+    ) -> Optional[list]:
+        """Return list of files changed between two commits, or None on error."""
+        result = self.shell.run(
+            ["git", "diff", "--name-only", from_sha, to_sha],
+            cwd=repo,
+        )
+        if result.returncode != 0:
+            return None
+        return [f for f in result.stdout.strip().splitlines() if f]
+
+    def _copy_changed_files(
+        self, container_name: str, code_path: Path, files: list
+    ) -> bool:
+        """Copy only the listed relative paths into /app in the container."""
+        for rel_path in files:
+            src = code_path / rel_path
+            if not src.exists():
+                # Deleted in this commit - remove from container
+                self.shell.run(
+                    ["docker", "exec", container_name, "rm", "-f", f"/app/{rel_path}"]
+                )
+            else:
+                parent = Path(rel_path).parent
+                if str(parent) != ".":
+                    self.shell.run(
+                        ["docker", "exec", container_name, "mkdir", "-p", f"/app/{parent}"]
+                    )
+                result = self.shell.run(
+                    ["docker", "cp", str(src), f"{container_name}:/app/{rel_path}"]
+                )
+                if result.returncode != 0:
+                    return False
+        return True
     
     def _get_container_name(self, service: str) -> str:
         """Get full container name for service."""

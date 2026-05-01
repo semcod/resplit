@@ -59,6 +59,10 @@ login_payload:
   username: admin
   password: secret
 
+# Manual overrides for fixing historical bugs
+# Files from this directory are copied to the clone before deploy
+patch_dir: .rebuild/patch
+
 # ⚡ Accelerator Mode (10x Speed)
 # ------------------------------------------------------------------------------
 # Ultra-fast execution using worktrees + hot reload + parallel testing.

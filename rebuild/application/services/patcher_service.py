@@ -44,17 +44,20 @@ class PatcherService(Service[Path, int]):
             content = path.read_text()
             original = content
             
-            # 1. Comment out npm install / npm ci / yarn install / pnpm install
-            # Matches: RUN npm ci, RUN npm install, etc.
-            install_patterns = [
+            # 1. Comment out install and build commands
+            # Matches: RUN npm ci, RUN npm install, RUN npm run build, RUN npx vite build, etc.
+            skip_patterns = [
                 r"(\bnpm\s+ci\b)",
                 r"(\bnpm\s+install\b)",
                 r"(\byarn\s+install\b)",
                 r"(\bpnpm\s+install\b)",
-                r"(\bnpm\s+i\b)"
+                r"(\bnpm\s+i\b)",
+                r"(\bnpm\s+run\s+build\b)",
+                r"(\bnpx\s+vite\s+build\b)",
+                r"(\bvite\s+build\b)"
             ]
             
-            for pattern in install_patterns:
+            for pattern in skip_patterns:
                 # Replace command with 'true' to skip but keep shell syntax intact
                 content = re.sub(pattern, "true", content, flags=re.IGNORECASE)
             

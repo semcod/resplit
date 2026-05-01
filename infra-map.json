@@ -43,7 +43,7 @@
         "traefik.http.routers.frontend.rule": "Host(`identification.localhost`)",
         "traefik.http.services.frontend.loadbalancer.server.port": "80"
       },
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.dev.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.dev.yml",
       "resolved_ports": [
         {
           "raw": "${FRONTEND_PORT:-8100}:80",
@@ -54,7 +54,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "VITE_API_URL": "http://backend:8000",
         "VITE_WS_URL": "ws://backend:8000",
@@ -75,118 +75,38 @@
       "name": "backend",
       "image": null,
       "ports": [
-        "${BACKEND_PORT:-8101}:8000"
+        "8003:8003"
       ],
       "healthcheck": {
         "test": [
           "CMD",
           "curl",
           "-f",
-          "http://localhost:8000/api/v3/health"
+          "http://localhost:8003/api/health"
         ],
-        "interval": "30s",
-        "timeout": "10s",
-        "retries": 3,
-        "start_period": "40s"
+        "interval": "5s",
+        "timeout": "3s",
+        "retries": 10
       },
-      "depends_on": [
-        "c2004-pg",
-        "postgres"
-      ],
-      "environment": {
-        "BACKEND_PORT": "8101",
-        "SERVICE_NAME": "identification",
-        "SERVICE_VERSION": "1.0.17",
-        "API_HOST": "0.0.0.0",
-        "API_PORT": "8000",
-        "API_WORKERS": "4",
-        "API_RELOAD": "false",
-        "DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dcore%2Cpublic",
-        "CONFIG_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dconfig%2Cpublic",
-        "AUTH_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dauth%2Cpublic",
-        "SECRET_KEY": "dev-secret-key-change-me-32-chars-min",
-        "CORS_ORIGINS": "[\"http://localhost:8100\",\"http://identification.localhost\"]",
-        "ENABLE_RFID": "true",
-        "ENABLE_QR": "true",
-        "ENABLE_BARCODE": "true",
-        "ENABLE_MANUAL": "true",
-        "DEVTOOLS_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Ddevtools%2Cpublic",
-        "SCENARIO_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dscn%2Cshared%2Cpublic",
-        "MENU_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dmenu%2Cpublic",
-        "LOG_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dlogs%2Cpublic",
-        "CONNECT_SCENARIO_BACKEND_URL": "http://connect-scenario-backend:8108",
-        "CONNECT_SCENARIO_TIMEOUT_SECONDS": "7",
-        "CONNECT_TEST_BACKEND_URL": "http://172.17.0.1:8119",
-        "CONNECT_TEST_TIMEOUT_SECONDS": "7",
-        "CONNECT_ID_BACKEND_URL": "http://172.17.0.1:8117",
-        "CONNECT_ID_TIMEOUT_SECONDS": "5",
-        "CONNECT_MANAGER_BACKEND_URL": "http://connect-manager-backend:8104",
-        "CONNECT_MANAGER_TIMEOUT_SECONDS": "5",
-        "CONNECT_PROTOCOL_BACKEND_URL": "http://connect-protocol-backend:8120",
-        "CONNECT_PROTOCOL_TIMEOUT_SECONDS": "7",
-        "CONNECT_DATA_BACKEND_URL": "http://connect-data-backend:8121",
-        "CONNECT_DATA_TIMEOUT_SECONDS": "7",
-        "CONNECT_TEMPLATE_BACKEND_URL": "http://172.19.0.1:8106",
-        "CONNECT_TEMPLATE_TIMEOUT_SECONDS": "8",
-        "NFO_LEVEL": "DEBUG",
-        "NFO_ENV": "docker",
-        "PYTHONPATH": "/workspace"
-      },
+      "depends_on": [],
+      "environment": {},
       "labels": {
         "traefik.enable": "true",
-        "traefik.http.routers.backend.rule": "Host(`api.identification.localhost`)",
-        "traefik.http.services.backend.loadbalancer.server.port": "8000"
+        "traefik.http.routers.backend.rule": "PathPrefix(`/api`)"
       },
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.dev.yml",
+      "source_file": "/home/tom/github/semcod/resplit/examples/02-docker-compose-project/docker-compose.yml",
       "resolved_ports": [
         {
-          "raw": "${BACKEND_PORT:-8101}:8000",
+          "raw": "8003:8003",
           "host": "",
-          "host_port": "8101",
-          "container_port": "8000",
+          "host_port": "8003",
+          "container_port": "8003",
           "protocol": ""
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "BACKEND_PORT": "8101",
-        "SERVICE_NAME": "identification",
-        "SERVICE_VERSION": "1.0.17",
-        "API_HOST": "0.0.0.0",
-        "API_PORT": "8000",
-        "API_WORKERS": "4",
-        "API_RELOAD": "false",
-        "DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dcore%2Cpublic",
-        "CONFIG_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dconfig%2Cpublic",
-        "AUTH_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dauth%2Cpublic",
-        "SECRET_KEY": "dev-secret-key-change-me-32-chars-min",
-        "CORS_ORIGINS": "[\"http://localhost:8100\",\"http://identification.localhost\"]",
-        "ENABLE_RFID": "true",
-        "ENABLE_QR": "true",
-        "ENABLE_BARCODE": "true",
-        "ENABLE_MANUAL": "true",
-        "DEVTOOLS_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Ddevtools%2Cpublic",
-        "SCENARIO_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dscn%2Cshared%2Cpublic",
-        "MENU_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dmenu%2Cpublic",
-        "LOG_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004?options=-csearch_path%3Dlogs%2Cpublic",
-        "CONNECT_SCENARIO_BACKEND_URL": "http://connect-scenario-backend:8108",
-        "CONNECT_SCENARIO_TIMEOUT_SECONDS": "7",
-        "CONNECT_TEST_BACKEND_URL": "http://172.17.0.1:8119",
-        "CONNECT_TEST_TIMEOUT_SECONDS": "7",
-        "CONNECT_ID_BACKEND_URL": "http://172.17.0.1:8117",
-        "CONNECT_ID_TIMEOUT_SECONDS": "5",
-        "CONNECT_MANAGER_BACKEND_URL": "http://connect-manager-backend:8104",
-        "CONNECT_MANAGER_TIMEOUT_SECONDS": "5",
-        "CONNECT_PROTOCOL_BACKEND_URL": "http://connect-protocol-backend:8120",
-        "CONNECT_PROTOCOL_TIMEOUT_SECONDS": "7",
-        "CONNECT_DATA_BACKEND_URL": "http://connect-data-backend:8121",
-        "CONNECT_DATA_TIMEOUT_SECONDS": "7",
-        "CONNECT_TEMPLATE_BACKEND_URL": "http://172.19.0.1:8106",
-        "CONNECT_TEMPLATE_TIMEOUT_SECONDS": "8",
-        "NFO_LEVEL": "DEBUG",
-        "NFO_ENV": "docker",
-        "PYTHONPATH": "/workspace"
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
+        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next"
       }
     },
     "traefik": {
@@ -212,7 +132,7 @@
         "DOCKER_API_VERSION": "1.44"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.dev.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.dev.yml",
       "resolved_ports": [
         {
           "raw": "80:80",
@@ -230,7 +150,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "DOCKER_API_VERSION": "1.44"
       }
@@ -257,7 +177,7 @@
         "POSTGRES_PASSWORD": ""
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.pg.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.pg.yml",
       "resolved_ports": [
         {
           "raw": "${POSTGRES_PORT:-5432}:5432",
@@ -268,7 +188,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "POSTGRES_DB": "c2004",
         "POSTGRES_USER": "c2004",
@@ -290,10 +210,10 @@
         "PGDATABASE": "c2004"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.prod.pg.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.prod.pg.yml",
       "resolved_ports": [],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "PGHOST": "c2004-pg",
         "PGUSER": "c2004",
@@ -335,7 +255,7 @@
         "traefik.http.routers.firmware.middlewares": "firmware-strip",
         "traefik.http.services.firmware.loadbalancer.server.port": "8202"
       },
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.prod.vps.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.prod.vps.yml",
       "resolved_ports": [
         {
           "raw": "8202:8202",
@@ -346,7 +266,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "SIMULATION_MODE": "REALTIME",
         "PHYSICS_TIMESTEP": "0.01",
@@ -375,7 +295,7 @@
         "POSTGRES_PASSWORD": "dev_password"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.prod.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.prod.yml",
       "resolved_ports": [
         {
           "raw": "${POSTGRES_PORT:-5432}:5432",
@@ -386,7 +306,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "POSTGRES_DB": "c2004",
         "POSTGRES_USER": "c2004",
@@ -428,7 +348,7 @@
         "PYTHONPATH": "/workspace"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${SERVICE_ID_PILOT_PORT:-8111}:8000",
@@ -439,7 +359,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "SERVICE_NAME": "service-id-pilot",
         "SERVICE_VERSION": "1.0.17",
@@ -489,7 +409,7 @@
         "PYTHONPATH": "/workspace"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${SERVICE_MANAGER_PILOT_PORT:-8112}:8000",
@@ -500,7 +420,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "SERVICE_NAME": "service-manager-pilot",
         "SERVICE_VERSION": "1.0.17",
@@ -519,30 +439,49 @@
       "name": "connect-id-backend",
       "image": null,
       "ports": [
-        "${CONNECT_ID_BACKEND_HTTP_PORT:-8117}:8117"
+        "${CONNECT_ID_BACKEND_PORT:-8103}:8103"
       ],
-      "healthcheck": null,
-      "depends_on": [],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python3",
+          "-c",
+          "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8103/health', timeout=2).status == 200 else 1)"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "retries": 3,
+        "start_period": "15s"
+      },
+      "depends_on": [
+        "postgres"
+      ],
       "environment": {
         "CONNECT_ID_BACKEND_HOST": "0.0.0.0",
-        "CONNECT_ID_BACKEND_PORT": "8117"
+        "CONNECT_ID_BACKEND_PORT": "8103",
+        "CONNECT_ID_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004_identification",
+        "CONNECT_ID_EVENT_SUBSCRIBERS": "http://connect-manager-backend:8104",
+        "MASKSERVICE_API_URL": "http://backend:8000"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-id/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
-          "raw": "${CONNECT_ID_BACKEND_HTTP_PORT:-8117}:8117",
+          "raw": "${CONNECT_ID_BACKEND_PORT:-8103}:8103",
           "host": "",
-          "host_port": "8117",
-          "container_port": "8117",
+          "host_port": "8103",
+          "container_port": "8103",
           "protocol": ""
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "CONNECT_ID_BACKEND_HOST": "0.0.0.0",
-        "CONNECT_ID_BACKEND_PORT": "8117"
+        "CONNECT_ID_BACKEND_PORT": "8103",
+        "CONNECT_ID_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004_identification",
+        "CONNECT_ID_EVENT_SUBSCRIBERS": "http://connect-manager-backend:8104",
+        "MASKSERVICE_API_URL": "http://backend:8000"
       }
     },
     "connect-data-backend": {
@@ -571,7 +510,7 @@
         "MASKSERVICE_TIMEOUT_SECONDS": "7"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_DATA_BACKEND_PORT:-8121}:8121",
@@ -582,7 +521,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "CONNECT_DATA_BACKEND_HOST": "0.0.0.0",
         "CONNECT_DATA_BACKEND_PORT": "8121",
@@ -594,51 +533,82 @@
       "name": "connect-manager-backend",
       "image": null,
       "ports": [
-        "${CONNECT_MANAGER_BACKEND_HTTP_PORT:-8107}:8107"
+        "${CONNECT_MANAGER_BACKEND_PORT:-8104}:8104"
       ],
-      "healthcheck": null,
-      "depends_on": [],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python3",
+          "-c",
+          "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8104/health', timeout=2).status == 200 else 1)"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "retries": 3,
+        "start_period": "15s"
+      },
+      "depends_on": [
+        "postgres"
+      ],
       "environment": {
         "CONNECT_MANAGER_BACKEND_HOST": "0.0.0.0",
-        "CONNECT_MANAGER_BACKEND_PORT": "8107"
+        "CONNECT_MANAGER_BACKEND_PORT": "8104",
+        "CONNECT_MANAGER_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004_manager",
+        "MASKSERVICE_API_URL": "http://backend:8000"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-manager/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
-          "raw": "${CONNECT_MANAGER_BACKEND_HTTP_PORT:-8107}:8107",
+          "raw": "${CONNECT_MANAGER_BACKEND_PORT:-8104}:8104",
           "host": "",
-          "host_port": "8107",
-          "container_port": "8107",
+          "host_port": "8104",
+          "container_port": "8104",
           "protocol": ""
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "CONNECT_MANAGER_BACKEND_HOST": "0.0.0.0",
-        "CONNECT_MANAGER_BACKEND_PORT": "8107"
+        "CONNECT_MANAGER_BACKEND_PORT": "8104",
+        "CONNECT_MANAGER_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004_manager",
+        "MASKSERVICE_API_URL": "http://backend:8000"
       }
     },
     "connect-template-backend": {
       "name": "connect-template-backend",
       "image": null,
       "ports": [
-        "${CONNECT_TEMPLATE_BACKEND_HTTP_PORT:-8106}:8106"
+        "${CONNECT_TEMPLATE_BACKEND_PORT:-8106}:8106"
       ],
-      "healthcheck": null,
-      "depends_on": [],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python3",
+          "-c",
+          "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8106/health', timeout=2).status == 200 else 1)"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "retries": 3,
+        "start_period": "15s"
+      },
+      "depends_on": [
+        "postgres"
+      ],
       "environment": {
         "CONNECT_TEMPLATE_BACKEND_HOST": "0.0.0.0",
         "CONNECT_TEMPLATE_BACKEND_PORT": "8106",
-        "MASKSERVICE_API_URL": "http://host.docker.internal:8101",
+        "CONNECT_TEMPLATE_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004_template",
+        "MASKSERVICE_API_URL": "http://backend:8000",
         "MASKSERVICE_TIMEOUT_SECONDS": "8"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-template/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
-          "raw": "${CONNECT_TEMPLATE_BACKEND_HTTP_PORT:-8106}:8106",
+          "raw": "${CONNECT_TEMPLATE_BACKEND_PORT:-8106}:8106",
           "host": "",
           "host_port": "8106",
           "container_port": "8106",
@@ -646,11 +616,12 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "CONNECT_TEMPLATE_BACKEND_HOST": "0.0.0.0",
         "CONNECT_TEMPLATE_BACKEND_PORT": "8106",
-        "MASKSERVICE_API_URL": "http://host.docker.internal:8101",
+        "CONNECT_TEMPLATE_DATABASE_URL": "postgresql://c2004:dev_password@postgres:5432/c2004_template",
+        "MASKSERVICE_API_URL": "http://backend:8000",
         "MASKSERVICE_TIMEOUT_SECONDS": "8"
       }
     },
@@ -658,19 +629,31 @@
       "name": "connect-test-backend",
       "image": null,
       "ports": [
-        "${CONNECT_TEST_BACKEND_HTTP_PORT:-8119}:8119"
+        "${CONNECT_TEST_BACKEND_PORT:-8119}:8119"
       ],
-      "healthcheck": null,
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python3",
+          "-c",
+          "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8119/health', timeout=2).status == 200 else 1)"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "retries": 3,
+        "start_period": "15s"
+      },
       "depends_on": [],
       "environment": {
         "CONNECT_TEST_BACKEND_HOST": "0.0.0.0",
-        "CONNECT_TEST_BACKEND_PORT": "8119"
+        "CONNECT_TEST_BACKEND_PORT": "8119",
+        "MASKSERVICE_API_URL": "http://backend:8000"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-test/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
-          "raw": "${CONNECT_TEST_BACKEND_HTTP_PORT:-8119}:8119",
+          "raw": "${CONNECT_TEST_BACKEND_PORT:-8119}:8119",
           "host": "",
           "host_port": "8119",
           "container_port": "8119",
@@ -678,10 +661,11 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "CONNECT_TEST_BACKEND_HOST": "0.0.0.0",
-        "CONNECT_TEST_BACKEND_PORT": "8119"
+        "CONNECT_TEST_BACKEND_PORT": "8119",
+        "MASKSERVICE_API_URL": "http://backend:8000"
       }
     },
     "connect-protocol-backend": {
@@ -713,7 +697,7 @@
         "MASKSERVICE_API_URL": "http://backend:8000"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_PROTOCOL_BACKEND_PORT:-8120}:8120",
@@ -724,7 +708,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "CONNECT_PROTOCOL_BACKEND_HOST": "0.0.0.0",
         "CONNECT_PROTOCOL_BACKEND_PORT": "8120",
@@ -761,7 +745,7 @@
         "SCENARIOS_DIR": "/app/scenarios"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CQL_BACKEND_PORT:-8101}:8101",
@@ -772,7 +756,7 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "CQL_BACKEND_HOST": "0.0.0.0",
         "CQL_BACKEND_PORT": "8101",
@@ -785,35 +769,35 @@
       "name": "connect-scenario-backend",
       "image": null,
       "ports": [
-        "${CONNECT_SCENARIO_BACKEND_HTTP_PORT:-8105}:8108"
+        "${CONNECT_SCENARIO_BACKEND_PORT:-8108}:8108"
       ],
       "healthcheck": null,
       "depends_on": [
-        "cql-scenario-backend"
+        "postgres"
       ],
       "environment": {
         "CONNECT_SCENARIO_BACKEND_HOST": "0.0.0.0",
         "CONNECT_SCENARIO_BACKEND_PORT": "8108",
-        "CQL_BACKEND_URL": "http://cql-scenario-backend:8101",
+        "CONNECT_SCENARIO_DATABASE_URL": "postgresql://c2004:${POSTGRES_PASSWORD:-dev_password@postgres:5432/c2004?options=-csearch_path%3Dcore%2Cpublic}",
         "OQLOS_API_URL": "http://host.docker.internal:8202"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-scenario/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
-          "raw": "${CONNECT_SCENARIO_BACKEND_HTTP_PORT:-8105}:8108",
+          "raw": "${CONNECT_SCENARIO_BACKEND_PORT:-8108}:8108",
           "host": "",
-          "host_port": "8105",
+          "host_port": "8108",
           "container_port": "8108",
           "protocol": ""
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "CONNECT_SCENARIO_BACKEND_HOST": "0.0.0.0",
         "CONNECT_SCENARIO_BACKEND_PORT": "8108",
-        "CQL_BACKEND_URL": "http://cql-scenario-backend:8101",
+        "CONNECT_SCENARIO_DATABASE_URL": "postgresql://c2004:${POSTGRES_PASSWORD:-dev_password@postgres:5432/c2004?options=-csearch_path%3Dcore%2Cpublic}",
         "OQLOS_API_URL": "http://host.docker.internal:8202"
       }
     },
@@ -821,26 +805,26 @@
       "name": "connect-scenario",
       "image": null,
       "ports": [
-        "${CONNECT_SCENARIO_DIRECT_PORT:-8096}:80"
+        "${CONNECT_SCENARIO_PORT:-8096}:80"
       ],
       "healthcheck": null,
       "depends_on": [
         "connect-scenario-backend",
-        "cql-scenario-backend"
+        "cql-backend"
       ],
       "environment": {
         "CONNECT_SCENARIO_BACKEND_URL": "http://connect-scenario-backend:8108",
-        "CQL_BACKEND_URL": "http://cql-scenario-backend:8101",
-        "BACKEND_API_URL": "http://172.17.0.1:8101",
-        "BACKEND_WS_URL": "http://172.17.0.1:8101",
+        "CQL_BACKEND_URL": "http://cql-backend:8101",
+        "BACKEND_API_URL": "http://backend:8000",
+        "BACKEND_WS_URL": "http://backend:8000",
         "CONNECT_SCENARIO_LISTEN_PORT": "80",
         "FRAME_ANCESTORS": "'self' http://localhost:8100 http://*.localhost https://*.localhost"
       },
       "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-scenario/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml",
       "resolved_ports": [
         {
-          "raw": "${CONNECT_SCENARIO_DIRECT_PORT:-8096}:80",
+          "raw": "${CONNECT_SCENARIO_PORT:-8096}:80",
           "host": "",
           "host_port": "8096",
           "container_port": "80",
@@ -848,368 +832,14 @@
         }
       ],
       "env_resolved": {
-        "OPENROUTER_API_KEY": "",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
         "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
         "CONNECT_SCENARIO_BACKEND_URL": "http://connect-scenario-backend:8108",
-        "CQL_BACKEND_URL": "http://cql-scenario-backend:8101",
-        "BACKEND_API_URL": "http://172.17.0.1:8101",
-        "BACKEND_WS_URL": "http://172.17.0.1:8101",
+        "CQL_BACKEND_URL": "http://cql-backend:8101",
+        "BACKEND_API_URL": "http://backend:8000",
+        "BACKEND_WS_URL": "http://backend:8000",
         "CONNECT_SCENARIO_LISTEN_PORT": "80",
         "FRAME_ANCESTORS": "'self' http://localhost:8100 http://*.localhost https://*.localhost"
-      }
-    },
-    "connect-id": {
-      "name": "connect-id",
-      "image": null,
-      "ports": [
-        "${CONNECT_ID_DIRECT_PORT:-8093}:80"
-      ],
-      "healthcheck": null,
-      "depends_on": [
-        "connect-id-backend"
-      ],
-      "environment": {
-        "CONNECT_ID_BACKEND_URL": "http://connect-id-backend:8117",
-        "CONNECT_ID_LISTEN_PORT": "80"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-id/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "${CONNECT_ID_DIRECT_PORT:-8093}:80",
-          "host": "",
-          "host_port": "8093",
-          "container_port": "80",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "CONNECT_ID_BACKEND_URL": "http://connect-id-backend:8117",
-        "CONNECT_ID_LISTEN_PORT": "80"
-      }
-    },
-    "connect-config-network": {
-      "name": "connect-config-network",
-      "image": "connect-config-network:local",
-      "ports": [
-        "8300:8300"
-      ],
-      "healthcheck": null,
-      "depends_on": [],
-      "environment": {
-        "MODULE_NAME": "connect-config-network",
-        "MODULE_ROUTE": "/connect-config-network",
-        "MODULE_PORT": "8300"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/modules/connect-config-network/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "8300:8300",
-          "host": "",
-          "host_port": "8300",
-          "container_port": "8300",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "MODULE_NAME": "connect-config-network",
-        "MODULE_ROUTE": "/connect-config-network",
-        "MODULE_PORT": "8300"
-      }
-    },
-    "connect-id-user-list": {
-      "name": "connect-id-user-list",
-      "image": "connect-id-user-list:local",
-      "ports": [
-        "8301:8301"
-      ],
-      "healthcheck": null,
-      "depends_on": [],
-      "environment": {
-        "MODULE_NAME": "connect-id-user-list",
-        "MODULE_ROUTE": "/connect-id-user-list",
-        "MODULE_PORT": "8301"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/modules/connect-id-user-list/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "8301:8301",
-          "host": "",
-          "host_port": "8301",
-          "container_port": "8301",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "MODULE_NAME": "connect-id-user-list",
-        "MODULE_ROUTE": "/connect-id-user-list",
-        "MODULE_PORT": "8301"
-      }
-    },
-    "connect-manager-library": {
-      "name": "connect-manager-library",
-      "image": "connect-manager-library:local",
-      "ports": [
-        "8302:8302"
-      ],
-      "healthcheck": null,
-      "depends_on": [],
-      "environment": {
-        "MODULE_NAME": "connect-manager-library",
-        "MODULE_ROUTE": "/connect-manager-library",
-        "MODULE_PORT": "8302"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/modules/connect-manager-library/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "8302:8302",
-          "host": "",
-          "host_port": "8302",
-          "container_port": "8302",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "MODULE_NAME": "connect-manager-library",
-        "MODULE_ROUTE": "/connect-manager-library",
-        "MODULE_PORT": "8302"
-      }
-    },
-    "connect-reports-month": {
-      "name": "connect-reports-month",
-      "image": "connect-reports-month:local",
-      "ports": [
-        "8303:8303"
-      ],
-      "healthcheck": null,
-      "depends_on": [],
-      "environment": {
-        "MODULE_NAME": "connect-reports-month",
-        "MODULE_ROUTE": "/connect-reports-month",
-        "MODULE_PORT": "8303"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/modules/connect-reports-month/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "8303:8303",
-          "host": "",
-          "host_port": "8303",
-          "container_port": "8303",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "MODULE_NAME": "connect-reports-month",
-        "MODULE_ROUTE": "/connect-reports-month",
-        "MODULE_PORT": "8303"
-      }
-    },
-    "cql-scenario-backend": {
-      "name": "cql-scenario-backend",
-      "image": null,
-      "ports": [],
-      "healthcheck": null,
-      "depends_on": [],
-      "environment": {
-        "CQL_BACKEND_HOST": "0.0.0.0",
-        "CQL_BACKEND_PORT": "8101",
-        "MASKSERVICE_API_URL": "http://host.docker.internal:8100",
-        "SCENARIOS_DIR": "/app/scenarios"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-scenario/docker-compose.yml",
-      "resolved_ports": [],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "CQL_BACKEND_HOST": "0.0.0.0",
-        "CQL_BACKEND_PORT": "8101",
-        "MASKSERVICE_API_URL": "http://host.docker.internal:8100",
-        "SCENARIOS_DIR": "/app/scenarios"
-      }
-    },
-    "connect-deleted-backend": {
-      "name": "connect-deleted-backend",
-      "image": null,
-      "ports": [
-        "8120:8120"
-      ],
-      "healthcheck": null,
-      "depends_on": [],
-      "environment": {
-        "PYTHONUNBUFFERED": "1"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-deleted/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "8120:8120",
-          "host": "",
-          "host_port": "8120",
-          "container_port": "8120",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "PYTHONUNBUFFERED": "1"
-      }
-    },
-    "connect-deleted": {
-      "name": "connect-deleted",
-      "image": null,
-      "ports": [
-        "8121:80"
-      ],
-      "healthcheck": null,
-      "depends_on": [
-        "connect-deleted-backend"
-      ],
-      "environment": {},
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-deleted/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "8121:80",
-          "host": "",
-          "host_port": "8121",
-          "container_port": "80",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next"
-      }
-    },
-    "connect-test": {
-      "name": "connect-test",
-      "image": null,
-      "ports": [
-        "${CONNECT_TEST_DIRECT_PORT:-8097}:80"
-      ],
-      "healthcheck": null,
-      "depends_on": [
-        "connect-test-backend"
-      ],
-      "environment": {
-        "CONNECT_TEST_BACKEND_URL": "http://connect-test-backend:8119",
-        "CONNECT_TEST_LISTEN_PORT": "80"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-test/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "${CONNECT_TEST_DIRECT_PORT:-8097}:80",
-          "host": "",
-          "host_port": "8097",
-          "container_port": "80",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "CONNECT_TEST_BACKEND_URL": "http://connect-test-backend:8119",
-        "CONNECT_TEST_LISTEN_PORT": "80"
-      }
-    },
-    "connect-manager": {
-      "name": "connect-manager",
-      "image": null,
-      "ports": [
-        "${CONNECT_MANAGER_DIRECT_PORT:-8095}:80"
-      ],
-      "healthcheck": null,
-      "depends_on": [
-        "connect-manager-backend"
-      ],
-      "environment": {
-        "CONNECT_MANAGER_BACKEND_URL": "http://connect-manager-backend:8107",
-        "CONNECT_MANAGER_LISTEN_PORT": "80"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-manager/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "${CONNECT_MANAGER_DIRECT_PORT:-8095}:80",
-          "host": "",
-          "host_port": "8095",
-          "container_port": "80",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "CONNECT_MANAGER_BACKEND_URL": "http://connect-manager-backend:8107",
-        "CONNECT_MANAGER_LISTEN_PORT": "80"
-      }
-    },
-    "connect-template": {
-      "name": "connect-template",
-      "image": null,
-      "ports": [
-        "${CONNECT_TEMPLATE_DIRECT_PORT:-8094}:80"
-      ],
-      "healthcheck": null,
-      "depends_on": [
-        "connect-template-backend"
-      ],
-      "environment": {
-        "CONNECT_TEMPLATE_BACKEND_URL": "http://connect-template-backend:8106",
-        "CONNECT_TEMPLATE_LISTEN_PORT": "80"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/connect-template/docker-compose.yml",
-      "resolved_ports": [
-        {
-          "raw": "${CONNECT_TEMPLATE_DIRECT_PORT:-8094}:80",
-          "host": "",
-          "host_port": "8094",
-          "container_port": "80",
-          "protocol": ""
-        }
-      ],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "CONNECT_TEMPLATE_BACKEND_URL": "http://connect-template-backend:8106",
-        "CONNECT_TEMPLATE_LISTEN_PORT": "80"
-      }
-    },
-    "aider": {
-      "name": "aider",
-      "image": null,
-      "ports": [],
-      "healthcheck": null,
-      "depends_on": [],
-      "environment": {
-        "OPENROUTER_API_KEY": "",
-        "AIDER_MODEL": "openrouter/deepseek/deepseek-chat-v3-0324:free"
-      },
-      "labels": {},
-      "source_file": "/home/tom/github/maskservice/c2004/.aider/docker-compose.yml",
-      "resolved_ports": [],
-      "env_resolved": {
-        "OPENROUTER_API_KEY": "",
-        "LLM_MODEL": "openrouter/qwen/qwen3-coder-next",
-        "AIDER_MODEL": "openrouter/deepseek/deepseek-chat-v3-0324:free"
       }
     }
   },
@@ -1219,115 +849,19 @@
       "type": "missing_healthcheck",
       "service": "c2004-backup",
       "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/docker-compose.prod.pg.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-id-backend",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-id/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-manager-backend",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-manager/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-template-backend",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-template/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-test-backend",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-test/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.prod.pg.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-scenario-backend",
       "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-scenario/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-scenario",
       "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-scenario/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-id",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-id/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-config-network",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/modules/connect-config-network/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-id-user-list",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/modules/connect-id-user-list/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-manager-library",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/modules/connect-manager-library/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-reports-month",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/modules/connect-reports-month/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "cql-scenario-backend",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-scenario/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-deleted-backend",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-deleted/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-deleted",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-deleted/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-test",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-test/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-manager",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-manager/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "connect-template",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/connect-template/docker-compose.yml"
-    },
-    {
-      "type": "missing_healthcheck",
-      "service": "aider",
-      "severity": "warning",
-      "file": "/home/tom/github/maskservice/c2004/.aider/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml"
     },
     {
       "type": "port_conflict",
@@ -1340,55 +874,18 @@
       "severity": "error"
     },
     {
-      "type": "port_conflict",
-      "port": "8101",
-      "host": "localhost",
-      "services": [
-        "backend",
-        "cql-backend"
-      ],
-      "severity": "error"
-    },
-    {
-      "type": "port_conflict",
-      "port": "8120",
-      "host": "localhost",
-      "services": [
-        "connect-protocol-backend",
-        "connect-deleted-backend"
-      ],
-      "severity": "error"
-    },
-    {
-      "type": "port_conflict",
-      "port": "8121",
-      "host": "localhost",
-      "services": [
-        "connect-data-backend",
-        "connect-deleted"
-      ],
-      "severity": "error"
-    },
-    {
-      "type": "hardcoded_secret",
-      "service": "backend",
-      "env_key": "SECRET_KEY",
-      "severity": "critical",
-      "file": "/home/tom/github/maskservice/c2004/docker-compose.dev.yml"
-    },
-    {
       "type": "hardcoded_secret",
       "service": "service-id-pilot",
       "env_key": "SECRET_KEY",
       "severity": "critical",
-      "file": "/home/tom/github/maskservice/c2004/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml"
     },
     {
       "type": "hardcoded_secret",
       "service": "service-manager-pilot",
       "env_key": "SECRET_KEY",
       "severity": "critical",
-      "file": "/home/tom/github/maskservice/c2004/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/c2004/repo/docker-compose.yml"
     }
   ],
   "cycles": [],
