@@ -169,7 +169,7 @@ class ParallelTestEngine:
                         endpoint=ep,
                         status=EndpointStatus.SKIP,
                         error="Health checks failed - skipping remaining tests",
-                        duration_seconds=0
+                        response_time_ms=0
                     )
                 return list(results.values())
         
@@ -186,7 +186,7 @@ class ParallelTestEngine:
                         endpoint=ep,
                         status=EndpointStatus.SKIP,
                         error=skip_reason,
-                        duration_seconds=0
+                        response_time_ms=0
                     )
                 else:
                     to_run.append(ep)
@@ -254,9 +254,9 @@ class ParallelTestEngine:
             if method == "GET":
                 response = await client.get(endpoint.path)
             elif method == "POST":
-                response = await client.post(endpoint.path, json=endpoint.example_payload)
+                response = await client.post(endpoint.path)
             elif method == "PUT":
-                response = await client.put(endpoint.path, json=endpoint.example_payload)
+                response = await client.put(endpoint.path)
             elif method == "DELETE":
                 response = await client.delete(endpoint.path)
             else:
@@ -276,8 +276,8 @@ class ParallelTestEngine:
                 endpoint=endpoint,
                 status=status,
                 http_status=response.status_code,
-                response_preview=response.text[:500],
-                duration_seconds=duration
+                error=response.text[:500] if status != EndpointStatus.OK else None,
+                response_time_ms=duration * 1000
             )
             
         except httpx.TimeoutException:
@@ -285,14 +285,14 @@ class ParallelTestEngine:
                 endpoint=endpoint,
                 status=EndpointStatus.TIMEOUT,
                 error=f"Timeout after {self.timeout}s",
-                duration_seconds=time.perf_counter() - start
+                response_time_ms=(time.perf_counter() - start) * 1000
             )
         except Exception as e:
             return EndpointResult(
                 endpoint=endpoint,
                 status=EndpointStatus.FAIL,
                 error=str(e)[:200],
-                duration_seconds=time.perf_counter() - start
+                response_time_ms=(time.perf_counter() - start) * 1000
             )
     
     def execute_sync(self, endpoints: List[Endpoint]) -> List[EndpointResult]:

@@ -18,6 +18,7 @@ class DayResult:
     endpoint_results: list[EndpointResult] = field(default_factory=list)
     output_dir: Optional[Path] = None
     error: Optional[str] = None
+    deploy_log: Optional[str] = None
     duration_seconds: float = 0.0
     is_dry_run: bool = False
 
@@ -56,7 +57,8 @@ class DayResult:
             "deploy": {
                 "method": self.deploy_method.value,
                 "success": self.deploy_success,
-                "is_dry_run": self.is_dry_run
+                "is_dry_run": self.is_dry_run,
+                "log": self.deploy_log
             },
             "results": [
                 {
