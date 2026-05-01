@@ -127,3 +127,55 @@ def test_prewarm_worktrees_continues_after_individual_failure(tmp_path):
     with patch.object(pipeline.worktrees, "get_or_create", side_effect=_flaky):
         # should not raise
         pipeline._prewarm_worktrees(["good111", "bad000", "good222"])
+
+
+def test_needs_db_restore_returns_true_when_migration_file_changed(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+
+    with patch.object(pipeline.git, "diff_names", return_value=["app/migrations/0001_initial.py", "app/views.py"]):
+        assert pipeline._needs_db_restore("sha_prev", "sha_cur") is True
+
+
+def test_needs_db_restore_returns_false_when_no_db_files_changed(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+
+    with patch.object(pipeline.git, "diff_names", return_value=["app/views.py", "app/serializers.py"]):
+        assert pipeline._needs_db_restore("sha_prev", "sha_cur") is False
+
+
+def test_needs_db_restore_returns_true_when_no_previous_commit(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+
+    assert pipeline._needs_db_restore(None, "sha_cur") is True
+
+
+def test_needs_db_restore_returns_true_when_diff_fails(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+
+    with patch.object(pipeline.git, "diff_names", return_value=None):
+        assert pipeline._needs_db_restore("sha_prev", "sha_cur") is True
+
+
+def test_run_day_fast_skips_db_restore_when_no_db_files_changed(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+    commit = _commit()
+    pipeline._baseline_snapshot = "baseline"
+    pipeline._previous_commit = "prevsha"
+
+    with patch.object(pipeline.deploy, "switch_commit", return_value=True), \
+         patch.object(pipeline.worktrees, "get_active_path", return_value=tmp_path), \
+         patch.object(pipeline, "_needs_db_restore", return_value=False) as mock_needs, \
+         patch.object(pipeline.db_snapshots, "restore") as mock_restore, \
+         patch.object(pipeline.scanner, "execute", return_value=[]), \
+         patch.object(pipeline.tester, "execute_sync", return_value=[]), \
+         patch.object(pipeline.reporter, "save_day"):
+        result = pipeline._run_day_fast(date(2024, 3, 15), commit)
+
+    assert result.error is None
+    mock_needs.assert_called_once_with("prevsha", commit.sha)
+    mock_restore.assert_not_called()
