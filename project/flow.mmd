@@ -4,22 +4,22 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph Core
-        SUMR__detect_deploy_method["detect_deploy_method"]
-        SUMR___compose_file["_compose_file"]
-        SUMR__start["start"]
-        SUMR__stop["stop"]
-        SUMR___compose_up["_compose_up"]
-        SUMR___compose_down["_compose_down"]
-        SUMR___uvicorn_start["_uvicorn_start"]
-        SUMR___uvicorn_stop["_uvicorn_stop"]
-        SUMR___wait_healthy["_wait_healthy"]
-        SUMR__walk["walk"]
-        SUMR__restore["restore"]
-        SUMR__report["report"]
-        SUMR__version["version"]
-        SUMR__dashboard["dashboard"]
-        SUMR___attach_screenshots["_attach_screenshots"]
-        ...["+226 more"]
+        docs__README__generate_readme["generate_readme"]
+        project__map__toon__walk["walk"]
+        project__map__toon__restore["restore"]
+        project__map__toon__report["report"]
+        project__map__toon__dashboard["dashboard"]
+        project__map__toon__tui["tui"]
+        project__map__toon__version["version"]
+        project__map__toon__duplicates["duplicates"]
+        project__map__toon__services["services"]
+        project__map__toon__truth["truth"]
+        project__map__toon__plan["plan"]
+        project__map__toon___print_summary_table["_print_summary_table"]
+        project__map__toon__get_cc_for_day["get_cc_for_day"]
+        project__map__toon___extract_avg_cc["_extract_avg_cc"]
+        project__map__toon__generate_dashboard["generate_dashboard"]
+        ...["+167 more"]
     end
 
-    class SUMR__detect_deploy_method,SUMR___compose_file,SUMR__start,SUMR__stop,SUMR___compose_up,SUMR___compose_down,SUMR___uvicorn_start,SUMR___uvicorn_stop,SUMR___wait_healthy,SUMR__walk entry
+    class docs__README__generate_readme,project__map__toon__walk,project__map__toon__restore,project__map__toon__report,project__map__toon__dashboard,project__map__toon__tui,project__map__toon__version,project__map__toon__duplicates,project__map__toon__services,project__map__toon__truth entry

@@ -1,4 +1,4 @@
-"""Tests for rebuild.models dataclasses."""
+"""Tests for rebuild.domain models."""
 from __future__ import annotations
 
 from datetime import date, datetime
@@ -6,15 +6,10 @@ from pathlib import Path
 
 import pytest
 
-from rebuild.models import (
-    CommitInfo,
-    DayResult,
-    DeployMethod,
-    Endpoint,
-    EndpointResult,
-    EndpointStatus,
-    WalkConfig,
-)
+from rebuild.domain.models import DeployMethod, WalkConfig
+from rebuild.domain.commit import CommitInfo
+from rebuild.domain.day_result import DayResult
+from rebuild.domain.endpoint import Endpoint, EndpointResult, EndpointStatus
 
 
 def test_endpoint_url():

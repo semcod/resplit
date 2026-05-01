@@ -3,16 +3,18 @@ set -euo pipefail
 
 REPO="${1:-.}"
 DAYS="${2:-30}"
-OUTPUT="${3:-.rebuild}"
 
-echo "rebuild dry-run walk: $REPO (last $DAYS days)"
+echo "rebuild walk (dry-run): $REPO"
 
-rebuild walk "$REPO" \
-  --days "$DAYS" \
-  --deploy none \
-  --dry-run \
-  --output "$OUTPUT" \
-  --no-screenshots
+# 1. Pipeline execution
+python3 -m rebuild walk "$REPO" --days "$DAYS" --dry-run --output .rebuild_dry
 
-echo ""
-echo "Done. Open: $OUTPUT/index.html"
+# 2. Analysis
+echo -e "\n--- Analysis: Duplicates ---"
+python3 -m rebuild analyze duplicates "$REPO"
+
+echo -e "\n--- Analysis: Service Overlap ---"
+python3 -m rebuild analyze services
+
+echo -e "\n--- Done ---"
+echo "  Report: .rebuild_dry/index.html"

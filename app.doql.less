@@ -2,17 +2,12 @@
 
 app {
   name: rebuild;
-  version: 0.1.7;
+  version: 0.1.9;
 }
 
 dependencies {
   runtime: "typer>=0.12, rich>=13, gitpython>=3.1, httpx>=0.27, pyyaml>=6, pydantic>=2, deta>=0.1, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
   dev: "pytest>=8, pytest-cov, pytest-asyncio, ruff, mypy, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
-}
-
-interface[type="api"] {
-  type: rest;
-  framework: fastapi;
 }
 
 interface[type="cli"] {
@@ -22,12 +17,81 @@ interface[type="cli"] page[name="rebuild"] {
 
 }
 
+workflow[name="install"] {
+  trigger: manual;
+  step-1: run cmd=pip install -e ".[dev]";
+}
+
+workflow[name="install-tui"] {
+  trigger: manual;
+  step-1: run cmd=pip install -e ".[dev,tui]";
+}
+
+workflow[name="install-full"] {
+  trigger: manual;
+  step-1: run cmd=pip install -e ".[dev,tui,screenshots]";
+  step-2: run cmd=playwright install chromium;
+}
+
+workflow[name="test"] {
+  trigger: manual;
+  step-1: run cmd=python -m pytest tests/ -q;
+}
+
+workflow[name="test-v"] {
+  trigger: manual;
+  step-1: run cmd=python -m pytest tests/ -v;
+}
+
+workflow[name="lint"] {
+  trigger: manual;
+  step-1: run cmd=ruff check rebuild/ tests/;
+}
+
+workflow[name="fmt"] {
+  trigger: manual;
+  step-1: run cmd=ruff format rebuild/ tests/;
+}
+
+workflow[name="check"] {
+  trigger: manual;
+  step-1: depend target=lint;
+  step-2: depend target=test;
+}
+
+workflow[name="tui"] {
+  trigger: manual;
+  step-1: run cmd=rebuild tui;
+}
+
+workflow[name="walk-dry"] {
+  trigger: manual;
+  step-1: run cmd=rebuild walk . --days 30 --dry-run --no-screenshots;
+}
+
+workflow[name="dashboard"] {
+  trigger: manual;
+  step-1: run cmd=rebuild dashboard --repo .;
+}
+
+workflow[name="build"] {
+  trigger: manual;
+  step-1: run cmd=python -m build;
+}
+
+workflow[name="clean"] {
+  trigger: manual;
+  step-1: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
+  step-2: run cmd=find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true;
+  step-3: run cmd=rm -rf dist/ build/;
+}
+
 deploy {
-  target: pip;
+  target: makefile;
 }
 
 environment[name="local"] {
-  runtime: python;
+  runtime: docker-compose;
   env_file: .env;
   python_version: >=3.10;
 }

@@ -1,0 +1,13 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/health",
+    "url": "http://localhost:8003/api/health",
+    "status": "fail",
+    "http_status": null,
+    "response_time_ms": null,
+    "screenshot": null,
+    "testql_passed": null,
+    "error": "[Errno 111] Connection refused [screenshot error: playwright not installed]"
+  }
+]

@@ -7,10 +7,12 @@ Historical deployment analysis — walk git history, deploy per day, test all en
 - [Metadata](#metadata)
 - [Architecture](#architecture)
 - [Interfaces](#interfaces)
+- [Workflows](#workflows)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Deployment](#deployment)
 - [Release Management (`goal.yaml`)](#release-management-goalyaml)
+- [Makefile Targets](#makefile-targets)
 - [Code Analysis](#code-analysis)
 - [Test Contracts](#test-contracts)
 - [Intent](#intent)
@@ -18,12 +20,12 @@ Historical deployment analysis — walk git history, deploy per day, test all en
 ## Metadata
 
 - **name**: `rebuild`
-- **version**: `0.1.7`
+- **version**: `0.1.9`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, testql(2), app.doql.less, goal.yaml, project/(2 analysis files)
+- **generated_from**: pyproject.toml, Makefile, testql(2), app.doql.less, goal.yaml, project/(2 analysis files)
 
 ## Architecture
 
@@ -38,17 +40,12 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: rebuild;
-  version: 0.1.7;
+  version: 0.1.9;
 }
 
 dependencies {
   runtime: "typer>=0.12, rich>=13, gitpython>=3.1, httpx>=0.27, pyyaml>=6, pydantic>=2, deta>=0.1, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
   dev: "pytest>=8, pytest-cov, pytest-asyncio, ruff, mypy, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
-}
-
-interface[type="api"] {
-  type: rest;
-  framework: fastapi;
 }
 
 interface[type="cli"] {
@@ -58,12 +55,81 @@ interface[type="cli"] page[name="rebuild"] {
 
 }
 
+workflow[name="install"] {
+  trigger: manual;
+  step-1: run cmd=pip install -e ".[dev]";
+}
+
+workflow[name="install-tui"] {
+  trigger: manual;
+  step-1: run cmd=pip install -e ".[dev,tui]";
+}
+
+workflow[name="install-full"] {
+  trigger: manual;
+  step-1: run cmd=pip install -e ".[dev,tui,screenshots]";
+  step-2: run cmd=playwright install chromium;
+}
+
+workflow[name="test"] {
+  trigger: manual;
+  step-1: run cmd=python -m pytest tests/ -q;
+}
+
+workflow[name="test-v"] {
+  trigger: manual;
+  step-1: run cmd=python -m pytest tests/ -v;
+}
+
+workflow[name="lint"] {
+  trigger: manual;
+  step-1: run cmd=ruff check rebuild/ tests/;
+}
+
+workflow[name="fmt"] {
+  trigger: manual;
+  step-1: run cmd=ruff format rebuild/ tests/;
+}
+
+workflow[name="check"] {
+  trigger: manual;
+  step-1: depend target=lint;
+  step-2: depend target=test;
+}
+
+workflow[name="tui"] {
+  trigger: manual;
+  step-1: run cmd=rebuild tui;
+}
+
+workflow[name="walk-dry"] {
+  trigger: manual;
+  step-1: run cmd=rebuild walk . --days 30 --dry-run --no-screenshots;
+}
+
+workflow[name="dashboard"] {
+  trigger: manual;
+  step-1: run cmd=rebuild dashboard --repo .;
+}
+
+workflow[name="build"] {
+  trigger: manual;
+  step-1: run cmd=python -m build;
+}
+
+workflow[name="clean"] {
+  trigger: manual;
+  step-1: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
+  step-2: run cmd=find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true;
+  step-3: run cmd=rm -rf dist/ build/;
+}
+
 deploy {
-  target: pip;
+  target: makefile;
 }
 
 environment[name="local"] {
-  runtime: python;
+  runtime: docker-compose;
   env_file: .env;
   python_version: >=3.10;
 }
@@ -147,12 +213,14 @@ ASSERT[30]{field, operator, expected}:
   result.health_pct, ==, 50.0
 ```
 
+## Workflows
+
 ## Configuration
 
 ```yaml
 project:
   name: rebuild
-  version: 0.1.7
+  version: 0.1.9
   env: local
 ```
 
@@ -203,153 +271,231 @@ pip install -e .[dev]
 - **build strategies**: `python`, `nodejs`, `rust`
 - **version files**: `VERSION`, `pyproject.toml:version`, `rebuild/__init__.py:__version__`
 
+## Makefile Targets
+
+- `help`
+- `install`
+- `install-tui`
+- `install-full`
+- `test`
+- `test-v`
+- `lint`
+- `fmt`
+- `check`
+- `tui`
+- `walk-dry`
+- `dashboard`
+- `build`
+- `clean`
+
 ## Code Analysis
 
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# resplit | 29f 2716L | python:20,shell:8,less:1 | 2026-05-01
-# stats: 102 func | 9 cls | 29 mod | CC̄=3.8 | critical:2 | cycles:0
-# alerts[5]: CC walk=15; CC report=13; CC _scan_via_compose_labels=9; CC save_html=9; CC extract_endpoint=9
-# hotspots[5]: walk fan=30; report fan=22; dashboard fan=18; _scan_via_compose_labels fan=13; _batch_playwright fan=12
+# resplit | 51f 4573L | python:42,shell:8,less:1 | 2026-05-01
+# stats: 96 func | 33 cls | 51 mod | CC̄=3.0 | critical:0 | cycles:0
+# alerts[5]: CC services=8; CC plan=8; CC _load_day_results=8; CC _endpoint_diff=8; CC walk=7
+# hotspots[5]: walk fan=16; services fan=15; truth fan=13; restore fan=11; _generate_refactor_plan fan=11
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[29]:
-  app.doql.less,34
-  examples/01-dry-run-walk/run.sh,19
-  examples/02-docker-compose-project/run.sh,26
+M[51]:
+  app.doql.less,98
+  examples/01-dry-run-walk/run.sh,21
+  examples/02-docker-compose-project/run.sh,33
   examples/03-restore-endpoint/mock_results.sh,38
-  examples/03-restore-endpoint/run.sh,31
+  examples/03-restore-endpoint/run.sh,22
   examples/restore_endpoint.sh,14
   examples/walk_dry_run.sh,14
   project.sh,41
   rebuild/__init__.py,11
-  rebuild/cli.py,366
-  rebuild/dashboard.py,189
-  rebuild/deployer.py,155
-  rebuild/endpoint_scanner.py,165
-  rebuild/git_walker.py,132
-  rebuild/models.py,110
-  rebuild/reporter.py,236
-  rebuild/restorer.py,188
-  rebuild/screenshotter.py,172
-  rebuild/tester.py,188
+  rebuild/__main__.py,4
+  rebuild/analysis/duplication_engine.py,173
+  rebuild/analysis/git_truth_analyzer.py,121
+  rebuild/analysis/service_graph.py,98
+  rebuild/analysis/service_similarity.py,60
+  rebuild/application/__init__.py,1
+  rebuild/application/pipeline.py,113
+  rebuild/application/services/base.py,11
+  rebuild/application/services/deploy_service.py,106
+  rebuild/application/services/git_service.py,70
+  rebuild/application/services/history_service.py,81
+  rebuild/application/services/reporter_service.py,210
+  rebuild/application/services/restore_service.py,150
+  rebuild/application/services/scanner_service.py,134
+  rebuild/application/services/screenshot_service.py,74
+  rebuild/application/services/test_service.py,51
+  rebuild/domain/__init__.py,1
+  rebuild/domain/commit.py,12
+  rebuild/domain/context.py,14
+  rebuild/domain/day_result.py,35
+  rebuild/domain/endpoint.py,41
+  rebuild/domain/models.py,31
+  rebuild/infrastructure/__init__.py,1
+  rebuild/infrastructure/http_adapter.py,31
+  rebuild/infrastructure/shell_adapter.py,38
+  rebuild/interfaces/__init__.py,1
+  rebuild/interfaces/cli.py,361
+  rebuild/interfaces/dashboard.py,189
+  rebuild/interfaces/tui.py,927
+  rebuild/refactor/recommendation_engine.py,94
+  rebuild/refactor/refactor_executor.py,49
   tests/__init__.py,1
-  tests/test_deployer.py,37
-  tests/test_endpoint_scanner.py,72
-  tests/test_git_walker.py,51
-  tests/test_models.py,71
-  tests/test_reporter.py,78
-  tests/test_restorer.py,47
-  tests/test_screenshotter.py,99
-  tests/test_tester.py,129
+  tests/test_deploy_service.py,102
+  tests/test_git_service.py,42
+  tests/test_history_service.py,114
+  tests/test_models.py,66
+  tests/test_pipeline.py,156
+  tests/test_reporter_service.py,184
+  tests/test_restore_service.py,93
+  tests/test_scanner_service.py,159
+  tests/test_test_service.py,80
   tree.sh,2
 D:
   rebuild/__init__.py:
-  rebuild/cli.py:
-    e: walk,restore,report,version,dashboard,_attach_screenshots,_print_day_summary,_print_summary_table
+  rebuild/__main__.py:
+  rebuild/analysis/duplication_engine.py:
+    e: CodeFragment,DuplicateGroup,DuplicationEngine
+    CodeFragment:
+    DuplicateGroup:
+    DuplicationEngine: __init__(1),scan(1),_extract_fragments(1),_extract_py_fragments(1),_extract_regex_fragments(1),_compute_structural_hash_py(1),_compute_fuzzy_signature_py(1)  # Engine for detecting structural and semantic duplication in 
+  rebuild/analysis/git_truth_analyzer.py:
+    e: FunctionQuality,GitTruthAnalyzer
+    FunctionQuality:
+    GitTruthAnalyzer: __init__(2),analyze_function_history(2),_analyze_content(4),_compute_complexity(1),_load_historical_results(0)  # Analyzes code evolution and identifies the 'best' versions o
+  rebuild/analysis/service_graph.py:
+    e: ServiceNode,ServiceGraphBuilder
+    ServiceNode:
+    ServiceGraphBuilder: __init__(2),build(0),_analyze_file(1),detect_cycles(0)  # Builds a dependency graph of services within the application
+  rebuild/analysis/service_similarity.py:
+    e: ServiceSimilarity,ServiceSimilarityAnalyzer
+    ServiceSimilarity:
+    ServiceSimilarityAnalyzer: analyze_directory(1),_extract_methods(1)  # Analyzer for detecting overlapping responsibilities between 
+  rebuild/application/__init__.py:
+  rebuild/application/pipeline.py:
+    e: Pipeline
+    Pipeline: __init__(2),log(1),run(0),run_day(2)  # Orchestrates the analysis process by composing various servi
+  rebuild/application/services/base.py:
+    e: Service
+    Service: execute(1)  # Standard interface for all application services.
+  rebuild/application/services/deploy_service.py:
+    e: DeployService
+    DeployService: __init__(4),execute(1),start(1),stop(1),_compose_file(1),_compose_up(1),_compose_down(1),_uvicorn_start(1),_uvicorn_stop(0),_wait_healthy(0)  # Service for managing the lifecycle of the service being anal
+  rebuild/application/services/git_service.py:
+    e: GitService
+    GitService: __init__(2),execute(1),days_with_commits(1),checkout(1),restore_head(0),_run_git(1)  # Service for interacting with Git repositories and history.
+  rebuild/application/services/history_service.py:
+    e: HistoryService
+    HistoryService: execute(1),load_history(1),_load_commit(2)  # Service for loading and managing historical scan results fro
+  rebuild/application/services/reporter_service.py:
+    e: ReporterService
+    ReporterService: execute(1),save_json(1),_status_badge(1),_screenshot_html(2),save_html(1),save_day(1),save_timeline_index(2)  # Service for generating HTML and JSON reports.
+  rebuild/application/services/restore_service.py:
+    e: RestoreService
+    RestoreService: __init__(2),execute(1),find_last_working_day(2),extract_endpoint(3),_find_backend_files(1),_is_page_endpoint(1),_write_readme(4)  # Service for restoring a working endpoint from git history.
+  rebuild/application/services/scanner_service.py:
+    e: ScannerService
+    ScannerService: __init__(1),execute(1),_scan_via_deta(1),_ports_to_endpoints(2),_scan_via_openapi(1),_parse_openapi(2),_scan_via_compose_labels(1)  # Service for discovering API endpoints in a repository.
+  rebuild/application/services/screenshot_service.py:
+    e: ScreenshotConfig,ScreenshotService
+    ScreenshotConfig:
+    ScreenshotService: __init__(1),execute(1)  # Service for capturing screenshots of endpoints.
+  rebuild/application/services/test_service.py:
+    e: TestService
+    TestService: __init__(2),set_day_dir(1),execute(1),_test_endpoint(1)  # Service for testing endpoints using various strategies.
+  rebuild/domain/__init__.py:
+  rebuild/domain/commit.py:
+    e: CommitInfo
+    CommitInfo:
+  rebuild/domain/context.py:
+    e: EndpointContext
+    EndpointContext:
+  rebuild/domain/day_result.py:
+    e: DayResult
+    DayResult: ok_count(0),fail_count(0),health_pct(0)
+  rebuild/domain/endpoint.py:
+    e: EndpointStatus,Endpoint,EndpointResult
+    EndpointStatus:
+    Endpoint: url(0),slug(0)
+    EndpointResult:
+  rebuild/domain/models.py:
+    e: DeployMethod,WalkConfig
+    DeployMethod:
+    WalkConfig:
+  rebuild/infrastructure/__init__.py:
+  rebuild/infrastructure/http_adapter.py:
+    e: HttpAdapter
+    HttpAdapter: __init__(2),get(2),post(2),close(0)  # Adapter for HTTP requests.
+  rebuild/infrastructure/shell_adapter.py:
+    e: ShellAdapter
+    ShellAdapter: __init__(1),run(3),popen(2)  # Adapter for shell command execution.
+  rebuild/interfaces/__init__.py:
+  rebuild/interfaces/cli.py:
+    e: walk,restore,report,dashboard,tui,version,duplicates,services,truth,plan,execute,_generate_refactor_plan,_print_summary_table
     walk(repo;days;date_from;date_to;output;deploy;health_url;base_url;screenshots;dry_run)
     restore(endpoint;repo;output;results_dir)
     report(results_dir)
-    version()
     dashboard(results_dir;repo)
-    _attach_screenshots(result;day_dir)
-    _print_day_summary(result)
+    tui()
+    version()
+    duplicates(path;min_lines)
+    services(path)
+    truth(file;function;repo)
+    plan(path)
+    execute(path;force)
+    _generate_refactor_plan(path)
     _print_summary_table(results)
-  rebuild/dashboard.py:
+  rebuild/interfaces/dashboard.py:
     e: get_cc_for_day,_extract_avg_cc,generate_dashboard,_render_html
     get_cc_for_day(repo;day)
     _extract_avg_cc(data)
     generate_dashboard(results;output_dir;repo)
     _render_html(days;health;cc;total_days)
-  rebuild/deployer.py:
-    e: detect_deploy_method,_compose_file,start,stop,_compose_up,_compose_down,_uvicorn_start,_uvicorn_stop,_wait_healthy
-    detect_deploy_method(repo)
-    _compose_file(repo;config)
-    start(repo;config)
-    stop(repo;config)
-    _compose_up(repo;config)
-    _compose_down(repo;config)
-    _uvicorn_start(repo;config)
-    _uvicorn_stop()
-    _wait_healthy(config)
-  rebuild/endpoint_scanner.py:
-    e: scan_endpoints,_scan_via_deta,_ports_to_endpoints,_scan_via_openapi,_parse_openapi,_scan_via_compose_labels
-    scan_endpoints(repo;config)
-    _scan_via_deta(repo;config)
-    _ports_to_endpoints(data;base_url)
-    _scan_via_openapi(base_url)
-    _parse_openapi(spec;base_url)
-    _scan_via_compose_labels(repo;config)
-  rebuild/git_walker.py:
-    e: _run_git,get_commit_for_day,iter_days,checkout,restore_head,days_with_commits
-    _run_git(args;cwd)
-    get_commit_for_day(repo;day;earliest)
-    iter_days(config)
-    checkout(repo;sha)
-    restore_head(repo)
-    days_with_commits(config)
-  rebuild/models.py:
-    e: DeployMethod,EndpointStatus,CommitInfo,Endpoint,EndpointResult,DayResult,WalkConfig
-    DeployMethod:
-    EndpointStatus:
-    CommitInfo:
-    Endpoint: url(0),slug(0)
-    EndpointResult:
-    DayResult: ok_count(0),fail_count(0),health_pct(0)
-    WalkConfig:
-  rebuild/reporter.py:
-    e: save_json,_status_badge,_screenshot_html,save_html,save_day,save_timeline_index
-    save_json(result)
-    _status_badge(status)
-    _screenshot_html(r;day_dir)
-    save_html(result)
-    save_day(result)
-    save_timeline_index(results;output_dir)
-  rebuild/restorer.py:
-    e: find_last_working_day,extract_endpoint,_find_backend_files,_is_page_endpoint,_write_readme
-    find_last_working_day(endpoint_path;results_dir)
-    extract_endpoint(repo;endpoint_path;working_day;target)
-    _find_backend_files(repo;endpoint_path)
-    _is_page_endpoint(path)
-    _write_readme(target;endpoint_path;working_day;backend_files)
-  rebuild/screenshotter.py:
-    e: take_screenshot,take_screenshots_batch,_playwright_shot,_batch_playwright,screenshot_endpoint,ScreenshotConfig,ScreenshotResult
-    ScreenshotConfig:
-    ScreenshotResult:
-    take_screenshot(url;filename;cfg)
-    take_screenshots_batch(urls;cfg)
-    _playwright_shot(url;path;cfg)
-    _batch_playwright(urls;cfg)
-    screenshot_endpoint(url;slug;screenshots_dir)
-  rebuild/tester.py:
-    e: run_tests,_testql_available,_run_via_testql,_parse_testql_results,_run_http_probe,_fallback_all_timeout
-    run_tests(endpoints;config;day_dir)
-    _testql_available()
-    _run_via_testql(endpoints;config;day_dir)
-    _parse_testql_results(results_path;endpoints;config)
-    _run_http_probe(endpoints;config)
-    _fallback_all_timeout(endpoints)
+  rebuild/interfaces/tui.py:
+    e: _load_day_results,_endpoint_diff,_health_bar,_calc_health,launch_tui
+    _load_day_results(results_dir)
+    _endpoint_diff(prev;curr)
+    _health_bar(pct;width)
+    _calc_health(results)
+    launch_tui()
+  rebuild/refactor/recommendation_engine.py:
+    e: RefactorSuggestion,RecommendationEngine
+    RefactorSuggestion:
+    RecommendationEngine: generate_plan(4)  # Generates actionable refactoring plans based on analysis res
+  rebuild/refactor/refactor_executor.py:
+    e: RefactorExecutor
+    RefactorExecutor: __init__(1),execute_suggestion(1),_merge_duplicates(1)  # Executes refactoring suggestions on the filesystem.
   tests/__init__.py:
-  tests/test_deployer.py:
-    e: test_detect_docker_compose_yml,test_detect_docker_compose_yaml,test_detect_uvicorn_server,test_detect_uvicorn_backend_server,test_detect_none
+  tests/test_deploy_service.py:
+    e: _config,test_detect_docker_compose_yml,test_detect_docker_compose_yaml,test_detect_uvicorn_via_server_py,test_detect_uvicorn_via_backend_server_py,test_detect_none_fallback,test_start_dry_run_skips_deploy,test_start_none_method_returns_true,test_stop_dry_run_skips,test_stop_none_method_skips,test_execute_delegates_to_start
+    _config(tmp_path;method;dry_run)
     test_detect_docker_compose_yml(tmp_path)
     test_detect_docker_compose_yaml(tmp_path)
-    test_detect_uvicorn_server(tmp_path)
-    test_detect_uvicorn_backend_server(tmp_path)
-    test_detect_none(tmp_path)
-  tests/test_endpoint_scanner.py:
-    e: test_parse_openapi,test_ports_to_endpoints,test_scan_via_compose_labels,test_scan_endpoints_minimal_fallback
-    test_parse_openapi()
-    test_ports_to_endpoints()
-    test_scan_via_compose_labels(tmp_path)
-    test_scan_endpoints_minimal_fallback(tmp_path)
-  tests/test_git_walker.py:
-    e: test_get_commit_for_day_parses_output,test_get_commit_for_day_no_output,test_get_commit_for_day_git_error,test_days_with_commits_filters_none
-    test_get_commit_for_day_parses_output()
-    test_get_commit_for_day_no_output()
-    test_get_commit_for_day_git_error()
-    test_days_with_commits_filters_none()
+    test_detect_uvicorn_via_server_py(tmp_path)
+    test_detect_uvicorn_via_backend_server_py(tmp_path)
+    test_detect_none_fallback(tmp_path)
+    test_start_dry_run_skips_deploy(tmp_path)
+    test_start_none_method_returns_true(tmp_path)
+    test_stop_dry_run_skips(tmp_path)
+    test_stop_none_method_skips(tmp_path)
+    test_execute_delegates_to_start(tmp_path)
+  tests/test_git_service.py:
+    e: test_get_commit_for_day_ok,test_get_commit_for_day_none,test_days_with_commits
+    test_get_commit_for_day_ok(tmp_path)
+    test_get_commit_for_day_none(tmp_path)
+    test_days_with_commits(tmp_path)
+  tests/test_history_service.py:
+    e: _write_day,test_load_history_empty_dir,test_load_history_no_results_json,test_load_history_single_day,test_load_history_multiple_days_sorted,test_load_history_health_pct,test_load_history_skips_invalid_dir_name,test_load_history_with_commit,test_load_history_status_timeout,test_load_history_testql_passed
+    _write_day(results_dir;day;results;commit_lines)
+    test_load_history_empty_dir(tmp_path)
+    test_load_history_no_results_json(tmp_path)
+    test_load_history_single_day(tmp_path)
+    test_load_history_multiple_days_sorted(tmp_path)
+    test_load_history_health_pct(tmp_path)
+    test_load_history_skips_invalid_dir_name(tmp_path)
+    test_load_history_with_commit(tmp_path)
+    test_load_history_status_timeout(tmp_path)
+    test_load_history_testql_passed(tmp_path)
   tests/test_models.py:
     e: test_endpoint_url,test_endpoint_url_strips_trailing_slash,test_endpoint_slug,test_day_result_health_pct_empty,test_day_result_health_pct,test_walk_config_defaults
     test_endpoint_url()
@@ -358,42 +504,60 @@ D:
     test_day_result_health_pct_empty()
     test_day_result_health_pct()
     test_walk_config_defaults()
-  tests/test_reporter.py:
-    e: _make_result,test_save_json_creates_files,test_save_json_results_content,test_save_html_creates_report,test_save_timeline_index
-    _make_result(tmp_path)
-    test_save_json_creates_files(tmp_path)
-    test_save_json_results_content(tmp_path)
-    test_save_html_creates_report(tmp_path)
-    test_save_timeline_index(tmp_path)
-  tests/test_restorer.py:
-    e: _make_results_dir,test_find_last_working_day_found,test_find_last_working_day_not_found,test_find_backend_files,test_is_page_endpoint
-    _make_results_dir(tmp_path;day;endpoint;status)
-    test_find_last_working_day_found(tmp_path)
-    test_find_last_working_day_not_found(tmp_path)
-    test_find_backend_files(tmp_path)
-    test_is_page_endpoint()
-  tests/test_screenshotter.py:
-    e: test_take_screenshot_playwright_not_installed,test_take_screenshot_success,test_take_screenshot_retry_then_succeed,test_take_screenshot_all_retries_fail,test_screenshot_endpoint_returns_path_on_success,test_screenshot_endpoint_returns_none_on_failure,test_take_screenshots_batch_playwright_missing
-    test_take_screenshot_playwright_not_installed(tmp_path)
-    test_take_screenshot_success(tmp_path)
-    test_take_screenshot_retry_then_succeed(tmp_path)
-    test_take_screenshot_all_retries_fail(tmp_path)
-    test_screenshot_endpoint_returns_path_on_success(tmp_path)
-    test_screenshot_endpoint_returns_none_on_failure(tmp_path)
-    test_take_screenshots_batch_playwright_missing(tmp_path)
-  tests/test_tester.py:
-    e: _ep,test_testql_available_missing,test_testql_available_ok,test_parse_testql_results_ok,test_parse_testql_results_fail,test_parse_testql_results_missing_endpoint,test_run_http_probe_skip_non_get,test_run_http_probe_ok,test_run_http_probe_timeout,test_run_tests_uses_http_probe_when_no_testql_dir,test_fallback_all_timeout
+  tests/test_pipeline.py:
+    e: _config,_commit,test_run_returns_empty_when_no_commits,test_run_day_dry_run_skips_checkout,test_run_day_returns_day_result,test_run_day_deploy_failure_skips_scan,test_run_day_stop_always_called,test_run_processes_all_days
+    _config(tmp_path;dry_run)
+    _commit(day)
+    test_run_returns_empty_when_no_commits(tmp_path)
+    test_run_day_dry_run_skips_checkout(tmp_path)
+    test_run_day_returns_day_result(tmp_path)
+    test_run_day_deploy_failure_skips_scan(tmp_path)
+    test_run_day_stop_always_called(tmp_path)
+    test_run_processes_all_days(tmp_path)
+  tests/test_reporter_service.py:
+    e: _ep,_day_result,test_save_json_creates_results_file,test_save_json_creates_endpoints_file,test_save_json_writes_commit_txt,test_save_json_no_output_dir_skips,test_save_json_testql_passed_field,test_save_html_creates_report_file,test_save_html_contains_health_pct,test_save_timeline_index_creates_index,test_save_timeline_index_multiple_days_sorted
     _ep(path;method)
-    test_testql_available_missing()
-    test_testql_available_ok()
-    test_parse_testql_results_ok(tmp_path)
-    test_parse_testql_results_fail(tmp_path)
-    test_parse_testql_results_missing_endpoint(tmp_path)
-    test_run_http_probe_skip_non_get()
-    test_run_http_probe_ok()
-    test_run_http_probe_timeout()
-    test_run_tests_uses_http_probe_when_no_testql_dir(tmp_path)
-    test_fallback_all_timeout()
+    _day_result(tmp_path;ep_results;commit)
+    test_save_json_creates_results_file(tmp_path)
+    test_save_json_creates_endpoints_file(tmp_path)
+    test_save_json_writes_commit_txt(tmp_path)
+    test_save_json_no_output_dir_skips(tmp_path)
+    test_save_json_testql_passed_field(tmp_path)
+    test_save_html_creates_report_file(tmp_path)
+    test_save_html_contains_health_pct(tmp_path)
+    test_save_timeline_index_creates_index(tmp_path)
+    test_save_timeline_index_multiple_days_sorted(tmp_path)
+  tests/test_restore_service.py:
+    e: _write_day,test_find_last_working_day_found,test_find_last_working_day_picks_most_recent,test_find_last_working_day_none_when_always_fail,test_find_last_working_day_missing_dir,test_find_last_working_day_ignores_other_endpoints,test_find_last_working_day_skips_invalid_dirs,test_execute_returns_date
+    _write_day(results_dir;day;results)
+    test_find_last_working_day_found(tmp_path)
+    test_find_last_working_day_picks_most_recent(tmp_path)
+    test_find_last_working_day_none_when_always_fail(tmp_path)
+    test_find_last_working_day_missing_dir(tmp_path)
+    test_find_last_working_day_ignores_other_endpoints(tmp_path)
+    test_find_last_working_day_skips_invalid_dirs(tmp_path)
+    test_execute_returns_date(tmp_path)
+  tests/test_scanner_service.py:
+    e: _config,test_parse_openapi_returns_endpoints,test_parse_openapi_ignores_unknown_methods,test_parse_openapi_empty_paths,test_scan_via_compose_labels_finds_traefik_prefix,test_scan_via_compose_labels_no_compose_file,test_scan_via_compose_labels_dict_labels,test_ports_to_endpoints,test_ports_to_endpoints_no_services,test_execute_falls_back_to_health,test_execute_deta_takes_priority,test_execute_deduplicates_openapi_vs_deta
+    _config(tmp_path;base_url)
+    test_parse_openapi_returns_endpoints(tmp_path)
+    test_parse_openapi_ignores_unknown_methods(tmp_path)
+    test_parse_openapi_empty_paths(tmp_path)
+    test_scan_via_compose_labels_finds_traefik_prefix(tmp_path)
+    test_scan_via_compose_labels_no_compose_file(tmp_path)
+    test_scan_via_compose_labels_dict_labels(tmp_path)
+    test_ports_to_endpoints(tmp_path)
+    test_ports_to_endpoints_no_services(tmp_path)
+    test_execute_falls_back_to_health(tmp_path)
+    test_execute_deta_takes_priority(tmp_path)
+    test_execute_deduplicates_openapi_vs_deta(tmp_path)
+  tests/test_test_service.py:
+    e: _ep,test_http_probe_ok,test_http_probe_timeout,test_testql_strategy_parse_ok,test_test_service_delegates_to_strategy
+    _ep(path;method)
+    test_http_probe_ok()
+    test_http_probe_timeout()
+    test_testql_strategy_parse_ok(tmp_path)
+    test_test_service_delegates_to_strategy()
 ```
 
 ## Test Contracts
