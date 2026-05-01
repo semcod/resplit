@@ -1,11 +1,11 @@
 """
-retrodep CLI — główny punkt wejścia.
+resplit CLI — główny punkt wejścia.
 
 Komendy:
-  retrodep walk    — przejdź historię git i testuj endpointy
-  retrodep restore — przywróć działający endpoint jako projekt
-  retrodep report  — wygeneruj zbiorczy raport z istniejących wyników
-  retrodep status  — pokaż status ostatniego walk
+  resplit walk    — przejdź historię git i testuj endpointy
+  resplit restore — przywróć działający endpoint jako projekt
+  resplit report  — wygeneruj zbiorczy raport z istniejących wyników
+  resplit status  — pokaż status ostatniego walk
 """
 from __future__ import annotations
 
@@ -14,7 +14,6 @@ from datetime import date
 from pathlib import Path
 from typing import Optional
 
-import httpx
 import typer
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
@@ -32,9 +31,11 @@ from .models import (
     WalkConfig,
 )
 from .reporter import save_day, save_timeline_index
+from .screenshotter import ScreenshotConfig, screenshot_endpoint
+from .tester import run_tests
 
 app = typer.Typer(
-    name="retrodep",
+    name="resplit",
     help="Historical deployment analysis — walk git history, test endpoints, capture screenshots.",
     rich_markup_mode="markdown",
     no_args_is_help=True,
@@ -52,7 +53,7 @@ def walk(
     days: int = typer.Option(30, help="Ile dni wstecz"),
     date_from: Optional[str] = typer.Option(None, "--from", help="Data od YYYY-MM-DD"),
     date_to: Optional[str] = typer.Option(None, "--to", help="Data do YYYY-MM-DD"),
-    output: Path = typer.Option(Path(".retrodep"), help="Katalog wyjściowy"),
+    output: Path = typer.Option(Path(".resplit"), help="Katalog wyjściowy"),
     deploy: str = typer.Option("auto", help="Metoda deploy: auto|docker-compose|uvicorn|none"),
     health_url: str = typer.Option("http://localhost:8003/api/health", help="URL health check"),
     base_url: str = typer.Option("http://localhost:8003", help="Bazowy URL usługi"),
@@ -85,7 +86,7 @@ def walk(
         dry_run=dry_run,
     )
 
-    console.print(f"\n[bold]retrodep walk[/bold] v{__version__}")
+    console.print(f"\n[bold]resplit walk[/bold] v{__version__}")
     console.print(f"  repo:   {repo}")
     console.print(f"  output: {output}")
     console.print(f"  deploy: {method.value}")
@@ -132,8 +133,12 @@ def walk(
             result.endpoints = scan_endpoints(repo, config)
             console.print(f"  Endpointów: [bold]{len(result.endpoints)}[/bold]")
 
-            # 4. Testuj każdy endpoint
-            result.endpoint_results = _probe_endpoints(result, config, day_dir)
+            # 4. Testuj każdy endpoint (testql lub HTTP probe)
+            result.endpoint_results = run_tests(result.endpoints, config, day_dir)
+
+            # 4b. Screenshots (opcjonalnie)
+            if config.screenshots:
+                _attach_screenshots(result, day_dir)
 
             # 5. Raport
             save_day(result)
@@ -172,7 +177,7 @@ def restore(
     endpoint: str = typer.Argument(help="Ścieżka endpointu np. /api/health"),
     repo: Path = typer.Argument(Path("."), help="Repozytorium"),
     output: Path = typer.Option(Path("restored"), help="Katalog docelowy projektu"),
-    results_dir: Path = typer.Option(Path(".retrodep"), help="Katalog z wynikami walk"),
+    results_dir: Path = typer.Option(Path(".resplit"), help="Katalog z wynikami walk"),
 ) -> None:
     """Przywróć działający endpoint jako izolowany projekt."""
     from .restorer import find_last_working_day, extract_endpoint
@@ -194,7 +199,7 @@ def restore(
 
 @app.command()
 def report(
-    results_dir: Path = typer.Option(Path(".retrodep"), help="Katalog z wynikami walk"),
+    results_dir: Path = typer.Option(Path(".resplit"), help="Katalog z wynikami walk"),
 ) -> None:
     """Wygeneruj zbiorczy raport z istniejących wyników."""
     import json
@@ -258,66 +263,76 @@ def report(
 
 @app.command()
 def version() -> None:
-    """Pokaż wersję retrodep."""
-    console.print(f"retrodep v{__version__}")
+    """Pokaż wersję resplit."""
+    console.print(f"resplit v{__version__}")
+
+
+# ──────────────────────────────────────────────
+# dashboard
+# ──────────────────────────────────────────────
+
+@app.command()
+def dashboard(
+    results_dir: Path = typer.Option(Path(".resplit"), help="Katalog z wynikami walk"),
+    repo: Optional[Path] = typer.Option(None, help="Repo do pobrania CC (opcjonalnie)"),
+) -> None:
+    """Wygeneruj dashboard porównawczy: timeline health% + CC."""
+    import json as _json
+    from .dashboard import generate_dashboard
+    from .models import CommitInfo, Endpoint, EndpointResult, EndpointStatus
+
+    all_results = []
+    for day_dir in sorted(results_dir.iterdir()):
+        rf = day_dir / "results.json"
+        if not rf.exists():
+            continue
+        try:
+            day_date = date.fromisoformat(day_dir.name)
+        except ValueError:
+            continue
+        data = _json.loads(rf.read_text())
+        ep_results = []
+        endpoints = []
+        for r in data:
+            ep = Endpoint(method=r["method"], path=r["path"], base_url="")
+            endpoints.append(ep)
+            ep_results.append(EndpointResult(
+                endpoint=ep,
+                status=EndpointStatus(r["status"]),
+                http_status=r.get("http_status"),
+            ))
+        from .models import DayResult as _DR
+        all_results.append(_DR(
+            day=day_date,
+            commit=None,
+            deploy_method=DeployMethod.NONE,
+            deploy_success=True,
+            endpoints=endpoints,
+            endpoint_results=ep_results,
+            output_dir=day_dir,
+        ))
+
+    if not all_results:
+        console.print("[yellow]Brak wyników w katalogu.[/yellow]")
+        raise typer.Exit(0)
+
+    out = generate_dashboard(all_results, results_dir, repo=repo)
+    console.print(f"[green]✓ Dashboard: {out}[/green]")
 
 
 # ──────────────────────────────────────────────
 # Helpers
 # ──────────────────────────────────────────────
 
-def _probe_endpoints(result: DayResult, config: WalkConfig, day_dir: Path) -> list[EndpointResult]:
-    """Testuje każdy endpoint HTTP (GET) i opcjonalnie robi screenshot."""
-    ep_results = []
-
+def _attach_screenshots(result: DayResult, day_dir: Path) -> None:
+    """Dodaje screenshoty do istniejących EndpointResult (tylko GET + OK/FAIL)."""
     screenshots_dir = day_dir / "screenshots"
-    if config.screenshots:
-        screenshots_dir.mkdir(parents=True, exist_ok=True)
-
-    for ep in result.endpoints:
-        if ep.method != "GET":
-            # Non-GET: zapisz jako SKIP
-            ep_results.append(EndpointResult(endpoint=ep, status=EndpointStatus.SKIP))
+    cfg = ScreenshotConfig(output_dir=screenshots_dir)
+    for ep_result in result.endpoint_results:
+        ep = ep_result.endpoint
+        if ep.method != "GET" or ep_result.status not in (EndpointStatus.OK, EndpointStatus.FAIL):
             continue
-
-        t0 = time.time()
-        try:
-            r = httpx.get(ep.url, timeout=8, follow_redirects=True)
-            ms = (time.time() - t0) * 1000
-            status = EndpointStatus.OK if r.status_code < 400 else EndpointStatus.FAIL
-            screenshot_path = None
-            if config.screenshots:
-                screenshot_path = _take_screenshot(ep.url, screenshots_dir / f"{ep.slug}.png")
-            ep_results.append(EndpointResult(
-                endpoint=ep,
-                status=status,
-                http_status=r.status_code,
-                response_time_ms=ms,
-                screenshot_path=screenshot_path,
-            ))
-        except httpx.TimeoutException:
-            ep_results.append(EndpointResult(endpoint=ep, status=EndpointStatus.TIMEOUT))
-        except Exception as exc:
-            ep_results.append(EndpointResult(endpoint=ep, status=EndpointStatus.FAIL, error=str(exc)))
-
-    return ep_results
-
-
-def _take_screenshot(url: str, path: Path) -> Optional[Path]:
-    """Screenshot via Playwright (jeśli zainstalowany)."""
-    try:
-        from playwright.sync_api import sync_playwright
-        with sync_playwright() as pw:
-            browser = pw.chromium.launch(headless=True)
-            page = browser.new_page()
-            page.goto(url, wait_until="networkidle", timeout=15_000)
-            page.screenshot(path=str(path), full_page=True)
-            browser.close()
-        return path
-    except ImportError:
-        return None
-    except Exception:
-        return None
+        ep_result.screenshot_path = screenshot_endpoint(ep.url, ep.slug, screenshots_dir)
 
 
 def _print_day_summary(result: DayResult) -> None:

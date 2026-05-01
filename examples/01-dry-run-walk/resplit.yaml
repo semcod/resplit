@@ -1,0 +1,15 @@
+project:
+  name: "my-api"
+  repo: "."
+
+deploy:
+  method: none
+
+scan:
+  days: 30
+  earliest_commit_per_day: true
+
+output:
+  dir: .resplit
+  screenshots: false
+  html_report: true

@@ -1,5 +1,5 @@
 """
-retrodep.endpoint_scanner — wykrywa endpointy przez deta scan lub OpenAPI.
+resplit.endpoint_scanner — wykrywa endpointy przez deta scan lub OpenAPI.
 
 Hierarchia:
   1. deta scan → infra.toon.yaml → lista portów/usług

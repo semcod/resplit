@@ -3,18 +3,17 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "retrodep"
-version = "0.1.0"
+name = "resplit"
+version = "0.1.1"
 description = "Historical deployment analysis — walk git history, deploy per day, test all endpoints, capture screenshots, restore working fragments"
 readme = "README.md"
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
 authors = [{ name = "Tom Sapletta", email = "tom@sapletta.com" }]
 requires-python = ">=3.10"
-keywords = ["deployment", "regression", "git", "testing", "endpoints", "history"]
+keywords = ["deployment", "regression", "git", "testing", "endpoints", "history", "resplit"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -31,24 +30,31 @@ dependencies = [
     "deta>=0.1",         # infra scanning
     # "wup>=0.1",        # optional: regression watcher
     # "regres>=0.1",     # optional: regression analysis
-    # "testql>=1.2",     # optional: endpoint testing DSL
+    # "testql>=1.2",     # optional: endpoint testing DSL,
+    "goal>=2.1.0",
+    "costs>=0.1.20",
+    "pfix>=0.1.60",
 ]
 
 [project.optional-dependencies]
 screenshots = ["playwright>=1.44"]
 full = ["playwright>=1.44", "wup", "regres", "testql"]
-dev = ["pytest>=8", "pytest-cov", "pytest-asyncio", "ruff", "mypy"]
+dev = ["pytest>=8", "pytest-cov", "pytest-asyncio", "ruff", "mypy",
+    "goal>=2.1.0",
+    "costs>=0.1.20",
+    "pfix>=0.1.60",
+]
 
 [project.scripts]
-retrodep = "retrodep.cli:app"
+resplit = "resplit.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/softreck/retrodep"
-Repository = "https://github.com/softreck/retrodep"
+Homepage = "https://github.com/semcod/resplit"
+Repository = "https://github.com/semcod/resplit"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["retrodep*"]
+include = ["resplit*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -63,3 +69,32 @@ target-version = "py310"
 python_version = "3.10"
 strict = false
 ignore_missing_imports = true
+
+[tool.pfix]
+# Self-healing Python configuration
+model = "openrouter/qwen/qwen3-coder-next"
+auto_apply = true
+auto_install_deps = true
+auto_restart = false
+max_retries = 3
+create_backups = false
+git_auto_commit = false
+
+[tool.pfix.runtime_todo]
+enabled = true
+todo_file = "TODO.md"
+min_severity = "low"
+deduplicate = true
+
+[tool.costs]
+# AI Cost tracking configuration
+badge = true
+update_readme = true
+readme_path = "README.md"
+default_model = "openrouter/qwen/qwen3-coder-next"
+analysis_mode = "byok"
+full_history = true
+max_commits = 500
+
+# Cost thresholds for badge colors (USD)
+badge_color_thresholds = { low = 1.0, medium = 5.0, high = 10.0, critical = 50.0 }

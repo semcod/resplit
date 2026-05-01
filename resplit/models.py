@@ -1,5 +1,5 @@
 """
-retrodep.models — shared data structures.
+resplit.models — shared data structures.
 """
 from __future__ import annotations
 
@@ -93,7 +93,7 @@ class DayResult:
 @dataclass
 class WalkConfig:
     repo_path: Path
-    output_dir: Path = Path(".retrodep")
+    output_dir: Path = Path(".resplit")
     days: int = 30
     date_from: Optional[date] = None
     date_to: Optional[date] = None

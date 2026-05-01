@@ -1,10 +1,10 @@
 """
-retrodep.deployer — wykrywa metodę deployu i zarządza cyklem życia usługi.
+resplit.deployer — wykrywa metodę deployu i zarządza cyklem życia usługi.
 
 Wspierane metody:
   - docker-compose (docker-compose.yml / docker compose)
   - uvicorn (FastAPI / wykryty server.py)
-  - custom (komenda z retrodep.yaml)
+  - custom (komenda z resplit.yaml)
   - none (dry-run / brak deployable artefaktów)
 """
 from __future__ import annotations

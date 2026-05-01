@@ -1,0 +1,19 @@
+project:
+  name: "my-api"
+  repo: "."
+
+deploy:
+  method: docker-compose
+  compose_file: docker-compose.yml
+  health_url: http://localhost:8003/api/health
+  health_timeout: 60
+  health_interval: 2
+
+scan:
+  days: 90
+  earliest_commit_per_day: true
+
+output:
+  dir: .resplit
+  screenshots: false
+  html_report: true
