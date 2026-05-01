@@ -100,7 +100,10 @@ class ConfigLoader:
             config.test_bodies.update(project["test_bodies"])
             
         # Replay
-        if "replay" in project:
-            config.replay = bool(project["replay"])
         if "service" in project:
             config.app_service = project["service"]
+        if "patch_dir" in project:
+            p = Path(project["patch_dir"])
+            if not p.is_absolute():
+                p = (config.repo_path / p).resolve()
+            config.patch_dir = p

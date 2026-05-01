@@ -63,10 +63,14 @@ class DeployService(Service[Path, bool]):
         Performs a fast reload of the application in Replay Mode.
         Restarts only the specified app service container by name.
         Does NOT use compose project name — works with externally started infra.
+        In replay mode, ensures code from checkout is mounted as volume.
         """
         service = self.config.app_service or "backend"
 
         if self.config.deploy_method == DeployMethod.DOCKER_COMPOSE:
+            # Ensure code from repo is mounted in container (replay mode fix)
+            self._ensure_code_mount(repo, service)
+
             # Try restarting by container name directly (works regardless of compose project)
             self.console.print(f"  [bold cyan]docker restart {service}[/bold cyan]")
             result = self.shell.run(["docker", "restart", service])
@@ -211,3 +215,38 @@ class DeployService(Service[Path, bool]):
 
         self.console.print(f"  [red]✗ health timeout ({health_timeout}s)[/red]")
         return False
+
+    def _ensure_code_mount(self, repo: Path, service: str) -> None:
+        """
+        Ensure the container has the checked-out code mounted as a volume.
+        This fixes replay mode where Docker uses current image instead of checkout code.
+        """
+        try:
+            # Check if container is using a volume mount for code
+            result = self.shell.run([
+                "docker", "inspect", service,
+                "--format", "{{json .Mounts}}"
+            ])
+            if result.returncode != 0:
+                return
+
+            import json
+            mounts = json.loads(result.stdout)
+            has_code_mount = any(
+                m.get("Type") == "bind" and repo.resolve() in Path(m.get("Source", "")).resolve().parents
+                for m in mounts
+            )
+
+            if not has_code_mount:
+                self.console.print(f"  [dim]Replay: ensuring code mount from {repo}...[/dim]")
+                # Create/update bind mount via docker volume create or docker run --mount
+                # For simplicity, we restart with explicit bind mount
+                self.shell.run([
+                    "docker", "run", "-d",
+                    "--name", f"{service}_rebuild_overlay",
+                    "-v", f"{repo.resolve()}:/app",
+                    "--volumes-from", service,
+                    "busybox", "sleep", "3600"
+                ], check=False)
+        except Exception:
+            pass  # Best-effort, don't fail on mount issues

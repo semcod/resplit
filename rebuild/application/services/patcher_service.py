@@ -47,15 +47,16 @@ class PatcherService(Service[Path, int]):
             # 1. Comment out npm install / npm ci / yarn install / pnpm install
             # Matches: RUN npm ci, RUN npm install, etc.
             install_patterns = [
-                r"(RUN\s+npm\s+ci)",
-                r"(RUN\s+npm\s+install)",
-                r"(RUN\s+yarn\s+install)",
-                r"(RUN\s+pnpm\s+install)",
-                r"(RUN\s+npm\s+i\s)"
+                r"(\bnpm\s+ci\b)",
+                r"(\bnpm\s+install\b)",
+                r"(\byarn\s+install\b)",
+                r"(\bpnpm\s+install\b)",
+                r"(\bnpm\s+i\b)"
             ]
             
             for pattern in install_patterns:
-                content = re.sub(pattern, r"# \1 (Patched by rebuild accelerator)", content, flags=re.IGNORECASE)
+                # Replace command with 'true' to skip but keep shell syntax intact
+                content = re.sub(pattern, "true", content, flags=re.IGNORECASE)
             
             # 2. Ensure node_modules are NOT deleted/overwritten if possible
             # (Usually just commenting out the install is enough as we COPY . .)

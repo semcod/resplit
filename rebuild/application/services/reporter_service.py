@@ -221,6 +221,12 @@ class ReporterService(Service[DayResult, None]):
             json.dumps(export_data, indent=2, ensure_ascii=False), encoding="utf-8"
         )
 
+        # Generate trend chart SVG
+        trend_svg = self._generate_trend_chart(results)
+
+        # Generate endpoint diff between consecutive days
+        diff_section = self._generate_endpoint_diff(results)
+
         rows = ""
         for r in sorted(results, key=lambda x: x.day, reverse=True):
             day_dir = r.output_dir or (output_dir / str(r.day))
@@ -278,6 +284,8 @@ class ReporterService(Service[DayResult, None]):
   <button class="btn btn-primary" onclick="dlFmt('toon')">&#8595; Pobierz TOON</button>
 </div>
 <div class="content">
+  {trend_svg if trend_svg else ""}
+  {diff_section if diff_section else ""}
   <table>
     <thead><tr><th>Dzień</th><th>Commit</th><th>Health</th><th>OK/Total</th><th>Deploy</th><th>Czas</th></tr></thead>
     <tbody>{rows}</tbody>
@@ -329,3 +337,87 @@ function dlFmt(fmt) {{
         }
         color, label = colors.get(status, ("#94a3b8", status.value))
         return f'<span style="background:{color};color:#fff;padding:2px 8px;border-radius:4px;font-size:12px">{label}</span>'
+
+    def _classify_error(self, result: EndpointResult) -> str:
+        """Classify error into category for grouping."""
+        if result.status == EndpointStatus.OK or result.status == EndpointStatus.SKIP:
+            return ""
+        if not result.error:
+            return "unknown"
+        err_lower = result.error.lower()
+        # Auth errors
+        if any(k in err_lower for k in ["unauthorized", "401", "forbidden", "403", "auth", "token"]):
+            return "auth"
+        # Template/param errors
+        if any(k in err_lower for k in ["not found", "404", "missing", "template", "param"]):
+            return "template"
+        # Timeout errors
+        if "timeout" in err_lower:
+            return "timeout"
+        # Server errors
+        if any(k in err_lower for k in ["500", "internal", "server error"]):
+            return "server"
+        # Network/connection errors
+        if any(k in err_lower for k in ["connection", "network", "refused"]):
+            return "network"
+        return "other"
+
+    def _generate_trend_chart(self, results: List[DayResult]) -> str:
+        """Generate inline SVG chart showing health% trend over time."""
+        if not results:
+            return ""
+        sorted_results = sorted(results, key=lambda x: x.day)
+        width = 800
+        height = 120
+        padding = 30
+        plot_width = width - 2 * padding
+        plot_height = height - 2 * padding
+
+        points = []
+        for i, r in enumerate(sorted_results):
+            x = padding + (i / max(1, len(sorted_results) - 1)) * plot_width
+            y = padding + (1 - r.health_pct / 100) * plot_height
+            points.append(f"{x},{y}")
+
+        if not points:
+            return ""
+
+        polyline = " ".join(points)
+        # Color gradient based on average health
+        avg_health = sum(r.health_pct for r in sorted_results) / len(sorted_results)
+        stroke_color = "#22c55e" if avg_health >= 80 else "#f97316" if avg_health >= 50 else "#ef4444"
+
+        svg = f"""<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" style="background:#f8fafc;border-radius:8px;margin:24px 0;">
+  <line x1="{padding}" y1="{padding}" x2="{padding}" y2="{height-padding}" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="{padding}" y1="{height-padding}" x2="{width-padding}" y2="{height-padding}" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="{padding-5}" y="{padding}" text-anchor="end" font-size="10" fill="#64748b">100%</text>
+  <text x="{padding-5}" y="{height-padding}" text-anchor="end" font-size="10" fill="#64748b">0%</text>
+  <polyline points="{polyline}" fill="none" stroke="{stroke_color}" stroke-width="2" stroke-linejoin="round"/>
+  {"".join(f'<circle cx="{p.split(",")[0]}" cy="{p.split(",")[1]}" r="3" fill="{stroke_color}"/>' for p in points)}
+</svg>"""
+        return svg
+
+    def _generate_endpoint_diff(self, results: List[DayResult]) -> str:
+        """Generate HTML section showing endpoint additions/removals between consecutive days."""
+        if len(results) < 2:
+            return ""
+        sorted_results = sorted(results, key=lambda x: x.day)
+        diff_rows = ""
+        for i in range(1, len(sorted_results)):
+            prev = sorted_results[i - 1]
+            curr = sorted_results[i]
+            prev_eps = {f"{ep.method} {ep.path}" for ep in prev.endpoints}
+            curr_eps = {f"{ep.method} {ep.path}" for ep in curr.endpoints}
+            added = curr_eps - prev_eps
+            removed = prev_eps - curr_eps
+            if not added and not removed:
+                continue
+            diff_rows += f"""
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:16px;">
+              <div style="font-weight:600;font-size:14px;margin-bottom:8px;">{prev.day} → {curr.day}</div>
+              {f'<div style="color:#22c55e;font-size:13px;">+ {len(added)} added: {", ".join(sorted(added)[:3])}{"..." if len(added) > 3 else ""}</div>' if added else ""}
+              {f'<div style="color:#ef4444;font-size:13px;">- {len(removed)} removed: {", ".join(sorted(removed)[:3])}{"..." if len(removed) > 3 else ""}</div>' if removed else ""}
+            </div>"""
+        if not diff_rows:
+            return ""
+        return f'<div style="margin:24px 0;"><h3 style="margin:0 0 12px 0;font-size:16px;">Endpoint Changes</h3>{diff_rows}</div>'

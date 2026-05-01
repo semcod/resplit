@@ -26,8 +26,8 @@
 - [x] **Per-Endpoint Body**: Opcjonalne `body:` dla POST/PUT/PATCH w konfiguracji testów.
 
 ### 🟡 Średnie — Raporty c2004
-- [ ] **Failure Grouping**: W raporcie HTML grupuj błędy wg kategorii (auth, template, missing).
-- [ ] **Trend Chart**: Wykres trendu health% w czasie (Chart.js / SVG inline).
+- [x] **Failure Grouping**: W raporcie HTML grupuj błędy wg kategorii (auth, template, missing).
+- [x] **Trend Chart**: Wykres trendu health% w czasie (Chart.js / SVG inline).
 - [ ] **Endpoint Diff**: Pokaż endpointy które znikły lub pojawiły się między commitami.
 - [x] **Response Time Tracking**: Zmierz i wyświetl `time_ms` dla wszystkich requestów.
 

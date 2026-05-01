@@ -48,3 +48,6 @@ class WalkConfig:
     smart_select: bool = True  # Use git diff to select only affected tests
     keep_alive: bool = True  # Keep infrastructure running after walk
     shutdown_after: bool = False  # Override keep_alive and shutdown
+    
+    # Phase 10: Manual Override / Patching
+    patch_dir: Optional[Path] = None  # Path to directory with fixes to apply to clone
