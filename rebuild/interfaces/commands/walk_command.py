@@ -32,6 +32,7 @@ def walk_command(
     accelerator: bool,
     patch_dir: Optional[Path],
     console: Console,
+    health_timeout: int = 60,
 ) -> None:
     repo = repo.resolve()
     output = output.resolve()
@@ -60,6 +61,7 @@ def walk_command(
         app_service=service,
         accelerator=accelerator,
         patch_dir=patch_dir,
+        health_timeout=health_timeout,
     )
 
     config_path = repo / "rebuild.yaml"

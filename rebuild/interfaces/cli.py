@@ -74,11 +74,13 @@ def walk(
     port: int = typer.Option(7821, "--port", help="Port serwera HTTP (--serve)"),
     accelerator: bool = typer.Option(False, "--accelerator", help="⚡ Przyspieszony tryb: użyj aktualnych node_modules i patchuj Dockerfile"),
     patch_dir: Optional[Path] = typer.Option(None, "--patch-dir", help="Folder z poprawkami do nałożenia na klon"),
+    health_timeout: int = typer.Option(60, "--health-timeout", help="Timeout health check w sekundach [default: 60]"),
 ) -> None:
     """Przejdź historię git dzień po dniu, deployuj i testuj endpointy."""
     from .commands.walk_command import walk_command
     walk_command(repo, days, date_from, date_to, output, deploy, replay, service,
-                 health_url, base_url, screenshots, dry_run, serve, port, accelerator, patch_dir, console)
+                 health_url, base_url, screenshots, dry_run, serve, port, accelerator, patch_dir, console,
+                 health_timeout=health_timeout)
 
 
 @app.command()

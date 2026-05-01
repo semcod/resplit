@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.1.17] - 2026-05-01
+
+### Docs
+- Update README.md
+
+### Other
+- Update infra-map.json
+- Update rebuild/interfaces/cli.py
+- Update rebuild/interfaces/commands/walk_command.py
+
 ## [0.1.16] - 2026-05-01
 
 ### Docs
