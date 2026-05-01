@@ -1,7 +1,7 @@
 <!-- code2docs:start --># resplit
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-5546-green)
-> **5546** functions | **0** classes | **84** files | CC̄ = 2.6
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-5549-green)
+> **5549** functions | **0** classes | **84** files | CC̄ = 2.6
 
 > Auto-generated project documentation from source code analysis.
 
@@ -82,16 +82,14 @@ resplit/
 ├── Makefile
 ├── SUMD
 ├── PLAN
-├── pyproject
 ├── tree
 ├── TODO
 ├── CHANGELOG
-├── README
+├── project
     ├── case_study_c2004
     ├── usage
     ├── c2004
     ├── architecture
-    ├── README
     ├── walk_dry_run
     ├── Makefile
     ├── restore_endpoint
@@ -142,16 +140,18 @@ resplit/
             ├── docker-compose
             ├── Dockerfile
         ├── toon
-    ├── README
             ├── toon
             ├── toon
-├── project
-        ├── toon
+├── pyproject
     ├── prompt
+        ├── toon
+├── README
+        ├── toon
     ├── context
         ├── toon
         ├── toon
-        ├── toon
+    ├── README
+    ├── README
     ├── calls
         ├── toon
 ```
@@ -1855,7 +1855,6 @@ resplit/
 - `test_test_service_ok()` — —
 - `test_test_service_timeout()` — —
 - `test_test_service_set_day_dir()` — —
-- `generate_readme()` — —
 - `print()` — —
 - `send_mvp_command()` — —
 - `print()` — —
@@ -1942,6 +1941,7 @@ resplit/
 - `esc()` — —
 - `d()` — —
 - `all()` — —
+- `generate_readme()` — —
 - `marked()` — —
 - `manifest()` — —
 - `sidebar()` — —
@@ -1999,7 +1999,6 @@ resplit/
 - `index()` — —
 - `module_index()` — —
 - `all()` — —
-- `generate_readme()` — —
 - `run_migration()` — —
 - `main()` — —
 - `set_default()` — —
@@ -3686,6 +3685,10 @@ resplit/
 - `test_test_service_ok()` — —
 - `test_test_service_timeout()` — —
 - `test_test_service_set_day_dir()` — —
+- `generate_readme()` — —
+- `print()` — —
+- `send_mvp_command()` — —
+- `sendMVPCommand()` — —
 
 
 ## Project Structure
@@ -3752,7 +3755,7 @@ resplit/
 📄 `project.context`
 📄 `project.duplication.toon`
 📄 `project.evolution.toon`
-📄 `project.map.toon` (81869 functions)
+📄 `project.map.toon` (122859 functions)
 📄 `project.project.toon`
 📄 `project.prompt`
 📄 `pyproject`
@@ -3771,7 +3774,7 @@ resplit/
 
 ## Requirements
 
-- Python >= >=3.10
+- Python >= >=3.11
 - typer >=0.12- rich >=13- gitpython >=3.1- httpx >=0.27- pyyaml >=6- pydantic >=2- deta >=0.1- goal >=2.1.0- costs >=0.1.20- pfix >=0.1.60
 
 ## Contributing
