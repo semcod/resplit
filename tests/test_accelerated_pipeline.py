@@ -54,6 +54,8 @@ def test_run_day_fast_stops_when_db_restore_fails(tmp_path):
     pipeline._baseline_snapshot = "baseline"
 
     with patch.object(pipeline.deploy, "switch_commit", return_value=True), \
+         patch.object(pipeline.worktrees, "get_active_path", return_value=tmp_path), \
+         patch.object(pipeline.patcher, "apply_manual_overrides", return_value=0), \
          patch.object(pipeline.db_snapshots, "restore", return_value=False), \
          patch.object(pipeline.scanner, "execute") as mock_scan:
         result = pipeline._run_day_fast(date(2024, 3, 15), commit)
@@ -69,6 +71,8 @@ def test_run_day_fast_stops_when_app_health_fails_after_db_restore(tmp_path):
     pipeline._baseline_snapshot = "baseline"
 
     with patch.object(pipeline.deploy, "switch_commit", return_value=True), \
+         patch.object(pipeline.worktrees, "get_active_path", return_value=tmp_path), \
+         patch.object(pipeline.patcher, "apply_manual_overrides", return_value=0), \
          patch.object(pipeline.db_snapshots, "restore", return_value=True), \
          patch.object(pipeline.deploy, "wait_healthy", return_value=False), \
          patch.object(pipeline.scanner, "execute") as mock_scan:
