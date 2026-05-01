@@ -2,6 +2,34 @@
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-05-01
+
+### Docs
+- Update README.md
+- Update docs/case_study_c2004.md
+- Update docs/img/c2004_dashboard.png
+- Update docs/img/c2004_duplication.png
+- Update docs/img/c2004_graph.png
+- Update docs/img/c2004_tasks.png
+
+### Test
+- Update tests/test_deploy_service.py
+- Update tests/test_models.py
+- Update tests/test_reporter_service.py
+
+### Other
+- Update architecture.html
+- Update rebuild/application/pipeline.py
+- Update rebuild/application/services/deploy_service.py
+- Update rebuild/application/services/history_service.py
+- Update rebuild/application/services/reporter_service.py
+- Update rebuild/application/services/scanner_service.py
+- Update rebuild/application/services/test_service.py
+- Update rebuild/domain/day_result.py
+- Update rebuild/domain/models.py
+- Update rebuild/interfaces/cli.py
+- ... and 1 more files
+
 ## [0.1.11] - 2026-05-01
 
 ### Docs

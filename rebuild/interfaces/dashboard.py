@@ -132,17 +132,30 @@ def _render_html(
 <title>rebuild — dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
-  body {{ font-family: system-ui, sans-serif; margin: 0; padding: 24px; background: #f8fafc; color: #1e293b; }}
+  body {{ font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f8fafc; color: #1e293b; }}
+  nav {{ background: #1e293b; color: #fff; padding: 10px 24px; display: flex; gap: 20px; align-items: center; font-size: 0.9rem; }}
+  nav a {{ color: #94a3b8; text-decoration: none; }}
+  nav a:hover {{ color: #fff; }}
+  nav .active {{ color: #fff; font-weight: 600; }}
+  .content {{ padding: 24px; }}
   h1 {{ font-size: 1.6rem; margin-bottom: 4px; }}
   .meta {{ color: #64748b; font-size: 0.9rem; margin-bottom: 24px; }}
   .chart-wrap {{ background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.07); max-width: 1100px; }}
+  .hint {{ color: #94a3b8; font-size: 0.8rem; margin-top: 8px; }}
 </style>
 </head>
 <body>
+<nav>
+  <span style="color:#6366f1;font-weight:700">rebuild</span>
+  <a href="index.html">&#9776; Timeline</a>
+  <span class="active">&#9650; Dashboard</span>
+</nav>
+<div class="content">
 <h1>📊 rebuild — dashboard</h1>
 <div class="meta">{total_days} dni &nbsp;·&nbsp; health% (lewa oś){"&nbsp;·&nbsp; Avg CC (prawa oś)" if has_cc else ""}</div>
 <div class="chart-wrap">
-  <canvas id="chart" height="80"></canvas>
+  <canvas id="chart" height="80" style="cursor:pointer"></canvas>
+  <div class="hint">Kliknij punkt na wykresie → otworzy raport dnia</div>
 </div>
 <script>
 const ctx = document.getElementById('chart');
@@ -183,6 +196,15 @@ new Chart(ctx, {{
     }}
   }}
 }});
+const chart = Chart.getChart('chart');
+document.getElementById('chart').addEventListener('click', function(e) {{
+  const points = chart.getElementsAtEventForMode(e, 'nearest', {{ intersect: true }}, true);
+  if (points.length) {{
+    const day = {days_js}[points[0].index];
+    window.location.href = day + '/report.html';
+  }}
+}});
 </script>
+</div>
 </body>
 </html>"""

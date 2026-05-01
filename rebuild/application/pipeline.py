@@ -22,7 +22,7 @@ from .services.reporter_service import ReporterService
 class Pipeline:
     """
     Orchestrates the analysis process (Command).
-    Supports Incremental Walking and Event Sourcing.
+    Supports Incremental Walking, Event Sourcing, and Replay Mode.
     """
     def __init__(self, config: WalkConfig, console=None):
         self.config = config
@@ -31,7 +31,7 @@ class Pipeline:
         
         # Initialize services
         self.git = GitService(config.repo_path)
-        self.deploy = DeployService(config)
+        self.deploy = DeployService(config, console=self.console)
         self.scanner = ScannerService(config)
         self.tester = TestService(config)
         self.screenshots = ScreenshotService(ScreenshotConfig(output_dir=config.output_dir))
@@ -73,15 +73,19 @@ class Pipeline:
             self.log("[yellow]Brak commitów w podanym przedziale.[/yellow]")
             return []
 
-        self._emit("PIPELINE_STARTED", days=len(commits), repo=str(self.config.repo_path))
+        self._emit("PIPELINE_STARTED", days=len(commits), repo=str(self.config.repo_path), replay=self.config.replay)
         self.log(f"Znaleziono [bold]{len(commits)}[/bold] dni z commitami.\n")
+        
+        if self.config.replay:
+            self.log("[bold magenta]⚡ Replay Mode: Utrzymywanie stałej infrastruktury.[/bold magenta]")
+            self.deploy.start(self.config.repo_path)
+            
         all_results: List[DayResult] = []
 
         try:
             for day, commit in commits:
                 if commit.sha in self._processed_shas:
                     self.log(f"--- [bold]{day}[/bold]  {commit.sha[:8]}  [dim](skipped — already processed)[/dim]")
-                    # In a real scenario, we might want to load previous results to include in all_results
                     continue
                     
                 result = self.run_day(day, commit)
@@ -89,6 +93,7 @@ class Pipeline:
                 self._processed_shas.add(commit.sha)
                 self._save_state()
         finally:
+            self.deploy.stop(self.config.repo_path)
             if not self.config.dry_run:
                 self.git.restore_head()
 
@@ -100,13 +105,14 @@ class Pipeline:
         day_dir = self.config.output_dir / str(day)
         self.log(f"--- [bold]{day}[/bold]  {commit.sha[:8]}  {commit.message[:60]}")
 
-        t0 = time.time()
+        t0 = time.perf_counter()
         result = DayResult(
             day=day,
             commit=commit,
             deploy_method=self.config.deploy_method,
             deploy_success=False,
             output_dir=day_dir,
+            is_dry_run=self.config.dry_run
         )
 
         try:
@@ -115,14 +121,19 @@ class Pipeline:
                 self.git.checkout(commit.sha)
                 self._emit("COMMIT_CHECKOUT", sha=commit.sha, day=str(day))
 
-            # 2. Deploy
-            self._emit("DEPLOY_STARTED", method=self.config.deploy_method.value)
-            result.deploy_success = self.deploy.start(self.config.repo_path)
-            self._emit("DEPLOY_FINISHED", success=result.deploy_success)
+            # 2. Deploy/Reload
+            if self.config.replay:
+                self._emit("DEPLOY_RELOAD_STARTED", service=self.config.app_service)
+                result.deploy_success = self.deploy.reload(self.config.repo_path)
+                self._emit("DEPLOY_RELOAD_FINISHED", success=result.deploy_success)
+            else:
+                self._emit("DEPLOY_STARTED", method=self.config.deploy_method.value)
+                result.deploy_success = self.deploy.start(self.config.repo_path)
+                self._emit("DEPLOY_FINISHED", success=result.deploy_success)
             
             if not result.deploy_success and not self.config.dry_run:
-                self.log("  [red]✗ deploy failed — skip endpoints[/red]")
-                result.duration_seconds = time.time() - t0
+                self.log("  [red]✗ deploy/reload failed — skip endpoints[/red]")
+                result.duration_seconds = time.perf_counter() - t0
                 self.reporter.save_day(result)
                 return result
 
@@ -134,7 +145,7 @@ class Pipeline:
             # 4. Test endpoints
             self.tester.set_day_dir(day_dir)
             result.endpoint_results = self.tester.execute(result.endpoints)
-            self._emit("TEST_FINISHED", ok=sum(1 for r in result.endpoint_results if r.status.value == "ok"))
+            self._emit("TEST_FINISHED", ok=result.ok_count)
 
             # 5. Screenshots
             if self.config.screenshots:
@@ -151,7 +162,8 @@ class Pipeline:
             self._emit("ERROR_OCCURRED", error=str(exc))
             self.log(f"  [red]Błąd: {exc}[/red]")
         finally:
-            self.deploy.stop(self.config.repo_path)
-            result.duration_seconds = time.time() - t0
+            if not self.config.replay:
+                self.deploy.stop(self.config.repo_path)
+            result.duration_seconds = time.perf_counter() - t0
 
         return result

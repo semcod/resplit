@@ -79,6 +79,12 @@ class ScannerService(Service[Path, List[Endpoint]]):
         return endpoints
 
     def _scan_via_openapi(self, base_url: str) -> List[Endpoint]:
+        # In dry-run: prefer static file in repo (reproducible per commit)
+        if self.config.dry_run:
+            static = self._scan_via_openapi_file(self.config.repo_path)
+            if static:
+                return static
+            # Fallback: probe live URL for endpoint list only (no tests will run)
         for path in ("/openapi.json", "/docs/openapi.json", "/api/openapi.json"):
             try:
                 r = httpx.get(f"{base_url.rstrip('/')}{path}", timeout=5)
@@ -86,6 +92,23 @@ class ScannerService(Service[Path, List[Endpoint]]):
                     return self._parse_openapi(r.json(), base_url)
             except Exception:
                 continue
+        return []
+
+    def _scan_via_openapi_file(self, repo: Path) -> List[Endpoint]:
+        candidates = [
+            repo / "openapi.json",
+            repo / "docs" / "openapi.json",
+            repo / "backend" / "openapi.json",
+            repo / "api" / "openapi.json",
+            repo / "generated" / "openapi.json",
+        ]
+        for candidate in candidates:
+            if candidate.exists():
+                try:
+                    spec = json.loads(candidate.read_text())
+                    return self._parse_openapi(spec, self.config.base_url)
+                except Exception:
+                    continue
         return []
 
     def _parse_openapi(self, spec: dict, base_url: str) -> List[Endpoint]:

@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.11-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.65-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-3.7h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.12-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.80-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-3.8h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $1.6500 (11 commits)
-- 👤 **Human dev:** ~$366 (3.7h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $1.8000 (12 commits)
+- 👤 **Human dev:** ~$381 (3.8h @ $100/h, 30min dedup)
 
 Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -17,7 +17,7 @@ Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 ## Code Evolution Intelligence Engine
 
-![Version](https://img.shields.io/badge/version-0.1.11-blue) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-65%20passing-brightgreen)
+![Version](https://img.shields.io/badge/version-0.1.12-blue) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-65%20passing-brightgreen)
 
 **Historical deployment analysis & Code Intelligence** — walk git history day by day, deploy per commit, test all endpoints, capture screenshots, and **analyze code evolution** to find duplicates, rank quality, and generate refactor plans.
 
@@ -27,6 +27,43 @@ Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrou
 - **[Full Usage Guide](docs/usage.md)**: Step-by-step instructions.
 - **[Architecture](docs/architecture.md)**: Detailed layered design.
 - **[Changelog](CHANGELOG.md)**: Latest v0.1.10 features.
+
+---
+
+## 🚀 c2004 Case Study: Analyzing a Complex Ecosystem
+Applying `rebuild` to the massive **c2004** project (88 subdirectories, thousands of files).
+
+### 1. Eliminating Cross-Component Duplication
+**Scenario**: Identifying structural clones between the main `backend` and auxiliary modules like `connect-test` or `frontend`.
+```bash
+rebuild analyze duplicates /path/to/c2004
+```
+![Duplication Analysis Mockup](docs/img/c2004_duplication.png)
+*Result: Found 1,597 duplicate groups across Python and JS/TS files.*
+
+### 2. Architecture Visualization & Cycle Detection
+**Scenario**: Mapping dependencies between `connect-manager`, `workshop`, and `scenario` to find architectural bottlenecks.
+```bash
+rebuild analyze services /path/to/c2004/backend --export
+```
+![Architecture Graph Mockup](docs/img/c2004_graph.png)
+*Result: Generated interactive D3.js map highlighting circular dependencies in the service layer.*
+
+### 3. AI-Powered Refactor Planning
+**Scenario**: Generating an automated refactor plan with an AI Executive Summary for the team.
+```bash
+rebuild refactor plan /path/to/c2004/backend --ai
+rebuild refactor pr /path/to/c2004/backend
+```
+*Result: 122 high-impact suggestions with automated Markdown PR descriptions.*
+
+### 4. Health & Quality Timeline
+**Scenario**: Tracking how code complexity affects system stability over time.
+```bash
+rebuild dashboard --repo /path/to/c2004
+```
+![Health Dashboard Mockup](docs/img/c2004_dashboard.png)
+*Result: Visualized correlation between technical debt and API pass rates.*
 
 ---
 
@@ -41,45 +78,9 @@ Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 ---
 
-## Quick start
-
-### 🚀 Bootstrapping
-
-```bash
-# Initialize project config and .env
-rebuild init
-```
-
-### 🧠 Intelligence & Analysis
-
-```bash
-# Find duplicates across Python and JS/TS
-rebuild analyze duplicates .
-
-# Export interactive architecture graph
-rebuild analyze services --export
-
-# Generate AI-powered refactor plan and PR description
-rebuild refactor plan . --ai
-rebuild refactor pr .
-```
-
-### 🏃 Execution Pipeline
-
-```bash
-# Analyze last 30 days history (Incremental)
-rebuild walk . --days 30
-
-# Launch TUI
-rebuild tui
-```
-
----
-
 ## Examples
 
 Explore ready-to-run scenarios in [`examples/`](examples/):
-
 - **[01-dry-run-walk](examples/01-dry-run-walk/)**: Standard walk + intelligence.
 - **[02-docker-compose-project](examples/02-docker-compose-project/)**: Full pipeline with **Docker isolation**.
 - **[03-restore-endpoint](examples/03-restore-endpoint/)**: Discovering "truth" and extracting endpoints.

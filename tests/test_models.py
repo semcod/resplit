@@ -61,5 +61,5 @@ def test_walk_config_defaults():
     config = WalkConfig(repo_path=Path("/tmp"))
     assert config.days == 30
     assert config.output_dir == Path(".rebuild")
-    assert config.deploy_method == DeployMethod.DOCKER_COMPOSE
+    assert config.deploy_method == DeployMethod.AUTO
     assert config.dry_run is False

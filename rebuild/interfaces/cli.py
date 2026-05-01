@@ -74,6 +74,8 @@ def walk(
     date_to: Optional[str] = typer.Option(None, "--to", help="Data do YYYY-MM-DD"),
     output: Path = typer.Option(Path(".rebuild"), help="Katalog wyjściowy"),
     deploy: str = typer.Option("auto", help="Metoda deploy: auto|docker-compose|uvicorn|none"),
+    replay: bool = typer.Option(False, "--replay", help="Tryb Replay: stały Docker + szybki restart"),
+    service: Optional[str] = typer.Option(None, "--service", help="Nazwa serwisu Docker do restartu (w trybie --replay)"),
     health_url: str = typer.Option("http://localhost:8003/api/health", help="URL health check"),
     base_url: str = typer.Option("http://localhost:8003", help="Bazowy URL usługi"),
     screenshots: bool = typer.Option(True, help="Rób zrzuty ekranu (wymaga playwright)"),
@@ -106,12 +108,14 @@ def walk(
         base_url=base_url,
         screenshots=screenshots,
         dry_run=dry_run,
+        replay=replay,
+        app_service=service
     )
 
     console.print(f"\n[bold]rebuild walk[/bold] v{__version__}")
     console.print(f"  repo:   {repo}")
     console.print(f"  output: {output}")
-    console.print(f"  deploy: {method.value}")
+    console.print(f"  deploy: {method.value} {'(REPLAY)' if replay else ''}")
     console.print(f"  days:   {days}\n")
 
     pipeline = Pipeline(config, console=console)
@@ -413,6 +417,7 @@ def _print_summary_table(results: list[DayResult]) -> None:
     table.add_column("Health", justify="right")
     table.add_column("OK/Total", justify="right")
     table.add_column("Deploy")
+    table.add_column("Czas")
 
     for r in sorted(results, key=lambda x: x.day):
         color = "green" if r.health_pct >= 80 else "yellow" if r.health_pct >= 50 else "red"
@@ -422,6 +427,7 @@ def _print_summary_table(results: list[DayResult]) -> None:
             f"[{color}]{r.health_pct}%[/{color}]",
             f"{r.ok_count}/{len(r.endpoints)}",
             "✓" if r.deploy_success else "✗",
+            f"{r.duration_seconds:.2f}s"
         )
 
     console.print(table)

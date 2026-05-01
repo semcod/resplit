@@ -32,31 +32,51 @@ class HistoryService(Service[Path, List[DayResult]]):
                 continue
             
             commit = self._load_commit(day_dir, day_date)
-            data = json.loads(rf.read_text())
-            
+            raw = json.loads(rf.read_text())
+
+            # Support both new dict format (to_dict()) and old list format
+            if isinstance(raw, dict):
+                ep_list = raw.get("results", [])
+                if commit is None and raw.get("commit"):
+                    c = raw["commit"]
+                    commit = CommitInfo(
+                        sha=c.get("sha", ""),
+                        message=c.get("message", ""),
+                        author=c.get("author", ""),
+                        timestamp=datetime.fromisoformat(c["timestamp"]) if c.get("timestamp") else datetime.now(),
+                        date=day_date,
+                    )
+                deploy_success = raw.get("deploy", {}).get("success", True)
+                is_dry_run = raw.get("deploy", {}).get("is_dry_run", False)
+            else:
+                ep_list = raw
+                deploy_success = True
+                is_dry_run = False
+
             endpoints = []
             ep_results = []
-            for r in data:
+            for r in ep_list:
                 ep = Endpoint(method=r["method"], path=r["path"], base_url=r.get("url", ""))
                 endpoints.append(ep)
                 ep_results.append(EndpointResult(
                     endpoint=ep,
                     status=EndpointStatus(r["status"]),
                     http_status=r.get("http_status"),
-                    response_time_ms=r.get("response_time_ms"),
+                    response_time_ms=r.get("response_time_ms") or r.get("time_ms"),
                     screenshot_path=Path(r["screenshot"]) if r.get("screenshot") else None,
                     testql_passed=r.get("testql_passed"),
                     error=r.get("error"),
                 ))
-            
+
             result = DayResult(
                 day=day_date,
                 commit=commit,
-                deploy_method=DeployMethod.NONE, # Unknown at load time
-                deploy_success=True, # Assume true if results exist
+                deploy_method=DeployMethod.NONE,
+                deploy_success=deploy_success,
                 endpoints=endpoints,
                 endpoint_results=ep_results,
                 output_dir=day_dir,
+                is_dry_run=is_dry_run,
             )
             all_results.append(result)
         

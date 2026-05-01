@@ -28,13 +28,11 @@ class TestService(Service[List[Endpoint], List[EndpointResult]]):
         return results
 
     def _test_endpoint(self, ep: Endpoint) -> EndpointResult:
-        # 1. Try TestQL if available
-        # (Simplified for now)
-        
-        # 2. Fallback to HTTP Probe
+        if self.config.dry_run:
+            return EndpointResult(endpoint=ep, status=EndpointStatus.SKIP)
+
         try:
-            url = ep.url
-            resp = self.http.get(url)
+            resp = self.http.get(ep.url)
             status = EndpointStatus.OK if resp.status_code < 400 else EndpointStatus.FAIL
             return EndpointResult(
                 endpoint=ep,

@@ -2,7 +2,7 @@ from __future__ import annotations
 import time
 import hashlib
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Any
 
 from rich.console import Console
 
@@ -14,7 +14,7 @@ from ...infrastructure.http_adapter import HttpAdapter
 class DeployService(Service[Path, bool]):
     """
     Service for managing the lifecycle of the service being analyzed.
-    Uses ShellAdapter and HttpAdapter for isolation and robustness.
+    Supports 'Replay Mode' (Invariant Infrastructure).
     """
     def __init__(self, config: WalkConfig, console: Optional[Console] = None, shell: Optional[ShellAdapter] = None, http: Optional[HttpAdapter] = None):
         self.config = config
@@ -24,16 +24,18 @@ class DeployService(Service[Path, bool]):
         self._uvicorn_proc: Optional[Any] = None
         self._project_name = f"rebuild-{hashlib.md5(str(config.repo_path.resolve()).encode()).hexdigest()[:8]}"
 
-    def execute(self, repo: Path) -> bool:
-        return self.start(repo)
+    def detect_deploy_method(self, repo: Path) -> DeployMethod:
+        for name in (self.config.compose_file, "docker-compose.yml", "docker-compose.yaml"):
+            if (repo / name).exists():
+                return DeployMethod.DOCKER_COMPOSE
+        for candidate in ("server.py", Path("backend") / "server.py"):
+            if (repo / candidate).exists():
+                return DeployMethod.UVICORN
+        return DeployMethod.NONE
 
     def start(self, repo: Path) -> bool:
         method = self.config.deploy_method
-        if method == DeployMethod.NONE:
-            return True
-
-        if self.config.dry_run:
-            self.console.print(f"[dim]  [dry-run] skipped deploy ({method})[/dim]")
+        if method == DeployMethod.NONE or self.config.dry_run:
             return True
 
         if method == DeployMethod.DOCKER_COMPOSE:
@@ -41,6 +43,26 @@ class DeployService(Service[Path, bool]):
         if method == DeployMethod.UVICORN:
             return self._uvicorn_start(repo)
         return False
+
+    def reload(self, repo: Path) -> bool:
+        """
+        Performs a fast reload of the application in Replay Mode.
+        Restarts only the specified app service.
+        """
+        if self.config.deploy_method != DeployMethod.DOCKER_COMPOSE:
+            return self.start(repo)
+
+        service = self.config.app_service or "backend"
+        self.console.print(f"  [bold cyan]docker compose restart {service}[/bold cyan]")
+        cf = self._compose_file(repo)
+        cmd = ["docker", "compose", "-p", self._project_name, "-f", str(cf), "restart", service]
+        result = self.shell.run(cmd, cwd=repo)
+        
+        if result.returncode != 0:
+            self.console.print(f"  [red]Restart failed:[/red] {result.stderr[:200]}")
+            return False
+            
+        return self._wait_healthy()
 
     def stop(self, repo: Path) -> None:
         if self.config.dry_run or self.config.deploy_method == DeployMethod.NONE:
@@ -52,12 +74,10 @@ class DeployService(Service[Path, bool]):
 
     def _compose_file(self, repo: Path) -> Path:
         explicit = repo / self.config.compose_file
-        if explicit.exists():
-            return explicit
+        if explicit.exists(): return explicit
         for name in ("docker-compose.yml", "docker-compose.yaml"):
             p = repo / name
-            if p.exists():
-                return p
+            if p.exists(): return p
         raise FileNotFoundError(f"Nie znaleziono pliku docker-compose w {repo}")
 
     def _compose_up(self, repo: Path) -> bool:

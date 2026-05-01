@@ -1,14 +1,14 @@
 from __future__ import annotations
-from enum import Enum
 from dataclasses import dataclass
+from datetime import date
+from enum import Enum
 from pathlib import Path
 from typing import Optional
-from datetime import date
 
-class DeployMethod(str, Enum):
+class DeployMethod(Enum):
+    AUTO = "auto"
     DOCKER_COMPOSE = "docker-compose"
     UVICORN = "uvicorn"
-    CUSTOM = "custom"
     NONE = "none"
 
 @dataclass
@@ -18,13 +18,15 @@ class WalkConfig:
     days: int = 30
     date_from: Optional[date] = None
     date_to: Optional[date] = None
-    deploy_method: DeployMethod = DeployMethod.DOCKER_COMPOSE
-    compose_file: str = "docker-compose.yml"
+    deploy_method: DeployMethod = DeployMethod.AUTO
     health_url: str = "http://localhost:8003/api/health"
     health_timeout: int = 60
-    health_interval: float = 2.0
+    health_interval: int = 2
     base_url: str = "http://localhost:8003"
-    testql_dir: Optional[Path] = None
     screenshots: bool = True
     dry_run: bool = False
-    earliest_commit_per_day: bool = True
+    compose_file: str = "docker-compose.yml"
+    
+    # Phase 12: Replay Engine
+    replay: bool = False
+    app_service: Optional[str] = None  # Docker service to restart (e.g. 'backend')
