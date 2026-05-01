@@ -13,11 +13,11 @@ class HttpAdapter:
         self.retries = retries
         self.client = httpx.Client(timeout=timeout)
 
-    def get(self, url: str, params: Optional[Dict[str, Any]] = None) -> httpx.Response:
+    def get(self, url: str, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, str]] = None) -> httpx.Response:
         last_exc = None
         for attempt in range(self.retries):
             try:
-                return self.client.get(url, params=params)
+                return self.client.get(url, params=params, headers=headers)
             except (httpx.RequestError, httpx.TimeoutException) as e:
                 last_exc = e
                 time.sleep(2 ** attempt) # Exponential backoff

@@ -32,7 +32,8 @@ class TestService(Service[List[Endpoint], List[EndpointResult]]):
             return EndpointResult(endpoint=ep, status=EndpointStatus.SKIP)
 
         try:
-            resp = self.http.get(ep.url)
+            headers = self.config.auth
+            resp = self.http.get(ep.url, headers=headers)
             status = EndpointStatus.OK if resp.status_code < 400 else EndpointStatus.FAIL
             return EndpointResult(
                 endpoint=ep,

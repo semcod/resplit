@@ -1,0 +1,80 @@
+from __future__ import annotations
+import yaml
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+from ..domain.models import WalkConfig, DeployMethod
+
+class ConfigLoader:
+    """
+    Loader for rebuild.yaml configuration files.
+    Merges file configuration with CLI defaults.
+    """
+    @staticmethod
+    def load(path: Path) -> Dict[str, Any]:
+        if not path.exists():
+            return {}
+        try:
+            with open(path, "r") as f:
+                data = yaml.safe_load(f)
+                return data if isinstance(data, dict) else {}
+        except Exception:
+            return {}
+
+    @staticmethod
+    def apply_to_config(config: WalkConfig, yaml_data: Dict[str, Any]):
+        """
+        Updates WalkConfig instance with data from YAML.
+        """
+        project = yaml_data.get("project", {})
+        if not project: # Support flat structure too
+            project = yaml_data
+
+        if "output" in project:
+            out = project["output"]
+            val = out["dir"] if isinstance(out, dict) and "dir" in out else out
+            p = Path(val)
+            if not p.is_absolute():
+                p = (config.repo_path / p).resolve()
+            config.output_dir = p
+        if "days" in project:
+            config.days = int(project["days"])
+        if "deploy" in project:
+            d = project["deploy"]
+            if isinstance(d, dict):
+                if "method" in d:
+                    config.deploy_method = DeployMethod(d["method"])
+                if "compose_file" in d:
+                    config.compose_file = d["compose_file"]
+                if "health_url" in d:
+                    config.health_url = d["health_url"]
+                if "health_timeout" in d:
+                    config.health_timeout = int(d["health_timeout"])
+            else:
+                config.deploy_method = DeployMethod(d)
+        if "health_url" in project:
+            config.health_url = project["health_url"]
+        if "base_url" in project:
+            config.base_url = project["base_url"]
+        if "screenshots" in project:
+            config.screenshots = bool(project["screenshots"])
+        if "compose_file" in project:
+            config.compose_file = project["compose_file"]
+        
+        # Fixtures
+        if "test_fixtures" in yaml_data:
+            config.test_fixtures.update(yaml_data["test_fixtures"])
+        elif "fixtures" in project:
+            config.test_fixtures.update(project["fixtures"])
+            
+        # Auth
+        if "auth" in yaml_data:
+            config.auth.update(yaml_data["auth"])
+        elif "auth" in project:
+            config.auth.update(project["auth"])
+            
+        # Replay
+        if "replay" in project:
+            config.replay = bool(project["replay"])
+        if "service" in project:
+            config.app_service = project["service"]

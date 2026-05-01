@@ -10,21 +10,18 @@
 - [x] **history_service**: Obsługa nowego formatu `results.json` (dict z kluczem `results`)
 - [x] **index.html**: Eksport JSON/YAML/TOON + toolbar w nawigacji
 - [x] **rebuild serve**: Komenda do serwowania raportów na HTTP
+- [x] **Deploy Log Details**: Store full docker logs in `DayResult` and show them in reports when deploy fails.
+- [x] **Param Substitution**: In OpenAPI/FastAPI scanner — replace `{param}` with test values from `rebuild.yaml`.
+- [x] **Fixture Seed**: Support `test_fixtures:` in `rebuild.yaml`.
+- [x] **Auth Config**: Add `auth:` to `rebuild.yaml` for custom headers (Bearer tokens, etc).
 
 ### 🔴 Krytyczne
 - [ ] **Replay + volume mount**: W replay mode Docker używa aktualnego obrazu, nie kodu z checkoutu. Rozwiązanie: w clone podmontować katalog kodu jako volume lub budować obraz per commit.
 - [ ] **init tworzy rebuild.yaml w oryginalnym repo**: `init()` wywołany z `walk` tworzy pliki w `repo_path`. Powinno trafiać do klona lub być pomijane.
-- [ ] **Deploy Log Details**: Ulepszyć raportowanie przyczyn nieudanego deploy (exit code, stderr, timeout info).
 - [ ] **Deploy Retry**: Dodać mechanizm retry z backoff dla niestabilnych deployów.
 - [ ] **Health Check Verbose**: Pokaż szczegółowy log health-check (curl output) gdy serwis nie odpowiada.
-
-### 🟠 Wysokie — Template Path Testing
-- [ ] **Param Substitution**: W skanerze OpenAPI/FastAPI — zastępuj `{param}` testowymi wartościami zamiast dosłownego testowania.
-- [ ] **Fixture Seed**: Dodać obsługę `test_fixtures:` w `rebuild.yaml` — testowe ID/slug dla każdego zasobu.
-- [ ] **CRUD Chain**: Auto-create zasobu (POST) → test GET/PATCH/DELETE → cleanup DELETE.
-
-### 🟠 Wysokie — Autoryzacja
-- [ ] **Auth Config**: Dodać sekcję `auth:` do `rebuild.yaml` (basic/bearer/session).
+- [ ] **Manual Override**: Support a `patch/` directory in `.rebuild/` to automatically apply fixes to the cloned repo before walk.
+- [ ] **Health Recovery**: If a day fails, allow manual "fix" commit in the clone to see if health improves (without modifying source).
 - [ ] **Token Propagation**: Zaloguj się raz przed testem, propaguj token Bearer do wszystkich requestów.
 - [ ] **Per-Endpoint Body**: Opcjonalne `body:` dla POST/PUT/PATCH w konfiguracji testów.
 

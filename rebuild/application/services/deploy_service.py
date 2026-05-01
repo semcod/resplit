@@ -23,6 +23,7 @@ class DeployService(Service[Path, bool]):
         self.http = http or HttpAdapter(timeout=5)
         self._uvicorn_proc: Optional[Any] = None
         self._project_name = f"rebuild-{hashlib.md5(str(config.repo_path.resolve()).encode()).hexdigest()[:8]}"
+        self.last_log: Optional[str] = None
 
     def detect_deploy_method(self, repo: Path) -> DeployMethod:
         for name in (self.config.compose_file, "docker-compose.yml", "docker-compose.yaml"):
@@ -49,6 +50,10 @@ class DeployService(Service[Path, bool]):
             return self._uvicorn_start(repo)
         return False
 
+    def execute(self, repo: Path) -> bool:
+        """Implements Service protocol."""
+        return self.start(repo)
+
     def reload(self, repo: Path) -> bool:
         """
         Performs a fast reload of the application in Replay Mode.
@@ -73,6 +78,7 @@ class DeployService(Service[Path, bool]):
                 except FileNotFoundError:
                     pass
             if result.returncode != 0:
+                self.last_log = result.stderr
                 self.console.print(f"  [red]Restart failed:[/red] {result.stderr[:200]}")
                 return False
         else:
@@ -106,6 +112,7 @@ class DeployService(Service[Path, bool]):
         self.console.print(f"  [bold cyan]docker compose up[/bold cyan] (project: {self._project_name})")
         result = self.shell.run(cmd, cwd=repo)
         if result.returncode != 0:
+            self.last_log = result.stderr
             self.console.print(f"  [red]docker compose up failed:[/red]\n{result.stderr[:500]}")
             return False
         return self._wait_healthy()
