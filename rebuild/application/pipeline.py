@@ -69,6 +69,28 @@ class Pipeline:
         with open(log_file, "a") as f:
             f.write(event.to_json() + "\n")
 
+        # Also publish to real-time event service
+        try:
+            # Map event types to EventType enum
+            event_map = {
+                "PIPELINE_STARTED": EventType.PIPELINE_START,
+                "PIPELINE_FINISHED": EventType.PIPELINE_END,
+                "DAY_STARTED": EventType.DAY_START,
+                "DAY_FINISHED": EventType.DAY_END,
+                "DEPLOY_STARTED": EventType.DEPLOY_START,
+                "DEPLOY_SUCCESS": EventType.DEPLOY_SUCCESS,
+                "DEPLOY_FAILED": EventType.DEPLOY_FAIL,
+                "TEST_STARTED": EventType.TEST_START,
+                "TEST_FINISHED": EventType.TEST_END,
+                "HEALTH_CHECK": EventType.HEALTH_CHECK,
+                "ERROR": EventType.ERROR,
+                "LOG": EventType.LOG,
+            }
+            rt_type = event_map.get(event_type, EventType.LOG)
+            self._event_service.emit(rt_type, kwargs, day=kwargs.get("day"), commit=kwargs.get("commit_sha"))
+        except Exception:
+            pass  # Don't break pipeline if event service fails
+
     def log(self, message: str):
         if self.console:
             self.console.print(message)
