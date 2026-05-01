@@ -4,21 +4,21 @@
 
 - **Project**: /home/tom/github/semcod/resplit
 - **Primary Language**: md
-- **Languages**: md: 18, yaml: 17, txt: 10, json: 9, shell: 8
+- **Languages**: md: 21, yaml: 17, txt: 10, json: 9, shell: 8
 - **Analysis Mode**: static
-- **Total Functions**: 5492
+- **Total Functions**: 5546
 - **Total Classes**: 0
-- **Modules**: 74
-- **Entry Points**: 5476
+- **Modules**: 78
+- **Entry Points**: 5530
 
 ## Architecture by Module
 
 ### project.map.toon
-- **Functions**: 20565
+- **Functions**: 81869
 - **File**: `map.toon.yaml`
 
 ### SUMD
-- **Functions**: 17181
+- **Functions**: 40890
 - **File**: `SUMD.md`
 
 ### restored_c2004_health.api-health.backend.site.src.main
@@ -40,6 +40,14 @@
 ### restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
 - **Functions**: 9
 - **File**: `main.py`
+
+### examples.09-mvp-protocol.README
+- **Functions**: 5
+- **File**: `README.md`
+
+### examples.08-nlp-commands.README
+- **Functions**: 4
+- **File**: `README.md`
 
 ### testql-scenarios.generated-from-pytests.testql.toon
 - **Functions**: 2

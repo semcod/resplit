@@ -2,6 +2,89 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-01
+
+### 🔥 Major: Full-Stack Testing & Intelligence Platform
+
+**Auth & Testing:**
+- **Auth Login**: Added `login_url` and `login_payload` for automatic token acquisition
+- **Auth Headers**: Custom headers support via `auth:` config
+- **Param Substitution**: `{param}` in OpenAPI paths replaced with values from `test_fixtures:`
+- **Test Bodies**: Per-endpoint body configuration via `test_bodies:`
+- **Response Time Tracking**: Measured and displayed in reports
+
+**Reporting & Visualization:**
+- **Failure Grouping**: Errors classified (auth, template, timeout, server, network)
+- **Trend Charts**: Inline SVG health% trend visualization
+- **Endpoint Diff**: Track added/removed endpoints between days
+- **SSE Live Streaming**: Real-time event stream in dashboard (`/events`)
+- **Modern UI**: Dark glassmorphism design with Outfit + JetBrains Mono fonts
+
+**Deploy & Reliability:**
+- **Deploy Retry**: Configurable retry with exponential backoff
+- **Health Verbose**: Detailed curl output when health checks fail
+- **Deploy Logs**: Full logs captured in `DayResult.deploy_log`
+- **Replay Code Sync**: `docker cp` copies checkout to `/app` before restart
+- **Code Overlay**: Handle read-only mounts via `/tmp/rebuild-overlay` + PYTHONPATH
+
+**Manual Recovery:**
+- **Manual Override**: `--patch-dir` to apply fixes to cloned repo before walk
+- **Health Recovery**: Detect `rebuild-fix:<sha>` commits in clone for recovery
+- **Git Diff Names**: `diff_names()` for smart test selection
+
+**Accelerator Mode (10x):**
+- **Sync Current State**: `sync_current_state()` for node_modules preservation
+- **Git Worktree**: Shared clone with rsync overlay
+- **Dockerfile Patcher**: Auto-patch for accelerator compatibility
+- **DB Snapshots**: Fast database state restoration
+- **Parallel Tests**: Dependency graph-based parallel execution
+- **Smart Selection**: Git-diff based test selection
+
+**Analysis & Intelligence:**
+- **Semantic Embeddings**: `sentence-transformers` integration for conceptual similarity
+- **Vector Search**: SQLite-backed vector index for rapid semantic lookup
+- **Multi-Repo Analysis**: Cross-repo dependency and clone detection
+- **Auto PR**: Automated PR creation with AI summaries
+- **Evolution Viz**: D3.js code evolution playback
+- **DSL**: Domain Specific Language for scripting
+- **NLP**: Natural language command parsing
+
+**Scanner Enhancements:**
+- **FastAPI Routes**: AST-based route discovery from source code
+- **Router Prefixes**: Automatic prefix extraction from APIRouter()
+- **Template Paths**: Track original template vs resolved path
+
+**CLI Commands:**
+- `rebuild accelerator`: Ultra-fast walk mode
+- `rebuild auto-pr`: Automated PR creation
+- `rebuild evolution`: Code evolution visualization
+- `rebuild dsl`: DSL command execution
+- `rebuild nlp`: Natural language parsing
+- `rebuild mvp`: MVP protocol server
+- `rebuild analyze vector-build`: Build semantic index
+- `rebuild analyze vector-query`: Semantic search
+- `rebuild analyze multi-repo`: Cross-repo analysis
+
+**Infrastructure:**
+- **Event Service**: Real-time event bus for SSE streaming
+- **Config Loader**: Unified `rebuild.yaml` loading with CLI merge
+- **Patcher Service**: Manual override application
+- **Override Service**: Patch directory application
+- **PR Service**: GitHub/GitLab PR automation
+- **Summary Service**: AI summary generation
+
+**Fixes:**
+- **Safe Clone**: `walk` never creates files in original repo (removed auto-init)
+- **Clone Isolation**: `clone_for_walk()` creates `.rebuild/repo/` for safe checkouts
+- **Checkout Force**: `git checkout --force` for uncommitted changes
+- **History Format**: `history_service` handles new `results.json` dict format
+- **Replay Health**: Replay mode only checks health, doesn't `compose up`
+- **Reload by Name**: `docker restart <name>` without compose project dependency
+
+**Dependencies:**
+- Added `sentence-transformers>=2.7` optional dependency (semantic)
+- Updated `full` optional dependency to include semantic
+
 ## [0.1.13] - 2026-05-01
 
 ### Docs

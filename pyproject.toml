@@ -9,7 +9,7 @@ description = "Historical deployment analysis — walk git history, deploy per d
 readme = "README.md"
 license = "Apache-2.0"
 authors = [{ name = "Tom Sapletta", email = "tom@sapletta.com" }]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = ["deployment", "regression", "git", "testing", "endpoints", "history", "rebuild"]
 classifiers = [
     "Development Status :: 3 - Alpha",

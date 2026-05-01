@@ -427,6 +427,84 @@ def evolution(
     console.print(f"  [dim]Otwórz w przeglądarce aby zobaczyć playback[/dim]")
 
 
+@app.command()
+def dsl(
+    script: Optional[Path] = typer.Option(None, "--script", help="Plik DSL z komendami"),
+    command: Optional[str] = typer.Option(None, "--command", help="Pojedyncza komenda DSL"),
+    execute: bool = typer.Option(False, "--execute", help="Wykonaj komendy DSL (nie tylko parsuj)"),
+) -> None:
+    """Wykonaj DSL (Domain Specific Language) komendy rebuild."""
+    from ..domain.dsl import DSLParser, DSLInterpreter
+
+    if not script and not command:
+        console.print("[red]✗ Podaj --script lub --command[/red]")
+        raise typer.Exit(1)
+
+    parser = DSLParser()
+    interpreter = DSLInterpreter()
+
+    if script:
+        if not script.exists():
+            console.print(f"[red]✗ Plik {script} nie istnieje.[/red]")
+            raise typer.Exit(1)
+        commands = parser.parse_file(script)
+        console.print(f"[bold]Załadowano {len(commands)} komend DSL z {script}[/bold]")
+        for cmd in commands:
+            console.print(f"  - {cmd.command.value}: {cmd.parameters} {cmd.flags}")
+            if execute:
+                result = interpreter.execute(cmd)
+                console.print(f"    [dim]Status: {result.get('status')}[/dim]")
+    elif command:
+        cmd = parser.parse(command)
+        console.print(f"[bold]Komenda DSL:[/bold] {cmd.command.value}")
+        console.print(f"  Parameters: {cmd.parameters}")
+        console.print(f"  Flags: {cmd.flags}")
+        if execute:
+            result = interpreter.execute(cmd)
+            console.print(f"  [dim]Status: {result.get('status')}[/dim]")
+            console.print(f"  [green]✓ Zinterpretowano[/green]")
+
+
+@app.command()
+def nlp(
+    text: str = typer.Argument(..., help="Tekst komendy w języku naturalnym"),
+    to_dsl: bool = typer.Option(False, "--to-dsl", help="Konwertuj do DSL"),
+    to_cli: bool = typer.Option(False, "--to-cli", help="Konwertuj do CLI args"),
+) -> None:
+    """Parsuj komendę w języku naturalnym i konwertuj na DSL/CLI."""
+    from ..application.services.nlp_service import NLPService
+
+    nlp = NLPService()
+    command = nlp.parse(text)
+
+    console.print(f"[bold]Zinterpretowana komenda:[/bold] {command.intent.value}")
+    console.print(f"  Confidence: {command.confidence:.2f}")
+    console.print(f"  Parameters: {command.parameters}")
+
+    if to_dsl:
+        dsl = nlp.to_dsl(command)
+        console.print(f"\n[bold]DSL:[/bold] {dsl}")
+    if to_cli:
+        cli_args = nlp.to_cli_args(command)
+        console.print(f"\n[bold]CLI args:[/bold] {' '.join(cli_args)}")
+
+
+@app.command()
+def mvp(
+    host: str = typer.Option("0.0.0.0", help="Host dla MVP server"),
+    port: int = typer.Option(8899, help="Port dla MVP server"),
+) -> None:
+    """Uruchom MVP protocol server."""
+    from ..domain.mvp_protocol import MVPServer
+
+    console.print(f"[bold cyan]Uruchamianie MVP Server...[/bold cyan]")
+    console.print(f"  Host: {host}")
+    console.print(f"  Port: {port}")
+    console.print(f"  Protocol: JSON over HTTP")
+    server = MVPServer(host=host, port=port)
+    server.start()
+
+
 # ──────────────────────────────────────────────
 # analyze commands (Queries)
 # ──────────────────────────────────────────────

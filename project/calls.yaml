@@ -5,62 +5,6 @@ stats:
   total_edges: 32
   modules_count: 5
 nodes:
-  restored_c2004_health.api-health.backend.site.src.main.renderSidebar:
-    name: renderSidebar
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 656
-    cyclomatic_complexity: 11
-    calls_out: 1
-    calls_in: 3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid:
-    name: renderServicesGrid
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 446
-    cyclomatic_complexity: 4
-    calls_out: 3
-    calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.renderServices:
-    name: renderServices
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 416
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 2
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute:
-    name: handleRoute
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 33
-    cyclomatic_complexity: 7
-    calls_out: 10
-    calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.allServices:
-    name: allServices
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 519
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.renderDownloads:
-    name: renderDownloads
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 138
-    cyclomatic_complexity: 4
-    calls_out: 11
-    calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index:
     name: index
     module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
@@ -68,17 +12,73 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.route:
-    name: route
+  restored_c2004_health.api-health.backend.site.src.main.getRoute:
+    name: getRoute
     module: restored_c2004_health.api-health.backend.site.src.main
-    line: 34
-    cyclomatic_complexity: 7
-    calls_out: 8
+    line: 24
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
     calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.table:
-    name: table
+  restored_c2004_health.api-health.backend.site.src.main.renderSidebar:
+    name: renderSidebar
     module: restored_c2004_health.api-health.backend.site.src.main
-    line: 514
+    line: 656
+    cyclomatic_complexity: 11
+    calls_out: 1
+    calls_in: 3
+  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck:
+    name: runHealthCheck
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 509
+    cyclomatic_complexity: 11
+    calls_out: 10
+    calls_in: 1
+  restored_c2004_health.api-health.backend.site.src.main.allServices:
+    name: allServices
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 519
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 0
+  restored_c2004_health.api-health.backend.site.src.main.updateActiveNav:
+    name: updateActiveNav
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 57
+    cyclomatic_complexity: 10
+    calls_out: 4
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid:
+    name: renderServicesGrid
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 446
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
+  restored_c2004_health.api-health.backend.site.src.main.esc:
+    name: esc
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 693
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  restored_c2004_health.api-health.backend.site.src.main.summary:
+    name: summary
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 510
     cyclomatic_complexity: 2
     calls_out: 5
     calls_in: 0
@@ -89,12 +89,61 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.renderDocs:
-    name: renderDocs
+  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl:
+    name: unhealthyEl
     module: restored_c2004_health.api-health.backend.site.src.main
-    line: 620
-    cyclomatic_complexity: 6
-    calls_out: 9
+    line: 513
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  restored_c2004_health.api-health.backend.site.src.main.renderHome:
+    name: renderHome
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 71
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  restored_c2004_health.api-health.backend.site.src.main.renderServices:
+    name: renderServices
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 416
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth:
+    name: checkServiceHealth
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 477
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 6
+  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture:
+    name: renderArchitecture
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 285
+    cyclomatic_complexity: 1
+    calls_out: 11
+    calls_in: 2
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 1
     calls_in: 2
   restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html:
     name: _index_html
@@ -103,48 +152,41 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 1
     calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 77
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture:
-    name: renderArchitecture
+  restored_c2004_health.api-health.backend.site.src.main.renderDocs:
+    name: renderDocs
     module: restored_c2004_health.api-health.backend.site.src.main
-    line: 285
-    cyclomatic_complexity: 1
-    calls_out: 11
+    line: 620
+    cyclomatic_complexity: 6
+    calls_out: 9
     calls_in: 2
-  restored_c2004_health.api-health.backend.site.src.main.summary:
-    name: summary
+  restored_c2004_health.api-health.backend.site.src.main.table:
+    name: table
     module: restored_c2004_health.api-health.backend.site.src.main
-    line: 510
+    line: 514
     cyclomatic_complexity: 2
     calls_out: 5
     calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.getRoute:
-    name: getRoute
+  restored_c2004_health.api-health.backend.site.src.main.handleRoute:
+    name: handleRoute
     module: restored_c2004_health.api-health.backend.site.src.main
-    line: 24
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.renderHome:
-    name: renderHome
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 71
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 77
-    cyclomatic_complexity: 1
-    calls_out: 3
+    line: 33
+    cyclomatic_complexity: 7
+    calls_out: 10
     calls_in: 0
+  restored_c2004_health.api-health.backend.site.src.main.healthyEl:
+    name: healthyEl
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 512
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 0
+  restored_c2004_health.api-health.backend.site.src.main.renderDownloads:
+    name: renderDownloads
+    module: restored_c2004_health.api-health.backend.site.src.main
+    line: 138
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 2
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index:
     name: module_index
     module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
@@ -152,19 +194,12 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.updateActiveNav:
-    name: updateActiveNav
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 57
-    cyclomatic_complexity: 10
-    calls_out: 4
-    calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl:
-    name: unhealthyEl
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 513
-    cyclomatic_complexity: 2
-    calls_out: 5
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
     calls_in: 0
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html:
     name: _index_html
@@ -173,13 +208,6 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 1
     calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html:
     name: _index_html
     module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
@@ -187,41 +215,13 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 1
     calls_in: 2
-  restored_c2004_health.api-health.backend.site.src.main.healthyEl:
-    name: healthyEl
+  restored_c2004_health.api-health.backend.site.src.main.route:
+    name: route
     module: restored_c2004_health.api-health.backend.site.src.main
-    line: 512
-    cyclomatic_complexity: 2
-    calls_out: 5
+    line: 34
+    cyclomatic_complexity: 7
+    calls_out: 8
     calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.esc:
-    name: esc
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 693
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck:
-    name: runHealthCheck
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 509
-    cyclomatic_complexity: 11
-    calls_out: 10
-    calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth:
-    name: checkServiceHealth
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 477
-    cyclomatic_complexity: 4
-    calls_out: 7
-    calls_in: 6
 edges:
 - caller: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
   callee: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
@@ -3061,6 +3061,10 @@ entry_points:
 - SUMD.yaml_scalar
 - SUMD.zod_expr
 - docs.README.generate_readme
+- examples.08-nlp-commands.README.print
+- examples.09-mvp-protocol.README.print
+- examples.09-mvp-protocol.README.sendMVPCommand
+- examples.09-mvp-protocol.README.send_mvp_command
 - project.map.toon._add_condition_to_goal
 - project.map.toon._add_error
 - project.map.toon._add_if_conditions_for_params
@@ -4091,6 +4095,8 @@ entry_points:
 - project.map.toon.add_test_kind
 - project.map.toon.add_to_api_main
 - project.map.toon.add_to_backend_main
+- project.map.toon.all
+- project.map.toon.allServices
 - project.map.toon.analyze
 - project.map.toon.analyze_architectural_debt
 - project.map.toon.analyze_cqrs
@@ -4174,6 +4180,7 @@ entry_points:
 - project.map.toon.capabilities
 - project.map.toon.capture_screenshots
 - project.map.toon.categorize_icon
+- project.map.toon.checkServiceHealth
 - project.map.toon.check_api_auth_session
 - project.map.toon.check_api_config_sections
 - project.map.toon.check_api_menu
@@ -4270,10 +4277,14 @@ entry_points:
 - project.map.toon.consolidate_app_db
 - project.map.toon.consolidate_root_identification_db
 - project.map.toon.consolidate_scenario_db
+- project.map.toon.container
+- project.map.toon.content
+- project.map.toon.controller
 - project.map.toon.convert_dsl_syntax
 - project.map.toon.convert_goals_json_to_library
 - project.map.toon.copy_old_menu_data_if_present
 - project.map.toon.copy_to_pendrive
+- project.map.toon.coreClass
 - project.map.toon.count_lines
 - project.map.toon.count_references
 - project.map.toon.count_symbols
@@ -4345,6 +4356,7 @@ entry_points:
 - project.map.toon.curl_status
 - project.map.toon.curl_text
 - project.map.toon.current_iteration
+- project.map.toon.d
 - project.map.toon.daemon_loop
 - project.map.toon.dashboard
 - project.map.toon.dashboard_action_page
@@ -4354,6 +4366,7 @@ entry_points:
 - project.map.toon.decompose_file
 - project.map.toon.decompose_project
 - project.map.toon.define_menu_models
+- project.map.toon.degraded
 - project.map.toon.delete_activity
 - project.map.toon.delete_assignment
 - project.map.toon.delete_by_id
@@ -4392,7 +4405,9 @@ entry_points:
 - project.map.toon.detect_layer
 - project.map.toon.detect_module_boundaries
 - project.map.toon.discover_domain_handlers
+- project.map.toon.docPath
 - project.map.toon.docs_page
+- project.map.toon.dot
 - project.map.toon.downgrade
 - project.map.toon.drop_table
 - project.map.toon.dsl_from_goals
@@ -4441,6 +4456,7 @@ entry_points:
 - project.map.toon.ensure_tables_and_seed
 - project.map.toon.ensure_user
 - project.map.toon.ensure_workshop
+- project.map.toon.esc
 - project.map.toon.event_loop
 - project.map.toon.event_record_to_dict
 - project.map.toon.event_store_with_mock_db
@@ -4554,6 +4570,7 @@ entry_points:
 - project.map.toon.generate_markdown_report
 - project.map.toon.generate_migration_file
 - project.map.toon.generate_migration_sql
+- project.map.toon.generate_readme
 - project.map.toon.generate_recommendations
 - project.map.toon.generate_report
 - project.map.toon.generate_revision_id
@@ -4564,6 +4581,7 @@ entry_points:
 - project.map.toon.generate_testql_scenario
 - project.map.toon.generate_verification_checklist
 - project.map.toon.get
+- project.map.toon.getRoute
 - project.map.toon.get_activity
 - project.map.toon.get_admin_role_id
 - project.map.toon.get_all_routes
@@ -4709,7 +4727,9 @@ entry_points:
 - project.map.toon.goals_from_content
 - project.map.toon.goals_from_cql
 - project.map.toon.goals_from_dsl_text
+- project.map.toon.grid
 - project.map.toon.group_by_module
+- project.map.toon.handleRoute
 - project.map.toon.handle_bulk_save_sgi
 - project.map.toon.handle_cqrs_command
 - project.map.toon.handle_cqrs_query
@@ -4722,16 +4742,20 @@ entry_points:
 - project.map.toon.hardware_identify_proxy
 - project.map.toon.hardware_proxy_info
 - project.map.toon.has_column
+- project.map.toon.hash
 - project.map.toon.health
 - project.map.toon.health_check
 - project.map.toon.health_client
 - project.map.toon.health_full
+- project.map.toon.healthy
+- project.map.toon.healthyEl
 - project.map.toon.heartbeat
 - project.map.toon.hide_extra_menu_items
 - project.map.toon.highlight
 - project.map.toon.highlight_dsl
 - project.map.toon.highlight_line
 - project.map.toon.history
+- project.map.toon.html
 - project.map.toon.id_health
 - project.map.toon.identify
 - project.map.toon.identify_shortcut
@@ -4753,6 +4777,7 @@ entry_points:
 - project.map.toon.insert_if_missing
 - project.map.toon.insert_template_variable
 - project.map.toon.insert_with_retry
+- project.map.toon.isActive
 - project.map.toon.is_at_module_level
 - project.map.toon.is_component_specific_name
 - project.map.toon.is_component_specific_path
@@ -4837,6 +4862,7 @@ entry_points:
 - project.map.toon.list_users
 - project.map.toon.list_variables
 - project.map.toon.list_workshops
+- project.map.toon.loadDockerStatus
 - project.map.toon.load_config
 - project.map.toon.load_cql
 - project.map.toon.load_docs
@@ -4856,7 +4882,10 @@ entry_points:
 - project.map.toon.main
 - project.map.toon.manager_contracts
 - project.map.toon.manager_health
+- project.map.toon.manifest
+- project.map.toon.marked
 - project.map.toon.maybe_optional
+- project.map.toon.md
 - project.map.toon.mem_engine
 - project.map.toon.migrate
 - project.map.toon.migrate_database
@@ -4871,6 +4900,7 @@ entry_points:
 - project.map.toon.module_index
 - project.map.toon.module_parts_for
 - project.map.toon.multi_repo
+- project.map.toon.navigate
 - project.map.toon.needs_backup
 - project.map.toon.nested_to_flat_route
 - project.map.toon.nice_obj
@@ -4901,6 +4931,7 @@ entry_points:
 - project.map.toon.now_iso
 - project.map.toon.output_json
 - project.map.toon.package_json
+- project.map.toon.page
 - project.map.toon.page_file
 - project.map.toon.parse_args
 - project.map.toon.parse_auto_log_modules
@@ -5019,6 +5050,13 @@ entry_points:
 - project.map.toon.remap_reserved_columns
 - project.map.toon.remove_activity_from_scenario
 - project.map.toon.remove_inline_styles
+- project.map.toon.renderArchitecture
+- project.map.toon.renderDocs
+- project.map.toon.renderDownloads
+- project.map.toon.renderHome
+- project.map.toon.renderServices
+- project.map.toon.renderServicesGrid
+- project.map.toon.renderSidebar
 - project.map.toon.render_anyof_validator
 - project.map.toon.render_class
 - project.map.toon.render_defs
@@ -5033,6 +5071,7 @@ entry_points:
 - project.map.toon.repo
 - project.map.toon.report
 - project.map.toon.reports_contracts
+- project.map.toon.res
 - project.map.toon.reset_config_section
 - project.map.toon.reset_cqrs_setup
 - project.map.toon.reset_demo_data
@@ -5048,6 +5087,7 @@ entry_points:
 - project.map.toon.resolve_relative
 - project.map.toon.resolve_release_version
 - project.map.toon.resolve_system_chrome
+- project.map.toon.resp
 - project.map.toon.restart_kiosk
 - project.map.toon.restore
 - project.map.toon.restore_backup
@@ -5061,8 +5101,10 @@ entry_points:
 - project.map.toon.robots_txt
 - project.map.toon.rollback_migration
 - project.map.toon.root
+- project.map.toon.route
 - project.map.toon.route_mappings_to_commands
 - project.map.toon.row_to_dict
+- project.map.toon.runHealthCheck
 - project.map.toon.run_alembic_upgrade
 - project.map.toon.run_api_tests
 - project.map.toon.run_backend_tests
@@ -5151,6 +5193,7 @@ entry_points:
 - project.map.toon.should_skip_path
 - project.map.toon.show_status
 - project.map.toon.shutdown_event
+- project.map.toon.sidebar
 - project.map.toon.simulate_api_calls
 - project.map.toon.simulate_queries
 - project.map.toon.sitemap_xml
@@ -5160,16 +5203,21 @@ entry_points:
 - project.map.toon.split_legacy_xml_to_scenarios
 - project.map.toon.ssh_cmd
 - project.map.toon.standardize_scenario_dsl_goals
+- project.map.toon.start
 - project.map.toon.start_handler
 - project.map.toon.start_protocol
 - project.map.toon.start_session
 - project.map.toon.start_test_session
 - project.map.toon.startup_event
 - project.map.toon.status
+- project.map.toon.statusClass
+- project.map.toon.statusText
 - project.map.toon.step_handler
 - project.map.toon.stop_execution
 - project.map.toon.strip_nfo_fallback_blocks
+- project.map.toon.summary
 - project.map.toon.sync_dsl_tables_from_scenarios
+- project.map.toon.table
 - project.map.toon.table_exists
 - project.map.toon.take_screenshots_cli
 - project.map.toon.take_screenshots_playwright
@@ -5675,6 +5723,9 @@ entry_points:
 - project.map.toon.test_xml_to_ast_rejects_missing_root
 - project.map.toon.test_xsd_endpoint_returns_static_definition
 - project.map.toon.text_search
+- project.map.toon.time
+- project.map.toon.timeEl
+- project.map.toon.timeout
 - project.map.toon.to_module_label
 - project.map.toon.trigger_sync
 - project.map.toon.truth
@@ -5683,7 +5734,10 @@ entry_points:
 - project.map.toon.tsconfig_json
 - project.map.toon.tui
 - project.map.toon.ui_root
+- project.map.toon.unhealthy
+- project.map.toon.unhealthyEl
 - project.map.toon.unquote
+- project.map.toon.updateActiveNav
 - project.map.toon.update_activity
 - project.map.toon.update_assignment
 - project.map.toon.update_backend_db_config

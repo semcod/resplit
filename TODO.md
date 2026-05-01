@@ -49,3 +49,25 @@
 ## Phase 13: UI/UX Refinement
 - [x] **D3.js Enhancements**: Add "Code Evolution" playback to the graph (watch dependencies change over time).
 - [x] **TUI Refactor**: Finalize extraction of domain logic from `interfaces/tui.py`.
+
+---
+
+## Phase 14: Production Readiness (Następne)
+
+### 🔴 Krytyczne
+- [ ] **PyPI Package**: Publikacja rebuild na PyPI z poprawnymi metadata
+- [ ] **CI/CD Pipeline**: GitHub Actions z testami, linting i publish
+- [ ] **Versioning**: Semantic versioning z changelog automation
+- [ ] **Documentation Site**: Sphinx/MkDocs dla pełnej dokumentacji
+
+### 🟠 Wysokie
+- [ ] **Docker Image**: Oficjalny obraz Docker dla rebuild CLI
+- [ ] **Config Validation**: JSON Schema dla rebuild.yaml z walidacją
+- [ ] **Plugin System**: Extensible architecture dla custom scanners/reporters
+- [ ] **Telemetry**: Opcjonalna analityka użycia (opt-in)
+
+### 🟡 Średnie
+- [ ] **TUI Full Features**: Interaktywny terminal UI z nawigacją
+- [ ] **Export Formats**: Dodatkowe formaty (CSV, PDF, Markdown)
+- [ ] **Notification Hooks**: Slack/Discord/Webhook przy błędach
+- [ ] **Snapshot Management**: LRU cache dla snapshotów bazy danych
