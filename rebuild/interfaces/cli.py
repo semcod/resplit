@@ -3,6 +3,7 @@ rebuild CLI — główny punkt wejścia.
 """
 from __future__ import annotations
 
+import json
 from datetime import date
 from pathlib import Path
 from typing import Optional, List
@@ -312,6 +313,99 @@ def tui() -> None:
 def version() -> None:
     """Pokaż wersję rebuild."""
     console.print(f"rebuild v{__version__}")
+
+
+@app.command()
+def auto_pr(
+    analysis_file: Path = typer.Argument(..., help="Plik JSON z wynikami analizy (duplicates lub services)"),
+    platform: str = typer.Option("github", help="Platforma: github lub gitlab"),
+    token: Optional[str] = typer.Option(None, "--token", help="Token API GitHub/GitLab"),
+    repo_owner: Optional[str] = typer.Option(None, "--repo-owner", help="Właściciel repozytorium"),
+    repo_name: Optional[str] = typer.Option(None, "--repo-name", help="Nazwa repozytorium"),
+    base_branch: str = typer.Option("main", help="Gałąź bazowa"),
+    head_branch: str = typer.Option("rebuild-auto", help="Gałąź z propozycjami"),
+    title: str = typer.Option("Rebuild: Automated Refactor", help="Tytuł PR"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Pokaż PR bez tworzenia"),
+) -> None:
+    """Utwórz Pull/Merge Request z AI-generated summary z wyników analizy."""
+    from ..application.services.pr_service import PRService, PRConfig, Platform, load_config_from_env
+    from ..application.services.summary_service import SummaryService
+
+    if not analysis_file.exists():
+        console.print(f"[red]✗ Plik {analysis_file} nie istnieje.[/red]")
+        raise typer.Exit(1)
+
+    # Load analysis results
+    try:
+        analysis_data = json.loads(analysis_file.read_text())
+    except Exception as e:
+        console.print(f"[red]✗ Błąd wczytywania pliku analizy:[/red] {e}")
+        raise typer.Exit(1)
+
+    # Load PR config from args or environment
+    if token and repo_owner and repo_name:
+        try:
+            pr_platform = Platform(platform.lower())
+        except ValueError:
+            console.print(f"[red]✗ Nieobsługiwana platforma: {platform}[/red]")
+            raise typer.Exit(1)
+
+        pr_config = PRConfig(
+            platform=pr_platform,
+            token=token,
+            repo_owner=repo_owner,
+            repo_name=repo_name,
+            base_branch=base_branch,
+            head_branch=head_branch,
+            title=title,
+        )
+    else:
+        pr_config = load_config_from_env()
+        if not pr_config:
+            console.print("[red]✗ Brak konfiguracji PR. Podaj --token, --repo-owner, --repo-name lub ustaw zmienne środowiskowe.[/red]")
+            console.print("[dim]Zmienne środowiskowe:[/dim]")
+            console.print("  REBUILD_PR_PLATFORM=github|gitlab")
+            console.print("  REBUILD_PR_TOKEN=your_token")
+            console.print("  REBUILD_PR_REPO_OWNER=owner")
+            console.print("  REBUILD_PR_REPO_NAME=repo")
+            raise typer.Exit(1)
+
+    # Generate summary
+    summary_service = SummaryService()
+    console.print("[bold cyan]Generowanie podsumowania...[/bold cyan]")
+
+    if "duplicate_groups" in analysis_data:
+        summary_result = summary_service.generate_from_duplication(analysis_data)
+    elif "cycles" in analysis_data or "services" in analysis_data:
+        summary_result = summary_service.generate_from_service_graph(analysis_data)
+    else:
+        console.print("[red]✗ Nieznany format pliku analizy.[/red]")
+        raise typer.Exit(1)
+
+    console.print(f"\n[bold]Podsumowanie:[/bold]")
+    console.print(summary_result.summary)
+    console.print(f"\n[bold]Sugestie refactor ({len(summary_result.suggestions)}):[/bold]")
+    for suggestion in summary_result.suggestions[:10]:
+        console.print(f"  - [{suggestion.severity.upper()}] {suggestion.description}")
+    if len(summary_result.suggestions) > 10:
+        console.print(f"  ... i jeszcze {len(summary_result.suggestions) - 10}")
+
+    if dry_run:
+        console.print("\n[yellow]Dry run mode - PR nie został utworzony.[/yellow]")
+        return
+
+    # Create PR
+    console.print(f"\n[bold cyan]Tworzenie PR na {pr_config.platform.value}...[/bold cyan]")
+    pr_service = PRService(pr_config)
+    formatted_suggestions = summary_service.format_suggestions_for_pr(summary_result.suggestions)
+    pr_result = pr_service.create_pr(summary_result.summary, formatted_suggestions)
+
+    if pr_result.success:
+        console.print(f"[green]✓ PR utworzony:[/green] {pr_result.pr_url}")
+        console.print(f"  [dim]PR #{pr_result.pr_number}[/dim]")
+    else:
+        console.print(f"[red]✗ Błąd tworzenia PR:[/red] {pr_result.error}")
+        raise typer.Exit(1)
 
 
 # ──────────────────────────────────────────────
