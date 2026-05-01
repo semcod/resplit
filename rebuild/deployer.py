@@ -17,7 +17,7 @@ from typing import Optional
 import httpx
 from rich.console import Console
 
-from .models import DeployMethod, WalkConfig
+from .domain.models import DeployMethod, WalkConfig
 
 console = Console()
 

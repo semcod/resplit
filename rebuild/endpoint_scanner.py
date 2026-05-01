@@ -17,7 +17,8 @@ from typing import Optional
 import httpx
 import yaml
 
-from .models import Endpoint, WalkConfig
+from .domain.models import WalkConfig
+from .domain.endpoint import Endpoint
 
 
 # ──────────────────────────────────────────────
