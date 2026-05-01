@@ -20,6 +20,7 @@ from .services.screenshot_service import ScreenshotService, ScreenshotConfig
 from .services.reporter_service import ReporterService
 from .services.patcher_service import PatcherService
 from .services.override_service import OverrideService
+from .services.event_service import get_event_service, EventType
 
 class Pipeline:
     """
@@ -30,7 +31,8 @@ class Pipeline:
         self.config = config
         self.console = console
         self._event_log: List[PipelineEvent] = []
-        
+        self._event_service = get_event_service()
+
         # Initialize services
         self.git = GitService(config.repo_path)
         self.deploy = DeployService(config, console=self.console)
@@ -40,7 +42,7 @@ class Pipeline:
         self.reporter = ReporterService()
         self.patcher = PatcherService()
         self.overrider = OverrideService()
-        
+
         # Load incremental state
         self._state_file = config.output_dir / "walk_state.json"
         self._processed_shas: Set[str] = self._load_state()

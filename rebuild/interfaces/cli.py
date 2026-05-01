@@ -729,20 +729,55 @@ def _serve_reports(output: Path, port: int) -> None:
     import threading
     import webbrowser
     import os
+    import queue
+    from ..application.services.event_service import get_event_service
 
     os.chdir(output)
-    handler = http.server.SimpleHTTPRequestHandler
+    event_service = get_event_service()
+    event_service.enable()
+
+    class SSEHandler(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *a):
+            pass  # Suppress log messages
+
+        def do_GET(self):
+            if self.path == "/events":
+                self.send_response(200)
+                self.send_header("Content-Type", "text/event-stream")
+                self.send_header("Cache-Control", "no-cache")
+                self.send_header("Connection", "keep-alive")
+                self.end_headers()
+
+                q = event_service.subscribe()
+                try:
+                    while True:
+                        event = q.get(timeout=30)
+                        self.wfile.write(event.encode())
+                        self.wfile.flush()
+                except queue.Empty:
+                    self.wfile.write(b"data: keepalive\n\n")
+                    self.wfile.flush()
+                except Exception:
+                    pass
+                finally:
+                    event_service.unsubscribe(q)
+            else:
+                super().do_GET()
+
+    handler = SSEHandler
     handler.log_message = lambda *a: None
 
     with socketserver.TCPServer(("", port), handler) as httpd:
         url = f"http://localhost:{port}/index.html"
         console.print(f"\n[bold green]Serwer HTTP uruchomiony:[/bold green] {url}")
+        console.print(f"  [dim]SSE endpoint:[/dim] http://localhost:{port}/events")
         console.print("  [dim]Ctrl+C aby zatrzymać[/dim]\n")
         threading.Timer(0.4, lambda: webbrowser.open(url)).start()
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
             console.print("\n[dim]Serwer zatrzymany.[/dim]")
+            event_service.disable()
 
 
 def _print_summary_table(results: list[DayResult]) -> None:
