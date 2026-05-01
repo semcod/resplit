@@ -12,88 +12,19 @@ from ..domain.day_result import DayResult
 from ..domain.context import EndpointContext
 from ..domain.events import PipelineEvent
 
-from .services.git_service import GitService
+from .base_pipeline import BasePipeline
 from .services.deploy_service import DeployService
-from .services.scanner_service import ScannerService
 from .services.test_service import TestService
-from .services.screenshot_service import ScreenshotService, ScreenshotConfig
-from .services.reporter_service import ReporterService
-from .services.patcher_service import PatcherService
-from .services.override_service import OverrideService
-from .services.event_service import get_event_service, EventType
 
-class Pipeline:
+class Pipeline(BasePipeline):
     """
     Orchestrates the analysis process (Command).
     Supports Incremental Walking, Event Sourcing, and Replay Mode.
     """
     def __init__(self, config: WalkConfig, console=None):
-        self.config = config
-        self.console = console
-        self._event_log: List[PipelineEvent] = []
-        self._event_service = get_event_service()
-
-        # Initialize services
-        self.git = GitService(config.repo_path)
+        super().__init__(config, console)
         self.deploy = DeployService(config, console=self.console)
-        self.scanner = ScannerService(config)
         self.tester = TestService(config)
-        self.screenshots = ScreenshotService(ScreenshotConfig(output_dir=config.output_dir))
-        self.reporter = ReporterService()
-        self.patcher = PatcherService()
-        self.overrider = OverrideService()
-
-        # Load incremental state
-        self._state_file = config.output_dir / "walk_state.json"
-        self._processed_shas: Set[str] = self._load_state()
-
-    def _load_state(self) -> Set[str]:
-        if self._state_file.exists():
-            try:
-                data = json.loads(self._state_file.read_text())
-                return set(data.get("processed_shas", []))
-            except Exception:
-                pass
-        return set()
-
-    def _save_state(self):
-        self.config.output_dir.mkdir(parents=True, exist_ok=True)
-        data = {"processed_shas": list(self._processed_shas)}
-        self._state_file.write_text(json.dumps(data, indent=2))
-
-    def _emit(self, event_type: str, **kwargs):
-        event = PipelineEvent.create(event_type, **kwargs)
-        self._event_log.append(event)
-        log_file = self.config.output_dir / "history.jsonl"
-        self.config.output_dir.mkdir(parents=True, exist_ok=True)
-        with open(log_file, "a") as f:
-            f.write(event.to_json() + "\n")
-
-        # Also publish to real-time event service
-        try:
-            # Map event types to EventType enum
-            event_map = {
-                "PIPELINE_STARTED": EventType.PIPELINE_START,
-                "PIPELINE_FINISHED": EventType.PIPELINE_END,
-                "DAY_STARTED": EventType.DAY_START,
-                "DAY_FINISHED": EventType.DAY_END,
-                "DEPLOY_STARTED": EventType.DEPLOY_START,
-                "DEPLOY_SUCCESS": EventType.DEPLOY_SUCCESS,
-                "DEPLOY_FAILED": EventType.DEPLOY_FAIL,
-                "TEST_STARTED": EventType.TEST_START,
-                "TEST_FINISHED": EventType.TEST_END,
-                "HEALTH_CHECK": EventType.HEALTH_CHECK,
-                "ERROR": EventType.ERROR,
-                "LOG": EventType.LOG,
-            }
-            rt_type = event_map.get(event_type, EventType.LOG)
-            self._event_service.emit(rt_type, kwargs, day=kwargs.get("day"), commit=kwargs.get("commit_sha"))
-        except Exception:
-            pass  # Don't break pipeline if event service fails
-
-    def log(self, message: str):
-        if self.console:
-            self.console.print(message)
 
     def _check_for_manual_fix(self, walk_git: GitService, original_sha: str) -> Optional[str]:
         """

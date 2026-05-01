@@ -1,0 +1,10 @@
+pipeline:
+  profile: python-minimal
+
+  metrics:
+    cc_max: 15
+    critical_max: 0
+    coverage_min: 60
+
+  env:
+    LLM_MODEL: openrouter/qwen/qwen3-coder-next
