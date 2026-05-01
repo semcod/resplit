@@ -47,5 +47,5 @@
 - [x] **Auto-PR Agent**: Automatically open PRs on GitHub/GitLab using generated AI summaries.
 
 ## Phase 13: UI/UX Refinement
-- [ ] **D3.js Enhancements**: Add "Code Evolution" playback to the graph (watch dependencies change over time).
-- [ ] **TUI Refactor**: Finalize extraction of domain logic from `interfaces/tui.py`.
+- [x] **D3.js Enhancements**: Add "Code Evolution" playback to the graph (watch dependencies change over time).
+- [x] **TUI Refactor**: Finalize extraction of domain logic from `interfaces/tui.py`.

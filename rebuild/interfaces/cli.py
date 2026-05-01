@@ -408,6 +408,25 @@ def auto_pr(
         raise typer.Exit(1)
 
 
+@app.command()
+def evolution(
+    timeline_file: Path = typer.Argument(..., help="Plik JSON z timeline snapshots"),
+    output: Path = typer.Option(Path("evolution.html"), help="Plik wyjściowy HTML"),
+    title: str = typer.Option("Code Evolution", help="Tytuł wizualizacji"),
+) -> None:
+    """Generuj wizualizację D3.js Code Evolution playback z timeline snapshots."""
+    from ..interfaces.evolution_viz import generate_evolution_html
+
+    if not timeline_file.exists():
+        console.print(f"[red]✗ Plik {timeline_file} nie istnieje.[/red]")
+        raise typer.Exit(1)
+
+    console.print("[bold cyan]Generowanie wizualizacji Code Evolution...[/bold cyan]")
+    output_path = generate_evolution_html(timeline_file, output, title)
+    console.print(f"[green]✓ Wizualizacja zapisana:[/green] {output_path}")
+    console.print(f"  [dim]Otwórz w przeglądarce aby zobaczyć playback[/dim]")
+
+
 # ──────────────────────────────────────────────
 # analyze commands (Queries)
 # ──────────────────────────────────────────────
