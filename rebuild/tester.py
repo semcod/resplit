@@ -1,12 +1,12 @@
 """
-resplit.tester — uruchamia testql scenarios per endpoint.
+rebuild.tester — uruchamia testql scenarios per endpoint.
 
 Hierarchia:
   1. Jeśli testql dostępny i scenarios_dir istnieje → uruchom testql
   2. Fallback → prosty HTTP GET probe (zachowanie z cli.py)
 
 Wyniki zapisywane do:
-  .resplit/YYYY-MM-DD/testql-results.json
+  .rebuild/YYYY-MM-DD/testql-results.json
 """
 from __future__ import annotations
 

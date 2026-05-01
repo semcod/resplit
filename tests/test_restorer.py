@@ -1,4 +1,4 @@
-"""Tests for resplit.restorer."""
+"""Tests for rebuild.restorer."""
 from __future__ import annotations
 
 import json
@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from resplit.restorer import find_last_working_day, _find_backend_files, _is_page_endpoint
+from rebuild.restorer import find_last_working_day, _find_backend_files, _is_page_endpoint
 
 
 def _make_results_dir(tmp_path: Path, day: str, endpoint: str, status: str) -> None:

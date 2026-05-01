@@ -1,5 +1,5 @@
 """
-resplit.restorer — przywraca działający endpoint z historii git.
+rebuild.restorer — przywraca działający endpoint z historii git.
 
 Workflow:
   1. Znajdź ostatni dzień, w którym endpoint zwracał status OK
@@ -149,7 +149,7 @@ def _write_readme(
 
 Wyodrębniony z historii git — ostatni działający dzień: **{working_day}**
 
-Wygenerowany przez [resplit](https://github.com/semcod/resplit).
+Wygenerowany przez [rebuild](https://github.com/semcod/rebuild).
 
 ## Struktura
 

@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rebuild"
-version = "0.1.6"
+version = "0.1.7"
 description = "Historical deployment analysis — walk git history, deploy per day, test all endpoints, capture screenshots, restore working fragments"
 readme = "README.md"
 license = "Apache-2.0"
 authors = [{ name = "Tom Sapletta", email = "tom@sapletta.com" }]
 requires-python = ">=3.10"
-keywords = ["deployment", "regression", "git", "testing", "endpoints", "history", "resplit"]
+keywords = ["deployment", "regression", "git", "testing", "endpoints", "history", "rebuild"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -46,7 +46,7 @@ dev = ["pytest>=8", "pytest-cov", "pytest-asyncio", "ruff", "mypy",
 ]
 
 [project.scripts]
-resplit = "resplit.cli:app"
+rebuild = "rebuild.cli:app"
 
 [project.urls]
 Homepage = "https://github.com/semcod/resplit"
@@ -54,7 +54,7 @@ Repository = "https://github.com/semcod/resplit"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["resplit*"]
+include = ["rebuild*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

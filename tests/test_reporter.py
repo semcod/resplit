@@ -1,4 +1,4 @@
-"""Tests for resplit.reporter."""
+"""Tests for rebuild.reporter."""
 from __future__ import annotations
 
 import json
@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from resplit.models import (
+from rebuild.models import (
     CommitInfo,
     DayResult,
     DeployMethod,
@@ -15,7 +15,7 @@ from resplit.models import (
     EndpointResult,
     EndpointStatus,
 )
-from resplit.reporter import save_day, save_json, save_html, save_timeline_index
+from rebuild.reporter import save_day, save_json, save_html, save_timeline_index
 
 
 def _make_result(tmp_path: Path) -> DayResult:
@@ -63,7 +63,7 @@ def test_save_html_creates_report(tmp_path):
     report = tmp_path / "2024-03-15" / "report.html"
     assert report.exists()
     content = report.read_text()
-    assert "resplit" in content
+    assert "rebuild" in content
     assert "2024-03-15" in content
 
 
@@ -73,5 +73,5 @@ def test_save_timeline_index(tmp_path):
     index = tmp_path / "index.html"
     assert index.exists()
     content = index.read_text()
-    assert "resplit" in content
+    assert "rebuild" in content
     assert "2024-03-15" in content

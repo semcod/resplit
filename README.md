@@ -1,13 +1,13 @@
-# resplit
+# rebuild
 
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.6-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.90-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.2h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.7-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.05-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.2h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $0.9000 (6 commits)
-- 👤 **Human dev:** ~$215 (2.2h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $1.0500 (7 commits)
+- 👤 **Human dev:** ~$220 (2.2h @ $100/h, 30min dedup)
 
 Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -15,7 +15,7 @@ Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 **Historical deployment analysis** — walk git history day by day, deploy per commit, test all endpoints, capture screenshots, restore working fragments.
 
-![Version](https://img.shields.io/badge/version-0.1.6-blue)
+![Version](https://img.shields.io/badge/version-0.1.7-blue)
 ![Python](https://img.shields.io/badge/python-3.10+-blue)
 ![License](https://img.shields.io/badge/license-Apache--2.0-green)
 ![Tests](https://img.shields.io/badge/tests-44%20passing-brightgreen)
@@ -38,10 +38,10 @@ Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrou
 ## Install
 
 ```bash
-pip install resplit
+pip install rebuild
 
 # with Playwright screenshots
-pip install "resplit[screenshots]"
+pip install "rebuild[screenshots]"
 playwright install chromium
 
 # development
@@ -54,35 +54,35 @@ pip install -e ".[dev]"
 
 ```bash
 # Dry-run: scan last 30 days without deploy
-resplit walk . --days 30 --dry-run
+rebuild walk . --days 30 --dry-run
 
 # Full walk with docker-compose
-resplit walk . --days 30 --deploy docker-compose
+rebuild walk . --days 30 --deploy docker-compose
 
 # Walk a specific date range
-resplit walk /path/to/repo --from 2024-01-01 --to 2024-04-01
+rebuild walk /path/to/repo --from 2024-01-01 --to 2024-04-01
 
 # Restore last working version of an endpoint
-resplit restore /api/health .
+rebuild restore /api/health .
 
 # Generate timeline report from existing results
-resplit report
+rebuild report
 
 # Generate CC vs health% dashboard
-resplit dashboard --repo .
+rebuild dashboard --repo .
 
 # Show version
-resplit version
+rebuild version
 ```
 
 ---
 
 ## CLI reference
 
-### `resplit walk`
+### `rebuild walk`
 
 ```
-resplit walk [REPO] [OPTIONS]
+rebuild walk [REPO] [OPTIONS]
 
   REPO                    Path to git repository (default: .)
 
@@ -90,7 +90,7 @@ Options:
   --days INT              How many days back (default: 30)
   --from TEXT             Start date YYYY-MM-DD
   --to TEXT               End date YYYY-MM-DD
-  --output PATH           Output directory (default: .resplit)
+  --output PATH           Output directory (default: .rebuild)
   --deploy TEXT           Deploy method: auto|docker-compose|uvicorn|none
   --health-url TEXT       Health check URL (default: http://localhost:8003/api/health)
   --base-url TEXT         Base service URL (default: http://localhost:8003)
@@ -99,34 +99,34 @@ Options:
   --dry-run               Scan only, no deploy
 ```
 
-### `resplit restore`
+### `rebuild restore`
 
 ```
-resplit restore ENDPOINT [REPO] [OPTIONS]
+rebuild restore ENDPOINT [REPO] [OPTIONS]
 
   ENDPOINT                Endpoint path e.g. /api/health
 
 Options:
   --output PATH           Target project directory (default: restored/)
-  --results-dir PATH      Walk results directory (default: .resplit)
+  --results-dir PATH      Walk results directory (default: .rebuild)
 ```
 
-### `resplit report`
+### `rebuild report`
 
 ```
-resplit report [OPTIONS]
+rebuild report [OPTIONS]
 
 Options:
-  --results-dir PATH      Walk results directory (default: .resplit)
+  --results-dir PATH      Walk results directory (default: .rebuild)
 ```
 
-### `resplit dashboard`
+### `rebuild dashboard`
 
 ```
-resplit dashboard [OPTIONS]
+rebuild dashboard [OPTIONS]
 
 Options:
-  --results-dir PATH      Walk results directory (default: .resplit)
+  --results-dir PATH      Walk results directory (default: .rebuild)
   --repo PATH             Repository path for CC extraction via toon (optional)
 ```
 
@@ -135,7 +135,7 @@ Options:
 ## Output structure
 
 ```
-.resplit/
+.rebuild/
   2024-03-15/
     commit.txt              # sha · message · author · timestamp
     endpoints.json          # detected endpoints
@@ -146,12 +146,12 @@ Options:
       GET_api_health.png
       GET_api_items.png
   index.html                # timeline of all days
-  dashboard.html            # CC vs health% chart (after resplit dashboard)
+  dashboard.html            # CC vs health% chart (after rebuild dashboard)
 ```
 
 ---
 
-## Configuration — `resplit.yaml`
+## Configuration — `rebuild.yaml`
 
 ```yaml
 project:
@@ -175,7 +175,7 @@ testql:
   timeout: 10
 
 output:
-  dir: .resplit
+  dir: .rebuild
   screenshots: true
   html_report: true
 ```
@@ -185,8 +185,8 @@ output:
 ## Architecture
 
 ```
-resplit/
-├── resplit/
+rebuild/
+├── rebuild/
 │   ├── __init__.py
 │   ├── cli.py              # Typer CLI: walk, restore, report, version, dashboard
 │   ├── models.py           # Dataclasses: WalkConfig, DayResult, Endpoint, CommitInfo
@@ -205,7 +205,7 @@ resplit/
 │   └── 03-restore-endpoint/
 ├── testql-scenarios/
 ├── pyproject.toml
-└── resplit.yaml.example
+└── rebuild.yaml.example
 ```
 
 ### Endpoint scanner — 3-level fallback

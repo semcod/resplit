@@ -6,8 +6,8 @@ ENDPOINT="${1:-/api/health}"
 REPO="${2:-.}"
 OUTPUT="${3:-./restored}"
 
-resplit restore "$ENDPOINT" "$REPO" \
+rebuild restore "$ENDPOINT" "$REPO" \
   --output "$OUTPUT" \
-  --results-dir .resplit
+  --results-dir .rebuild
 
 echo "Przywrócono do: $OUTPUT"

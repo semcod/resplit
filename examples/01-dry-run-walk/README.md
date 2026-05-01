@@ -6,8 +6,8 @@ Przydatne do weryfikacji zakresu commitów i konfiguracji bez uruchamiania docke
 ## Uruchomienie
 
 ```bash
-pip install resplit
-resplit walk . --days 30 --dry-run --output .resplit
+pip install rebuild
+rebuild walk . --days 30 --dry-run --output .rebuild
 ```
 
 lub przez skrypt:
@@ -26,7 +26,7 @@ lub przez skrypt:
 ## Wynik
 
 ```
-.resplit/
+.rebuild/
   2024-03-15/
     endpoints.json
     report.html

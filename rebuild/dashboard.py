@@ -1,7 +1,7 @@
 """
-resplit.dashboard — timeline CC (cyclomatic complexity) nałożony na health%.
+rebuild.dashboard — timeline CC (cyclomatic complexity) nałożony na health%.
 
-Generuje .resplit/dashboard.html z dwoma osiami:
+Generuje .rebuild/dashboard.html z dwoma osiami:
   - oś Y lewa: health% (z results.json per dzień)
   - oś Y prawa: średnie CC (z toon / regres scan per dzień)
 
@@ -129,7 +129,7 @@ def _render_html(
 <html lang="pl">
 <head>
 <meta charset="utf-8">
-<title>resplit — dashboard</title>
+<title>rebuild — dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
   body {{ font-family: system-ui, sans-serif; margin: 0; padding: 24px; background: #f8fafc; color: #1e293b; }}
@@ -139,7 +139,7 @@ def _render_html(
 </style>
 </head>
 <body>
-<h1>📊 resplit — dashboard</h1>
+<h1>📊 rebuild — dashboard</h1>
 <div class="meta">{total_days} dni &nbsp;·&nbsp; health% (lewa oś){"&nbsp;·&nbsp; Avg CC (prawa oś)" if has_cc else ""}</div>
 <div class="chart-wrap">
   <canvas id="chart" height="80"></canvas>

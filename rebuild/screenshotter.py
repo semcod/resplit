@@ -1,5 +1,5 @@
 """
-resplit.screenshotter — Playwright screenshots per endpoint z retry/timeout.
+rebuild.screenshotter — Playwright screenshots per endpoint z retry/timeout.
 
 Używany przez cli.py walk jako osobny moduł (nie inline w cli).
 Playwright jest opcjonalny — brak instalacji → graceful skip.

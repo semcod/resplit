@@ -6,9 +6,9 @@ Używane gdy endpoint przestał działać i chcemy wyciągnąć ostatnią dział
 ## Workflow
 
 ```
-resplit walk (wcześniej)  →  .resplit/ z wynikami per dzień
+rebuild walk (wcześniej)  →  .rebuild/ z wynikami per dzień
           ↓
-resplit restore /api/health  →  restored/api-health/
+rebuild restore /api/health  →  restored/api-health/
                                   backend/
                                   docker/
                                   README.md
@@ -16,14 +16,14 @@ resplit restore /api/health  →  restored/api-health/
 
 ## Wymagania
 
-- Wcześniej uruchomiony `resplit walk` (wyniki w `.resplit/`)
+- Wcześniej uruchomiony `rebuild walk` (wyniki w `.rebuild/`)
 - Repozytorium dostępne lokalnie
 
 ## Uruchomienie
 
 ```bash
 # Krok 1: znajdź ostatni działający dzień dla endpointu
-resplit restore /api/health . --output ./restored
+rebuild restore /api/health . --output ./restored
 
 # Krok 2: uruchom przywrócony projekt
 cd restored/api-health/docker
@@ -51,9 +51,9 @@ restored/
     README.md         ← instrukcja uruchomienia
 ```
 
-## Co robi resplit restore
+## Co robi rebuild restore
 
-1. Przeszukuje `.resplit/*/results.json` od najnowszego dnia
+1. Przeszukuje `.rebuild/*/results.json` od najnowszego dnia
 2. Znajduje ostatni dzień gdzie endpoint zwracał `status: ok`
 3. Checkout repo do tego commitu
 4. Kopiuje pliki backend (heurystyka: pliki zawierające ścieżkę endpointu)

@@ -4,15 +4,15 @@ set -euo pipefail
 ENDPOINT="${1:-/api/health}"
 REPO="${2:-.}"
 OUTPUT="${3:-./restored}"
-RESULTS_DIR="${4:-.resplit}"
+RESULTS_DIR="${4:-.rebuild}"
 
-echo "resplit restore: $ENDPOINT"
+echo "rebuild restore: $ENDPOINT"
 echo "  repo:        $REPO"
 echo "  results-dir: $RESULTS_DIR"
 echo "  output:      $OUTPUT"
 echo ""
 
-resplit restore "$ENDPOINT" "$REPO" \
+rebuild restore "$ENDPOINT" "$REPO" \
   --output "$OUTPUT" \
   --results-dir "$RESULTS_DIR"
 
