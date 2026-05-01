@@ -3,34 +3,23 @@ flowchart TD
     %% Entry points (blue)
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
-    subgraph CLI
-        resplit__cli__walk["walk"]
-        resplit__cli__restore["restore"]
-        resplit__cli__report["report"]
-        resplit__cli__version["version"]
-        resplit__cli__dashboard["dashboard"]
-        resplit__cli___attach_screenshots["_attach_screenshots"]
-        resplit__cli___print_day_summary["_print_day_summary"]
-        resplit__cli___print_summary_table["_print_summary_table"]
-    end
-
     subgraph Core
-        resplit__git_walker___run_git["_run_git"]
-        resplit__git_walker__get_commit_for_day["get_commit_for_day"]
-        resplit__git_walker__iter_days["iter_days"]
-        resplit__git_walker__days_with_commits["days_with_commits"]
-        resplit__deployer__start["start"]
-        docs__README__generate_readme["generate_readme"]
-        project__map__toon__walk["walk"]
-        project__map__toon__restore["restore"]
-        project__map__toon__report["report"]
-        project__map__toon__version["version"]
-        project__map__toon___probe_endpoints["_probe_endpoints"]
-        project__map__toon___take_screenshot["_take_screenshot"]
-        project__map__toon___print_day_summary["_print_day_summary"]
-        project__map__toon___print_summary_table["_print_summary_table"]
-        project__map__toon__detect_deploy_method["detect_deploy_method"]
-        ...["+156 more"]
+        SUMR__detect_deploy_method["detect_deploy_method"]
+        SUMR___compose_file["_compose_file"]
+        SUMR__start["start"]
+        SUMR__stop["stop"]
+        SUMR___compose_up["_compose_up"]
+        SUMR___compose_down["_compose_down"]
+        SUMR___uvicorn_start["_uvicorn_start"]
+        SUMR___uvicorn_stop["_uvicorn_stop"]
+        SUMR___wait_healthy["_wait_healthy"]
+        SUMR__walk["walk"]
+        SUMR__restore["restore"]
+        SUMR__report["report"]
+        SUMR__version["version"]
+        SUMR__dashboard["dashboard"]
+        SUMR___attach_screenshots["_attach_screenshots"]
+        ...["+226 more"]
     end
 
-    class resplit__deployer__start,docs__README__generate_readme,project__map__toon__walk,project__map__toon__restore,project__map__toon__report,project__map__toon__version,project__map__toon___probe_endpoints,project__map__toon___take_screenshot,project__map__toon___print_day_summary,project__map__toon___print_summary_table entry
+    class SUMR__detect_deploy_method,SUMR___compose_file,SUMR__start,SUMR__stop,SUMR___compose_up,SUMR___compose_down,SUMR___uvicorn_start,SUMR___uvicorn_stop,SUMR___wait_healthy,SUMR__walk entry

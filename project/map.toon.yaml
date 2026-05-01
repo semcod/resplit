@@ -1,25 +1,29 @@
-# resplit | 25f 2602L | python:20,shell:4,less:1 | 2026-05-01
-# stats: 102 func | 9 cls | 25 mod | CC̄=3.8 | critical:2 | cycles:0
+# resplit | 29f 2716L | python:20,shell:8,less:1 | 2026-05-01
+# stats: 102 func | 9 cls | 29 mod | CC̄=3.8 | critical:2 | cycles:0
 # alerts[5]: CC walk=15; CC report=13; CC _scan_via_compose_labels=9; CC save_html=9; CC extract_endpoint=9
 # hotspots[5]: walk fan=30; report fan=22; dashboard fan=18; _scan_via_compose_labels fan=13; _batch_playwright fan=12
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[25]:
+M[29]:
   app.doql.less,34
+  examples/01-dry-run-walk/run.sh,19
+  examples/02-docker-compose-project/run.sh,26
+  examples/03-restore-endpoint/mock_results.sh,38
+  examples/03-restore-endpoint/run.sh,31
   examples/restore_endpoint.sh,14
   examples/walk_dry_run.sh,14
   project.sh,41
-  resplit/__init__.py,11
-  resplit/cli.py,366
-  resplit/dashboard.py,189
-  resplit/deployer.py,155
-  resplit/endpoint_scanner.py,165
-  resplit/git_walker.py,132
-  resplit/models.py,110
-  resplit/reporter.py,236
-  resplit/restorer.py,188
-  resplit/screenshotter.py,172
-  resplit/tester.py,188
+  rebuild/__init__.py,11
+  rebuild/cli.py,366
+  rebuild/dashboard.py,189
+  rebuild/deployer.py,155
+  rebuild/endpoint_scanner.py,165
+  rebuild/git_walker.py,132
+  rebuild/models.py,110
+  rebuild/reporter.py,236
+  rebuild/restorer.py,188
+  rebuild/screenshotter.py,172
+  rebuild/tester.py,188
   tests/__init__.py,1
   tests/test_deployer.py,37
   tests/test_endpoint_scanner.py,72
@@ -31,8 +35,8 @@ M[25]:
   tests/test_tester.py,129
   tree.sh,2
 D:
-  resplit/__init__.py:
-  resplit/cli.py:
+  rebuild/__init__.py:
+  rebuild/cli.py:
     e: walk,restore,report,version,dashboard,_attach_screenshots,_print_day_summary,_print_summary_table
     walk(repo;days;date_from;date_to;output;deploy;health_url;base_url;screenshots;dry_run)
     restore(endpoint;repo;output;results_dir)
@@ -42,13 +46,13 @@ D:
     _attach_screenshots(result;day_dir)
     _print_day_summary(result)
     _print_summary_table(results)
-  resplit/dashboard.py:
+  rebuild/dashboard.py:
     e: get_cc_for_day,_extract_avg_cc,generate_dashboard,_render_html
     get_cc_for_day(repo;day)
     _extract_avg_cc(data)
     generate_dashboard(results;output_dir;repo)
     _render_html(days;health;cc;total_days)
-  resplit/deployer.py:
+  rebuild/deployer.py:
     e: detect_deploy_method,_compose_file,start,stop,_compose_up,_compose_down,_uvicorn_start,_uvicorn_stop,_wait_healthy
     detect_deploy_method(repo)
     _compose_file(repo;config)
@@ -59,7 +63,7 @@ D:
     _uvicorn_start(repo;config)
     _uvicorn_stop()
     _wait_healthy(config)
-  resplit/endpoint_scanner.py:
+  rebuild/endpoint_scanner.py:
     e: scan_endpoints,_scan_via_deta,_ports_to_endpoints,_scan_via_openapi,_parse_openapi,_scan_via_compose_labels
     scan_endpoints(repo;config)
     _scan_via_deta(repo;config)
@@ -67,7 +71,7 @@ D:
     _scan_via_openapi(base_url)
     _parse_openapi(spec;base_url)
     _scan_via_compose_labels(repo;config)
-  resplit/git_walker.py:
+  rebuild/git_walker.py:
     e: _run_git,get_commit_for_day,iter_days,checkout,restore_head,days_with_commits
     _run_git(args;cwd)
     get_commit_for_day(repo;day;earliest)
@@ -75,7 +79,7 @@ D:
     checkout(repo;sha)
     restore_head(repo)
     days_with_commits(config)
-  resplit/models.py:
+  rebuild/models.py:
     e: DeployMethod,EndpointStatus,CommitInfo,Endpoint,EndpointResult,DayResult,WalkConfig
     DeployMethod:
     EndpointStatus:
@@ -84,7 +88,7 @@ D:
     EndpointResult:
     DayResult: ok_count(0),fail_count(0),health_pct(0)
     WalkConfig:
-  resplit/reporter.py:
+  rebuild/reporter.py:
     e: save_json,_status_badge,_screenshot_html,save_html,save_day,save_timeline_index
     save_json(result)
     _status_badge(status)
@@ -92,14 +96,14 @@ D:
     save_html(result)
     save_day(result)
     save_timeline_index(results;output_dir)
-  resplit/restorer.py:
+  rebuild/restorer.py:
     e: find_last_working_day,extract_endpoint,_find_backend_files,_is_page_endpoint,_write_readme
     find_last_working_day(endpoint_path;results_dir)
     extract_endpoint(repo;endpoint_path;working_day;target)
     _find_backend_files(repo;endpoint_path)
     _is_page_endpoint(path)
     _write_readme(target;endpoint_path;working_day;backend_files)
-  resplit/screenshotter.py:
+  rebuild/screenshotter.py:
     e: take_screenshot,take_screenshots_batch,_playwright_shot,_batch_playwright,screenshot_endpoint,ScreenshotConfig,ScreenshotResult
     ScreenshotConfig:
     ScreenshotResult:
@@ -108,7 +112,7 @@ D:
     _playwright_shot(url;path;cfg)
     _batch_playwright(urls;cfg)
     screenshot_endpoint(url;slug;screenshots_dir)
-  resplit/tester.py:
+  rebuild/tester.py:
     e: run_tests,_testql_available,_run_via_testql,_parse_testql_results,_run_http_probe,_fallback_all_timeout
     run_tests(endpoints;config;day_dir)
     _testql_available()

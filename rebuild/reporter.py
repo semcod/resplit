@@ -13,7 +13,8 @@ import json
 from datetime import date
 from pathlib import Path
 
-from .models import DayResult, EndpointResult, EndpointStatus
+from .domain.day_result import DayResult
+from .domain.endpoint import EndpointResult, EndpointStatus
 
 
 # ──────────────────────────────────────────────

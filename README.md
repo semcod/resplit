@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.7-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.05-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.2h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.8-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.20-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.3h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $1.0500 (7 commits)
-- 👤 **Human dev:** ~$220 (2.2h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $1.2000 (8 commits)
+- 👤 **Human dev:** ~$226 (2.3h @ $100/h, 30min dedup)
 
 Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -15,7 +15,7 @@ Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 **Historical deployment analysis** — walk git history day by day, deploy per commit, test all endpoints, capture screenshots, restore working fragments.
 
-![Version](https://img.shields.io/badge/version-0.1.7-blue)
+![Version](https://img.shields.io/badge/version-0.1.8-blue)
 ![Python](https://img.shields.io/badge/python-3.10+-blue)
 ![License](https://img.shields.io/badge/license-Apache--2.0-green)
 ![Tests](https://img.shields.io/badge/tests-44%20passing-brightgreen)
@@ -26,12 +26,13 @@ Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 1. **Walk** — iterates through git history day by day (configurable range)
 2. **Deploy** — starts the service per commit (docker-compose / uvicorn / none)
-3. **Scan** — detects endpoints via `deta scan` → OpenAPI → Traefik labels fallback
-4. **Test** — runs `testql` scenarios or falls back to HTTP probe per endpoint
+3. **Scan** — `deta` (service-level) → OpenAPI (API-level) → Traefik labels fallback
+4. **Test** — `testql` scenarios (detailed API) or HTTP probe fallback (service-level)
 5. **Screenshot** — Playwright screenshots per endpoint with retry/timeout
 6. **Report** — generates `report.html` + `results.json` per day + timeline `index.html`
-7. **Restore** — extracts the last working day of an endpoint as an isolated project
+7. **Restore** — extracts the last working day of an endpoint as an isolated Docker project
 8. **Dashboard** — overlays health% timeline with avg cyclomatic complexity (via `toon`)
+9. **TUI** — interactive terminal menu: project → walk → history → diff → restore
 
 ---
 
@@ -40,8 +41,15 @@ Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrou
 ```bash
 pip install rebuild
 
+# with interactive TUI
+pip install "rebuild[tui]"
+
 # with Playwright screenshots
 pip install "rebuild[screenshots]"
+playwright install chromium
+
+# everything
+pip install "rebuild[full]"
 playwright install chromium
 
 # development
@@ -53,6 +61,9 @@ pip install -e ".[dev]"
 ## Quick start
 
 ```bash
+# Interactive TUI (recommended)
+rebuild tui
+
 # Dry-run: scan last 30 days without deploy
 rebuild walk . --days 30 --dry-run
 
@@ -130,6 +141,35 @@ Options:
   --repo PATH             Repository path for CC extraction via toon (optional)
 ```
 
+### `rebuild tui`
+
+```
+rebuild tui
+```
+
+Interactive terminal UI — requires `pip install "rebuild[tui]"`. No options needed.
+
+**TUI flow:**
+```
+ProjectScreen
+  ├── [Open history]  → HistoryScreen
+  │                       ├── [Diff]      → EndpointDetailScreen (diff mode)
+  │                       ├── [Endpoints] → EndpointDetailScreen (detail mode)
+  │                       └── [Restore]   → RestoreScreen → docker compose up -d
+  └── [New walk]      → WalkConfigScreen → WalkProgressScreen → HistoryScreen
+```
+
+**Keyboard shortcuts:**
+
+| Key | Action |
+|-----|--------|
+| `D` | Diff vs previous day |
+| `R` | Restore selected endpoint |
+| `Enter` | Endpoint details for selected day |
+| `F1` | Help |
+| `Escape` | Back |
+| `Ctrl+C` | Quit |
+
 ---
 
 ## Output structure
@@ -188,16 +228,17 @@ output:
 rebuild/
 ├── rebuild/
 │   ├── __init__.py
-│   ├── cli.py              # Typer CLI: walk, restore, report, version, dashboard
+│   ├── cli.py              # Typer CLI: walk, restore, report, version, dashboard, tui
 │   ├── models.py           # Dataclasses: WalkConfig, DayResult, Endpoint, CommitInfo
 │   ├── git_walker.py       # Day-by-day git history iteration
 │   ├── deployer.py         # Deploy method detection + docker-compose/uvicorn lifecycle
-│   ├── endpoint_scanner.py # deta scan → OpenAPI → Traefik labels fallback
-│   ├── tester.py           # testql runner with HTTP probe fallback
+│   ├── endpoint_scanner.py # deta (service) → OpenAPI (API) → Traefik labels fallback
+│   ├── tester.py           # testql scenarios (API-level) + HTTP probe fallback
 │   ├── screenshotter.py    # Playwright screenshots with retry/timeout
 │   ├── reporter.py         # HTML + JSON report per day + timeline index
-│   ├── restorer.py         # Extract last working endpoint as isolated project
-│   └── dashboard.py        # CC (toon) vs health% comparative timeline
+│   ├── restorer.py         # Extract last working endpoint as isolated Docker project
+│   ├── dashboard.py        # CC (toon) vs health% comparative timeline
+│   └── tui.py              # Textual TUI — 6-screen interactive menu
 ├── tests/                  # 44 tests (pytest)
 ├── examples/
 │   ├── 01-dry-run-walk/
@@ -230,16 +271,17 @@ rebuild/
 
 | Module | CC̄ | Functions | Purpose |
 |--------|-----|-----------|---------|
-| `cli` | 6.3 | 8 | CLI entry points |
+| `cli` | 6.3 | 9 | CLI entry points (incl. `tui`) |
 | `models` | — | — | Dataclasses only |
 | `git_walker` | 3.3 | 6 | Git history iteration |
 | `deployer` | 3.5 | 9 | Deploy lifecycle |
-| `endpoint_scanner` | 5.5 | 6 | Endpoint detection |
-| `tester` | 4.3 | 6 | Endpoint testing |
-| `screenshotter` | 3.6 | 5 | Screenshots |
+| `endpoint_scanner` | 5.5 | 6 | Endpoint detection (deta+OpenAPI+Traefik) |
+| `tester` | 4.3 | 6 | testql (API-level) + HTTP probe (service-level) |
+| `screenshotter` | 3.6 | 5 | Playwright screenshots with retry |
 | `reporter` | 6.0 | 6 | HTML/JSON reports |
-| `restorer` | 5.5 | 5 | Endpoint extraction |
-| `dashboard` | 4.5 | 4 | CC vs health chart |
+| `restorer` | 5.5 | 5 | Endpoint extraction → isolated Docker project |
+| `dashboard` | 4.5 | 4 | CC vs health% chart |
+| `tui` | — | 6 screens | Interactive Textual TUI |
 
 > **Hotspots** (CC ≥ 9): `walk` (CC=15), `report` (CC=13), `extract_endpoint` (CC=9), `save_html` (CC=9), `_scan_via_compose_labels` (CC=9)
 

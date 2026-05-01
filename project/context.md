@@ -3,64 +3,27 @@
 ## Overview
 
 - **Project**: /home/tom/github/semcod/resplit
-- **Primary Language**: python
-- **Languages**: python: 11, yaml: 10, md: 7, shell: 4, txt: 1
+- **Primary Language**: md
+- **Languages**: md: 11, yaml: 10, shell: 8, txt: 1, toml: 1
 - **Analysis Mode**: static
-- **Total Functions**: 221
-- **Total Classes**: 9
-- **Modules**: 34
-- **Entry Points**: 172
+- **Total Functions**: 242
+- **Total Classes**: 0
+- **Modules**: 32
+- **Entry Points**: 242
 
 ## Architecture by Module
 
 ### SUMD
-- **Functions**: 141
+- **Functions**: 139
 - **File**: `SUMD.md`
 
 ### project.map.toon
-- **Functions**: 104
+- **Functions**: 102
 - **File**: `map.toon.yaml`
 
 ### SUMR
 - **Functions**: 35
 - **File**: `SUMR.md`
-
-### resplit.deployer
-- **Functions**: 9
-- **File**: `deployer.py`
-
-### resplit.cli
-- **Functions**: 8
-- **File**: `cli.py`
-
-### resplit.git_walker
-- **Functions**: 6
-- **File**: `git_walker.py`
-
-### resplit.reporter
-- **Functions**: 6
-- **File**: `reporter.py`
-
-### resplit.endpoint_scanner
-- **Functions**: 6
-- **File**: `endpoint_scanner.py`
-
-### resplit.tester
-- **Functions**: 6
-- **File**: `tester.py`
-
-### resplit.restorer
-- **Functions**: 5
-- **File**: `restorer.py`
-
-### resplit.screenshotter
-- **Functions**: 5
-- **Classes**: 2
-- **File**: `screenshotter.py`
-
-### resplit.dashboard
-- **Functions**: 4
-- **File**: `dashboard.py`
 
 ### testql-scenarios.generated-from-pytests.testql.toon
 - **Functions**: 2
@@ -70,264 +33,202 @@
 - **Functions**: 1
 - **File**: `README.md`
 
-### resplit.models
-- **Functions**: 0
-- **Classes**: 7
-- **File**: `models.py`
-
 ## Key Entry Points
 
 Main execution flows into the system:
 
-### resplit.cli.walk
-> Przejdź historię git dzień po dniu, deployuj i testuj endpointy.
-- **Calls**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option
-
-### resplit.cli.report
-> Wygeneruj zbiorczy raport z istniejących wyników.
-- **Calls**: app.command, typer.Option, sorted, resplit.reporter.save_timeline_index, console.print, Path, results_dir.iterdir, commit_file.exists
-
-### resplit.cli.dashboard
-> Wygeneruj dashboard porównawczy: timeline health% + CC.
-- **Calls**: app.command, typer.Option, typer.Option, sorted, resplit.dashboard.generate_dashboard, console.print, Path, results_dir.iterdir
-
-### resplit.restorer.extract_endpoint
-> Wyodrębnia endpoint do izolowanego projektu.
-
-Strategia:
-- Szuka pliku routera zawierającego ścieżkę endpointu
-- Kopiuje router + powiązane handlery
--
-- **Calls**: target.mkdir, docker_dir.mkdir, resplit.restorer._find_backend_files, resplit.restorer._write_readme, console.print, src.exists, df.exists, backend_dir.mkdir
-
-### resplit.cli.restore
-> Przywróć działający endpoint jako izolowany projekt.
-- **Calls**: app.command, typer.Argument, typer.Argument, typer.Option, typer.Option, project.map.toon.find_last_working_day, console.print, project.map.toon.extract_endpoint
-
-### resplit.restorer.find_last_working_day
-> Przeszukuje wyniki walk i zwraca ostatni dzień,
-w którym endpoint zwracał status OK.
-- **Calls**: sorted, results_dir.iterdir, json.loads, rf.exists, date.fromisoformat, rf.read_text, r.get, r.get
-
-### resplit.screenshotter.take_screenshots_batch
-> Batch screenshots. urls = [(url, filename), ...].
-Reużywa jednej instancji przeglądarki dla wszystkich URLi.
-- **Calls**: cfg.output_dir.mkdir, resplit.screenshotter._batch_playwright, ScreenshotResult, ScreenshotResult, str
-
-### resplit.cli.version
-> Pokaż wersję resplit.
-- **Calls**: app.command, console.print
-
-### docs.README.generate_readme
-
 ### testql-scenarios.generated-from-pytests.testql.toon.all
 
-### project.map.toon.walk
+### SUMR.detect_deploy_method
 
-### project.map.toon.restore
+### SUMR._compose_file
 
-### project.map.toon.report
+### SUMR.start
 
-### project.map.toon.version
+### SUMR.stop
 
-### project.map.toon._probe_endpoints
+### SUMR._compose_up
 
-### project.map.toon._take_screenshot
+### SUMR._compose_down
 
-### project.map.toon._print_day_summary
+### SUMR._uvicorn_start
 
-### project.map.toon._print_summary_table
+### SUMR._uvicorn_stop
 
-### project.map.toon.detect_deploy_method
+### SUMR._wait_healthy
 
-### project.map.toon._compose_file
+### SUMR.walk
 
-### project.map.toon.start
+### SUMR.restore
 
-### project.map.toon.stop
+### SUMR.report
 
-### project.map.toon._compose_up
+### SUMR.version
 
-### project.map.toon._compose_down
+### SUMR.dashboard
 
-### project.map.toon._uvicorn_start
+### SUMR._attach_screenshots
 
-### project.map.toon._uvicorn_stop
+### SUMR._print_day_summary
 
-### project.map.toon._wait_healthy
+### SUMR._print_summary_table
 
-### project.map.toon.scan_endpoints
+### SUMR.scan_endpoints
 
-### project.map.toon._scan_via_deta
+### SUMR._scan_via_deta
 
-### project.map.toon._ports_to_endpoints
+### SUMR._ports_to_endpoints
+
+### SUMR._scan_via_openapi
+
+### SUMR._parse_openapi
+
+### SUMR._scan_via_compose_labels
+
+### SUMR._run_git
+
+### SUMR.get_commit_for_day
+
+### SUMR.iter_days
+
+### SUMR.checkout
+
+### SUMR.restore_head
+
+### SUMR.days_with_commits
 
 ## Process Flows
 
 Key execution flows identified:
 
-### Flow 1: walk
-```
-walk [resplit.cli]
-```
-
-### Flow 2: report
-```
-report [resplit.cli]
-  └─ →> save_timeline_index
-```
-
-### Flow 3: dashboard
-```
-dashboard [resplit.cli]
-  └─ →> generate_dashboard
-      └─> _render_html
-```
-
-### Flow 4: extract_endpoint
-```
-extract_endpoint [resplit.restorer]
-  └─> _find_backend_files
-  └─> _write_readme
-```
-
-### Flow 5: restore
-```
-restore [resplit.cli]
-```
-
-### Flow 6: find_last_working_day
-```
-find_last_working_day [resplit.restorer]
-```
-
-### Flow 7: take_screenshots_batch
-```
-take_screenshots_batch [resplit.screenshotter]
-  └─> _batch_playwright
-```
-
-### Flow 8: version
-```
-version [resplit.cli]
-```
-
-### Flow 9: generate_readme
-```
-generate_readme [docs.README]
-```
-
-### Flow 10: all
+### Flow 1: all
 ```
 all [testql-scenarios.generated-from-pytests.testql.toon]
 ```
 
-## Key Classes
+### Flow 2: detect_deploy_method
+```
+detect_deploy_method [SUMR]
+```
 
-### resplit.models.DayResult
-- **Methods**: 3
-- **Key Methods**: resplit.models.DayResult.ok_count, resplit.models.DayResult.fail_count, resplit.models.DayResult.health_pct
+### Flow 3: _compose_file
+```
+_compose_file [SUMR]
+```
 
-### resplit.models.Endpoint
-- **Methods**: 2
-- **Key Methods**: resplit.models.Endpoint.url, resplit.models.Endpoint.slug
+### Flow 4: start
+```
+start [SUMR]
+```
 
-### resplit.models.DeployMethod
-- **Methods**: 0
-- **Inherits**: str, Enum
+### Flow 5: stop
+```
+stop [SUMR]
+```
 
-### resplit.models.EndpointStatus
-- **Methods**: 0
-- **Inherits**: str, Enum
+### Flow 6: _compose_up
+```
+_compose_up [SUMR]
+```
 
-### resplit.models.CommitInfo
-- **Methods**: 0
+### Flow 7: _compose_down
+```
+_compose_down [SUMR]
+```
 
-### resplit.models.EndpointResult
-- **Methods**: 0
+### Flow 8: _uvicorn_start
+```
+_uvicorn_start [SUMR]
+```
 
-### resplit.models.WalkConfig
-- **Methods**: 0
+### Flow 9: _uvicorn_stop
+```
+_uvicorn_stop [SUMR]
+```
 
-### resplit.screenshotter.ScreenshotConfig
-- **Methods**: 0
-
-### resplit.screenshotter.ScreenshotResult
-- **Methods**: 0
+### Flow 10: _wait_healthy
+```
+_wait_healthy [SUMR]
+```
 
 ## Data Transformation Functions
 
 Key functions that process and transform data:
 
-### resplit.endpoint_scanner._parse_openapi
-- **Output to**: spec.get, paths.items, methods.items, method.upper, details.get
-
-### project.map.toon._parse_openapi
-
-### project.map.toon.test_parse_openapi
-
-### project.map.toon.test_get_commit_for_day_parses_output
+### SUMR._parse_openapi
 
 ### SUMD._parse_openapi
+
+### SUMD._parse_testql_results
 
 ### SUMD.test_parse_openapi
 
 ### SUMD.test_get_commit_for_day_parses_output
 
-### SUMR._parse_openapi
+### SUMD.test_parse_testql_results_ok
 
-### resplit.tester._parse_testql_results
-> Parsuje JSON z testql i mapuje na EndpointResult.
+### SUMD.test_parse_testql_results_fail
 
-Format testql JSON (zakładany):
-[
-  {"path": "/ap
-- **Output to**: json.loads, idx.get, item.get, ep_results.append, results_path.read_text
+### SUMD.test_parse_testql_results_missing_endpoint
+
+### project.map.toon._parse_openapi
+
+### project.map.toon._parse_testql_results
+
+### project.map.toon.test_parse_openapi
+
+### project.map.toon.test_get_commit_for_day_parses_output
+
+### project.map.toon.test_parse_testql_results_ok
+
+### project.map.toon.test_parse_testql_results_fail
+
+### project.map.toon.test_parse_testql_results_missing_endpoint
 
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
-- `resplit.cli.walk` - 60 calls
-- `resplit.cli.report` - 31 calls
-- `resplit.cli.dashboard` - 22 calls
-- `resplit.restorer.extract_endpoint` - 19 calls
-- `resplit.cli.restore` - 16 calls
-- `resplit.reporter.save_json` - 9 calls
-- `resplit.endpoint_scanner.scan_endpoints` - 9 calls
-- `resplit.dashboard.generate_dashboard` - 9 calls
-- `resplit.screenshotter.take_screenshot` - 9 calls
-- `resplit.git_walker.get_commit_for_day` - 8 calls
-- `resplit.reporter.save_timeline_index` - 8 calls
-- `resplit.restorer.find_last_working_day` - 8 calls
-- `resplit.reporter.save_html` - 7 calls
-- `resplit.dashboard.get_cc_for_day` - 5 calls
-- `resplit.screenshotter.take_screenshots_batch` - 5 calls
-- `resplit.git_walker.iter_days` - 4 calls
-- `resplit.deployer.detect_deploy_method` - 4 calls
-- `resplit.tester.run_tests` - 4 calls
-- `resplit.deployer.start` - 3 calls
-- `resplit.git_walker.restore_head` - 2 calls
-- `resplit.reporter.save_day` - 2 calls
-- `resplit.deployer.stop` - 2 calls
-- `resplit.cli.version` - 2 calls
-- `resplit.screenshotter.screenshot_endpoint` - 2 calls
-- `resplit.git_walker.checkout` - 1 calls
-- `resplit.git_walker.days_with_commits` - 1 calls
-- `docs.README.generate_readme` - 0 calls
 - `testql-scenarios.generated-from-pytests.testql.toon.all` - 0 calls
-- `project.map.toon.walk` - 0 calls
-- `project.map.toon.restore` - 0 calls
-- `project.map.toon.report` - 0 calls
-- `project.map.toon.version` - 0 calls
-- `project.map.toon.detect_deploy_method` - 0 calls
-- `project.map.toon.start` - 0 calls
-- `project.map.toon.stop` - 0 calls
-- `project.map.toon.scan_endpoints` - 0 calls
-- `project.map.toon.get_commit_for_day` - 0 calls
-- `project.map.toon.iter_days` - 0 calls
-- `project.map.toon.checkout` - 0 calls
-- `project.map.toon.restore_head` - 0 calls
+- `SUMR.detect_deploy_method` - 0 calls
+- `SUMR.start` - 0 calls
+- `SUMR.stop` - 0 calls
+- `SUMR.walk` - 0 calls
+- `SUMR.restore` - 0 calls
+- `SUMR.report` - 0 calls
+- `SUMR.version` - 0 calls
+- `SUMR.dashboard` - 0 calls
+- `SUMR.scan_endpoints` - 0 calls
+- `SUMR.get_commit_for_day` - 0 calls
+- `SUMR.iter_days` - 0 calls
+- `SUMR.checkout` - 0 calls
+- `SUMR.restore_head` - 0 calls
+- `SUMR.days_with_commits` - 0 calls
+- `SUMR.save_json` - 0 calls
+- `SUMR.save_html` - 0 calls
+- `SUMR.save_day` - 0 calls
+- `SUMR.save_timeline_index` - 0 calls
+- `docs.README.generate_readme` - 0 calls
+- `SUMD.all` - 0 calls
+- `SUMD.walk` - 0 calls
+- `SUMD.restore` - 0 calls
+- `SUMD.report` - 0 calls
+- `SUMD.version` - 0 calls
+- `SUMD.dashboard` - 0 calls
+- `SUMD.get_cc_for_day` - 0 calls
+- `SUMD.generate_dashboard` - 0 calls
+- `SUMD.detect_deploy_method` - 0 calls
+- `SUMD.start` - 0 calls
+- `SUMD.stop` - 0 calls
+- `SUMD.scan_endpoints` - 0 calls
+- `SUMD.get_commit_for_day` - 0 calls
+- `SUMD.iter_days` - 0 calls
+- `SUMD.checkout` - 0 calls
+- `SUMD.restore_head` - 0 calls
+- `SUMD.days_with_commits` - 0 calls
+- `SUMD.save_json` - 0 calls
+- `SUMD.save_html` - 0 calls
+- `SUMD.save_day` - 0 calls
 
 ## System Interactions
 
@@ -335,36 +236,6 @@ How components interact:
 
 ```mermaid
 graph TD
-    walk --> command
-    walk --> Argument
-    walk --> Option
-    report --> command
-    report --> Option
-    report --> sorted
-    report --> save_timeline_index
-    report --> print
-    dashboard --> command
-    dashboard --> Option
-    dashboard --> sorted
-    dashboard --> generate_dashboard
-    extract_endpoint --> mkdir
-    extract_endpoint --> _find_backend_files
-    extract_endpoint --> _write_readme
-    extract_endpoint --> print
-    restore --> command
-    restore --> Argument
-    restore --> Option
-    find_last_working_da --> sorted
-    find_last_working_da --> iterdir
-    find_last_working_da --> loads
-    find_last_working_da --> exists
-    find_last_working_da --> fromisoformat
-    take_screenshots_bat --> mkdir
-    take_screenshots_bat --> _batch_playwright
-    take_screenshots_bat --> ScreenshotResult
-    take_screenshots_bat --> str
-    version --> command
-    version --> print
 ```
 
 ## Reverse Engineering Guidelines

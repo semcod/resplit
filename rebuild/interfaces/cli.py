@@ -16,23 +16,13 @@ from typing import Optional
 
 import typer
 from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
 from . import __version__
-from .deployer import detect_deploy_method, start, stop
-from .endpoint_scanner import scan_endpoints
-from .git_walker import checkout, days_with_commits, restore_head
-from .models import (
-    DeployMethod,
-    DayResult,
-    EndpointResult,
-    EndpointStatus,
-    WalkConfig,
-)
-from .reporter import save_day, save_timeline_index
-from .screenshotter import ScreenshotConfig, screenshot_endpoint
-from .tester import run_tests
+from ..domain.models import DeployMethod, WalkConfig
+from ..domain.day_result import DayResult
+from ..domain.endpoint import Endpoint, EndpointResult, EndpointStatus
+from ..application.pipeline import Pipeline
 
 app = typer.Typer(
     name="rebuild",
@@ -61,6 +51,7 @@ def walk(
     dry_run: bool = typer.Option(False, "--dry-run", help="Tylko skanuj, bez deploy"),
 ) -> None:
     """Przejdź historię git dzień po dniu, deployuj i testuj endpointy."""
+    from ..deployer import detect_deploy_method
 
     repo = repo.resolve()
     if not (repo / ".git").exists():
@@ -92,80 +83,14 @@ def walk(
     console.print(f"  deploy: {method.value}")
     console.print(f"  days:   {days}\n")
 
-    commits = days_with_commits(config)
-    if not commits:
-        console.print("[yellow]Brak commitów w podanym przedziale.[/yellow]")
-        raise typer.Exit(0)
+    pipeline = Pipeline(config, console=console)
+    all_results = pipeline.run()
 
-    console.print(f"Znaleziono [bold]{len(commits)}[/bold] dni z commitami.\n")
-
-    all_results: list[DayResult] = []
-
-    for day, commit in commits:
-        day_dir = output / str(day)
-        console.rule(f"[bold]{day}[/bold]  {commit.sha[:8]}  {commit.message[:60]}")
-
-        t0 = time.time()
-        result = DayResult(
-            day=day,
-            commit=commit,
-            deploy_method=method,
-            deploy_success=False,
-            output_dir=day_dir,
-        )
-
-        try:
-            # 1. Checkout
-            if not dry_run:
-                checkout(repo, commit.sha)
-
-            # 2. Deploy
-            result.deploy_success = start(repo, config)
-            if not result.deploy_success and not dry_run:
-                console.print("  [red]✗ deploy failed — skip endpoints[/red]")
-                result.duration_seconds = time.time() - t0
-                save_day(result)
-                all_results.append(result)
-                stop(repo, config)
-                continue
-
-            # 3. Skanuj endpointy
-            result.endpoints = scan_endpoints(repo, config)
-            console.print(f"  Endpointów: [bold]{len(result.endpoints)}[/bold]")
-
-            # 4. Testuj każdy endpoint (testql lub HTTP probe)
-            result.endpoint_results = run_tests(result.endpoints, config, day_dir)
-
-            # 4b. Screenshots (opcjonalnie)
-            if config.screenshots:
-                _attach_screenshots(result, day_dir)
-
-            # 5. Raport
-            save_day(result)
-
-        except KeyboardInterrupt:
-            console.print("\n[yellow]Przerwano przez użytkownika.[/yellow]")
-            break
-        except Exception as exc:
-            result.error = str(exc)
-            console.print(f"  [red]Błąd: {exc}[/red]")
-        finally:
-            # 6. Cleanup
-            stop(repo, config)
-            result.duration_seconds = time.time() - t0
-
-        all_results.append(result)
-        _print_day_summary(result)
-
-    # Przywróć HEAD
-    if not dry_run:
-        restore_head(repo)
-
-    # Zbiorczy index
-    save_timeline_index(all_results, output)
-
-    console.print(f"\n[bold green]✓ Gotowe![/bold green]  Raport: {output / 'index.html'}")
-    _print_summary_table(all_results)
+    if all_results:
+        console.print(f"\n[bold green]✓ Gotowe![/bold green]  Raport: {output / 'index.html'}")
+        _print_summary_table(all_results)
+    else:
+        console.print("[yellow]Brak wyników do wyświetlenia.[/yellow]")
 
 
 # ──────────────────────────────────────────────
@@ -180,7 +105,7 @@ def restore(
     results_dir: Path = typer.Option(Path(".rebuild"), help="Katalog z wynikami walk"),
 ) -> None:
     """Przywróć działający endpoint jako izolowany projekt."""
-    from .restorer import find_last_working_day, extract_endpoint
+    from ..restorer import find_last_working_day, extract_endpoint
 
     day = find_last_working_day(endpoint, results_dir)
     if not day:
@@ -203,18 +128,19 @@ def report(
 ) -> None:
     """Wygeneruj zbiorczy raport z istniejących wyników."""
     import json
+    from ..reporter import save_timeline_index
 
     all_results = []
     for day_dir in sorted(results_dir.iterdir()):
         rf = day_dir / "results.json"
         if not rf.exists():
             continue
-        # Uproszczona rekonstrukcja DayResult tylko do indeksu
         try:
             day_date = date.fromisoformat(day_dir.name)
         except ValueError:
             continue
-        from .models import CommitInfo
+        
+        from ..domain.commit import CommitInfo
         commit_file = day_dir / "commit.txt"
         commit = None
         if commit_file.exists():
@@ -229,9 +155,6 @@ def report(
                     date=day_date,
                 )
         data = json.loads(rf.read_text())
-        ok = sum(1 for r in data if r["status"] == "ok")
-        total = len(data)
-        from .models import Endpoint, EndpointResult, EndpointStatus
         endpoints = []
         ep_results = []
         for r in data:
@@ -279,7 +202,6 @@ def dashboard(
     """Wygeneruj dashboard porównawczy: timeline health% + CC."""
     import json as _json
     from .dashboard import generate_dashboard
-    from .models import CommitInfo, Endpoint, EndpointResult, EndpointStatus
 
     all_results = []
     for day_dir in sorted(results_dir.iterdir()):
@@ -301,8 +223,7 @@ def dashboard(
                 status=EndpointStatus(r["status"]),
                 http_status=r.get("http_status"),
             ))
-        from .models import DayResult as _DR
-        all_results.append(_DR(
+        all_results.append(DayResult(
             day=day_date,
             commit=None,
             deploy_method=DeployMethod.NONE,
@@ -321,28 +242,19 @@ def dashboard(
 
 
 # ──────────────────────────────────────────────
-# Helpers
+# tui
 # ──────────────────────────────────────────────
 
-def _attach_screenshots(result: DayResult, day_dir: Path) -> None:
-    """Dodaje screenshoty do istniejących EndpointResult (tylko GET + OK/FAIL)."""
-    screenshots_dir = day_dir / "screenshots"
-    cfg = ScreenshotConfig(output_dir=screenshots_dir)
-    for ep_result in result.endpoint_results:
-        ep = ep_result.endpoint
-        if ep.method != "GET" or ep_result.status not in (EndpointStatus.OK, EndpointStatus.FAIL):
-            continue
-        ep_result.screenshot_path = screenshot_endpoint(ep.url, ep.slug, screenshots_dir)
+@app.command()
+def tui() -> None:
+    """Interaktywne menu TUI: wybór projektu → walk → historia → diff → restore."""
+    from .tui import launch_tui
+    launch_tui()
 
 
-def _print_day_summary(result: DayResult) -> None:
-    color = "green" if result.health_pct >= 80 else "yellow" if result.health_pct >= 50 else "red"
-    console.print(
-        f"  [{color}]{result.health_pct}% health[/{color}]"
-        f"  OK:{result.ok_count}  FAIL:{result.fail_count}"
-        f"  ({result.duration_seconds:.1f}s)"
-    )
-
+# ──────────────────────────────────────────────
+# Helpers
+# ──────────────────────────────────────────────
 
 def _print_summary_table(results: list[DayResult]) -> None:
     table = Table(title="Podsumowanie walk", show_header=True)
