@@ -20,6 +20,8 @@ from datetime import date
 from pathlib import Path
 from typing import Optional
 
+from ..application.services.tui_data_service import TUIDataService
+
 # ──────────────────────────────────────────────
 # Graceful import
 # ──────────────────────────────────────────────
@@ -48,74 +50,6 @@ try:
     _TEXTUAL_OK = True
 except ImportError:
     _TEXTUAL_OK = False
-
-
-# ──────────────────────────────────────────────
-# Data helpers
-# ──────────────────────────────────────────────
-
-def _load_day_results(results_dir: Path) -> list[dict]:
-    """Wczytuje wyniki ze wszystkich podkatalogów .rebuild/YYYY-MM-DD/."""
-    days = []
-    for d in sorted(results_dir.iterdir()):
-        rf = d / "results.json"
-        if not d.is_dir() or not rf.exists():
-            continue
-        try:
-            date.fromisoformat(d.name)
-        except ValueError:
-            continue
-        try:
-            results = json.loads(rf.read_text())
-        except (json.JSONDecodeError, OSError):
-            results = []
-        commit_txt = (d / "commit.txt").read_text().strip() if (d / "commit.txt").exists() else ""
-        days.append({
-            "day": d.name,
-            "results": results,
-            "commit": commit_txt.split("\n")[0][:50] if commit_txt else "—",
-            "path": d,
-        })
-    return days
-
-
-def _endpoint_diff(prev: list[dict], curr: list[dict]) -> list[dict]:
-    """
-    Porównuje dwie listy wyników endpointów (z results.json).
-    Zwraca listę zmian: added / removed / status_changed.
-    """
-    prev_map = {(r["method"], r["path"]): r for r in prev}
-    curr_map = {(r["method"], r["path"]): r for r in curr}
-
-    changes = []
-    for key, r in curr_map.items():
-        if key not in prev_map:
-            changes.append({**r, "change": "added"})
-        elif prev_map[key]["status"] != r["status"]:
-            changes.append({
-                **r,
-                "change": "status_changed",
-                "prev_status": prev_map[key]["status"],
-            })
-    for key, r in prev_map.items():
-        if key not in curr_map:
-            changes.append({**r, "change": "removed"})
-
-    return changes
-
-
-def _health_bar(pct: float, width: int = 20) -> str:
-    filled = int(pct / 100 * width)
-    bar = "█" * filled + "░" * (width - filled)
-    color = "green" if pct >= 80 else "yellow" if pct >= 50 else "red"
-    return f"[{color}]{bar}[/{color}] {pct:.0f}%"
-
-
-def _calc_health(results: list[dict]) -> float:
-    if not results:
-        return 0.0
-    ok = sum(1 for r in results if r.get("status") == "ok")
-    return round(ok / len(results) * 100, 1)
 
 
 # ──────────────────────────────────────────────
@@ -178,15 +112,9 @@ if _TEXTUAL_OK:
             return self._repo_path() / ".rebuild"
 
         def _populate_recent(self) -> None:
-            try:
-                recent = subprocess.run(
-                    ["git", "rev-parse", "--show-toplevel"],
-                    capture_output=True, text=True, cwd=Path("."),
-                )
-                if recent.returncode == 0:
-                    self.query_one("#repo-input", Input).value = recent.stdout.strip()
-            except Exception:
-                pass
+            toplevel = TUIDataService.get_git_repo_toplevel(Path("."))
+            if toplevel:
+                self.query_one("#repo-input", Input).value = toplevel
 
         def _open_history(self) -> None:
             repo = self._repo_path()
@@ -426,20 +354,20 @@ if _TEXTUAL_OK:
             yield Footer()
 
         def on_mount(self) -> None:
-            self._days = _load_day_results(self._results_dir)
+            self._days = TUIDataService.load_day_results(self._results_dir)
             table = self.query_one("#history-table", DataTable)
             table.add_columns("Dzień", "Commit", "#EP", "OK", "FAIL", "Health%", "Δ vs poprzedni")
 
             for i, d in enumerate(self._days):
                 results = d["results"]
-                health = _calc_health(results)
+                health = TUIDataService.calc_health(results)
                 ok = sum(1 for r in results if r.get("status") == "ok")
                 fail = sum(1 for r in results if r.get("status") == "fail")
                 total = len(results)
 
                 if i > 0:
                     prev = self._days[i - 1]["results"]
-                    changes = _endpoint_diff(prev, results)
+                    changes = TUIDataService.endpoint_diff(prev, results)
                     if changes:
                         added = sum(1 for c in changes if c["change"] == "added")
                         removed = sum(1 for c in changes if c["change"] == "removed")
@@ -557,7 +485,7 @@ if _TEXTUAL_OK:
 
             if self._show_diff and self._prev:
                 table.add_columns("Zmiana", "Method", "Path", "Status teraz", "Status poprzednio", "HTTP", "ms")
-                changes = _endpoint_diff(self._prev["results"], self._day["results"])
+                changes = TUIDataService.endpoint_diff(self._prev["results"], self._day["results"])
                 for c in changes:
                     change_label = {
                         "added": "[green]+added[/green]",
