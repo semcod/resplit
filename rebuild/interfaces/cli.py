@@ -322,12 +322,37 @@ def version() -> None:
 def duplicates(
     path: Path = typer.Argument(Path("."), help="Ścieżka do skanowania"),
     min_lines: int = typer.Option(4, help="Minimalna liczba linii dla duplikatu"),
+    semantic: bool = typer.Option(False, "--semantic", help="Włącz semantyczne wykrywanie duplikatów (embeddings)"),
+    semantic_model: str = typer.Option(
+        "sentence-transformers/all-MiniLM-L6-v2",
+        "--semantic-model",
+        help="Model sentence-transformers do porównań semantycznych",
+    ),
+    semantic_threshold: float = typer.Option(
+        0.82,
+        "--semantic-threshold",
+        help="Próg podobieństwa kosinusowego dla grup semantycznych",
+    ),
+    semantic_max_fragments: int = typer.Option(
+        300,
+        "--semantic-max-fragments",
+        help="Maksymalna liczba fragmentów do osadzeń (kontrola kosztu/czasu)",
+    ),
 ) -> None:
     """[Query] Znajdź strukturalne i semantyczne duplikaty kodu."""
     from ..analysis.duplication_engine import DuplicationEngine
     
-    engine = DuplicationEngine(min_lines=min_lines)
+    engine = DuplicationEngine(
+        min_lines=min_lines,
+        semantic_enabled=semantic,
+        semantic_model_name=semantic_model,
+        semantic_threshold=semantic_threshold,
+        semantic_max_fragments=semantic_max_fragments,
+    )
     groups = engine.scan(path)
+
+    if semantic and engine.semantic_warning:
+        console.print(f"[yellow]⚠ Semantic mode warning:[/yellow] {engine.semantic_warning}")
     
     if not groups:
         console.print("[green]✓ Nie znaleziono duplikatów.[/green]")
@@ -339,6 +364,95 @@ def duplicates(
         for frag in group.fragments:
             console.print(f"  - {frag.file}:{frag.start_line} ([cyan]{frag.name or 'block'}[/cyan])")
         console.print("")
+
+
+@analyze_app.command()
+def vector_build(
+    path: Path = typer.Argument(Path("."), help="Ścieżka do skanowania i indeksowania"),
+    index: Path = typer.Option(
+        Path(".rebuild/semantic_index.sqlite"),
+        "--index",
+        help="Plik SQLite z indeksem wektorowym",
+    ),
+    min_lines: int = typer.Option(4, help="Minimalna liczba linii fragmentu"),
+    model: str = typer.Option(
+        "sentence-transformers/all-MiniLM-L6-v2",
+        "--model",
+        help="Model sentence-transformers dla osadzeń",
+    ),
+) -> None:
+    """[Query] Zbuduj lokalny indeks wektorowy fragmentów kodu."""
+    from ..analysis.vector_search import VectorSearchIndex
+
+    index_path = index.resolve()
+    vs = VectorSearchIndex(index_path, model_name=model)
+    with console.status("[bold cyan]Budowanie indeksu wektorowego...[/bold cyan]"):
+        inserted = vs.build_from_path(path.resolve(), min_lines=min_lines)
+
+    if vs.warning:
+        console.print(f"[yellow]⚠ Vector index warning:[/yellow] {vs.warning}")
+
+    total = vs.count()
+    console.print(
+        f"[green]✓ Indexed[/green] {inserted} fragmentów. "
+        f"[dim](total: {total}, db: {index_path})[/dim]"
+    )
+
+
+@analyze_app.command()
+def vector_query(
+    query: str = typer.Argument(..., help="Zapytanie semantyczne"),
+    index: Path = typer.Option(
+        Path(".rebuild/semantic_index.sqlite"),
+        "--index",
+        help="Plik SQLite z indeksem wektorowym",
+    ),
+    top_k: int = typer.Option(10, "--top-k", help="Liczba najlepszych wyników"),
+    min_score: float = typer.Option(0.0, "--min-score", help="Minimalny score podobieństwa"),
+    model: str = typer.Option(
+        "sentence-transformers/all-MiniLM-L6-v2",
+        "--model",
+        help="Model sentence-transformers dla zapytania",
+    ),
+) -> None:
+    """[Query] Wyszukaj semantycznie podobne fragmenty w indeksie wektorowym."""
+    from ..analysis.vector_search import VectorSearchIndex
+
+    index_path = index.resolve()
+    if not index_path.exists():
+        console.print(f"[red]✗ Brak indeksu:[/red] {index_path}")
+        raise typer.Exit(1)
+
+    vs = VectorSearchIndex(index_path, model_name=model)
+    hits = vs.query(query, top_k=top_k)
+
+    if vs.warning:
+        console.print(f"[yellow]⚠ Vector query warning:[/yellow] {vs.warning}")
+
+    filtered = [h for h in hits if h.score >= min_score]
+    if not filtered:
+        console.print("[yellow]Brak wyników dla podanych kryteriów.[/yellow]")
+        return
+
+    table = Table(show_header=True)
+    table.add_column("Score", justify="right", style="green")
+    table.add_column("File", style="cyan")
+    table.add_column("Line", justify="right")
+    table.add_column("Name")
+    table.add_column("Preview", style="dim")
+
+    for hit in filtered:
+        first_line = hit.fragment.content.strip().splitlines()
+        preview = first_line[0][:80] if first_line else ""
+        table.add_row(
+            f"{hit.score:.3f}",
+            str(hit.fragment.file),
+            str(hit.fragment.start_line),
+            hit.fragment.name or "block",
+            preview,
+        )
+
+    console.print(table)
 
 @analyze_app.command()
 def services(
