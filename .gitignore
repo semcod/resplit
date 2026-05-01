@@ -1,3 +1,9 @@
+.rebuild
+.rebuild_c2004_test
+.rebuild_ev
+.rebuild_inc
+.rebuild_test
+c2004
 architecture.html
 .testql
 !.testql/
