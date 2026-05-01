@@ -1,4 +1,4 @@
-"""Tests for resplit.deployer."""
+"""Tests for rebuild.deployer."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -6,8 +6,8 @@ from unittest.mock import patch
 
 import pytest
 
-from resplit.deployer import detect_deploy_method
-from resplit.models import DeployMethod
+from rebuild.deployer import detect_deploy_method
+from rebuild.models import DeployMethod
 
 
 def test_detect_docker_compose_yml(tmp_path):

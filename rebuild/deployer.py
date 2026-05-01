@@ -1,10 +1,10 @@
 """
-resplit.deployer — wykrywa metodę deployu i zarządza cyklem życia usługi.
+rebuild.deployer — wykrywa metodę deployu i zarządza cyklem życia usługi.
 
 Wspierane metody:
   - docker-compose (docker-compose.yml / docker compose)
   - uvicorn (FastAPI / wykryty server.py)
-  - custom (komenda z resplit.yaml)
+  - custom (komenda z rebuild.yaml)
   - none (dry-run / brak deployable artefaktów)
 """
 from __future__ import annotations

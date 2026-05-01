@@ -1,4 +1,4 @@
-"""Tests for resplit.tester."""
+"""Tests for rebuild.tester."""
 from __future__ import annotations
 
 import json
@@ -7,8 +7,8 @@ from unittest.mock import patch
 
 import pytest
 
-from resplit.models import Endpoint, EndpointStatus, WalkConfig
-from resplit.tester import (
+from rebuild.models import Endpoint, EndpointStatus, WalkConfig
+from rebuild.tester import (
     _fallback_all_timeout,
     _parse_testql_results,
     _run_http_probe,
@@ -26,14 +26,14 @@ def _ep(path: str = "/api/health", method: str = "GET") -> Endpoint:
 # ──────────────────────────────────────────────
 
 def test_testql_available_missing():
-    with patch("resplit.tester.subprocess.run", side_effect=FileNotFoundError):
+    with patch("rebuild.tester.subprocess.run", side_effect=FileNotFoundError):
         assert _testql_available() is False
 
 
 def test_testql_available_ok():
     import subprocess
     mock = type("R", (), {"returncode": 0})()
-    with patch("resplit.tester.subprocess.run", return_value=mock):
+    with patch("rebuild.tester.subprocess.run", return_value=mock):
         assert _testql_available() is True
 
 
@@ -94,7 +94,7 @@ def test_run_http_probe_ok():
     ep = _ep("/api/health")
     config = WalkConfig(repo_path=Path("/fake"))
     mock_response = type("R", (), {"status_code": 200})()
-    with patch("resplit.tester.httpx.get", return_value=mock_response):
+    with patch("rebuild.tester.httpx.get", return_value=mock_response):
         results = _run_http_probe([ep], config)
     assert results[0].status == EndpointStatus.OK
     assert results[0].http_status == 200
@@ -104,7 +104,7 @@ def test_run_http_probe_timeout():
     import httpx
     ep = _ep("/api/health")
     config = WalkConfig(repo_path=Path("/fake"))
-    with patch("resplit.tester.httpx.get", side_effect=httpx.TimeoutException("timeout")):
+    with patch("rebuild.tester.httpx.get", side_effect=httpx.TimeoutException("timeout")):
         results = _run_http_probe([ep], config)
     assert results[0].status == EndpointStatus.TIMEOUT
 
@@ -117,7 +117,7 @@ def test_run_tests_uses_http_probe_when_no_testql_dir(tmp_path):
     ep = _ep()
     config = WalkConfig(repo_path=tmp_path, testql_dir=None)
     mock_response = type("R", (), {"status_code": 200})()
-    with patch("resplit.tester.httpx.get", return_value=mock_response):
+    with patch("rebuild.tester.httpx.get", return_value=mock_response):
         results = run_tests([ep], config, tmp_path / "day")
     assert results[0].status == EndpointStatus.OK
 

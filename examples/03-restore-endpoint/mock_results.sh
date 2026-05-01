@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Pomocniczy skrypt: tworzy przykładowe wyniki walk w .resplit/
+# Pomocniczy skrypt: tworzy przykładowe wyniki walk w .rebuild/
 # żeby przetestować restore bez pełnego walk.
 set -euo pipefail
 
-RESULTS_DIR="${1:-.resplit}"
+RESULTS_DIR="${1:-.rebuild}"
 
 echo "Tworzę przykładowe wyniki walk w $RESULTS_DIR ..."
 

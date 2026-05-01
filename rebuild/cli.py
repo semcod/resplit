@@ -1,11 +1,11 @@
 """
-resplit CLI — główny punkt wejścia.
+rebuild CLI — główny punkt wejścia.
 
 Komendy:
-  resplit walk    — przejdź historię git i testuj endpointy
-  resplit restore — przywróć działający endpoint jako projekt
-  resplit report  — wygeneruj zbiorczy raport z istniejących wyników
-  resplit status  — pokaż status ostatniego walk
+  rebuild walk    — przejdź historię git i testuj endpointy
+  rebuild restore — przywróć działający endpoint jako projekt
+  rebuild report  — wygeneruj zbiorczy raport z istniejących wyników
+  rebuild status  — pokaż status ostatniego walk
 """
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ from .screenshotter import ScreenshotConfig, screenshot_endpoint
 from .tester import run_tests
 
 app = typer.Typer(
-    name="resplit",
+    name="rebuild",
     help="Historical deployment analysis — walk git history, test endpoints, capture screenshots.",
     rich_markup_mode="markdown",
     no_args_is_help=True,
@@ -53,7 +53,7 @@ def walk(
     days: int = typer.Option(30, help="Ile dni wstecz"),
     date_from: Optional[str] = typer.Option(None, "--from", help="Data od YYYY-MM-DD"),
     date_to: Optional[str] = typer.Option(None, "--to", help="Data do YYYY-MM-DD"),
-    output: Path = typer.Option(Path(".resplit"), help="Katalog wyjściowy"),
+    output: Path = typer.Option(Path(".rebuild"), help="Katalog wyjściowy"),
     deploy: str = typer.Option("auto", help="Metoda deploy: auto|docker-compose|uvicorn|none"),
     health_url: str = typer.Option("http://localhost:8003/api/health", help="URL health check"),
     base_url: str = typer.Option("http://localhost:8003", help="Bazowy URL usługi"),
@@ -86,7 +86,7 @@ def walk(
         dry_run=dry_run,
     )
 
-    console.print(f"\n[bold]resplit walk[/bold] v{__version__}")
+    console.print(f"\n[bold]rebuild walk[/bold] v{__version__}")
     console.print(f"  repo:   {repo}")
     console.print(f"  output: {output}")
     console.print(f"  deploy: {method.value}")
@@ -177,7 +177,7 @@ def restore(
     endpoint: str = typer.Argument(help="Ścieżka endpointu np. /api/health"),
     repo: Path = typer.Argument(Path("."), help="Repozytorium"),
     output: Path = typer.Option(Path("restored"), help="Katalog docelowy projektu"),
-    results_dir: Path = typer.Option(Path(".resplit"), help="Katalog z wynikami walk"),
+    results_dir: Path = typer.Option(Path(".rebuild"), help="Katalog z wynikami walk"),
 ) -> None:
     """Przywróć działający endpoint jako izolowany projekt."""
     from .restorer import find_last_working_day, extract_endpoint
@@ -199,7 +199,7 @@ def restore(
 
 @app.command()
 def report(
-    results_dir: Path = typer.Option(Path(".resplit"), help="Katalog z wynikami walk"),
+    results_dir: Path = typer.Option(Path(".rebuild"), help="Katalog z wynikami walk"),
 ) -> None:
     """Wygeneruj zbiorczy raport z istniejących wyników."""
     import json
@@ -263,8 +263,8 @@ def report(
 
 @app.command()
 def version() -> None:
-    """Pokaż wersję resplit."""
-    console.print(f"resplit v{__version__}")
+    """Pokaż wersję rebuild."""
+    console.print(f"rebuild v{__version__}")
 
 
 # ──────────────────────────────────────────────
@@ -273,7 +273,7 @@ def version() -> None:
 
 @app.command()
 def dashboard(
-    results_dir: Path = typer.Option(Path(".resplit"), help="Katalog z wynikami walk"),
+    results_dir: Path = typer.Option(Path(".rebuild"), help="Katalog z wynikami walk"),
     repo: Optional[Path] = typer.Option(None, help="Repo do pobrania CC (opcjonalnie)"),
 ) -> None:
     """Wygeneruj dashboard porównawczy: timeline health% + CC."""

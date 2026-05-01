@@ -19,6 +19,6 @@ testql:
   timeout: 10
 
 output:
-  dir: .resplit
+  dir: .rebuild
   screenshots: true
   html_report: true

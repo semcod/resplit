@@ -1,8 +1,8 @@
-# resplit — Plan paczki
+# rebuild — Plan paczki
 
 ## Cel
 
-Nowa paczka `resplit` łączy `deta` + `wup` + `regres` + `testql`, aby:
+Nowa paczka `rebuild` łączy `deta` + `wup` + `regres` + `testql`, aby:
 
 1. **Przejść wstecz** po historii git projekt po dniu
 2. Dla każdego dnia: znaleźć najwcześniejszy commit, wykonać deploy
@@ -16,7 +16,7 @@ Nowa paczka `resplit` łączy `deta` + `wup` + `regres` + `testql`, aby:
 ## Przepływ główny
 
 ```
-resplit walk <repo> [--from DATE] [--to DATE] [--deploy docker-compose]
+rebuild walk <repo> [--from DATE] [--to DATE] [--deploy docker-compose]
 
   Dla każdego dnia w przedziale:
     1. git log --before=DATE --after=DATE-1d  → najwcześniejszy commit
@@ -25,10 +25,10 @@ resplit walk <repo> [--from DATE] [--to DATE] [--deploy docker-compose]
     4. deploy (docker-compose up -d / uvicorn / ...) + health wait
     5. testql scenarios/ --url http://... → testy endpointów
     6. Playwright screenshot każdego endpointu (screenshotter.py)
-    7. Zapisz raport HTML + JSON w .resplit/YYYY-MM-DD/
+    7. Zapisz raport HTML + JSON w .rebuild/YYYY-MM-DD/
     8. docker-compose down / cleanup
 
-resplit restore <endpoint-path> [--date YYYY-MM-DD]
+rebuild restore <endpoint-path> [--date YYYY-MM-DD]
   → wyodrębnij działający endpoint jako projekt:
     /endpoint-path/
       frontend/
@@ -42,8 +42,8 @@ resplit restore <endpoint-path> [--date YYYY-MM-DD]
 ## Architektura paczki
 
 ```
-resplit/
-├── resplit/
+rebuild/
+├── rebuild/
 │   ├── __init__.py
 │   ├── cli.py              # Typer CLI: walk, restore, report, version
 │   ├── git_walker.py       # Iteracja po historii git dzień po dniu
@@ -67,17 +67,17 @@ resplit/
 ├── examples/
 │   ├── walk_dry_run.sh
 │   ├── restore_endpoint.sh
-│   └── resplit.yaml
+│   └── rebuild.yaml
 ├── pyproject.toml
 ├── README.md
-└── resplit.yaml.example
+└── rebuild.yaml.example
 ```
 
 ---
 
 ## Integracja z istniejącymi paczkami
 
-| Moduł resplit      | Używa z               | Do czego |
+| Moduł rebuild      | Używa z               | Do czego |
 |--------------------|-----------------------|----------|
 | `endpoint_scanner` | `deta scan`           | Wykrywa usługi, porty, endpointy z docker-compose/OpenAPI |
 | `tester`           | `testql`              | Uruchamia testy na wykrytych endpointach |
@@ -91,7 +91,7 @@ resplit/
 ## Format wyjścia per dzień
 
 ```
-.resplit/
+.rebuild/
   2024-01-15/
     commit.txt              # sha + message najwcześniejszego commitu
     endpoints.json          # lista endpointów wykryta przez deta
@@ -110,11 +110,11 @@ resplit/
 ## Fazy implementacji
 
 ### Faza 0 — Szkielet ✓
-- [x] `pyproject.toml` — name=resplit
+- [x] `pyproject.toml` — name=rebuild
 - [x] `models.py` — dataklasy (WalkConfig, DayResult, Endpoint, CommitInfo)
 - [x] `git_walker.py` — iteracja po historii
 - [x] `deployer.py` — detekcja + uruchomienie docker-compose/uvicorn
-- [x] `cli.py` — `resplit walk`, `resplit restore`, `resplit report`, `resplit version`
+- [x] `cli.py` — `rebuild walk`, `rebuild restore`, `rebuild report`, `rebuild version`
 - [x] `tests/` — test_models, test_git_walker, test_deployer (podstawowe)
 
 ### Faza 1 — Testy endpointów ← w toku
@@ -133,7 +133,7 @@ resplit/
 ### Faza 2 — Przykłady i docs
 - [x] `examples/walk_dry_run.sh`
 - [x] `examples/restore_endpoint.sh`
-- [x] `examples/resplit.yaml`
+- [x] `examples/rebuild.yaml`
 - [ ] `README.md` — pełna dokumentacja
 
 ### Faza 3 — Zaawansowane
@@ -148,27 +148,27 @@ resplit/
 
 ```bash
 # Przejdź ostatnie 30 dni
-resplit walk . --days 30
+rebuild walk . --days 30
 
 # Konkretny zakres
-resplit walk /home/tom/github/oqlos/www --from 2024-01-01 --to 2024-04-01
+rebuild walk /home/tom/github/oqlos/www --from 2024-01-01 --to 2024-04-01
 
 # Przywróć endpoint /api/health z ostatniego działającego dnia
-resplit restore /api/health --output ./restored/api-health
+rebuild restore /api/health --output ./restored/api-health
 
 # Wygeneruj zbiorczy raport z istniejących wyników
-resplit report
+rebuild report
 
 # Tylko skanuj bez deploy (dry-run)
-resplit walk . --dry-run
+rebuild walk . --dry-run
 
 # Pokaż wersję
-resplit version
+rebuild version
 ```
 
 ---
 
-## resplit.yaml — konfiguracja projektu
+## rebuild.yaml — konfiguracja projektu
 
 ```yaml
 project:
@@ -192,7 +192,7 @@ testql:
   timeout: 10
 
 output:
-  dir: .resplit
+  dir: .rebuild
   screenshots: true
   html_report: true
 ```

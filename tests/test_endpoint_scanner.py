@@ -1,4 +1,4 @@
-"""Tests for resplit.endpoint_scanner."""
+"""Tests for rebuild.endpoint_scanner."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -6,13 +6,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from resplit.endpoint_scanner import (
+from rebuild.endpoint_scanner import (
     _parse_openapi,
     _ports_to_endpoints,
     _scan_via_compose_labels,
     scan_endpoints,
 )
-from resplit.models import WalkConfig
+from rebuild.models import WalkConfig
 
 
 OPENAPI_SPEC = {
@@ -63,9 +63,9 @@ services:
 
 def test_scan_endpoints_minimal_fallback(tmp_path):
     config = WalkConfig(repo_path=tmp_path)
-    with patch("resplit.endpoint_scanner._scan_via_deta", return_value=[]), \
-         patch("resplit.endpoint_scanner._scan_via_openapi", return_value=[]), \
-         patch("resplit.endpoint_scanner._scan_via_compose_labels", return_value=[]):
+    with patch("rebuild.endpoint_scanner._scan_via_deta", return_value=[]), \
+         patch("rebuild.endpoint_scanner._scan_via_openapi", return_value=[]), \
+         patch("rebuild.endpoint_scanner._scan_via_compose_labels", return_value=[]):
         endpoints = scan_endpoints(tmp_path, config)
     assert len(endpoints) == 1
     assert endpoints[0].path == "/api/health"

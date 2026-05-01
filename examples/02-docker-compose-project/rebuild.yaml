@@ -10,10 +10,15 @@ deploy:
   health_interval: 2
 
 scan:
-  days: 90
+  days: 30
   earliest_commit_per_day: true
 
+testql:
+  scenarios_dir: testql-scenarios/
+  base_url: http://localhost:8003
+  timeout: 10
+
 output:
-  dir: .resplit
-  screenshots: false
+  dir: .rebuild
+  screenshots: true
   html_report: true

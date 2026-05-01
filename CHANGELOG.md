@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-05-01
+
+### Docs
+- Update CHANGELOG.md
+- Update PLAN.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update examples/01-dry-run-walk/README.md
+- Update examples/02-docker-compose-project/README.md
+- Update examples/03-restore-endpoint/README.md
+
+### Test
+- Update tests/test_deployer.py
+- Update tests/test_endpoint_scanner.py
+- Update tests/test_git_walker.py
+- Update tests/test_models.py
+- Update tests/test_reporter.py
+- Update tests/test_restorer.py
+- Update tests/test_screenshotter.py
+- Update tests/test_tester.py
+
+### Other
+- Update examples/01-dry-run-walk/rebuild.yaml
+- Update examples/01-dry-run-walk/run.sh
+- Update examples/02-docker-compose-project/rebuild.yaml
+- Update examples/02-docker-compose-project/run.sh
+- Update examples/03-restore-endpoint/mock_results.sh
+- Update examples/03-restore-endpoint/rebuild.yaml
+- Update examples/03-restore-endpoint/run.sh
+- Update examples/rebuild.yaml
+- Update examples/restore_endpoint.sh
+- Update examples/walk_dry_run.sh
+- ... and 12 more files
+
 ## [0.1.6] - 2026-05-01
 
 ### Docs
@@ -69,12 +104,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update .gitignore
 - Update VERSION
 - Update app.doql.less
-- Update examples/01-dry-run-walk/resplit.yaml
+- Update examples/01-dry-run-walk/rebuild.yaml
 - Update examples/01-dry-run-walk/run.sh
 - Update examples/02-docker-compose-project/docker-compose.yml
-- Update examples/02-docker-compose-project/resplit.yaml
+- Update examples/02-docker-compose-project/rebuild.yaml
 - Update examples/02-docker-compose-project/run.sh
 - Update examples/03-restore-endpoint/mock_results.sh
-- Update examples/03-restore-endpoint/resplit.yaml
+- Update examples/03-restore-endpoint/rebuild.yaml
 - ... and 34 more files
 

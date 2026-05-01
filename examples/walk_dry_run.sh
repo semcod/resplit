@@ -4,10 +4,10 @@ set -euo pipefail
 
 REPO="${1:-.}"
 
-resplit walk "$REPO" \
+rebuild walk "$REPO" \
   --days 30 \
   --deploy none \
   --dry-run \
-  --output .resplit
+  --output .rebuild
 
-echo "Raport: .resplit/index.html"
+echo "Raport: .rebuild/index.html"

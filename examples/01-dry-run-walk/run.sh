@@ -3,11 +3,11 @@ set -euo pipefail
 
 REPO="${1:-.}"
 DAYS="${2:-30}"
-OUTPUT="${3:-.resplit}"
+OUTPUT="${3:-.rebuild}"
 
-echo "resplit dry-run walk: $REPO (last $DAYS days)"
+echo "rebuild dry-run walk: $REPO (last $DAYS days)"
 
-resplit walk "$REPO" \
+rebuild walk "$REPO" \
   --days "$DAYS" \
   --deploy none \
   --dry-run \

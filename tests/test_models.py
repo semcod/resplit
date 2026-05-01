@@ -1,4 +1,4 @@
-"""Tests for resplit.models dataclasses."""
+"""Tests for rebuild.models dataclasses."""
 from __future__ import annotations
 
 from datetime import date, datetime
@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from resplit.models import (
+from rebuild.models import (
     CommitInfo,
     DayResult,
     DeployMethod,
@@ -65,6 +65,6 @@ def test_day_result_health_pct():
 def test_walk_config_defaults():
     config = WalkConfig(repo_path=Path("/tmp"))
     assert config.days == 30
-    assert config.output_dir == Path(".resplit")
+    assert config.output_dir == Path(".rebuild")
     assert config.deploy_method == DeployMethod.DOCKER_COMPOSE
     assert config.dry_run is False

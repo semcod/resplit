@@ -3,11 +3,11 @@ set -euo pipefail
 
 REPO="${1:-.}"
 DAYS="${2:-30}"
-OUTPUT="${3:-.resplit}"
+OUTPUT="${3:-.rebuild}"
 
-echo "resplit walk (docker-compose): $REPO (last $DAYS days)"
+echo "rebuild walk (docker-compose): $REPO (last $DAYS days)"
 
-resplit walk "$REPO" \
+rebuild walk "$REPO" \
   --days "$DAYS" \
   --deploy docker-compose \
   --health-url "http://localhost:8003/api/health" \
@@ -17,7 +17,7 @@ resplit walk "$REPO" \
 
 echo ""
 echo "Generating dashboard..."
-resplit dashboard --results-dir "$OUTPUT" --repo "$REPO"
+rebuild dashboard --results-dir "$OUTPUT" --repo "$REPO"
 
 echo ""
 echo "Done."

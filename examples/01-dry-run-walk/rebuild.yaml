@@ -10,6 +10,6 @@ scan:
   earliest_commit_per_day: true
 
 output:
-  dir: .resplit
+  dir: .rebuild
   screenshots: false
   html_report: true
