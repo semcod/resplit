@@ -4,10 +4,10 @@
 ## AI Cost Tracking
 
 ![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.31-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$3.30-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-6.2h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$4.05-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-6.7h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $3.3000 (22 commits)
-- 👤 **Human dev:** ~$619 (6.2h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $4.0500 (27 commits)
+- 👤 **Human dev:** ~$669 (6.7h @ $100/h, 30min dedup)
 
 Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -67,12 +67,13 @@ rebuild dashboard --repo /path/to/c2004
 
 ## What it does
 
-1. **Intelligence Layer** — Detects structural duplicates (Python/JS/TS), builds service graphs, and ranks code quality across history.
+1. **Intelligence Layer** — Detects structural & semantic duplicates (Python/JS/TS), builds service graphs, vector search embeddings, and ranks code quality across history.
 2. **Decision Engine** — Generates and executes refactoring plans with **AI support**.
-3. **Walk** — Iterates through git history day by day (Incremental support).
-4. **Deploy** — Starts the service per commit (Isolated Docker environments).
-5. **Scan & Test** — Automated endpoint discovery and TestQL execution.
-6. **Visualization** — D3.js interactive graphs and health dashboards.
+3. **Walk** — Iterates through git history day by day (Incremental, Replay, Accelerator modes).
+4. **Deploy** — Starts the service per commit (Isolated Docker, Replay with code sync, Accelerator with hot reload).
+5. **Scan & Test** — Automated endpoint discovery (OpenAPI, FastAPI routes, Traefik), TestQL execution, auth login, param substitution.
+6. **Visualization** — D3.js interactive graphs, health dashboards, SSE live event streaming, code evolution playback.
+7. **Automation** — Auto PR creation, DSL scripting, NLP natural language commands.
 
 ---
 

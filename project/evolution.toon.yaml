@@ -1,28 +1,28 @@
-# code2llm/evolution | 5492 func | 9f | 2026-05-01
+# code2llm/evolution | 5542 func | 9f | 2026-05-01
 
 NEXT[3] (ranked by impact):
-  [1] !! SPLIT           rebuild/interfaces/tui.py
-      WHY: 926L, 0 classes, max CC=0
+  [1] !! SPLIT           rebuild/interfaces/cli.py
+      WHY: 994L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [2] !! SPLIT           .rebuild_c2004_1d_replay_recreate_v2/repo/connect-scenario/cql-backend/cql_backend/parser.py
-      WHY: 844L, 0 classes, max CC=0
+  [2] !! SPLIT           rebuild/interfaces/tui.py
+      WHY: 854L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [3] !! SPLIT           .rebuild_c2004_7d_replay_real/repo/connect-scenario/cql-backend/cql_backend/parser.py
+  [3] !! SPLIT           .rebuild_c2004_1d_replay_recreate_v2/repo/connect-scenario/cql-backend/cql_backend/parser.py
       WHY: 844L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
 
 RISKS[3]:
+  ⚠ Splitting rebuild/interfaces/cli.py may break 0 import paths
   ⚠ Splitting rebuild/interfaces/tui.py may break 0 import paths
   ⚠ Splitting .rebuild_c2004_1d_replay_recreate_v2/repo/connect-scenario/cql-backend/cql_backend/parser.py may break 0 import paths
-  ⚠ Splitting .rebuild_c2004_7d_replay_real/repo/connect-scenario/cql-backend/cql_backend/parser.py may break 0 import paths
 
 METRICS-TARGET:
   CC̄:          0.0 → ≤0.0
   max-CC:      11 → ≤5
-  god-modules: 145 → 0
+  god-modules: 210 → 0
   high-CC(≥15): 0 → ≤0
   hub-types:   0 → ≤0
 
@@ -51,4 +51,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=0.8 → now CC̄=0.0
+  prev CC̄=0.0 → now CC̄=0.0

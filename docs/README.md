@@ -1,7 +1,7 @@
 <!-- code2docs:start --># resplit
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-5542-green)
-> **5542** functions | **0** classes | **80** files | CC̄ = 2.6
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-5546-green)
+> **5546** functions | **0** classes | **84** files | CC̄ = 2.6
 
 > Auto-generated project documentation from source code analysis.
 
@@ -86,7 +86,6 @@ resplit/
 ├── tree
 ├── TODO
 ├── CHANGELOG
-├── project
 ├── README
     ├── case_study_c2004
     ├── usage
@@ -99,10 +98,14 @@ resplit/
         ├── run
         ├── mock_results
         ├── README
+        ├── README
+        ├── README
         ├── run
         ├── docker-compose
         ├── README
         ├── run
+        ├── README
+        ├── pipeline
         ├── README
                         ├── result
                 ├── autoloop-state
@@ -139,13 +142,14 @@ resplit/
             ├── docker-compose
             ├── Dockerfile
         ├── toon
+    ├── README
             ├── toon
             ├── toon
-    ├── prompt
+├── project
         ├── toon
+    ├── prompt
     ├── context
         ├── toon
-    ├── README
         ├── toon
         ├── toon
     ├── calls
@@ -1852,6 +1856,10 @@ resplit/
 - `test_test_service_timeout()` — —
 - `test_test_service_set_day_dir()` — —
 - `generate_readme()` — —
+- `print()` — —
+- `send_mvp_command()` — —
+- `print()` — —
+- `sendMVPCommand()` — —
 - `health()` — —
 - `get_manifest()` — —
 - `list_pages()` — —
@@ -3686,7 +3694,7 @@ resplit/
 📄 `Makefile`
 📄 `PLAN`
 📄 `README`
-📄 `SUMD` (17181 functions)
+📄 `SUMD` (40890 functions)
 📄 `SUMR`
 📄 `TODO`
 📄 `c2004.repo..testql.autoloop-state`
@@ -3727,6 +3735,10 @@ resplit/
 📄 `examples.03-restore-endpoint.README`
 📄 `examples.03-restore-endpoint.mock_results`
 📄 `examples.03-restore-endpoint.run`
+📄 `examples.07-dsl-script.README`
+📄 `examples.07-dsl-script.pipeline`
+📄 `examples.08-nlp-commands.README` (4 functions)
+📄 `examples.09-mvp-protocol.README` (5 functions)
 📄 `examples.Makefile`
 📄 `examples.restore_endpoint`
 📄 `examples.walk_dry_run`
@@ -3740,7 +3752,7 @@ resplit/
 📄 `project.context`
 📄 `project.duplication.toon`
 📄 `project.evolution.toon`
-📄 `project.map.toon` (37837 functions)
+📄 `project.map.toon` (81869 functions)
 📄 `project.project.toon`
 📄 `project.prompt`
 📄 `pyproject`

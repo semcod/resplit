@@ -1,5 +1,5 @@
-# code2llm | 74f 188687L | md:18,yaml:17,txt:10,json:9,shell:8,python:4,yml:2,javascript:2,toml:1,backend:1 | 2026-05-01
-# CC̄=0.0 | critical:0/5492 | dups:0 | cycles:0
+# code2llm | 78f 340501L | md:21,yaml:17,txt:10,json:9,shell:8,python:4,yml:2,javascript:2,toml:1,dsl:1,backend:1 | 2026-05-01
+# CC̄=0.0 | critical:0/5546 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
@@ -29,44 +29,31 @@ LAYERS:
   │ vite.config.js              29L  0C    0m  CC=0.0    ←0
   │ Dockerfile.backend           0L  0C    0m  CC=0.0    ←0
   │
-  testql-scenarios/               CC̄=0.0    ←in:0  →out:0
-  │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←0
-  │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
+  ./                              CC̄=0.0    ←in:0  →out:0
+  │ !! SUMD.md                  125099L  0C  2703m  CC=0.0    ←0
+  │ !! SUMR.md                  57671L  0C    0m  CC=0.0    ←0
+  │ !! infra-map.json            1373L  0C    0m  CC=0.0    ←0
+  │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
+  │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md               183L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             104L  0C    0m  CC=0.0    ←0
+  │ README.md                   91L  0C    0m  CC=0.0    ←0
+  │ TODO.md                     73L  0C    0m  CC=0.0    ←0
+  │ project.sh                  27L  0C    0m  CC=0.0    ←0
+  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
+  │ Makefile                     0L  0C    0m  CC=0.0    ←0
   │
   docs/                           CC̄=0.0    ←in:0  →out:0
-  │ !! README.md                  577L  0C    1m  CC=0.0    ←0
+  │ !! README.md                 3811L  0C    1m  CC=0.0    ←0
   │ c2004.md                   228L  0C    0m  CC=0.0    ←0
   │ usage.md                    73L  0C    0m  CC=0.0    ←0
   │ case_study_c2004.md         56L  0C    0m  CC=0.0    ←0
   │ architecture.md             45L  0C    0m  CC=0.0    ←0
   │
-  ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMD.md                  53104L  0C  2703m  CC=0.0    ←0
-  │ !! SUMR.md                  31923L  0C    0m  CC=0.0    ←0
-  │ !! infra-map.json            1373L  0C    0m  CC=0.0    ←0
-  │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
-  │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             104L  0C    0m  CC=0.0    ←0
-  │ CHANGELOG.md               100L  0C    0m  CC=0.0    ←0
-  │ README.md                   90L  0C    0m  CC=0.0    ←0
-  │ TODO.md                     51L  0C    0m  CC=0.0    ←0
-  │ project.sh                  41L  0C    0m  CC=0.0    ←0
-  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
-  │ Makefile                     0L  0C    0m  CC=0.0    ←0
-  │
-  project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! map.toon.yaml            62758L  0C  2702m  CC=0.0    ←0
-  │ !! duplication.toon.yaml    31151L  0C    0m  CC=0.0    ←0
-  │ !! calls.yaml                 615L  0C    0m  CC=0.0    ←0
-  │ README.md                  339L  0C    0m  CC=0.0    ←0
-  │ context.md                 322L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml         123L  0C    0m  CC=0.0    ←0
-  │ calls.toon.yaml            108L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         54L  0C    0m  CC=0.0    ←0
-  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
-  │
   examples/                       CC̄=0.0    ←in:0  →out:0
+  │ README.md                  239L  0C    3m  CC=0.0    ←0
+  │ README.md                  137L  0C    1m  CC=0.0    ←0
+  │ README.md                   89L  0C    0m  CC=0.0    ←0
   │ README.md                   61L  0C    0m  CC=0.0    ←0
   │ README.md                   54L  0C    0m  CC=0.0    ←0
   │ mock_results.sh             37L  0C    0m  CC=0.0    ←0
@@ -75,9 +62,26 @@ LAYERS:
   │ run.sh                      21L  0C    0m  CC=0.0    ←0
   │ run.sh                      20L  0C    0m  CC=0.0    ←0
   │ docker-compose.yml          15L  0C    0m  CC=0.0    ←0
+  │ pipeline.dsl                14L  0C    0m  CC=0.0    ←0
   │ walk_dry_run.sh             13L  0C    0m  CC=0.0    ←0
   │ restore_endpoint.sh         13L  0C    0m  CC=0.0    ←0
   │ Makefile                     0L  0C    0m  CC=0.0    ←0
+  │
+  project/                        CC̄=0.0    ←in:0  →out:0
+  │ !! map.toon.yaml            82036L  0C  2752m  CC=0.0    ←0
+  │ !! duplication.toon.yaml    56904L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                5835L  0C    0m  CC=0.0    ←0
+  │ context.md                 342L  0C    0m  CC=0.0    ←0
+  │ README.md                  339L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         118L  0C    0m  CC=0.0    ←0
+  │ calls.toon.yaml            108L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         54L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
+  │
+  testql-scenarios/               CC̄=0.0    ←in:0  →out:0
+  │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←0
+  │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
   │
   c2004/                          CC̄=0.0    ←in:0  →out:0
   │ !! topology.json              588L  0C    0m  CC=0.0    ←0
