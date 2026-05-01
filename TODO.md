@@ -16,8 +16,8 @@
 - [x] **Auth Config**: Add `auth:` to `rebuild.yaml` for custom headers (Bearer tokens, etc).
 
 ### 🔴 Krytyczne
-- [ ] **Replay + volume mount**: W replay mode Docker używa aktualnego obrazu, nie kodu z checkoutu. Rozwiązanie: w clone podmontować katalog kodu jako volume lub budować obraz per commit.
-- [ ] **init tworzy rebuild.yaml w oryginalnym repo**: `init()` wywołany z `walk` tworzy pliki w `repo_path`. Powinno trafiać do klona lub być pomijane.
+- [x] **Replay + volume mount**: W replay mode Docker używa aktualnego obrazu, nie kodu z checkoutu. Rozwiązanie: w clone podmontować katalog kodu jako volume lub budować obraz per commit.
+- [x] **init tworzy rebuild.yaml w oryginalnym repo**: `init()` wywołany z `walk` tworzy pliki w `repo_path`. Powinno trafiać do klona lub być pomijane.
 - [x] **Deploy Retry**: Dodać mechanizm retry z backoff dla niestabilnych deployów.
 - [x] **Health Check Verbose**: Pokaż szczegółowy log health-check (curl output) gdy serwis nie odpowiada.
 - [x] **Manual Override**: Support a `patch/` directory in `.rebuild/` to automatically apply fixes to the cloned repo before walk.
@@ -32,9 +32,9 @@
 - [x] **Response Time Tracking**: Zmierz i wyświetl `time_ms` dla wszystkich requestów.
 
 ### 🟢 Niskie — Analyze na c2004
-- [ ] Uruchomić `rebuild analyze duplicates` na c2004 i zapisać wyniki.
-- [ ] Uruchomić `rebuild analyze services` na c2004 i zapisać wyniki.
-- [ ] Uruchomić `rebuild analyze truth` na wybrane moduły c2004.
+- [x] Uruchomić `rebuild analyze duplicates` na c2004 i zapisać wyniki.
+- [x] Uruchomić `rebuild analyze services` na c2004 i zapisać wyniki.
+- [x] Uruchomić `rebuild analyze truth` na wybrane moduły c2004.
 
 
 ## Phase 11: Deep Semantic Analysis

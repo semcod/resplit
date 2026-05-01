@@ -92,6 +92,22 @@ class AcceleratedPipeline:
                 "factories",
             ]
         )
+        # Patterns for files that define routes / endpoints.
+        # When none of the changed files match, the previous scan result is reused.
+        self._route_patterns: List[str] = list(
+            getattr(config, "route_patterns", None)
+            or [
+                "url",
+                "route",
+                "router",
+                "view",
+                "endpoint",
+                "api",
+                "openapi",
+                "swagger",
+            ]
+        )
+        self._cached_endpoints: Optional[List] = None
     
     def _load_state(self) -> Set[str]:
         """Load processed commit SHAs from state file."""
@@ -288,8 +304,13 @@ class AcceleratedPipeline:
                 else:
                     self.log("  [dim]DB restore skipped (no schema/data changes)[/dim]")
             
-            # 3. Scan endpoints
-            result.endpoints = self.scanner.execute(wt_path)
+            # 3. Scan endpoints (cached when route files are unchanged)
+            if self._needs_rescan(self._previous_commit, commit.sha):
+                result.endpoints = self.scanner.execute(wt_path)
+                self._cached_endpoints = result.endpoints
+            else:
+                result.endpoints = list(self._cached_endpoints)  # type: ignore[arg-type]
+                self.log("  [dim]Endpoint scan skipped (no route changes)[/dim]")
             
             # 4. Smart test selection (only test changed endpoints)
             endpoints_to_test = result.endpoints
@@ -328,6 +349,26 @@ class AcceleratedPipeline:
         result.duration_seconds = time.perf_counter() - t0
         return result
     
+    def _needs_rescan(self, from_sha: Optional[str], to_sha: str) -> bool:
+        """
+        Return True when the endpoint list must be rebuilt by running the scanner.
+        False when the diff contains no route-relevant files and a cached result exists.
+        Falls back to True (safe) on any error.
+        """
+        if from_sha is None or self._cached_endpoints is None:
+            return True
+
+        changed = self.git.diff_names(from_sha, to_sha)
+        if changed is None:
+            return True
+
+        for path in changed:
+            path_lower = path.lower()
+            if any(pat in path_lower for pat in self._route_patterns):
+                self.log(f"  [dim]Endpoint rescan required: {path}[/dim]")
+                return True
+        return False
+
     def _needs_db_restore(self, from_sha: Optional[str], to_sha: str) -> bool:
         """
         Return True when the diff between *from_sha* and *to_sha* touches any

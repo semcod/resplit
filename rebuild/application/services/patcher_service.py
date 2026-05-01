@@ -77,23 +77,27 @@ class PatcherService(Service[Path, int]):
         except Exception:
             pass
     def _patch_compose(self, path: Path) -> bool:
-        """Removes fixed names from networks/volumes to avoid collisions."""
+        """Removes fixed names and DB ports to avoid collisions."""
         try:
             content = path.read_text()
             original = content
             
-            # Remove 'name: ...' under 'networks:' and 'volumes:'
-            # But ONLY if it's inside the 'networks' or 'volumes' top-level keys
-            # To be safe and simple, we'll use regex to find 'name:' followed by names we know cause trouble
-            # or just any 'name:' under a network definition.
-            
-            # Pattern: any line with 'name:' that is preceded by a few spaces (not top level)
+            # 1. Remove fixed names (networks, volumes, containers)
             content = re.sub(r'^\s+name:\s+.*$', '', content, flags=re.MULTILINE)
-            
-            # Also remove 'container_name:' to allow parallel runs
             content = re.sub(r'^\s+container_name:\s+.*$', '', content, flags=re.MULTILINE)
             
-            # Remove Traefik Host rules that might conflict
+            # 2. Remove common DB port bindings to avoid host collisions
+            # Matches: postgres:, db:, redis:, etc followed by ports: - "5432:5432"
+            db_services = ["postgres", "db", "redis", "mysql", "mariadb", "mongo", "mongodb"]
+            for svc in db_services:
+                # Find the service block and the ports section within it
+                # This is a bit rough with regex but usually works for standard compose
+                pattern = rf'({svc}:.*?\n\s+ports:\n\s+-\s+["\']?\d+:\d+["\']?)'
+                content = re.sub(pattern, r'\1 # patched by rebuild', content, flags=re.DOTALL | re.IGNORECASE)
+                # Actually, just comment out the whole ports block for these
+                content = re.sub(rf'({svc}:.*?)(\n\s+ports:\n\s+-\s+["\']?\d+:\d+["\']?)', r'\1\n# \2', content, flags=re.DOTALL | re.IGNORECASE)
+
+            # 3. Remove Traefik Host rules
             content = re.sub(r'Host\(`[^`]+`\)', 'Host(`localhost`)', content)
 
             if content != original:

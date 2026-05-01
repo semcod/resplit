@@ -179,3 +179,63 @@ def test_run_day_fast_skips_db_restore_when_no_db_files_changed(tmp_path):
     assert result.error is None
     mock_needs.assert_called_once_with("prevsha", commit.sha)
     mock_restore.assert_not_called()
+
+
+def test_needs_rescan_returns_true_when_no_cache(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+    # _cached_endpoints is None by default
+    assert pipeline._needs_rescan("sha_prev", "sha_cur") is True
+
+
+def test_needs_rescan_returns_true_when_route_file_changed(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+    pipeline._cached_endpoints = []
+
+    with patch.object(pipeline.git, "diff_names", return_value=["app/urls.py", "app/serializers.py"]):
+        assert pipeline._needs_rescan("sha_prev", "sha_cur") is True
+
+
+def test_needs_rescan_returns_false_when_only_non_route_files_changed(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+    pipeline._cached_endpoints = []
+
+    with patch.object(pipeline.git, "diff_names", return_value=["app/models.py", "README.md"]):
+        assert pipeline._needs_rescan("sha_prev", "sha_cur") is False
+
+
+def test_needs_rescan_returns_true_when_diff_fails(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+    pipeline._cached_endpoints = []
+
+    with patch.object(pipeline.git, "diff_names", return_value=None):
+        assert pipeline._needs_rescan("sha_prev", "sha_cur") is True
+
+
+def test_run_day_fast_reuses_cached_endpoints_when_no_route_changes(tmp_path):
+    from rebuild.domain.endpoint import Endpoint
+
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+    commit = _commit()
+    pipeline._baseline_snapshot = "baseline"
+    pipeline._previous_commit = "prevsha"
+    cached = [Endpoint(method="GET", path="/api/health", base_url="http://localhost")]
+    pipeline._cached_endpoints = cached
+
+    with patch.object(pipeline.deploy, "switch_commit", return_value=True), \
+         patch.object(pipeline.worktrees, "get_active_path", return_value=tmp_path), \
+         patch.object(pipeline, "_needs_db_restore", return_value=False), \
+         patch.object(pipeline, "_needs_rescan", return_value=False) as mock_rescan, \
+         patch.object(pipeline.scanner, "execute") as mock_scan, \
+         patch.object(pipeline.tester, "execute_sync", return_value=[]), \
+         patch.object(pipeline.reporter, "save_day"):
+        result = pipeline._run_day_fast(date(2024, 3, 15), commit)
+
+    assert result.error is None
+    mock_scan.assert_not_called()
+    mock_rescan.assert_called_once_with("prevsha", commit.sha)
+    assert result.endpoints == cached

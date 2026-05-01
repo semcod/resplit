@@ -63,13 +63,14 @@ class DeployService(Service[Path, bool]):
         Performs a fast reload of the application in Replay Mode.
         Restarts only the specified app service container by name.
         Does NOT use compose project name — works with externally started infra.
-        In replay mode, ensures code from checkout is mounted as volume.
+        In replay mode, syncs checked-out code into runtime before restart.
         """
         service = self.config.app_service or "backend"
 
         if self.config.deploy_method == DeployMethod.DOCKER_COMPOSE:
-            # Ensure code from repo is mounted in container (replay mode fix)
-            self._ensure_code_mount(repo, service)
+            # Ensure runtime gets code from current checkout (replay correctness)
+            if not self._sync_code_to_runtime(repo, service):
+                self.console.print("  [yellow]Replay sync warning:[/yellow] failed to copy checkout into container")
 
             # Try restarting by container name directly (works regardless of compose project)
             self.console.print(f"  [bold cyan]docker restart {service}[/bold cyan]")
@@ -216,37 +217,33 @@ class DeployService(Service[Path, bool]):
         self.console.print(f"  [red]✗ health timeout ({health_timeout}s)[/red]")
         return False
 
-    def _ensure_code_mount(self, repo: Path, service: str) -> None:
-        """
-        Ensure the container has the checked-out code mounted as a volume.
-        This fixes replay mode where Docker uses current image instead of checkout code.
-        """
+    def _sync_code_to_runtime(self, repo: Path, service: str) -> bool:
+        """Copy checked-out repository into /app of the running service container."""
+        container = self._resolve_container_name(repo, service)
+        if not container:
+            return False
+
+        prep = self.shell.run(["docker", "exec", container, "mkdir", "-p", "/app"])
+        if prep.returncode != 0:
+            return False
+
+        copy = self.shell.run(["docker", "cp", f"{repo}/.", f"{container}:/app/"])
+        return copy.returncode == 0
+
+    def _resolve_container_name(self, repo: Path, service: str) -> Optional[str]:
+        """Resolve runtime container name from direct name or compose service."""
+        direct = self.shell.run(["docker", "inspect", service])
+        if direct.returncode == 0:
+            return service
+
         try:
-            # Check if container is using a volume mount for code
-            result = self.shell.run([
-                "docker", "inspect", service,
-                "--format", "{{json .Mounts}}"
-            ])
-            if result.returncode != 0:
-                return
+            cf = self._compose_file(repo)
+        except FileNotFoundError:
+            return None
 
-            import json
-            mounts = json.loads(result.stdout)
-            has_code_mount = any(
-                m.get("Type") == "bind" and repo.resolve() in Path(m.get("Source", "")).resolve().parents
-                for m in mounts
-            )
-
-            if not has_code_mount:
-                self.console.print(f"  [dim]Replay: ensuring code mount from {repo}...[/dim]")
-                # Create/update bind mount via docker volume create or docker run --mount
-                # For simplicity, we restart with explicit bind mount
-                self.shell.run([
-                    "docker", "run", "-d",
-                    "--name", f"{service}_rebuild_overlay",
-                    "-v", f"{repo.resolve()}:/app",
-                    "--volumes-from", service,
-                    "busybox", "sleep", "3600"
-                ], check=False)
-        except Exception:
-            pass  # Best-effort, don't fail on mount issues
+        lookup = self.shell.run(
+            ["docker", "compose", "-f", str(cf), "ps", "-q", service],
+            cwd=repo,
+        )
+        cid = lookup.stdout.strip() if lookup.returncode == 0 else ""
+        return cid or None
