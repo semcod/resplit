@@ -85,6 +85,7 @@ def walk(
     serve: bool = typer.Option(False, "--serve", help="Uruchom serwer HTTP po zakończeniu i otwórz przeglądarkę"),
     port: int = typer.Option(7821, "--port", help="Port serwera HTTP (--serve)"),
     accelerator: bool = typer.Option(False, "--accelerator", help="⚡ Przyspieszony tryb: użyj aktualnych node_modules i patchuj Dockerfile"),
+    patch_dir: Optional[Path] = typer.Option(None, "--patch-dir", help="Folder z poprawkami do nałożenia na klon"),
 ) -> None:
     """Przejdź historię git dzień po dniu, deployuj i testuj endpointy."""
     repo = repo.resolve()
@@ -112,7 +113,8 @@ def walk(
         dry_run=dry_run,
         replay=replay,
         app_service=service,
-        accelerator=accelerator
+        accelerator=accelerator,
+        patch_dir=patch_dir
     )
 
     # Merge with rebuild.yaml if exists

@@ -19,6 +19,7 @@ from .services.test_service import TestService
 from .services.screenshot_service import ScreenshotService, ScreenshotConfig
 from .services.reporter_service import ReporterService
 from .services.patcher_service import PatcherService
+from .services.override_service import OverrideService
 
 class Pipeline:
     """
@@ -38,6 +39,7 @@ class Pipeline:
         self.screenshots = ScreenshotService(ScreenshotConfig(output_dir=config.output_dir))
         self.reporter = ReporterService()
         self.patcher = PatcherService()
+        self.overrider = OverrideService()
         
         # Load incremental state
         self._state_file = config.output_dir / "walk_state.json"
@@ -68,6 +70,31 @@ class Pipeline:
     def log(self, message: str):
         if self.console:
             self.console.print(message)
+
+    def _check_for_manual_fix(self, repo: Path, original_sha: str) -> Optional[str]:
+        """
+        Check for manual fix commits in the clone that target the original commit.
+        Fix commits should have a message like "fix for <sha>" or reference the original SHA.
+        """
+        try:
+            # Get commits after the original SHA
+            result = self.shell.run(
+                ["git", "log", "--oneline", f"{original_sha}..HEAD"],
+                cwd=repo
+            )
+            if result.returncode != 0:
+                return None
+
+            for line in result.stdout.strip().split("\n"):
+                if not line:
+                    continue
+                # Look for commits that reference the original SHA or have "fix" in message
+                if original_sha[:8] in line or "fix" in line.lower():
+                    sha = line.split()[0]
+                    return sha
+        except Exception:
+            pass
+        return None
 
     def run(self) -> List[DayResult]:
         commits = self.git.days_with_commits(self.config)
@@ -143,6 +170,13 @@ class Pipeline:
                     self.log(f"  [dim]Manual override: applied {overrides} file(s) from {manual_patch_dir}[/dim]")
                     self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(manual_patch_dir))
 
+                # Check for manual fix commit in clone (for health recovery)
+                fix_sha = self._check_for_manual_fix(walk_git.repo_path, commit.sha)
+                if fix_sha:
+                    self.log(f"  [cyan]Manual fix detected: {fix_sha[:8]}, applying...[/cyan]")
+                    walk_git.checkout(fix_sha)
+                    self._emit("MANUAL_FIX_APPLIED", original_sha=commit.sha, fix_sha=fix_sha)
+
             # Clone path for static file scanning; original path for docker
             scan_repo = walk_git.repo_path
 
@@ -150,6 +184,12 @@ class Pipeline:
                 patched = self.patcher.execute(scan_repo)
                 if patched:
                     self.log(f"  [dim]Spatchowano {patched} plików Dockerfile (accelerator).[/dim]")
+
+            # 3. Apply manual overrides (fixes for historical bugs)
+            if self.config.patch_dir and not self.config.dry_run:
+                overridden = self.overrider.execute(scan_repo, self.config.patch_dir)
+                if overridden:
+                    self.log(f"  [bold green]✓ Zastosowano {overridden} poprawek manualnych.[/bold green]")
 
             # 2. Deploy/Reload
             if self.config.replay:
