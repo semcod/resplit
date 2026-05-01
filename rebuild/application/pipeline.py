@@ -85,9 +85,6 @@ class Pipeline:
                 clone_path = self.config.output_dir / "repo"
                 self.git.sync_current_state(clone_path)
                 self._walk_git = GitService(clone_path)
-                patched = self.patcher.execute(clone_path)
-                if patched:
-                    self.log(f"  [dim]Spatchowano {patched} plików Dockerfile.[/dim]")
             else:
                 self.log("[dim]Klonowanie repo do .rebuild/repo/ ...[/dim]")
                 self._walk_git = self.git.clone_for_walk(self.config.output_dir)
@@ -148,6 +145,11 @@ class Pipeline:
 
             # Clone path for static file scanning; original path for docker
             scan_repo = walk_git.repo_path
+
+            if self.config.accelerator and not self.config.dry_run:
+                patched = self.patcher.execute(scan_repo)
+                if patched:
+                    self.log(f"  [dim]Spatchowano {patched} plików Dockerfile (accelerator).[/dim]")
 
             # 2. Deploy/Reload
             if self.config.replay:
