@@ -43,7 +43,7 @@
         "traefik.http.routers.frontend.rule": "Host(`identification.localhost`)",
         "traefik.http.services.frontend.loadbalancer.server.port": "80"
       },
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.dev.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.dev.yml",
       "resolved_ports": [
         {
           "raw": "${FRONTEND_PORT:-8100}:80",
@@ -137,7 +137,7 @@
         "traefik.http.routers.backend.rule": "Host(`api.identification.localhost`)",
         "traefik.http.services.backend.loadbalancer.server.port": "8000"
       },
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.dev.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.dev.yml",
       "resolved_ports": [
         {
           "raw": "${BACKEND_PORT:-8101}:8000",
@@ -212,7 +212,7 @@
         "DOCKER_API_VERSION": "1.44"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.dev.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.dev.yml",
       "resolved_ports": [
         {
           "raw": "80:80",
@@ -257,7 +257,7 @@
         "POSTGRES_PASSWORD": ""
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.pg.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.pg.yml",
       "resolved_ports": [
         {
           "raw": "${POSTGRES_PORT:-5432}:5432",
@@ -290,7 +290,7 @@
         "PGDATABASE": "c2004"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.prod.pg.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.prod.pg.yml",
       "resolved_ports": [],
       "env_resolved": {
         "OPENROUTER_API_KEY": "",
@@ -335,7 +335,7 @@
         "traefik.http.routers.firmware.middlewares": "firmware-strip",
         "traefik.http.services.firmware.loadbalancer.server.port": "8202"
       },
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.prod.vps.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.prod.vps.yml",
       "resolved_ports": [
         {
           "raw": "8202:8202",
@@ -375,7 +375,7 @@
         "POSTGRES_PASSWORD": "dev_password"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.prod.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.prod.yml",
       "resolved_ports": [
         {
           "raw": "${POSTGRES_PORT:-5432}:5432",
@@ -428,7 +428,7 @@
         "PYTHONPATH": "/workspace"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${SERVICE_ID_PILOT_PORT:-8111}:8000",
@@ -489,7 +489,7 @@
         "PYTHONPATH": "/workspace"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${SERVICE_MANAGER_PILOT_PORT:-8112}:8000",
@@ -528,7 +528,7 @@
         "CONNECT_ID_BACKEND_PORT": "8117"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-id/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-id/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_ID_BACKEND_HTTP_PORT:-8117}:8117",
@@ -571,7 +571,7 @@
         "MASKSERVICE_TIMEOUT_SECONDS": "7"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_DATA_BACKEND_PORT:-8121}:8121",
@@ -603,7 +603,7 @@
         "CONNECT_MANAGER_BACKEND_PORT": "8107"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-manager/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-manager/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_MANAGER_BACKEND_HTTP_PORT:-8107}:8107",
@@ -635,7 +635,7 @@
         "MASKSERVICE_TIMEOUT_SECONDS": "8"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-template/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-template/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_TEMPLATE_BACKEND_HTTP_PORT:-8106}:8106",
@@ -667,7 +667,7 @@
         "CONNECT_TEST_BACKEND_PORT": "8119"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-test/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-test/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_TEST_BACKEND_HTTP_PORT:-8119}:8119",
@@ -713,7 +713,7 @@
         "MASKSERVICE_API_URL": "http://backend:8000"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_PROTOCOL_BACKEND_PORT:-8120}:8120",
@@ -761,7 +761,7 @@
         "SCENARIOS_DIR": "/app/scenarios"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CQL_BACKEND_PORT:-8101}:8101",
@@ -798,7 +798,7 @@
         "OQLOS_API_URL": "http://host.docker.internal:8202"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-scenario/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-scenario/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_SCENARIO_BACKEND_HTTP_PORT:-8105}:8108",
@@ -837,7 +837,7 @@
         "FRAME_ANCESTORS": "'self' http://localhost:8100 http://*.localhost https://*.localhost"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-scenario/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-scenario/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_SCENARIO_DIRECT_PORT:-8096}:80",
@@ -873,7 +873,7 @@
         "CONNECT_ID_LISTEN_PORT": "80"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-id/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-id/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_ID_DIRECT_PORT:-8093}:80",
@@ -904,7 +904,7 @@
         "MODULE_PORT": "8300"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/modules/connect-config-network/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/modules/connect-config-network/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "8300:8300",
@@ -936,7 +936,7 @@
         "MODULE_PORT": "8301"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/modules/connect-id-user-list/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/modules/connect-id-user-list/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "8301:8301",
@@ -968,7 +968,7 @@
         "MODULE_PORT": "8302"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/modules/connect-manager-library/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/modules/connect-manager-library/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "8302:8302",
@@ -1000,7 +1000,7 @@
         "MODULE_PORT": "8303"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/modules/connect-reports-month/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/modules/connect-reports-month/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "8303:8303",
@@ -1031,7 +1031,7 @@
         "SCENARIOS_DIR": "/app/scenarios"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-scenario/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-scenario/docker-compose.yml",
       "resolved_ports": [],
       "env_resolved": {
         "OPENROUTER_API_KEY": "",
@@ -1054,7 +1054,7 @@
         "PYTHONUNBUFFERED": "1"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-deleted/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-deleted/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "8120:8120",
@@ -1082,7 +1082,7 @@
       ],
       "environment": {},
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-deleted/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-deleted/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "8121:80",
@@ -1112,7 +1112,7 @@
         "CONNECT_TEST_LISTEN_PORT": "80"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-test/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-test/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_TEST_DIRECT_PORT:-8097}:80",
@@ -1144,7 +1144,7 @@
         "CONNECT_MANAGER_LISTEN_PORT": "80"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-manager/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-manager/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_MANAGER_DIRECT_PORT:-8095}:80",
@@ -1176,7 +1176,7 @@
         "CONNECT_TEMPLATE_LISTEN_PORT": "80"
       },
       "labels": {},
-      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-template/docker-compose.yml",
+      "source_file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-template/docker-compose.yml",
       "resolved_ports": [
         {
           "raw": "${CONNECT_TEMPLATE_DIRECT_PORT:-8094}:80",
@@ -1200,109 +1200,109 @@
       "type": "missing_healthcheck",
       "service": "c2004-backup",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.prod.pg.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.prod.pg.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-id-backend",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-id/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-id/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-manager-backend",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-manager/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-manager/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-template-backend",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-template/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-template/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-test-backend",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-test/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-test/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-scenario-backend",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-scenario/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-scenario/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-scenario",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-scenario/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-scenario/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-id",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-id/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-id/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-config-network",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/modules/connect-config-network/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/modules/connect-config-network/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-id-user-list",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/modules/connect-id-user-list/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/modules/connect-id-user-list/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-manager-library",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/modules/connect-manager-library/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/modules/connect-manager-library/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-reports-month",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/modules/connect-reports-month/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/modules/connect-reports-month/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "cql-scenario-backend",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-scenario/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-scenario/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-deleted-backend",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-deleted/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-deleted/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-deleted",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-deleted/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-deleted/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-test",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-test/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-test/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-manager",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-manager/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-manager/docker-compose.yml"
     },
     {
       "type": "missing_healthcheck",
       "service": "connect-template",
       "severity": "warning",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/connect-template/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/connect-template/docker-compose.yml"
     },
     {
       "type": "port_conflict",
@@ -1349,21 +1349,21 @@
       "service": "backend",
       "env_key": "SECRET_KEY",
       "severity": "critical",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.dev.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.dev.yml"
     },
     {
       "type": "hardcoded_secret",
       "service": "service-id-pilot",
       "env_key": "SECRET_KEY",
       "severity": "critical",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.yml"
     },
     {
       "type": "hardcoded_secret",
       "service": "service-manager-pilot",
       "env_key": "SECRET_KEY",
       "severity": "critical",
-      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_3d_replay_real_fix/repo/docker-compose.yml"
+      "file": "/home/tom/github/semcod/resplit/.rebuild_c2004_1d_realtime_live/repo/docker-compose.yml"
     }
   ],
   "cycles": [],

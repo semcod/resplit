@@ -140,6 +140,7 @@ class Pipeline:
             self.log("[yellow]Brak commitów w podanym przedziale.[/yellow]")
             return []
 
+        self._event_service.enable()
         self._emit("PIPELINE_STARTED", days=len(commits), repo=str(self.config.repo_path), replay=self.config.replay)
         self.log(f"Znaleziono [bold]{len(commits)}[/bold] dni z commitami.\n")
         
@@ -184,6 +185,7 @@ class Pipeline:
         finally:
             walk_git = getattr(self, "_walk_git", self.git)
             self.deploy.stop(walk_git.repo_path)
+            self._event_service.disable()
 
         self._emit("PIPELINE_FINISHED", total_days=len(all_results))
         self.reporter.save_timeline_index(all_results, self.config.output_dir)
