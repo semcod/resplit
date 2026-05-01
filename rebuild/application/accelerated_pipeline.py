@@ -228,6 +228,7 @@ class AcceleratedPipeline:
             
             self._emit("CODE_SWITCH_FINISHED", sha=commit.sha)
             result.deploy_success = True
+            wt_path = self.worktrees.get_active_path(commit.sha)
 
             # Manual overrides from .rebuild/patch
             patch_dir = self.output_dir / "patch"
@@ -248,7 +249,6 @@ class AcceleratedPipeline:
                     return result
             
             # 3. Scan endpoints
-            wt_path = self.worktrees.get_active_path(commit.sha)
             result.endpoints = self.scanner.execute(wt_path)
             
             # 4. Smart test selection (only test changed endpoints)

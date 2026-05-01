@@ -49,6 +49,7 @@ class AcceleratorDeployService(DeployService):
         self._runtime_marker_filename = ".rebuild_runtime_sha"
         self._last_health_success_at: Optional[float] = None
         self._container_name_cache: Dict[str, str] = {}
+        self._reload_strategy_cache: Dict[str, str] = {}
     
     def start(self, repo: Path) -> bool:
         """
@@ -260,20 +261,34 @@ class AcceleratorDeployService(DeployService):
         if wt_path:
             trigger = wt_path / ".reload"
             trigger.write_text(str(time.time()))
-        
-        # Method 2: Send SIGHUP to main process
-        self.shell.run([
-            "docker", "kill", "--signal=HUP", container_name
-        ])
-        
-        # Method 3: Try to find and signal uvicorn/python process
-        self.shell.run([
-            "docker", "exec", container_name,
-            "sh", "-c", "kill -HUP $(pgrep -f 'uvicorn|python' | head -1) 2>/dev/null || true"
-        ])
+
+        strategy = self._reload_strategy_cache.get(service)
+        if strategy == "signal":
+            self._send_hup_signal(container_name)
+        elif strategy == "exec":
+            self._send_exec_hup(container_name)
+        else:
+            signal_result = self._send_hup_signal(container_name)
+            if signal_result.returncode == 0:
+                self._reload_strategy_cache[service] = "signal"
+            else:
+                exec_result = self._send_exec_hup(container_name)
+                if exec_result.returncode == 0:
+                    self._reload_strategy_cache[service] = "exec"
         
         # Small delay to let reload start
         time.sleep(0.5)
+
+    def _send_hup_signal(self, container_name: str):
+        return self.shell.run([
+            "docker", "kill", "--signal=HUP", container_name
+        ])
+
+    def _send_exec_hup(self, container_name: str):
+        return self.shell.run([
+            "docker", "exec", container_name,
+            "sh", "-c", "kill -HUP $(pgrep -f 'uvicorn|python' | head -1) 2>/dev/null || true"
+        ])
 
     def _write_runtime_marker(self, code_path: Path, sha: str) -> None:
         code_path.mkdir(parents=True, exist_ok=True)
