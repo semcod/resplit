@@ -23,9 +23,9 @@ class WalkConfig:
     health_timeout: int = 60
     health_interval: int = 2
     health_verbose: bool = False
-    deploy_retry_attempts: int = 1
-    deploy_retry_backoff_seconds: float = 2.0
-    deploy_retry_backoff_multiplier: float = 2.0
+    deploy_retry_attempts: int = 3
+    deploy_retry_backoff_seconds: float = 5.0
+    deploy_retry_backoff_multiplier: float = 3.0
     base_url: str = "http://localhost:8003"
     screenshots: bool = True
     dry_run: bool = False

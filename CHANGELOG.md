@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+## [0.1.15] - 2026-05-01
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/test_test_service.py
+
+### Other
+- Update project/duplication.toon.yaml
+- Update rebuild/application/pipeline.py
+- Update rebuild/application/services/deploy_service.py
+- Update rebuild/application/services/scanner_service.py
+- Update rebuild/application/services/test_service.py
+- Update rebuild/domain/day_result.py
+- Update rebuild/domain/endpoint.py
+- Update rebuild/domain/models.py
+
 ## [0.1.14] - 2026-05-01
 
 ### Docs

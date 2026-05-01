@@ -241,14 +241,17 @@ class Pipeline:
                     self.log(f"  [bold green]✓ Zastosowano {overridden} poprawek manualnych.[/bold green]")
 
             # 2. Deploy/Reload
+            self.deploy.day_dir = day_dir
             if self.config.replay:
                 self._emit("DEPLOY_RELOAD_STARTED", service=self.config.app_service)
                 result.deploy_success = self.deploy.reload(walk_git.repo_path)
                 result.deploy_log = self.deploy.last_log
+                result.deploy_error_category = self.deploy.last_error_category
                 self._emit("DEPLOY_RELOAD_FINISHED", success=result.deploy_success)
             else:
                 result.deploy_success = self.deploy.start(walk_git.repo_path)
                 result.deploy_log = self.deploy.last_log
+                result.deploy_error_category = self.deploy.last_error_category
                 self._emit("DEPLOY_FINISHED", success=result.deploy_success)
 
             if not result.deploy_success and not self.config.dry_run:
