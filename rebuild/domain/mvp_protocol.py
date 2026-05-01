@@ -73,6 +73,14 @@ class MVPProtocolHandler:
             MessageType.COMMAND: self._handle_command,
             MessageType.EVENT: self._handle_event,
         }
+        self._command_dispatch: Dict[str, Any] = {
+            "walk": self._handle_walk,
+            "analyze": self._handle_analyze,
+            "evolution": self._handle_evolution,
+            "auto_pr": self._handle_auto_pr,
+            "dsl": self._handle_dsl,
+            "nlp": self._handle_nlp,
+        }
 
     def handle_message(self, message: MVPMessage) -> MVPMessage:
         """Handle an incoming MVP message."""
@@ -103,24 +111,13 @@ class MVPProtocolHandler:
                 payload={"error": "Missing 'command' in payload"},
             )
 
-        # Route to appropriate handler based on command
-        if command == "walk":
-            return self._handle_walk(params)
-        elif command == "analyze":
-            return self._handle_analyze(params)
-        elif command == "evolution":
-            return self._handle_evolution(params)
-        elif command == "auto_pr":
-            return self._handle_auto_pr(params)
-        elif command == "dsl":
-            return self._handle_dsl(params)
-        elif command == "nlp":
-            return self._handle_nlp(params)
-        else:
+        handler = self._command_dispatch.get(command)
+        if handler is None:
             return MVPMessage(
                 message_type=MessageType.ERROR,
                 payload={"error": f"Unknown command: {command}"},
             )
+        return handler(params)
 
     def _handle_event(self, message: MVPMessage) -> MVPMessage:
         """Handle an event message."""

@@ -4,27 +4,16 @@ rebuild CLI — główny punkt wejścia.
 from __future__ import annotations
 
 import json
-from datetime import date
 from pathlib import Path
 from typing import Optional, List
 
 import typer
 from rich.console import Console
-from rich.table import Table
-from rich.tree import Tree
-from rich.panel import Panel
-from rich.markdown import Markdown
 
 from .. import __version__
-from ..domain.models import DeployMethod, WalkConfig
-from ..domain.day_result import DayResult
-from ..application.pipeline import Pipeline
-from ..application.accelerated_pipeline import AcceleratedPipeline
 from ..application.services.history_service import HistoryService
 from ..application.services.reporter_service import ReporterService
-from ..application.services.deploy_service import DeployService
 from ..application.services.restore_service import RestoreService
-from ..infrastructure.config_loader import ConfigLoader
 
 app = typer.Typer(
     name="rebuild",
@@ -47,7 +36,6 @@ def init(
     force: bool = typer.Option(False, "--force", help="Nadpisz istniejące pliki"),
 ) -> None:
     """Zainicjuj nowy projekt rebuild i wygeneruj domyślną konfigurację."""
-    # 1. rebuild.yaml
     config_file = path / "rebuild.yaml"
     if not config_file.exists() or force:
         template_path = Path(__file__).parent.parent / "infrastructure" / "config_template.yaml"
@@ -55,7 +43,6 @@ def init(
         config_file.write_text(config_content)
         console.print(f"[green]✓ Wygenerowano {config_file}[/green]")
 
-    # 2. .env template
     env_file = path / ".env"
     if not env_file.exists() or force:
         env_content = """# rebuild AI Configuration
@@ -89,63 +76,9 @@ def walk(
     patch_dir: Optional[Path] = typer.Option(None, "--patch-dir", help="Folder z poprawkami do nałożenia na klon"),
 ) -> None:
     """Przejdź historię git dzień po dniu, deployuj i testuj endpointy."""
-    repo = repo.resolve()
-    output = output.resolve()
-    if not (repo / ".git").exists():
-        console.print(f"[red]✗ {repo} nie jest repozytorium git[/red]")
-        raise typer.Exit(1)
-
-    deploy_svc = DeployService(WalkConfig(repo_path=repo))
-    if deploy == "auto":
-        method = deploy_svc.detect_deploy_method(repo) if not dry_run else DeployMethod.NONE
-    else:
-        method = DeployMethod(deploy)
-
-    config = WalkConfig(
-        repo_path=repo,
-        output_dir=output,
-        days=days,
-        date_from=date.fromisoformat(date_from) if date_from else None,
-        date_to=date.fromisoformat(date_to) if date_to else None,
-        deploy_method=method,
-        health_url=health_url,
-        base_url=base_url,
-        screenshots=screenshots,
-        dry_run=dry_run,
-        replay=replay,
-        app_service=service,
-        accelerator=accelerator,
-        patch_dir=patch_dir
-    )
-
-    # Merge with rebuild.yaml only when present (walk never auto-runs init)
-    config_path = repo / "rebuild.yaml"
-    if config_path.exists():
-        yaml_data = ConfigLoader.load(config_path)
-        if yaml_data:
-            ConfigLoader.apply_to_config(config, yaml_data)
-    else:
-        console.print("  [dim]Brak rebuild.yaml — używam tylko opcji CLI (bez auto-init).[/dim]")
-
-    console.print(f"\n[bold]rebuild walk[/bold] v{__version__}")
-    console.print(f"  repo:   {repo}")
-    console.print(f"  output: {output}")
-    console.print(f"  deploy: {method.value} {'(REPLAY)' if replay else ''}")
-    console.print(f"  days:   {days}\n")
-
-    pipeline = Pipeline(config, console=console)
-    all_results = pipeline.run()
-
-    if all_results:
-        console.print(f"\n[bold green]✓ Gotowe![/bold green]")
-        from .dashboard import generate_dashboard
-        generate_dashboard(all_results, output, repo=repo)
-        _print_report_links(output, port if serve else None)
-        _print_summary_table(all_results)
-        if serve:
-            _serve_reports(output, port)
-    else:
-        console.print("[yellow]Brak wyników do wyświetlenia.[/yellow]")
+    from .commands.walk_command import walk_command
+    walk_command(repo, days, date_from, date_to, output, deploy, replay, service,
+                 health_url, base_url, screenshots, dry_run, serve, port, accelerator, patch_dir, console)
 
 
 @app.command()
@@ -161,7 +94,6 @@ def restore(
     if not day:
         console.print(f"[red]✗ Nie znaleziono działającego dnia dla {endpoint}[/red]")
         raise typer.Exit(1)
-
     console.print(f"Ostatni działający dzień: [bold]{day}[/bold]")
     target = output / endpoint.strip("/").replace("/", "-")
     restore_svc.extract_endpoint(endpoint, day, target)
@@ -175,12 +107,10 @@ def report(
     """Wygeneruj zbiorczy raport z istniejących wyników."""
     history_svc = HistoryService()
     reporter_svc = ReporterService()
-    
     all_results = history_svc.execute(results_dir)
     if not all_results:
         console.print("[yellow]Brak wyników do raportowania.[/yellow]")
         return
-
     reporter_svc.save_timeline_index(all_results, results_dir)
     console.print(f"[green]✓ Wygenerowano: {results_dir / 'index.html'}[/green]")
 
@@ -193,12 +123,10 @@ def dashboard(
     """Wygeneruj dashboard porównawczy: timeline health% + CC."""
     from .dashboard import generate_dashboard
     history_svc = HistoryService()
-    
     all_results = history_svc.execute(results_dir)
     if not all_results:
         console.print("[yellow]Brak wyników w katalogu.[/yellow]")
         raise typer.Exit(0)
-
     out = generate_dashboard(all_results, results_dir, repo=repo)
     console.print(f"[green]✓ Dashboard: {out}[/green]")
 
@@ -223,70 +151,11 @@ def accelerator(
     port: int = typer.Option(7821, "--port", help="Port serwera HTTP"),
     patch_dir: Optional[Path] = typer.Option(None, "--patch-dir", help="Folder z poprawkami do nałożenia na klon"),
 ) -> None:
-    """⚡ Ultra-szybki tryb 10x - worktree + hot reload + parallel testing.
-    
-    Zamiast restartować Docker per commit:
-    - Kontenery działają cały czas
-    - Kod podmieniany via git worktree + bind mount
-    - Hot reload bez restartu procesów
-    - Baza danycH przywracana z snapshotu
-    - Testy równoległe z dependency graph
-    """
-    repo = repo.resolve()
-    if not (repo / ".git").exists():
-        console.print(f"[red]✗ {repo} nie jest repozytorium git[/red]")
-        raise typer.Exit(1)
-
-    config = WalkConfig(
-        repo_path=repo,
-        output_dir=output,
-        days=days,
-        date_from=date.fromisoformat(date_from) if date_from else None,
-        date_to=date.fromisoformat(date_to) if date_to else None,
-        deploy_method=DeployMethod.DOCKER_COMPOSE,
-        health_url=health_url,
-        base_url=base_url,
-        screenshots=screenshots,
-        dry_run=False,
-        replay=False,
-        app_service=service,
-        accelerator=True,
-        db_container=db_container,
-        db_type=db_type,
-        max_parallel_tests=parallel,
-        smart_select=smart,
-        keep_alive=not shutdown,
-        shutdown_after=shutdown,
-        patch_dir=patch_dir
-    )
-
-    console.print(f"\n[bold cyan]⚡ REBUILD ACCELERATOR[/bold cyan] v{__version__}")
-    console.print(f"  repo:     {repo}")
-    console.print(f"  output:   {output}")
-    console.print(f"  service:  {service}")
-    console.print(f"  db:       {db_container} ({db_type})")
-    console.print(f"  parallel: {parallel} concurrent tests")
-    console.print(f"  smart:    {'✓' if smart else '✗'} git-diff selection")
-    console.print("")
-
-    pipeline = AcceleratedPipeline(config, console=console)
-    
-    try:
-        all_results = pipeline.run()
-    finally:
-        if shutdown:
-            pipeline.cleanup()
-
-    if all_results:
-        console.print(f"\n[bold green]✓ Accelerator done![/bold green]")
-        from .dashboard import generate_dashboard
-        generate_dashboard(all_results, output, repo=repo)
-        _print_report_links(output, port if serve else None)
-        _print_summary_table(all_results)
-        if serve:
-            _serve_reports(output, port)
-    else:
-        console.print("[yellow]Brak wyników.[/yellow]")
+    """⚡ Ultra-szybki tryb 10x - worktree + hot reload + parallel testing."""
+    from .commands.walk_command import accelerator_command
+    accelerator_command(repo, days, date_from, date_to, output, service, db_container, db_type,
+                        parallel, smart, health_url, base_url, screenshots, shutdown, serve, port,
+                        patch_dir, console)
 
 
 @app.command()
@@ -298,8 +167,9 @@ def serve(
     if not results_dir.exists():
         console.print(f"[red]✗ Katalog {results_dir} nie istnieje. Uruchom najpierw 'rebuild walk'.[/red]")
         raise typer.Exit(1)
-    _print_report_links(results_dir, port)
-    _serve_reports(results_dir, port)
+    from .commands.helpers import print_report_links, serve_reports
+    print_report_links(results_dir, port, console)
+    serve_reports(results_dir, port, console)
 
 
 @app.command()
@@ -335,42 +205,27 @@ def auto_pr(
         console.print(f"[red]✗ Plik {analysis_file} nie istnieje.[/red]")
         raise typer.Exit(1)
 
-    # Load analysis results
     try:
         analysis_data = json.loads(analysis_file.read_text())
     except Exception as e:
         console.print(f"[red]✗ Błąd wczytywania pliku analizy:[/red] {e}")
         raise typer.Exit(1)
 
-    # Load PR config from args or environment
     if token and repo_owner and repo_name:
         try:
             pr_platform = Platform(platform.lower())
         except ValueError:
             console.print(f"[red]✗ Nieobsługiwana platforma: {platform}[/red]")
             raise typer.Exit(1)
-
-        pr_config = PRConfig(
-            platform=pr_platform,
-            token=token,
-            repo_owner=repo_owner,
-            repo_name=repo_name,
-            base_branch=base_branch,
-            head_branch=head_branch,
-            title=title,
-        )
+        pr_config = PRConfig(platform=pr_platform, token=token, repo_owner=repo_owner,
+                             repo_name=repo_name, base_branch=base_branch,
+                             head_branch=head_branch, title=title)
     else:
         pr_config = load_config_from_env()
         if not pr_config:
             console.print("[red]✗ Brak konfiguracji PR. Podaj --token, --repo-owner, --repo-name lub ustaw zmienne środowiskowe.[/red]")
-            console.print("[dim]Zmienne środowiskowe:[/dim]")
-            console.print("  REBUILD_PR_PLATFORM=github|gitlab")
-            console.print("  REBUILD_PR_TOKEN=your_token")
-            console.print("  REBUILD_PR_REPO_OWNER=owner")
-            console.print("  REBUILD_PR_REPO_NAME=repo")
             raise typer.Exit(1)
 
-    # Generate summary
     summary_service = SummaryService()
     console.print("[bold cyan]Generowanie podsumowania...[/bold cyan]")
 
@@ -394,7 +249,6 @@ def auto_pr(
         console.print("\n[yellow]Dry run mode - PR nie został utworzony.[/yellow]")
         return
 
-    # Create PR
     console.print(f"\n[bold cyan]Tworzenie PR na {pr_config.platform.value}...[/bold cyan]")
     pr_service = PRService(pr_config)
     formatted_suggestions = summary_service.format_suggestions_for_pr(summary_result.suggestions)
@@ -415,12 +269,10 @@ def evolution(
     title: str = typer.Option("Code Evolution", help="Tytuł wizualizacji"),
 ) -> None:
     """Generuj wizualizację D3.js Code Evolution playback z timeline snapshots."""
-    from ..interfaces.evolution_viz import generate_evolution_html
-
+    from .evolution_viz import generate_evolution_html
     if not timeline_file.exists():
         console.print(f"[red]✗ Plik {timeline_file} nie istnieje.[/red]")
         raise typer.Exit(1)
-
     console.print("[bold cyan]Generowanie wizualizacji Code Evolution...[/bold cyan]")
     output_path = generate_evolution_html(timeline_file, output, title)
     console.print(f"[green]✓ Wizualizacja zapisana:[/green] {output_path}")
@@ -435,7 +287,6 @@ def dsl(
 ) -> None:
     """Wykonaj DSL (Domain Specific Language) komendy rebuild."""
     from ..domain.dsl import DSLParser, DSLInterpreter
-
     if not script and not command:
         console.print("[red]✗ Podaj --script lub --command[/red]")
         raise typer.Exit(1)
@@ -473,19 +324,16 @@ def nlp(
 ) -> None:
     """Parsuj komendę w języku naturalnym i konwertuj na DSL/CLI."""
     from ..application.services.nlp_service import NLPService
-
-    nlp = NLPService()
-    command = nlp.parse(text)
-
-    console.print(f"[bold]Zinterpretowana komenda:[/bold] {command.intent.value}")
-    console.print(f"  Confidence: {command.confidence:.2f}")
-    console.print(f"  Parameters: {command.parameters}")
-
+    nlp_svc = NLPService()
+    cmd = nlp_svc.parse(text)
+    console.print(f"[bold]Zinterpretowana komenda:[/bold] {cmd.intent.value}")
+    console.print(f"  Confidence: {cmd.confidence:.2f}")
+    console.print(f"  Parameters: {cmd.parameters}")
     if to_dsl:
-        dsl = nlp.to_dsl(command)
-        console.print(f"\n[bold]DSL:[/bold] {dsl}")
+        dsl_out = nlp_svc.to_dsl(cmd)
+        console.print(f"\n[bold]DSL:[/bold] {dsl_out}")
     if to_cli:
-        cli_args = nlp.to_cli_args(command)
+        cli_args = nlp_svc.to_cli_args(cmd)
         console.print(f"\n[bold]CLI args:[/bold] {' '.join(cli_args)}")
 
 
@@ -496,7 +344,6 @@ def mvp(
 ) -> None:
     """Uruchom MVP protocol server."""
     from ..domain.mvp_protocol import MVPServer
-
     console.print(f"[bold cyan]Uruchamianie MVP Server...[/bold cyan]")
     console.print(f"  Host: {host}")
     console.print(f"  Port: {port}")
@@ -506,7 +353,7 @@ def mvp(
 
 
 # ──────────────────────────────────────────────
-# analyze commands (Queries)
+# analyze commands
 # ──────────────────────────────────────────────
 
 @analyze_app.command()
@@ -514,209 +361,50 @@ def duplicates(
     path: Path = typer.Argument(Path("."), help="Ścieżka do skanowania"),
     min_lines: int = typer.Option(4, help="Minimalna liczba linii dla duplikatu"),
     semantic: bool = typer.Option(False, "--semantic", help="Włącz semantyczne wykrywanie duplikatów (embeddings)"),
-    semantic_model: str = typer.Option(
-        "sentence-transformers/all-MiniLM-L6-v2",
-        "--semantic-model",
-        help="Model sentence-transformers do porównań semantycznych",
-    ),
-    semantic_threshold: float = typer.Option(
-        0.82,
-        "--semantic-threshold",
-        help="Próg podobieństwa kosinusowego dla grup semantycznych",
-    ),
-    semantic_max_fragments: int = typer.Option(
-        300,
-        "--semantic-max-fragments",
-        help="Maksymalna liczba fragmentów do osadzeń (kontrola kosztu/czasu)",
-    ),
+    semantic_model: str = typer.Option("sentence-transformers/all-MiniLM-L6-v2", "--semantic-model", help="Model sentence-transformers"),
+    semantic_threshold: float = typer.Option(0.82, "--semantic-threshold", help="Próg podobieństwa kosinusowego"),
+    semantic_max_fragments: int = typer.Option(300, "--semantic-max-fragments", help="Maksymalna liczba fragmentów"),
 ) -> None:
     """[Query] Znajdź strukturalne i semantyczne duplikaty kodu."""
-    from ..analysis.duplication_engine import DuplicationEngine
-    
-    engine = DuplicationEngine(
-        min_lines=min_lines,
-        semantic_enabled=semantic,
-        semantic_model_name=semantic_model,
-        semantic_threshold=semantic_threshold,
-        semantic_max_fragments=semantic_max_fragments,
-    )
-    groups = engine.scan(path)
-
-    if semantic and engine.semantic_warning:
-        console.print(f"[yellow]⚠ Semantic mode warning:[/yellow] {engine.semantic_warning}")
-    
-    if not groups:
-        console.print("[green]✓ Nie znaleziono duplikatów.[/green]")
-        return
-        
-    console.print(f"\n[bold red]Znaleziono {len(groups)} grup duplikatów:[/bold red]\n")
-    for i, group in enumerate(groups, 1):
-        console.print(f"[bold]Grupa {i} (Similarity: {group.similarity:.2f}, Reason: {group.reason})[/bold]")
-        for frag in group.fragments:
-            console.print(f"  - {frag.file}:{frag.start_line} ([cyan]{frag.name or 'block'}[/cyan])")
-        console.print("")
+    from .commands.analyze_command import duplicates_command
+    duplicates_command(path, min_lines, semantic, semantic_model, semantic_threshold, semantic_max_fragments, console)
 
 
 @analyze_app.command()
 def vector_build(
     path: Path = typer.Argument(Path("."), help="Ścieżka do skanowania i indeksowania"),
-    index: Path = typer.Option(
-        Path(".rebuild/semantic_index.sqlite"),
-        "--index",
-        help="Plik SQLite z indeksem wektorowym",
-    ),
+    index: Path = typer.Option(Path(".rebuild/semantic_index.sqlite"), "--index", help="Plik SQLite z indeksem wektorowym"),
     min_lines: int = typer.Option(4, help="Minimalna liczba linii fragmentu"),
-    model: str = typer.Option(
-        "sentence-transformers/all-MiniLM-L6-v2",
-        "--model",
-        help="Model sentence-transformers dla osadzeń",
-    ),
+    model: str = typer.Option("sentence-transformers/all-MiniLM-L6-v2", "--model", help="Model sentence-transformers"),
 ) -> None:
     """[Query] Zbuduj lokalny indeks wektorowy fragmentów kodu."""
-    from ..analysis.vector_search import VectorSearchIndex
-
-    index_path = index.resolve()
-    vs = VectorSearchIndex(index_path, model_name=model)
-    with console.status("[bold cyan]Budowanie indeksu wektorowego...[/bold cyan]"):
-        inserted = vs.build_from_path(path.resolve(), min_lines=min_lines)
-
-    if vs.warning:
-        console.print(f"[yellow]⚠ Vector index warning:[/yellow] {vs.warning}")
-
-    total = vs.count()
-    console.print(
-        f"[green]✓ Indexed[/green] {inserted} fragmentów. "
-        f"[dim](total: {total}, db: {index_path})[/dim]"
-    )
+    from .commands.analyze_command import vector_build_command
+    vector_build_command(path, index, min_lines, model, console)
 
 
 @analyze_app.command()
 def vector_query(
     query: str = typer.Argument(..., help="Zapytanie semantyczne"),
-    index: Path = typer.Option(
-        Path(".rebuild/semantic_index.sqlite"),
-        "--index",
-        help="Plik SQLite z indeksem wektorowym",
-    ),
+    index: Path = typer.Option(Path(".rebuild/semantic_index.sqlite"), "--index", help="Plik SQLite z indeksem wektorowym"),
     top_k: int = typer.Option(10, "--top-k", help="Liczba najlepszych wyników"),
     min_score: float = typer.Option(0.0, "--min-score", help="Minimalny score podobieństwa"),
-    model: str = typer.Option(
-        "sentence-transformers/all-MiniLM-L6-v2",
-        "--model",
-        help="Model sentence-transformers dla zapytania",
-    ),
+    model: str = typer.Option("sentence-transformers/all-MiniLM-L6-v2", "--model", help="Model sentence-transformers"),
 ) -> None:
     """[Query] Wyszukaj semantycznie podobne fragmenty w indeksie wektorowym."""
-    from ..analysis.vector_search import VectorSearchIndex
-
-    index_path = index.resolve()
-    if not index_path.exists():
-        console.print(f"[red]✗ Brak indeksu:[/red] {index_path}")
-        raise typer.Exit(1)
-
-    vs = VectorSearchIndex(index_path, model_name=model)
-    hits = vs.query(query, top_k=top_k)
-
-    if vs.warning:
-        console.print(f"[yellow]⚠ Vector query warning:[/yellow] {vs.warning}")
-
-    filtered = [h for h in hits if h.score >= min_score]
-    if not filtered:
-        console.print("[yellow]Brak wyników dla podanych kryteriów.[/yellow]")
-        return
-
-    table = Table(show_header=True)
-    table.add_column("Score", justify="right", style="green")
-    table.add_column("File", style="cyan")
-    table.add_column("Line", justify="right")
-    table.add_column("Name")
-    table.add_column("Preview", style="dim")
-
-    for hit in filtered:
-        first_line = hit.fragment.content.strip().splitlines()
-        preview = first_line[0][:80] if first_line else ""
-        table.add_row(
-            f"{hit.score:.3f}",
-            str(hit.fragment.file),
-            str(hit.fragment.start_line),
-            hit.fragment.name or "block",
-            preview,
-        )
-
-    console.print(table)
+    from .commands.analyze_command import vector_query_command
+    vector_query_command(query, index, top_k, min_score, model, console)
 
 
 @analyze_app.command()
 def multi_repo(
     repos: List[Path] = typer.Argument(..., help="Lista repozytoriów do analizy (min 2)"),
     min_lines: int = typer.Option(6, help="Minimalna długość fragmentu dla clone detection"),
-    export: Optional[Path] = typer.Option(
-        None,
-        "--export",
-        help="Opcjonalny plik JSON z pełnym raportem",
-    ),
+    export: Optional[Path] = typer.Option(None, "--export", help="Opcjonalny plik JSON z pełnym raportem"),
 ) -> None:
     """[Query] Analiza zależności i klonów kodu między wieloma repozytoriami."""
-    from ..analysis.service_graph import MultiRepoAnalyzer
+    from .commands.analyze_command import multi_repo_command
+    multi_repo_command(repos, min_lines, export, console)
 
-    if len(repos) < 2:
-        console.print("[red]✗ Podaj co najmniej 2 repozytoria.[/red]")
-        raise typer.Exit(1)
-
-    normalized = [p.resolve() for p in repos]
-    missing = [str(p) for p in normalized if not p.exists()]
-    if missing:
-        console.print("[red]✗ Nie znaleziono repozytoriów:[/red]")
-        for path in missing:
-            console.print(f"  - {path}")
-        raise typer.Exit(1)
-
-    analyzer = MultiRepoAnalyzer(normalized, min_lines=min_lines)
-    with console.status("[bold cyan]Analiza multi-repo...[/bold cyan]"):
-        report = analyzer.analyze()
-
-    console.print("\n[bold]Repositories[/bold]")
-    repo_table = Table(show_header=True)
-    repo_table.add_column("Key", style="cyan")
-    repo_table.add_column("Path", style="dim")
-    for key, path in report.repositories.items():
-        repo_table.add_row(key, path)
-    console.print(repo_table)
-
-    console.print("\n[bold]Cross-Repo Dependencies[/bold]")
-    if not report.dependencies:
-        console.print("[yellow]Brak wykrytych zależności cross-repo.[/yellow]")
-    else:
-        dep_table = Table(show_header=True)
-        dep_table.add_column("From", style="cyan")
-        dep_table.add_column("To", style="cyan")
-        dep_table.add_column("Imports", justify="right", style="green")
-        for dep in report.dependencies:
-            dep_table.add_row(dep.source_repo, dep.target_repo, str(dep.imports_count))
-        console.print(dep_table)
-
-    console.print("\n[bold]Shared Structural Clones[/bold]")
-    if not report.clone_groups:
-        console.print("[yellow]Brak współdzielonych klonów strukturalnych.[/yellow]")
-    else:
-        clone_table = Table(show_header=True)
-        clone_table.add_column("Hash", style="dim")
-        clone_table.add_column("Repos", style="cyan")
-        clone_table.add_column("Fragments", justify="right", style="green")
-        for group in report.clone_groups[:20]:
-            clone_table.add_row(
-                group.structural_hash[:12],
-                ", ".join(group.repositories),
-                str(group.fragments_count),
-            )
-        console.print(clone_table)
-        if len(report.clone_groups) > 20:
-            console.print(f"[dim]... i {len(report.clone_groups) - 20} więcej grup[/dim]")
-
-    if export:
-        out = export.resolve()
-        analyzer.export_json(out, report)
-        console.print(f"\n[green]✓ Export:[/green] {out}")
 
 @analyze_app.command()
 def services(
@@ -724,41 +412,9 @@ def services(
     export: bool = typer.Option(False, "--export", help="Wygeneruj interaktywny graf architecture.html"),
 ) -> None:
     """[Query] Wykryj nakładające się odpowiedzialności i powiązania między serwisami."""
-    from ..analysis.service_graph import ServiceGraphBuilder
-    from ..analysis.service_similarity import ServiceSimilarityAnalyzer
-    from ..analysis.graph_exporter import GraphExporter
-    
-    console.print("\n[bold cyan]Budowanie grafu usług...[/bold cyan]")
-    builder = ServiceGraphBuilder(path.resolve())
-    nodes = builder.build()
-    
-    if export:
-        exporter = GraphExporter(nodes)
-        out = Path("architecture.html")
-        exporter.export_html(out)
-        console.print(f"[green]✓ Wyeksportowano interaktywny graf do: {out.resolve()}[/green]")
-    else:
-        tree = Tree("[bold yellow]Architecture Graph[/bold yellow]")
-        for name, node in nodes.items():
-            branch = tree.add(f"[bold cyan]{name}[/bold cyan] ({len(node.methods)} methods)")
-            if node.dependencies:
-                deps = branch.add("[dim]Dependencies[/dim]")
-                for d in node.dependencies:
-                    deps.add(f"[blue]{d}[/blue]")
-        console.print(tree)
-    
-    cycles = builder.detect_cycles()
-    if cycles:
-        console.print("\n[bold red]⚠️ Wykryto cykle w zależnościach:[/bold red]")
-        for c in cycles:
-            console.print(f"  {' → '.join(c)}")
-            
-    analyzer = ServiceSimilarityAnalyzer()
-    similarities = analyzer.analyze_directory(path)
-    if similarities:
-        console.print(f"\n[bold yellow]Wykryto {len(similarities)} nakładających się usług:[/bold yellow]")
-        for sim in similarities:
-            console.print(f"  [bold]{sim.service_a}[/bold] ↔ [bold]{sim.service_b}[/bold] (Overlap: [red]{sim.overlap:.2f}[/red])")
+    from .commands.analyze_command import services_command
+    services_command(path, export, console)
+
 
 @analyze_app.command()
 def truth(
@@ -767,38 +423,12 @@ def truth(
     repo: Path = typer.Option(Path("."), help="Ścieżka do repo"),
 ) -> None:
     """[Query] Znajdź 'najprawdziwszą' wersję funkcji w historii git."""
-    from ..analysis.git_truth_analyzer import GitTruthAnalyzer
-    
-    analyzer = GitTruthAnalyzer(repo.resolve())
-    qualities = analyzer.analyze_function_history(file, function)
-    
-    if not qualities:
-        console.print(f"[yellow]Nie znaleziono historii dla funkcji {function} w pliku {file}[/yellow]")
-        return
-        
-    console.print(f"\n[bold green]Historia jakości funkcji {function}:[/bold green]\n")
-    table = Table(show_header=True)
-    table.add_column("Commit", style="cyan")
-    table.add_column("Data", style="dim")
-    table.add_column("Complexity", justify="right")
-    table.add_column("Lines", justify="right")
-    table.add_column("PassRate", justify="right")
-    table.add_column("Score", justify="right", style="bold green")
-    
-    for q in qualities:
-        table.add_row(
-            q.commit_sha[:8],
-            q.timestamp.strftime("%Y-%m-%d"),
-            str(q.complexity),
-            str(q.size_lines),
-            f"{q.test_pass_rate*100:.0f}%",
-            f"{q.score:.1f}"
-        )
-    console.print(table)
+    from .commands.analyze_command import truth_command
+    truth_command(file, function, repo, console)
 
 
 # ──────────────────────────────────────────────
-# refactor commands (Commands)
+# refactor commands
 # ──────────────────────────────────────────────
 
 @refactor_app.command()
@@ -807,54 +437,18 @@ def plan(
     ai: bool = typer.Option(False, "--ai", help="Użyj LLM do podsumowania planu"),
 ) -> None:
     """[Query] Wygeneruj plan refaktoryzacji z opcjonalnym wsparciem AI."""
-    suggestions = _generate_refactor_plan(path)
-    
-    if not suggestions:
-        console.print("[green]✓ System nie znalazł krytycznych problemów wymagających refaktoru.[/green]")
-        return
-        
-    if ai:
-        from ..application.services.llm_service import LLMService
-        llm = LLMService(console)
-        if llm.is_available():
-            with console.status("[bold cyan]AI analizuje plan...[/bold cyan]"):
-                plan_text = "\n".join([f"- {s.title}: {s.description}" for s in suggestions])
-                summary = llm.summarize_refactor_plan(plan_text)
-                console.print(Panel(summary, title="[bold cyan]AI Executive Summary[/bold cyan]", border_style="cyan"))
+    from .commands.refactor_command import plan_command
+    plan_command(path, ai, console)
 
-    console.print(f"\n[bold yellow]Zaproponowane działania ({len(suggestions)}):[/bold yellow]\n")
-    for i, s in enumerate(suggestions, 1):
-        color = "red" if s.impact == "HIGH" else "yellow" if s.impact == "MEDIUM" else "blue"
-        console.print(f"{i}. [bold]{s.title}[/bold] (Impact: [{color}]{s.impact}[/{color}])")
-        console.print(f"   {s.description}")
-        if s.rationale:
-            console.print(f"   [dim]Racja: {s.rationale}[/dim]")
-        if s.files:
-            console.print(f"   Pliki: {', '.join(str(f.name) for f in s.files[:5])}")
-        console.print("")
 
 @refactor_app.command()
 def pr(
     path: Path = typer.Argument(Path("."), help="Ścieżka do projektu"),
 ) -> None:
     """[Query] Wygeneruj profesjonalny opis Pull Requesta (wymaga AI)."""
-    suggestions = _generate_refactor_plan(path)
-    if not suggestions:
-        console.print("[yellow]Brak zmian do opisania.[/yellow]")
-        return
+    from .commands.refactor_command import pr_command
+    pr_command(path, console)
 
-    from ..application.services.llm_service import LLMService
-    llm = LLMService(console)
-    if not llm.is_available():
-        console.print("[red]✗ AI Service niedostępny. Sprawdź .env i OPENROUTER_API_KEY.[/red]")
-        return
-
-    with console.status("[bold cyan]Generowanie opisu PR...[/bold cyan]"):
-        plan_text = "\n".join([f"- {s.title}: {s.description} (Rationale: {s.rationale})" for s in suggestions])
-        description = llm.generate_pr_description(plan_text)
-        
-    console.print("\n[bold green]Gotowy opis Pull Requesta:[/bold green]\n")
-    console.print(Markdown(description))
 
 @refactor_app.command()
 def execute(
@@ -862,133 +456,5 @@ def execute(
     force: bool = typer.Option(False, "--force", help="Wykonaj bez potwierdzenia"),
 ) -> None:
     """[Command] Wykonaj automatycznie plan refaktoryzacji."""
-    from ..refactor.refactor_executor import RefactorExecutor
-    
-    suggestions = _generate_refactor_plan(path)
-    if not suggestions:
-        console.print("[green]Brak działań do wykonania.[/green]")
-        return
-
-    executor = RefactorExecutor(console)
-    for s in suggestions:
-        if not force:
-            confirm = typer.confirm(f"Czy wykonać: {s.title}?")
-            if not confirm: continue
-            
-        success = executor.execute_suggestion(s)
-        if success:
-            console.print(f"[green]✓ Wykonano: {s.title}[/green]")
-        else:
-            console.print(f"[red]✗ Błąd wykonania: {s.title}[/red]")
-
-def _generate_refactor_plan(path: Path):
-    from ..analysis.duplication_engine import DuplicationEngine
-    from ..analysis.service_similarity import ServiceSimilarityAnalyzer
-    from ..analysis.service_graph import ServiceGraphBuilder
-    from ..refactor.recommendation_engine import RecommendationEngine
-    
-    dup_engine = DuplicationEngine()
-    duplicates = dup_engine.scan(path)
-    
-    services_path = path / "rebuild/application/services"
-    sim_analyzer = ServiceSimilarityAnalyzer()
-    similarities = sim_analyzer.analyze_directory(services_path) if services_path.exists() else []
-    
-    graph_builder = ServiceGraphBuilder(services_path.resolve()) if services_path.exists() else None
-    graph = graph_builder.build() if graph_builder else {}
-    cycles = graph_builder.detect_cycles() if graph_builder else []
-    
-    rec_engine = RecommendationEngine()
-    return rec_engine.generate_plan(duplicates, similarities, graph, cycles)
-
-
-# ──────────────────────────────────────────────
-# Helpers
-# ──────────────────────────────────────────────
-
-def _print_report_links(output: Path, port: Optional[int]) -> None:
-    base = f"http://localhost:{port}" if port else str(output.resolve())
-    console.print("")
-    console.print(f"  [bold cyan]Timeline:[/bold cyan]   {base}/index.html")
-    console.print(f"  [bold cyan]Dashboard:[/bold cyan]  {base}/dashboard.html")
-    console.print(f"  [dim]Per-day:     {base}/YYYY-MM-DD/report.html[/dim]")
-
-
-def _serve_reports(output: Path, port: int) -> None:
-    import http.server
-    import socketserver
-    import threading
-    import webbrowser
-    import os
-    import queue
-    from ..application.services.event_service import get_event_service
-
-    os.chdir(output)
-    event_service = get_event_service()
-    event_service.enable()
-
-    class SSEHandler(http.server.SimpleHTTPRequestHandler):
-        def log_message(self, *a):
-            pass  # Suppress log messages
-
-        def do_GET(self):
-            if self.path == "/events":
-                self.send_response(200)
-                self.send_header("Content-Type", "text/event-stream")
-                self.send_header("Cache-Control", "no-cache")
-                self.send_header("Connection", "keep-alive")
-                self.end_headers()
-
-                q = event_service.subscribe()
-                try:
-                    while True:
-                        event = q.get(timeout=30)
-                        self.wfile.write(event.encode())
-                        self.wfile.flush()
-                except queue.Empty:
-                    self.wfile.write(b"data: keepalive\n\n")
-                    self.wfile.flush()
-                except Exception:
-                    pass
-                finally:
-                    event_service.unsubscribe(q)
-            else:
-                super().do_GET()
-
-    handler = SSEHandler
-    handler.log_message = lambda *a: None
-
-    with socketserver.TCPServer(("", port), handler) as httpd:
-        url = f"http://localhost:{port}/index.html"
-        console.print(f"\n[bold green]Serwer HTTP uruchomiony:[/bold green] {url}")
-        console.print(f"  [dim]SSE endpoint:[/dim] http://localhost:{port}/events")
-        console.print("  [dim]Ctrl+C aby zatrzymać[/dim]\n")
-        threading.Timer(0.4, lambda: webbrowser.open(url)).start()
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            console.print("\n[dim]Serwer zatrzymany.[/dim]")
-            event_service.disable()
-
-
-def _print_summary_table(results: list[DayResult]) -> None:
-    table = Table(title="Podsumowanie walk", show_header=True)
-    table.add_column("Dzień", style="bold")
-    table.add_column("Commit")
-    table.add_column("Health", justify="right")
-    table.add_column("OK/Total", justify="right")
-    table.add_column("Deploy")
-    table.add_column("Czas")
-
-    for r in sorted(results, key=lambda x: x.day):
-        color = "green" if r.health_pct >= 80 else "yellow" if r.health_pct >= 50 else "red"
-        table.add_row(
-            str(r.day),
-            r.commit.sha[:8] if r.commit else "—",
-            f"[{color}]{r.health_pct}%[/{color}]",
-            f"{r.ok_count}/{len(r.endpoints)}",
-            "✓" if r.deploy_success else "✗",
-            f"{r.duration_seconds:.2f}s"
-        )
-
-    console.print(table)
+    from .commands.refactor_command import execute_command
+    execute_command(path, force, console)

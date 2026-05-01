@@ -2,7 +2,7 @@
 
 app {
   name: rebuild;
-  version: 0.1.13;
+  version: 0.1.15;
 }
 
 dependencies {
@@ -248,5 +248,5 @@ deploy {
 environment[name="local"] {
   runtime: docker-compose;
   env_file: .env;
-  python_version: >=3.10;
+  python_version: >=3.11;
 }

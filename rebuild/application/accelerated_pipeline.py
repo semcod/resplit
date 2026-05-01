@@ -15,20 +15,15 @@ from ..domain.endpoint import Endpoint, EndpointResult, EndpointStatus
 from ..domain.day_result import DayResult
 from ..domain.events import PipelineEvent
 
-from .services.git_service import GitService
+from .base_pipeline import BasePipeline
 from .services.worktree_manager import WorktreeManager
 from .services.accelerator_deploy import AcceleratorDeployService
 from .services.db_snapshot_manager import DBSnapshotManager
-from .services.scanner_service import ScannerService
 from .services.parallel_test_engine import ParallelTestEngine
 from .services.smart_test_selector import SmartTestSelector
-from .services.screenshot_service import ScreenshotService, ScreenshotConfig
-from .services.reporter_service import ReporterService
-from .services.patcher_service import PatcherService
-from .services.override_service import OverrideService
 
 
-class AcceleratedPipeline:
+class AcceleratedPipeline(BasePipeline):
     """
     Ultra-fast pipeline using:
     - Git worktrees (instant branch switching)
@@ -37,44 +32,36 @@ class AcceleratedPipeline:
     - DB snapshots (instant state restore)
     - Parallel testing (concurrent execution)
     - Smart selection (diff-driven testing)
-    
+
     Typical speedup: 10-50x compared to traditional mode.
     """
-    
+
     def __init__(self, config: WalkConfig, console=None):
-        self.config = config
-        self.console = console
-        self._event_log: List[PipelineEvent] = []
-        
-        # Output directory for this run
+        super().__init__(config, console)
+
+        # Accelerator-specific directories
         self.output_dir = config.output_dir
         self.worktree_dir = self.output_dir / "worktrees"
         self.snapshot_dir = self.output_dir / "snapshots"
-        
-        # Initialize services
-        self.git = GitService(config.repo_path)
+
+        # Accelerator-specific services
         self.worktrees = WorktreeManager(config.repo_path, self.worktree_dir)
         self.deploy = AcceleratorDeployService(config, self.worktrees, console)
         self.db_snapshots = DBSnapshotManager(
             self.snapshot_dir,
             db_container=getattr(config, 'db_container', 'db'),
-            db_type=getattr(config, 'db_type', 'postgres')
+            db_type=getattr(config, 'db_type', 'postgres'),
         )
-        self.scanner = ScannerService(config)
         self.tester = ParallelTestEngine(
             config,
             max_concurrent=getattr(config, 'max_parallel_tests', 10),
-            health_first=True
+            health_first=True,
         )
         self.smart_selector = SmartTestSelector(config.repo_path)
-        self.screenshots = ScreenshotService(ScreenshotConfig(output_dir=config.output_dir))
-        self.reporter = ReporterService()
-        self.patcher = PatcherService()
-        self.overrider = OverrideService()
-        
-        # State tracking
+
+        # Accelerator state (extends base state)
         self._state_file = config.output_dir / "accelerator_state.json"
-        self._processed_shas: Set[str] = self._load_state()
+        self._processed_shas = self._load_state()
         self._baseline_snapshot: Optional[str] = None
         self._previous_commit: Optional[str] = None
         # Patterns that indicate a commit affects the DB schema/data.
@@ -111,15 +98,6 @@ class AcceleratedPipeline:
         # Cache: (from_sha, to_sha) -> diff file list.  Avoids redundant git calls.
         self._diff_cache: Dict[tuple, Optional[List[str]]] = {}
     
-    def _load_state(self) -> Set[str]:
-        """Load processed commit SHAs from state file."""
-        if self._state_file.exists():
-            try:
-                data = json.loads(self._state_file.read_text())
-                return set(data.get("processed_shas", []))
-            except Exception:
-                pass
-        return set()
     
     def _save_state(self):
         """Persist processed SHAs."""
@@ -131,19 +109,6 @@ class AcceleratedPipeline:
         }
         self._state_file.write_text(json.dumps(data, indent=2))
     
-    def _emit(self, event_type: str, **kwargs):
-        """Emit and log pipeline event."""
-        event = PipelineEvent.create(event_type, **kwargs)
-        self._event_log.append(event)
-        log_file = self.output_dir / "history.jsonl"
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        with open(log_file, "a") as f:
-            f.write(event.to_json() + "\n")
-    
-    def log(self, message: str):
-        """Log message to console if available."""
-        if self.console:
-            self.console.print(message)
     
     def run(self) -> List[DayResult]:
         """
