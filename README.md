@@ -3,83 +3,75 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.10-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.5h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.11-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.65-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-3.7h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $1.5000 (10 commits)
-- 👤 **Human dev:** ~$249 (2.5h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $1.6500 (11 commits)
+- 👤 **Human dev:** ~$366 (3.7h @ $100/h, 30min dedup)
 
 Generated on 2026-05-01 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
+
+
 ## Code Evolution Intelligence Engine
 
-![Version](https://img.shields.io/badge/version-0.1.10-blue) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-65%20passing-brightgreen)
+![Version](https://img.shields.io/badge/version-0.1.11-blue) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-65%20passing-brightgreen)
 
 **Historical deployment analysis & Code Intelligence** — walk git history day by day, deploy per commit, test all endpoints, capture screenshots, and **analyze code evolution** to find duplicates, rank quality, and generate refactor plans.
 
 ---
 
-## What it does
-
-1. **Intelligence Layer (NEW)** — Detects structural duplicates, builds service graphs, and ranks code quality across history.
-2. **Decision Engine (NEW)** — Generates actionable refactoring plans (Merge/Extract/Split) with clear rationale.
-3. **Walk** — Iterates through git history day by day (earliest commit per day).
-4. **Deploy** — Starts the service per commit: docker-compose / uvicorn / none.
-5. **Scan** — `deta` (service-level) → OpenAPI (API-level) → Traefik labels fallback.
-6. **Test** — `testql` scenarios (detailed API) or HTTP probe fallback (service-level).
-7. **Screenshot** — Playwright screenshots per endpoint with retry/timeout.
-8. **Restore** — Extract last working endpoint as isolated Docker project.
-9. **Dashboard** — Health% timeline overlaid with quality metrics.
-10. **TUI** — Interactive terminal menu for project exploration and recovery.
+## 📖 Documentation
+- **[Full Usage Guide](docs/usage.md)**: Step-by-step instructions.
+- **[Architecture](docs/architecture.md)**: Detailed layered design.
+- **[Changelog](CHANGELOG.md)**: Latest v0.1.10 features.
 
 ---
 
-## Install
+## What it does
 
-```bash
-pip install rebuild
-
-# with full intelligence suite (recommended)
-pip install "rebuild[full]"
-playwright install chromium
-```
+1. **Intelligence Layer** — Detects structural duplicates (Python/JS/TS), builds service graphs, and ranks code quality across history.
+2. **Decision Engine** — Generates and executes refactoring plans with **AI support**.
+3. **Walk** — Iterates through git history day by day (Incremental support).
+4. **Deploy** — Starts the service per commit (Isolated Docker environments).
+5. **Scan & Test** — Automated endpoint discovery and TestQL execution.
+6. **Visualization** — D3.js interactive graphs and health dashboards.
 
 ---
 
 ## Quick start
 
-### 🚀 Analysis & Intelligence (New in v0.1.10)
+### 🚀 Bootstrapping
 
 ```bash
-# Find structural and semantic duplicates
+# Initialize project config and .env
+rebuild init
+```
+
+### 🧠 Intelligence & Analysis
+
+```bash
+# Find duplicates across Python and JS/TS
 rebuild analyze duplicates .
 
-# Visualize service architecture graph and detect cycles
-rebuild analyze services
+# Export interactive architecture graph
+rebuild analyze services --export
 
-# Find the 'best' historical version of a function
-rebuild analyze truth rebuild/application/pipeline.py run_day
-
-# Generate a prioritized refactoring plan
-rebuild refactor plan .
+# Generate AI-powered refactor plan and PR description
+rebuild refactor plan . --ai
+rebuild refactor pr .
 ```
 
 ### 🏃 Execution Pipeline
 
 ```bash
-# Interactive TUI
+# Analyze last 30 days history (Incremental)
+rebuild walk . --days 30
+
+# Launch TUI
 rebuild tui
-
-# Dry-run walk: scan last 30 days without deploy
-rebuild walk . --days 30 --dry-run
-
-# Restore last working version of an endpoint
-rebuild restore /api/health .
-
-# Generate health vs quality dashboard
-rebuild dashboard --repo .
 ```
 
 ---
@@ -88,41 +80,9 @@ rebuild dashboard --repo .
 
 Explore ready-to-run scenarios in [`examples/`](examples/):
 
-- **[01-dry-run-walk](examples/01-dry-run-walk/)**: Standard walk without deployment + intelligence analysis.
-- **[02-docker-compose-project](examples/02-docker-compose-project/)**: Full pipeline with **Docker isolation**, screenshots, and architectural refactor plan.
-- **[03-restore-endpoint](examples/03-restore-endpoint/)**: Discovering historical "truth" and extracting a working endpoint as a standalone project.
-
-To run any example:
-```bash
-cd examples/01-dry-run-walk
-./run.sh ../.. 30
-```
-
----
-
-## Architecture
-
-Rebuild follows a strict layered architecture:
-`Interfaces → Application (Pipeline/Services) → Intelligence (Analysis/Refactor) → Domain → Infrastructure`.
-
-Detailed documentation: [docs/architecture.md](docs/architecture.md)
-
-```
-rebuild/
-├── analysis/           # Intelligence layer: duplication, truth ranking, service graph
-├── application/        # Application logic: Pipeline and injected Services
-├── domain/             # Pure data models (Endpoint, DayResult, CommitInfo)
-├── infrastructure/     # External adapters (Git, HTTP, Playwright)
-├── interfaces/         # Entrypoints: CLI, TUI, Dashboard
-└── refactor/           # Decision engine: Refactor recommendation engine
-```
-
----
-
-## Changelog & Roadmap
-
-- See [CHANGELOG.md](CHANGELOG.md) for the latest updates.
-- See [TODO.md](TODO.md) for the future roadmap (Automated Refactoring, LLM assistance).
+- **[01-dry-run-walk](examples/01-dry-run-walk/)**: Standard walk + intelligence.
+- **[02-docker-compose-project](examples/02-docker-compose-project/)**: Full pipeline with **Docker isolation**.
+- **[03-restore-endpoint](examples/03-restore-endpoint/)**: Discovering "truth" and extracting endpoints.
 
 ---
 

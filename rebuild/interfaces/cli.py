@@ -12,6 +12,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.tree import Tree
 from rich.panel import Panel
+from rich.markdown import Markdown
 
 from .. import __version__
 from ..domain.models import DeployMethod, WalkConfig
@@ -40,25 +41,29 @@ console = Console()
 @app.command()
 def init(
     path: Path = typer.Argument(Path("."), help="Katalog w którym zainicjować projekt"),
-    force: bool = typer.Option(False, "--force", help="Nadpisz istniejący rebuild.yaml"),
+    force: bool = typer.Option(False, "--force", help="Nadpisz istniejące pliki"),
 ) -> None:
     """Zainicjuj nowy projekt rebuild i wygeneruj domyślną konfigurację."""
+    # 1. rebuild.yaml
     config_file = path / "rebuild.yaml"
-    if config_file.exists() and not force:
-        console.print(f"[yellow]⚠ {config_file} już istnieje. Użyj --force aby nadpisać.[/yellow]")
-        return
+    if not config_file.exists() or force:
+        template_path = Path(__file__).parent.parent / "infrastructure" / "config_template.yaml"
+        config_content = template_path.read_text() if template_path.exists() else "project:\n  name: 'service'\n  repo: '.'"
+        config_file.write_text(config_content)
+        console.print(f"[green]✓ Wygenerowano {config_file}[/green]")
 
-    template_path = Path(__file__).parent.parent / "infrastructure" / "config_template.yaml"
-    if not template_path.exists():
-        # Fallback if template missing
-        config_content = "project:\n  name: 'service'\n  repo: '.'"
-    else:
-        config_content = template_path.read_text()
+    # 2. .env template
+    env_file = path / ".env"
+    if not env_file.exists() or force:
+        env_content = """# rebuild AI Configuration
+OPENROUTER_API_KEY=
+# Model (default: openrouter/qwen/qwen3-coder-next)
+LLM_MODEL=openrouter/qwen/qwen3-coder-next
+"""
+        env_file.write_text(env_content)
+        console.print(f"[green]✓ Wygenerowano {env_file}[/green]")
 
-    config_file.write_text(config_content)
-    console.print(f"[green]✓ Zainicjowano projekt w {path}[/green]")
-    console.print(f"  Konfiguracja: {config_file}")
-    console.print("  Edytuj plik aby dopasować workflow i metody deploy.")
+    console.print(f"\n[bold green]✓ Zainicjowano projekt w {path}[/bold green]")
 
 
 @app.command()
@@ -80,12 +85,10 @@ def walk(
         console.print(f"[red]✗ {repo} nie jest repozytorium git[/red]")
         raise typer.Exit(1)
 
-    # Auto-init if config missing
     if not (repo / "rebuild.yaml").exists():
         console.print("[dim]rebuild.yaml nie istnieje. Generowanie domyślnej konfiguracji...[/dim]")
         init(repo)
 
-    # Wykrywanie metody deploy
     deploy_svc = DeployService(WalkConfig(repo_path=repo))
     if deploy == "auto":
         method = deploy_svc.detect_deploy_method(repo) if not dry_run else DeployMethod.NONE
@@ -218,23 +221,31 @@ def duplicates(
 @analyze_app.command()
 def services(
     path: Path = typer.Argument(Path("rebuild/application/services"), help="Katalog z serwisami"),
+    export: bool = typer.Option(False, "--export", help="Wygeneruj interaktywny graf architecture.html"),
 ) -> None:
     """[Query] Wykryj nakładające się odpowiedzialności i powiązania między serwisami."""
     from ..analysis.service_graph import ServiceGraphBuilder
     from ..analysis.service_similarity import ServiceSimilarityAnalyzer
+    from ..analysis.graph_exporter import GraphExporter
     
     console.print("\n[bold cyan]Budowanie grafu usług...[/bold cyan]")
     builder = ServiceGraphBuilder(path.resolve())
     nodes = builder.build()
     
-    tree = Tree("[bold yellow]Architecture Graph[/bold yellow]")
-    for name, node in nodes.items():
-        branch = tree.add(f"[bold cyan]{name}[/bold cyan] ({len(node.methods)} methods)")
-        if node.dependencies:
-            deps = branch.add("[dim]Dependencies[/dim]")
-            for d in node.dependencies:
-                deps.add(f"[blue]{d}[/blue]")
-    console.print(tree)
+    if export:
+        exporter = GraphExporter(nodes)
+        out = Path("architecture.html")
+        exporter.export_html(out)
+        console.print(f"[green]✓ Wyeksportowano interaktywny graf do: {out.resolve()}[/green]")
+    else:
+        tree = Tree("[bold yellow]Architecture Graph[/bold yellow]")
+        for name, node in nodes.items():
+            branch = tree.add(f"[bold cyan]{name}[/bold cyan] ({len(node.methods)} methods)")
+            if node.dependencies:
+                deps = branch.add("[dim]Dependencies[/dim]")
+                for d in node.dependencies:
+                    deps.add(f"[blue]{d}[/blue]")
+        console.print(tree)
     
     cycles = builder.detect_cycles()
     if cycles:
@@ -293,14 +304,24 @@ def truth(
 @refactor_app.command()
 def plan(
     path: Path = typer.Argument(Path("."), help="Ścieżka do projektu"),
+    ai: bool = typer.Option(False, "--ai", help="Użyj LLM do podsumowania planu"),
 ) -> None:
-    """[Query] Wygeneruj plan refaktoryzacji."""
+    """[Query] Wygeneruj plan refaktoryzacji z opcjonalnym wsparciem AI."""
     suggestions = _generate_refactor_plan(path)
     
     if not suggestions:
         console.print("[green]✓ System nie znalazł krytycznych problemów wymagających refaktoru.[/green]")
         return
         
+    if ai:
+        from ..application.services.llm_service import LLMService
+        llm = LLMService(console)
+        if llm.is_available():
+            with console.status("[bold cyan]AI analizuje plan...[/bold cyan]"):
+                plan_text = "\n".join([f"- {s.title}: {s.description}" for s in suggestions])
+                summary = llm.summarize_refactor_plan(plan_text)
+                console.print(Panel(summary, title="[bold cyan]AI Executive Summary[/bold cyan]", border_style="cyan"))
+
     console.print(f"\n[bold yellow]Zaproponowane działania ({len(suggestions)}):[/bold yellow]\n")
     for i, s in enumerate(suggestions, 1):
         color = "red" if s.impact == "HIGH" else "yellow" if s.impact == "MEDIUM" else "blue"
@@ -311,6 +332,29 @@ def plan(
         if s.files:
             console.print(f"   Pliki: {', '.join(str(f.name) for f in s.files[:5])}")
         console.print("")
+
+@refactor_app.command()
+def pr(
+    path: Path = typer.Argument(Path("."), help="Ścieżka do projektu"),
+) -> None:
+    """[Query] Wygeneruj profesjonalny opis Pull Requesta (wymaga AI)."""
+    suggestions = _generate_refactor_plan(path)
+    if not suggestions:
+        console.print("[yellow]Brak zmian do opisania.[/yellow]")
+        return
+
+    from ..application.services.llm_service import LLMService
+    llm = LLMService(console)
+    if not llm.is_available():
+        console.print("[red]✗ AI Service niedostępny. Sprawdź .env i OPENROUTER_API_KEY.[/red]")
+        return
+
+    with console.status("[bold cyan]Generowanie opisu PR...[/bold cyan]"):
+        plan_text = "\n".join([f"- {s.title}: {s.description} (Rationale: {s.rationale})" for s in suggestions])
+        description = llm.generate_pr_description(plan_text)
+        
+    console.print("\n[bold green]Gotowy opis Pull Requesta:[/bold green]\n")
+    console.print(Markdown(description))
 
 @refactor_app.command()
 def execute(
@@ -343,7 +387,6 @@ def _generate_refactor_plan(path: Path):
     from ..analysis.service_graph import ServiceGraphBuilder
     from ..refactor.recommendation_engine import RecommendationEngine
     
-    # 1. Gather analysis (Queries)
     dup_engine = DuplicationEngine()
     duplicates = dup_engine.scan(path)
     
@@ -355,7 +398,6 @@ def _generate_refactor_plan(path: Path):
     graph = graph_builder.build() if graph_builder else {}
     cycles = graph_builder.detect_cycles() if graph_builder else []
     
-    # 2. Generate recommendations
     rec_engine = RecommendationEngine()
     return rec_engine.generate_plan(duplicates, similarities, graph, cycles)
 

@@ -1,0 +1,8 @@
+{"event_type": "PIPELINE_STARTED", "timestamp": "2026-05-01T14:03:42.762634", "data": {"days": 1, "repo": "/home/tom/github/semcod/resplit"}}
+{"event_type": "DEPLOY_STARTED", "timestamp": "2026-05-01T14:03:42.763846", "data": {"method": "none"}}
+{"event_type": "DEPLOY_FINISHED", "timestamp": "2026-05-01T14:03:42.763977", "data": {"success": true}}
+{"event_type": "SCAN_FINISHED", "timestamp": "2026-05-01T14:03:42.785589", "data": {"endpoint_count": 1}}
+{"event_type": "TEST_FINISHED", "timestamp": "2026-05-01T14:03:49.790221", "data": {"ok": 0}}
+{"event_type": "SCREENSHOTS_FINISHED", "timestamp": "2026-05-01T14:03:49.791792", "data": {}}
+{"event_type": "DAY_FINISHED", "timestamp": "2026-05-01T14:03:49.792217", "data": {"day": "2026-05-01", "health": 0.0}}
+{"event_type": "PIPELINE_FINISHED", "timestamp": "2026-05-01T14:03:49.792285", "data": {"total_days": 1}}

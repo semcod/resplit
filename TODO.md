@@ -1,22 +1,14 @@
 # TODO: rebuild Roadmap
 
-Future improvements and features for the Code Evolution Intelligence Engine.
+## Phase 11: Deep Semantic Analysis
+- [ ] **Semantic Embeddings**: Integrate `sentence-transformers` for conceptual similarity detection in `duplication_engine`.
+- [ ] **Vector Search**: Store code fragments in a vector database for rapid semantic lookup across large repos.
 
-## Phase 5: Automated Refactoring & AI Assistance
-- [x] **Automated Patching**: Implement logic to automatically execute recommended refactors (Initial RefactorExecutor).
-- [ ] **LLM Integration**: Use LLMs to generate "Refactor PRs" with high-level summaries.
-- [ ] **Semantic Embeddings**: Integrate `sentence-transformers` for true semantic similarity detection in `duplication_engine`.
+## Phase 12: Real-time & Cross-Repo
+- [ ] **Multi-Repo Support**: Analyze dependencies and clones across multiple repositories.
+- [ ] **Real-time Monitoring**: Show live analysis results and event logs in the dashboard.
+- [ ] **Auto-PR Agent**: Automatically open PRs on GitHub/GitLab using generated AI summaries.
 
-## Phase 6: Infrastructure Hardening
-- [x] **Adapter Pattern**: Fully isolate `subprocess` and `httpx` calls into `infrastructure/` adapters.
-- [ ] **Multi-Repo Support**: Enable analysis across multiple repositories for cross-project duplication detection.
-- [ ] **Incremental Walking**: Optimize `rebuild walk` to only analyze changes since the last run.
-
-## Phase 7: UI/UX Evolution
-- [ ] **Graph Visualization**: Export `service_graph` to interactive HTML/D3.js visualizations.
-- [ ] **TUI Refactor**: Extract domain logic from `interfaces/tui.py` into shared services.
-- [ ] **Real-time Monitoring**: Show live analysis results in the dashboard during `rebuild walk`.
-
-## Refinement
-- [ ] **Better CC Heuristics**: Fine-tune the `TruthRanker` score weights based on larger real-world data.
-- [x] **Language Support**: Expand AST/Regex analysis beyond Python (Added JS/TS support).
+## Phase 13: UI/UX Refinement
+- [ ] **D3.js Enhancements**: Add "Code Evolution" playback to the graph (watch dependencies change over time).
+- [ ] **TUI Refactor**: Finalize extraction of domain logic from `interfaces/tui.py`.

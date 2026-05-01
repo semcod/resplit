@@ -26,8 +26,10 @@ def _config(tmp_path: Path, dry_run: bool = True) -> WalkConfig:
 
 
 def _commit(day: date = date(2024, 3, 15)) -> CommitInfo:
+    # Generate unique SHA based on day to avoid duplicate SHA issues in tests
+    day_suffix = day.strftime("%Y%m%d")
     return CommitInfo(
-        sha="abc123def456abc123def456abc123def456abc1",
+        sha=f"abc123def456abc123def456abc123def{day_suffix}",
         message="Test commit",
         author="Alice",
         timestamp=datetime(2024, 3, 15, 10, 0),

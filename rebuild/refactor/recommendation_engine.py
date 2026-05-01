@@ -1,7 +1,7 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional, Dict
+from typing import List, Dict, Optional
 
 from ..analysis.duplication_engine import DuplicateGroup
 from ..analysis.service_similarity import ServiceSimilarity
@@ -9,17 +9,17 @@ from ..analysis.service_graph import ServiceNode
 
 @dataclass
 class RefactorSuggestion:
-    type: str  # "MERGE_DUPLICATES" | "EXTRACT_SERVICE" | "DECOUPLE_CYCLES" | "SPLIT_GOD_SERVICE"
     title: str
     description: str
-    impact: str  # "HIGH" | "MEDIUM" | "LOW"
-    files: List[Path]
-    rationale: str = ""
+    impact: str  # HIGH, MEDIUM, LOW
+    type: str    # MERGE_DUPLICATES, SPLIT_SERVICE, EXTRACT_INTERFACE, ADAPTER_PATTERN
+    files: List[Path] = field(default_factory=list)
+    rationale: Optional[str] = None
 
 class RecommendationEngine:
     """
-    Generates actionable refactoring plans based on analysis results.
-    Integrates architectural insights from the Service Graph.
+    Synthesizes analysis data into prioritized refactor suggestions.
+    Recognizes architectural patterns (Adapter, Interface, etc.).
     """
     def generate_plan(
         self, 
@@ -30,64 +30,53 @@ class RecommendationEngine:
     ) -> List[RefactorSuggestion]:
         suggestions = []
         
-        # 1. Duplicates suggestions (Semantic & Structural)
-        for i, group in enumerate(duplicates):
-            files = list(set(f.file for f in group.fragments))
-            names = list(set(f.name or "block" for f in group.fragments))
-            
-            if group.similarity >= 1.0:
+        # 1. Duplication Recommendations
+        for group in duplicates:
+            if group.similarity >= 0.9:
                 suggestions.append(RefactorSuggestion(
-                    type="MERGE_DUPLICATES",
-                    title=f"Merge exact duplicates: {', '.join(names[:3])}",
-                    description=f"Found {len(group.fragments)} structurally identical blocks. {group.reason}.",
+                    title=f"Merge Duplicates: {group.fragments[0].name or 'block'}",
+                    description=f"Found {len(group.fragments)} exact or near-exact duplicates.",
                     impact="HIGH" if len(group.fragments) > 2 else "MEDIUM",
-                    files=files,
-                    rationale="Direct structural identity across multiple locations increases maintenance cost."
-                ))
-            elif group.similarity >= 0.8:
-                suggestions.append(RefactorSuggestion(
                     type="MERGE_DUPLICATES",
-                    title=f"Unify similar signatures: {', '.join(names[:3])}",
-                    description=f"Found {len(group.fragments)} functions with identical parameter patterns. {group.reason}.",
-                    impact="MEDIUM",
-                    files=files,
-                    rationale="Signature overlap suggests a missing interface or shared base class."
+                    files=[f.file for f in group.fragments],
+                    rationale=f"Structural similarity: {group.similarity:.2f}. Reason: {group.reason}"
                 ))
 
-        # 2. Service Graph Insights: Cycles
-        if cycles:
-            for cycle in cycles:
-                suggestions.append(RefactorSuggestion(
-                    type="DECOUPLE_CYCLES",
-                    title=f"Break dependency cycle: {' -> '.join(cycle)}",
-                    description="Circular dependencies between services make the system rigid and hard to test.",
-                    impact="HIGH",
-                    files=[graph[name].path for name in cycle if name in graph],
-                    rationale="Cycles violate the Directed Acyclic Graph (DAG) principle of clean architecture."
-                ))
-
-        # 3. Service Graph Insights: God Services
-        for name, node in graph.items():
-            if len(node.methods) > 15:
-                suggestions.append(RefactorSuggestion(
-                    type="SPLIT_GOD_SERVICE",
-                    title=f"Refactor God Service: {name}",
-                    description=f"Service has {len(node.methods)} methods. This suggests too many responsibilities.",
-                    impact="MEDIUM",
-                    files=[node.path],
-                    rationale="Violates Single Responsibility Principle (SRP). Consider splitting into smaller services."
-                ))
-
-        # 4. Service Similarity Analysis
+        # 2. Service Similarity Recommendations
         for sim in similarities:
-            if sim.overlap > 0.6:
+            if sim.overlap > 0.4:
                 suggestions.append(RefactorSuggestion(
-                    type="EXTRACT_SERVICE",
-                    title=f"Extract shared logic: {sim.service_a} & {sim.service_b}",
-                    description=f"Services share {len(sim.common_methods)} method names: {', '.join(sim.common_methods)}.",
-                    impact="HIGH" if sim.overlap > 0.8 else "MEDIUM",
-                    files=[graph[sim.service_a].path, graph[sim.service_b].path] if sim.service_a in graph and sim.service_b in graph else [],
-                    rationale=f"Overlap of {sim.overlap*100:.0f}% suggests these services should be merged or share a common utility."
+                    title=f"Consolidate Services: {sim.service_a} & {sim.service_b}",
+                    description="These services share significant structural logic.",
+                    impact="HIGH" if sim.overlap > 0.7 else "MEDIUM",
+                    type="MERGE_SERVICES",
+                    files=[Path(sim.service_a), Path(sim.service_b)],
+                    rationale=f"Method overlap: {sim.overlap:.2f}"
                 ))
-                
-        return suggestions
+
+        # 3. Architectural Pattern: Adapter Pattern Suggestion
+        for name, node in graph.items():
+            # If a service depends on many infrastructure-like names
+            infra_deps = [d for d in node.dependencies if any(x in d.lower() for x in ["git", "http", "docker", "subprocess"])]
+            if len(infra_deps) >= 2:
+                suggestions.append(RefactorSuggestion(
+                    title=f"Apply Adapter Pattern to {name.split('.')[-1]}",
+                    description="Service depends directly on multiple infrastructure components.",
+                    impact="MEDIUM",
+                    type="ADAPTER_PATTERN",
+                    files=[Path(name.replace(".", "/") + ".py")],
+                    rationale=f"Direct dependencies on: {', '.join(infra_deps)}. This hinders mockability."
+                ))
+
+        # 4. Architectural Pattern: Interface Extraction for Cycles
+        for cycle in cycles:
+            suggestions.append(RefactorSuggestion(
+                title=f"Break Circular Dependency: {' -> '.join(cycle)}",
+                description="Found an architectural cycle between these services.",
+                impact="HIGH",
+                type="EXTRACT_INTERFACE",
+                files=[Path(c.replace(".", "/") + ".py") for c in cycle],
+                rationale="Cycles prevent modularity and lead to fragile builds."
+            ))
+
+        return sorted(suggestions, key=lambda x: x.impact, reverse=True)
