@@ -23,8 +23,17 @@ class HttpAdapter:
                 time.sleep(2 ** attempt) # Exponential backoff
         raise last_exc or Exception(f"Failed to GET {url}")
 
-    def post(self, url: str, json: Optional[Dict[str, Any]] = None) -> httpx.Response:
-        return self.client.post(url, json=json)
+    def post(self, url: str, json: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, str]] = None) -> httpx.Response:
+        return self.client.post(url, json=json, headers=headers)
+
+    def put(self, url: str, json: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, str]] = None) -> httpx.Response:
+        return self.client.put(url, json=json, headers=headers)
+
+    def patch(self, url: str, json: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, str]] = None) -> httpx.Response:
+        return self.client.patch(url, json=json, headers=headers)
+
+    def delete(self, url: str, headers: Optional[Dict[str, str]] = None) -> httpx.Response:
+        return self.client.delete(url, headers=headers)
         
     def close(self):
         self.client.close()

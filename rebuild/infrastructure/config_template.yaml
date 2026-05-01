@@ -28,6 +28,10 @@ deploy:
   health_url: http://localhost:8003/api/health
   health_timeout: 60
   health_interval: 2
+  health_verbose: false           # Log last health response/error on timeout
+  retry_attempts: 1              # Deploy/reload retries with backoff
+  retry_backoff_seconds: 2.0
+  retry_backoff_multiplier: 2.0
 
 # 🔍 Scanning & Testing
 # ------------------------------------------------------------------------------
@@ -39,6 +43,15 @@ testql:
   scenarios_dir: testql-scenarios/
   base_url: http://localhost:8003
   timeout: 10
+
+# Optional test payloads for mutation endpoints.
+# Key formats supported:
+# - "POST /api/items"
+# - "/api/items"
+test_bodies:
+  "POST /api/items":
+    name: demo-item
+    enabled: true
 
 # ⚡ Accelerator Mode (10x Speed)
 # ------------------------------------------------------------------------------

@@ -18,6 +18,7 @@ from .services.scanner_service import ScannerService
 from .services.test_service import TestService
 from .services.screenshot_service import ScreenshotService, ScreenshotConfig
 from .services.reporter_service import ReporterService
+from .services.patcher_service import PatcherService
 
 class Pipeline:
     """
@@ -36,6 +37,7 @@ class Pipeline:
         self.tester = TestService(config)
         self.screenshots = ScreenshotService(ScreenshotConfig(output_dir=config.output_dir))
         self.reporter = ReporterService()
+        self.patcher = PatcherService()
         
         # Load incremental state
         self._state_file = config.output_dir / "walk_state.json"
@@ -78,8 +80,17 @@ class Pipeline:
         
         # Clone repo into output_dir/repo/ so original is never modified
         if not self.config.dry_run:
-            self.log("[dim]Klonowanie repo do .rebuild/repo/ ...[/dim]")
-            self._walk_git = self.git.clone_for_walk(self.config.output_dir)
+            if self.config.accelerator:
+                self.log("[bold cyan]⚡ Accelerator Mode: Synchronizowanie stanu aktualnego (node_modules)...[/bold cyan]")
+                clone_path = self.config.output_dir / "repo"
+                self.git.sync_current_state(clone_path)
+                self._walk_git = GitService(clone_path)
+                patched = self.patcher.execute(clone_path)
+                if patched:
+                    self.log(f"  [dim]Spatchowano {patched} plików Dockerfile.[/dim]")
+            else:
+                self.log("[dim]Klonowanie repo do .rebuild/repo/ ...[/dim]")
+                self._walk_git = self.git.clone_for_walk(self.config.output_dir)
         else:
             self._walk_git = self.git
 
@@ -122,12 +133,18 @@ class Pipeline:
         )
 
         walk_git = getattr(self, "_walk_git", self.git)
+        manual_patch_dir = self.config.output_dir / "patch"
 
         try:
             # 1. Checkout in clone (original repo untouched)
             if not self.config.dry_run:
                 walk_git.checkout(commit.sha)
                 self._emit("COMMIT_CHECKOUT", sha=commit.sha, day=str(day))
+
+                overrides = self.patcher.apply_manual_overrides(manual_patch_dir, walk_git.repo_path)
+                if overrides:
+                    self.log(f"  [dim]Manual override: applied {overrides} file(s) from {manual_patch_dir}[/dim]")
+                    self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(manual_patch_dir))
 
             # Clone path for static file scanning; original path for docker
             scan_repo = walk_git.repo_path

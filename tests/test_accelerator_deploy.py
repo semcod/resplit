@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
+from types import SimpleNamespace
 
 import yaml
 
@@ -25,7 +26,7 @@ def test_switch_commit_syncs_code_when_live_bind_swap_is_disabled(tmp_path):
     svc = AcceleratorDeployService(_config(tmp_path), worktrees)
     svc._sync_code_to_container = MagicMock(return_value=True)
     svc._update_bind_mount = MagicMock(return_value=True)
-    svc._wait_healthy = MagicMock(return_value=True)
+    svc.wait_healthy = MagicMock(return_value=True)
     svc._trigger_reload = MagicMock()
     svc._verify_runtime_commit = MagicMock(return_value=True)
 
@@ -35,6 +36,7 @@ def test_switch_commit_syncs_code_when_live_bind_swap_is_disabled(tmp_path):
     svc._update_bind_mount.assert_not_called()
     svc._sync_code_to_container.assert_called_once_with("backend", worktree_path)
     svc._trigger_reload.assert_called_once_with("backend")
+    svc.wait_healthy.assert_called_once_with(timeout=5.0, interval=1.0)
     svc._verify_runtime_commit.assert_called_once_with("backend", "deadbeefcafebabe")
     assert svc._current_sha == "deadbeefcafebabe"
 
@@ -46,7 +48,7 @@ def test_switch_commit_sets_current_sha_before_triggering_reload(tmp_path):
 
     svc = AcceleratorDeployService(_config(tmp_path), worktrees)
     svc._sync_code_to_container = MagicMock(return_value=True)
-    svc._wait_healthy = MagicMock(return_value=True)
+    svc.wait_healthy = MagicMock(return_value=True)
     svc._verify_runtime_commit = MagicMock(return_value=True)
 
     seen = {}
@@ -60,6 +62,7 @@ def test_switch_commit_sets_current_sha_before_triggering_reload(tmp_path):
     result = svc.switch_commit("feedface12345678", tmp_path)
 
     assert result is True
+    svc.wait_healthy.assert_called_once_with(timeout=5.0, interval=1.0)
     svc._verify_runtime_commit.assert_called_once_with("backend", "feedface12345678")
     assert seen == {"service": "backend", "sha": "feedface12345678"}
 
@@ -123,10 +126,103 @@ def test_accelerated_compose_up_uses_runtime_compose_override(tmp_path):
     svc = AcceleratorDeployService(_config(tmp_path), worktrees)
     svc.prepare_runtime(tmp_path, code_path)
     svc.shell.run = MagicMock(return_value=MagicMock(returncode=0, stderr=""))
-    svc._wait_healthy = MagicMock(return_value=True)
+    svc.wait_healthy = MagicMock(return_value=True)
 
     result = svc.start(tmp_path)
 
     assert result is True
     command = svc.shell.run.call_args.args[0]
     assert str(svc._runtime_compose_file) in command
+
+
+def test_switch_commit_uses_short_health_gate_even_with_long_config_timeout(tmp_path):
+    worktrees = MagicMock()
+    worktree_path = tmp_path / "worktrees" / "wt_beaded"
+    worktrees.get_or_create.return_value = MagicMock(path=worktree_path)
+
+    config = _config(tmp_path)
+    config.health_timeout = 30
+    config.health_interval = 3
+
+    svc = AcceleratorDeployService(config, worktrees)
+    svc._sync_code_to_container = MagicMock(return_value=True)
+    svc.wait_healthy = MagicMock(return_value=True)
+    svc._trigger_reload = MagicMock()
+    svc._verify_runtime_commit = MagicMock(return_value=True)
+
+    result = svc.switch_commit("beaded0011223344", tmp_path)
+
+    assert result is True
+    svc.wait_healthy.assert_called_once_with(timeout=5.0, interval=1.0)
+
+
+def test_switch_commit_skips_short_health_probe_when_recent_success_is_cached(tmp_path):
+    worktrees = MagicMock()
+    worktree_path = tmp_path / "worktrees" / "wt_c001d00d"
+    worktrees.get_or_create.return_value = MagicMock(path=worktree_path)
+
+    svc = AcceleratorDeployService(_config(tmp_path), worktrees)
+    svc._sync_code_to_container = MagicMock(return_value=True)
+    svc.wait_healthy = MagicMock(return_value=True)
+    svc._trigger_reload = MagicMock()
+    svc._verify_runtime_commit = MagicMock(return_value=True)
+    svc._last_health_success_at = 100.0
+
+    with patch("rebuild.application.services.accelerator_deploy.time.monotonic", return_value=101.0):
+        result = svc.switch_commit("c001d00d12345678", tmp_path)
+
+    assert result is True
+    svc.wait_healthy.assert_not_called()
+    svc._verify_runtime_commit.assert_called_once_with("backend", "c001d00d12345678")
+
+
+def test_switch_commit_rechecks_health_when_cache_is_stale(tmp_path):
+    worktrees = MagicMock()
+    worktree_path = tmp_path / "worktrees" / "wt_fadedcab"
+    worktrees.get_or_create.return_value = MagicMock(path=worktree_path)
+
+    svc = AcceleratorDeployService(_config(tmp_path), worktrees)
+    svc._sync_code_to_container = MagicMock(return_value=True)
+    svc.wait_healthy = MagicMock(return_value=True)
+    svc._trigger_reload = MagicMock()
+    svc._verify_runtime_commit = MagicMock(return_value=True)
+    svc._last_health_success_at = 100.0
+
+    with patch("rebuild.application.services.accelerator_deploy.time.monotonic", side_effect=[103.5, 103.5]):
+        result = svc.switch_commit("fadedcab12345678", tmp_path)
+
+    assert result is True
+    svc.wait_healthy.assert_called_once_with(timeout=5.0, interval=1.0)
+
+
+def test_get_container_name_reuses_cached_container_lookup(tmp_path):
+    worktrees = MagicMock()
+    svc = AcceleratorDeployService(_config(tmp_path), worktrees)
+    svc.shell.run = MagicMock(return_value=SimpleNamespace(returncode=0, stdout="running", stderr=""))
+
+    first = svc._get_container_name("backend")
+    second = svc._get_container_name("backend")
+
+    assert first == "backend"
+    assert second == "backend"
+    svc.shell.run.assert_called_once_with(["docker", "inspect", "-f", "{{.State.Status}}", "backend"])
+
+
+def test_get_container_name_caches_compose_ps_fallback_result(tmp_path):
+    worktrees = MagicMock()
+    svc = AcceleratorDeployService(_config(tmp_path), worktrees)
+    svc.shell.run = MagicMock(
+        side_effect=[
+            SimpleNamespace(returncode=1, stdout="", stderr="missing"),
+            SimpleNamespace(returncode=1, stdout="", stderr="missing"),
+            SimpleNamespace(returncode=1, stdout="", stderr="missing"),
+            SimpleNamespace(returncode=0, stdout="1234567890abcdef\n", stderr=""),
+        ]
+    )
+
+    first = svc._get_container_name("backend")
+    second = svc._get_container_name("backend")
+
+    assert first == "1234567890ab"
+    assert second == "1234567890ab"
+    assert svc.shell.run.call_count == 4

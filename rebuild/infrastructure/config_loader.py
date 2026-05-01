@@ -50,6 +50,16 @@ class ConfigLoader:
                     config.health_url = d["health_url"]
                 if "health_timeout" in d:
                     config.health_timeout = int(d["health_timeout"])
+                if "health_interval" in d:
+                    config.health_interval = int(d["health_interval"])
+                if "health_verbose" in d:
+                    config.health_verbose = bool(d["health_verbose"])
+                if "retry_attempts" in d:
+                    config.deploy_retry_attempts = int(d["retry_attempts"])
+                if "retry_backoff_seconds" in d:
+                    config.deploy_retry_backoff_seconds = float(d["retry_backoff_seconds"])
+                if "retry_backoff_multiplier" in d:
+                    config.deploy_retry_backoff_multiplier = float(d["retry_backoff_multiplier"])
             else:
                 config.deploy_method = DeployMethod(d)
         if "health_url" in project:
@@ -72,6 +82,12 @@ class ConfigLoader:
             config.auth.update(yaml_data["auth"])
         elif "auth" in project:
             config.auth.update(project["auth"])
+
+        # Per-endpoint request bodies
+        if "test_bodies" in yaml_data and isinstance(yaml_data["test_bodies"], dict):
+            config.test_bodies.update(yaml_data["test_bodies"])
+        elif "test_bodies" in project and isinstance(project["test_bodies"], dict):
+            config.test_bodies.update(project["test_bodies"])
             
         # Replay
         if "replay" in project:

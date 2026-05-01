@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any, Dict
 
 class EndpointStatus(str, Enum):
     OK = "ok"
@@ -19,6 +19,7 @@ class Endpoint:
     service: str = ""     # nazwa usługi z deta scan
     description: str = ""
     template_path: Optional[str] = None # Oryginalna ścieżka z {param}
+    body: Optional[Dict[str, Any]] = None
 
     @property
     def url(self) -> str:

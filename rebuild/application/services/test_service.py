@@ -33,12 +33,28 @@ class TestService(Service[List[Endpoint], List[EndpointResult]]):
 
         try:
             headers = self.config.auth
-            resp = self.http.get(ep.url, headers=headers)
+            method = (ep.method or "GET").upper()
+            body = ep.body if isinstance(ep.body, dict) else None
+
+            if method == "GET":
+                resp = self.http.get(ep.url, headers=headers)
+            elif method == "POST":
+                resp = self.http.post(ep.url, json=body, headers=headers)
+            elif method == "PUT":
+                resp = self.http.put(ep.url, json=body, headers=headers)
+            elif method == "PATCH":
+                resp = self.http.patch(ep.url, json=body, headers=headers)
+            elif method == "DELETE":
+                resp = self.http.delete(ep.url, headers=headers)
+            else:
+                resp = self.http.get(ep.url, headers=headers)
+
             status = EndpointStatus.OK if resp.status_code < 400 else EndpointStatus.FAIL
             return EndpointResult(
                 endpoint=ep,
                 status=status,
-                http_status=resp.status_code
+                http_status=resp.status_code,
+                response_time_ms=resp.elapsed.total_seconds() * 1000 if getattr(resp, "elapsed", None) else None,
             )
         except Exception as e:
             return EndpointResult(

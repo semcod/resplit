@@ -252,13 +252,16 @@ class ParallelTestEngine:
         
         try:
             method = endpoint.method.upper() if endpoint.method else "GET"
+            body = endpoint.body if isinstance(endpoint.body, dict) else None
             
             if method == "GET":
                 response = await client.get(endpoint.path)
             elif method == "POST":
-                response = await client.post(endpoint.path)
+                response = await client.post(endpoint.path, json=body)
             elif method == "PUT":
-                response = await client.put(endpoint.path)
+                response = await client.put(endpoint.path, json=body)
+            elif method == "PATCH":
+                response = await client.patch(endpoint.path, json=body)
             elif method == "DELETE":
                 response = await client.delete(endpoint.path)
             else:

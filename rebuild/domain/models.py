@@ -1,10 +1,9 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from enum import Enum
 from pathlib import Path
 from typing import Optional, Dict
-from dataclasses import dataclass, field
 
 class DeployMethod(Enum):
     AUTO = "auto"
@@ -23,12 +22,17 @@ class WalkConfig:
     health_url: str = "http://localhost:8003/api/health"
     health_timeout: int = 60
     health_interval: int = 2
+    health_verbose: bool = False
+    deploy_retry_attempts: int = 1
+    deploy_retry_backoff_seconds: float = 2.0
+    deploy_retry_backoff_multiplier: float = 2.0
     base_url: str = "http://localhost:8003"
     screenshots: bool = True
     dry_run: bool = False
     compose_file: str = "docker-compose.yml"
     test_fixtures: Dict[str, str] = field(default_factory=dict)
     auth: Dict[str, str] = field(default_factory=dict)
+    test_bodies: Dict[str, Dict] = field(default_factory=dict)
     
     # Phase 12: Replay Engine
     replay: bool = False

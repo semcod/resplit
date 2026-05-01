@@ -60,3 +60,38 @@ def test_run_day_fast_stops_when_db_restore_fails(tmp_path):
 
     assert result.error == "DB restore failed: baseline"
     mock_scan.assert_not_called()
+
+
+def test_run_day_fast_stops_when_app_health_fails_after_db_restore(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+    commit = _commit()
+    pipeline._baseline_snapshot = "baseline"
+
+    with patch.object(pipeline.deploy, "switch_commit", return_value=True), \
+         patch.object(pipeline.db_snapshots, "restore", return_value=True), \
+         patch.object(pipeline.deploy, "wait_healthy", return_value=False), \
+         patch.object(pipeline.scanner, "execute") as mock_scan:
+        result = pipeline._run_day_fast(date(2024, 3, 15), commit)
+
+    assert result.error == "App health check failed after DB restore"
+    mock_scan.assert_not_called()
+
+
+def test_run_day_fast_uses_full_health_gate_after_db_restore(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+    commit = _commit()
+    pipeline._baseline_snapshot = "baseline"
+
+    with patch.object(pipeline.deploy, "switch_commit", return_value=True), \
+         patch.object(pipeline.db_snapshots, "restore", return_value=True), \
+         patch.object(pipeline.deploy, "wait_healthy", return_value=True) as mock_health, \
+            patch.object(pipeline.worktrees, "get_active_path", return_value=tmp_path), \
+         patch.object(pipeline.scanner, "execute", return_value=[]), \
+         patch.object(pipeline.tester, "execute_sync", return_value=[]), \
+         patch.object(pipeline.reporter, "save_day"):
+        result = pipeline._run_day_fast(date(2024, 3, 15), commit)
+
+    assert result.error is None
+    mock_health.assert_called_once_with()
