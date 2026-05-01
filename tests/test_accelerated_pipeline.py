@@ -177,7 +177,7 @@ def test_run_day_fast_skips_db_restore_when_no_db_files_changed(tmp_path):
         result = pipeline._run_day_fast(date(2024, 3, 15), commit)
 
     assert result.error is None
-    mock_needs.assert_called_once_with("prevsha", commit.sha)
+    mock_needs.assert_called_once_with("prevsha", commit.sha, [])
     mock_restore.assert_not_called()
 
 
@@ -237,5 +237,28 @@ def test_run_day_fast_reuses_cached_endpoints_when_no_route_changes(tmp_path):
 
     assert result.error is None
     mock_scan.assert_not_called()
-    mock_rescan.assert_called_once_with("prevsha", commit.sha)
+    mock_rescan.assert_called_once_with("prevsha", commit.sha, [])
     assert result.endpoints == cached
+
+
+def test_diff_names_cached_calls_git_only_once_for_same_pair(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+
+    with patch.object(pipeline.git, "diff_names", return_value=["app/views.py"]) as mock_diff:
+        first = pipeline._diff_names_cached("sha_a", "sha_b")
+        second = pipeline._diff_names_cached("sha_a", "sha_b")
+
+    assert first == ["app/views.py"]
+    assert second == ["app/views.py"]
+    mock_diff.assert_called_once_with("sha_a", "sha_b")
+
+
+def test_diff_names_cached_returns_lowercased_paths(tmp_path):
+    config = _config(tmp_path)
+    pipeline = AcceleratedPipeline(config)
+
+    with patch.object(pipeline.git, "diff_names", return_value=["App/Views.PY", "README.MD"]):
+        result = pipeline._diff_names_cached("sha_a", "sha_b")
+
+    assert result == ["app/views.py", "readme.md"]

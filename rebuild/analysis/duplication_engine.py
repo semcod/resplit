@@ -4,7 +4,7 @@ import hashlib
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Dict, Set, Tuple, Optional
+from typing import Any, List, Dict, Set, Optional
 
 @dataclass
 class CodeFragment:
@@ -29,29 +29,32 @@ class DuplicationEngine:
     Engine for detecting structural and semantic duplication in codebases.
     Supports Python (AST) and JS/TS (Regex-based structural normalization).
     """
-    def __init__(self, min_lines: int = 4):
+    def __init__(
+        self,
+        min_lines: int = 4,
+        semantic_enabled: bool = False,
+        semantic_model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
+        semantic_threshold: float = 0.82,
+        semantic_max_fragments: int = 300,
+    ):
         self.min_lines = min_lines
+        self.semantic_enabled = semantic_enabled
+        self.semantic_model_name = semantic_model_name
+        self.semantic_threshold = semantic_threshold
+        self.semantic_max_fragments = semantic_max_fragments
+        self.semantic_warning: Optional[str] = None
+        self._semantic_model: Optional[Any] = None
 
     def scan(self, path: Path) -> List[DuplicateGroup]:
         exact_matches: Dict[str, List[CodeFragment]] = {}
         fuzzy_matches: Dict[str, List[CodeFragment]] = {}
-        
-        files = list(path.rglob("*.*"))
-        for f in files:
-            if any(p in f.parts for p in (".venv", "venv", "__pycache__", ".rebuild", ".git", "node_modules")):
-                continue
-            
-            if f.suffix not in (".py", ".js", ".ts", ".jsx", ".tsx"):
-                continue
-                
-            try:
-                fragments = self._extract_fragments(f)
-                for frag in fragments:
-                    exact_matches.setdefault(frag.structural_hash, []).append(frag)
-                    if frag.fuzzy_signature:
-                        fuzzy_matches.setdefault(frag.fuzzy_signature, []).append(frag)
-            except Exception:
-                continue
+        self.semantic_warning = None
+
+        all_fragments = self.collect_fragments(path)
+        for frag in all_fragments:
+            exact_matches.setdefault(frag.structural_hash, []).append(frag)
+            if frag.fuzzy_signature:
+                fuzzy_matches.setdefault(frag.fuzzy_signature, []).append(frag)
 
         groups = []
         for h, frags in exact_matches.items():
@@ -66,7 +69,137 @@ class DuplicationEngine:
                     groups.append(DuplicateGroup(unseen, 0.8, h, "Fuzzy signature match"))
                     seen_frags.update(id(f) for f in unseen)
 
+        semantic_groups = self._find_semantic_groups(all_fragments, seen_frags)
+        groups.extend(semantic_groups)
+
         return sorted(groups, key=lambda g: len(g.fragments), reverse=True)
+
+    def collect_fragments(self, path: Path) -> List[CodeFragment]:
+        fragments: List[CodeFragment] = []
+        files = list(path.rglob("*.*"))
+        for f in files:
+            if any(p in f.parts for p in (".venv", "venv", "__pycache__", ".rebuild", ".git", "node_modules")):
+                continue
+
+            if f.suffix not in (".py", ".js", ".ts", ".jsx", ".tsx"):
+                continue
+
+            try:
+                fragments.extend(self._extract_fragments(f))
+            except Exception:
+                continue
+        return fragments
+
+    def _find_semantic_groups(self, fragments: List[CodeFragment], seen_frags: Set[int]) -> List[DuplicateGroup]:
+        if not self.semantic_enabled:
+            return []
+
+        encoder = self._get_semantic_encoder()
+        if encoder is None:
+            return []
+
+        candidates = [f for f in fragments if id(f) not in seen_frags]
+        if len(candidates) < 2:
+            return []
+
+        if len(candidates) > self.semantic_max_fragments:
+            candidates = candidates[: self.semantic_max_fragments]
+
+        texts = [self._semantic_text(f) for f in candidates]
+        try:
+            embeddings = encoder.encode(
+                texts,
+                convert_to_numpy=True,
+                normalize_embeddings=True,
+                show_progress_bar=False,
+            )
+        except Exception as exc:
+            self.semantic_warning = f"embedding encode failed: {exc}"
+            return []
+
+        groups: List[DuplicateGroup] = []
+        used_indices: Set[int] = set()
+        for i in range(len(candidates)):
+            if i in used_indices:
+                continue
+
+            members = [i]
+            for j in range(i + 1, len(candidates)):
+                if j in used_indices:
+                    continue
+                similarity = self._cosine_similarity(embeddings[i], embeddings[j])
+                if similarity >= self.semantic_threshold:
+                    members.append(j)
+
+            if len(members) < 2:
+                continue
+
+            used_indices.update(members)
+            grouped = [candidates[idx] for idx in members]
+            seen_frags.update(id(f) for f in grouped)
+            average_similarity = self._average_group_similarity(embeddings, members)
+            groups.append(
+                DuplicateGroup(
+                    fragments=grouped,
+                    similarity=average_similarity,
+                    representative_hash=self._semantic_group_hash(grouped),
+                    reason=f"Semantic embedding match ({self.semantic_model_name})",
+                )
+            )
+
+        return groups
+
+    def _get_semantic_encoder(self):
+        if self._semantic_model is not None:
+            return self._semantic_model
+
+        try:
+            from sentence_transformers import SentenceTransformer
+        except Exception:
+            self.semantic_warning = "package sentence-transformers not installed"
+            return None
+
+        try:
+            self._semantic_model = SentenceTransformer(self.semantic_model_name)
+        except Exception as exc:
+            self.semantic_warning = f"cannot load model '{self.semantic_model_name}': {exc}"
+            return None
+
+        return self._semantic_model
+
+    def _semantic_text(self, fragment: CodeFragment) -> str:
+        if fragment.name:
+            return f"function {fragment.name}\n{fragment.content}"
+        return fragment.content
+
+    def _semantic_group_hash(self, fragments: List[CodeFragment]) -> str:
+        fingerprint = "|".join(
+            f"{frag.file}:{frag.start_line}:{frag.end_line}" for frag in fragments
+        )
+        return f"semantic:{hashlib.md5(fingerprint.encode()).hexdigest()}"
+
+    def _average_group_similarity(self, embeddings: Any, indices: List[int]) -> float:
+        if len(indices) < 2:
+            return 1.0
+
+        total = 0.0
+        count = 0
+        for pos, i in enumerate(indices):
+            for j in indices[pos + 1 :]:
+                total += self._cosine_similarity(embeddings[i], embeddings[j])
+                count += 1
+        return total / count if count else 1.0
+
+    def _cosine_similarity(self, left: Any, right: Any) -> float:
+        try:
+            return float(left @ right)
+        except Exception:
+            dot = sum(float(a) * float(b) for a, b in zip(left, right))
+            norm_left = sum(float(a) * float(a) for a in left) ** 0.5
+            norm_right = sum(float(b) * float(b) for b in right) ** 0.5
+            if norm_left == 0.0 or norm_right == 0.0:
+                return 0.0
+            return dot / (norm_left * norm_right)
 
     def _extract_fragments(self, file_path: Path) -> List[CodeFragment]:
         if file_path.suffix == ".py":

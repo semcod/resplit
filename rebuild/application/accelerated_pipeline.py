@@ -108,6 +108,8 @@ class AcceleratedPipeline:
             ]
         )
         self._cached_endpoints: Optional[List] = None
+        # Cache: (from_sha, to_sha) -> diff file list.  Avoids redundant git calls.
+        self._diff_cache: Dict[tuple, Optional[List[str]]] = {}
     
     def _load_state(self) -> Set[str]:
         """Load processed commit SHAs from state file."""
@@ -287,10 +289,22 @@ class AcceleratedPipeline:
                     self.log(f"  [bold green]✓ Zastosowano {overrides} poprawek manualnych z {patch_dir}[/bold green]")
                     self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(patch_dir))
             
+            # Compute diff once; reused by DB restore check, rescan check, and smart selector.
+            if self._previous_commit:
+                changed_modules = self.smart_selector.get_changed_modules(
+                    self._previous_commit, commit.sha
+                )
+                changed_paths = [str(m.path).lower() for m in changed_modules]
+                # Populate diff cache so _needs_* helpers skip redundant git calls
+                self._diff_cache[(self._previous_commit, commit.sha)] = changed_paths
+            else:
+                changed_modules = []
+                changed_paths = None
+
             # 2. Restore DB to baseline (INSTANT - no re-seed)
             if self._baseline_snapshot:
                 needs_restore = self._needs_db_restore(
-                    self._previous_commit, commit.sha
+                    self._previous_commit, commit.sha, changed_paths
                 )
                 if needs_restore:
                     try:
@@ -305,7 +319,7 @@ class AcceleratedPipeline:
                     self.log("  [dim]DB restore skipped (no schema/data changes)[/dim]")
             
             # 3. Scan endpoints (cached when route files are unchanged)
-            if self._needs_rescan(self._previous_commit, commit.sha):
+            if self._needs_rescan(self._previous_commit, commit.sha, changed_paths):
                 result.endpoints = self.scanner.execute(wt_path)
                 self._cached_endpoints = result.endpoints
             else:
@@ -317,7 +331,7 @@ class AcceleratedPipeline:
             if self._previous_commit and getattr(self.config, 'smart_select', True):
                 selection = self.smart_selector.select_tests(
                     result.endpoints,
-                    self.smart_selector.get_changed_modules(self._previous_commit, commit.sha),
+                    changed_modules,
                     self._previous_commit
                 )
                 endpoints_to_test = selection.endpoints_to_test
@@ -349,7 +363,7 @@ class AcceleratedPipeline:
         result.duration_seconds = time.perf_counter() - t0
         return result
     
-    def _needs_rescan(self, from_sha: Optional[str], to_sha: str) -> bool:
+    def _needs_rescan(self, from_sha: Optional[str], to_sha: str, changed_paths: Optional[List[str]] = None) -> bool:
         """
         Return True when the endpoint list must be rebuilt by running the scanner.
         False when the diff contains no route-relevant files and a cached result exists.
@@ -358,18 +372,18 @@ class AcceleratedPipeline:
         if from_sha is None or self._cached_endpoints is None:
             return True
 
-        changed = self.git.diff_names(from_sha, to_sha)
-        if changed is None:
+        if changed_paths is None:
+            changed_paths = self._diff_names_cached(from_sha, to_sha)
+        if changed_paths is None:
             return True
 
-        for path in changed:
-            path_lower = path.lower()
-            if any(pat in path_lower for pat in self._route_patterns):
+        for path in changed_paths:
+            if any(pat in path for pat in self._route_patterns):
                 self.log(f"  [dim]Endpoint rescan required: {path}[/dim]")
                 return True
         return False
 
-    def _needs_db_restore(self, from_sha: Optional[str], to_sha: str) -> bool:
+    def _needs_db_restore(self, from_sha: Optional[str], to_sha: str, changed_paths: Optional[List[str]] = None) -> bool:
         """
         Return True when the diff between *from_sha* and *to_sha* touches any
         file that matches one of `_db_patterns`.  Falls back to True (safe) on
@@ -378,16 +392,26 @@ class AcceleratedPipeline:
         if from_sha is None:
             return True  # First commit - always restore
 
-        changed = self.git.diff_names(from_sha, to_sha)
-        if changed is None:
+        if changed_paths is None:
+            changed_paths = self._diff_names_cached(from_sha, to_sha)
+        if changed_paths is None:
             return True  # Can't determine diff - safe fallback
 
-        for path in changed:
-            path_lower = path.lower()
-            if any(pat in path_lower for pat in self._db_patterns):
+        for path in changed_paths:
+            if any(pat in path for pat in self._db_patterns):
                 self.log(f"  [dim]DB restore required: {path}[/dim]")
                 return True
         return False
+
+    def _diff_names_cached(self, from_sha: str, to_sha: str) -> Optional[List[str]]:
+        """Return lowercased changed-file list, memoized for the lifetime of this run."""
+        key = (from_sha, to_sha)
+        if key not in self._diff_cache:
+            result = self.git.diff_names(from_sha, to_sha)
+            self._diff_cache[key] = (
+                [p.lower() for p in result] if result is not None else None
+            )
+        return self._diff_cache[key]
 
     def _restore_db_fast(self):
         """Restore DB from snapshot (ultra-fast)."""
