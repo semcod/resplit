@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rebuild Architecture Graph</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; overflow: hidden; }
+        .node circle { stroke: #334155; stroke-width: 2px; }
+        .node text { font-size: 12px; fill: #94a3b8; pointer-events: none; }
+        .link { stroke: #334155; stroke-opacity: 0.6; stroke-width: 1.5px; fill: none; }
+        .tooltip { position: absolute; background: rgba(30, 41, 59, 0.9); border: 1px solid #475569; padding: 10px; border-radius: 6px; font-size: 13px; display: none; }
+        h1 { position: absolute; top: 20px; left: 20px; font-weight: 300; color: #38bdf8; margin: 0; }
+    </style>
+</head>
+<body>
+    <h1>Architecture Graph</h1>
+    <div id="tooltip" class="tooltip"></div>
+    <svg width="100%" height="100vh"></svg>
+
+    <script>
+        const data = {"nodes": [{"id": "services.restore_service", "methods": ["execute", "find_last_working_day", "extract_endpoint", "_find_backend_files", "_is_page_endpoint", "_write_readme"], "group": 1}, {"id": "services.base", "methods": ["execute"], "group": 1}, {"id": "services.history_service", "methods": ["execute", "load_history", "_load_commit"], "group": 1}, {"id": "services.git_service", "methods": ["execute", "days_with_commits", "checkout", "restore_head", "_run_git"], "group": 1}, {"id": "services.deploy_service", "methods": ["execute", "start", "stop", "_compose_file", "_compose_up", "_compose_down", "_uvicorn_start", "_uvicorn_stop", "_wait_healthy"], "group": 1}, {"id": "services.reporter_service", "methods": ["execute", "save_json", "_status_badge", "_screenshot_html", "save_html", "save_day", "save_timeline_index"], "group": 1}, {"id": "services.screenshot_service", "methods": ["execute"], "group": 1}, {"id": "services.scanner_service", "methods": ["execute", "_scan_via_deta", "_ports_to_endpoints", "_scan_via_openapi", "_parse_openapi", "_scan_via_compose_labels"], "group": 1}, {"id": "services.test_service", "methods": ["set_day_dir", "execute", "_test_endpoint"], "group": 1}], "links": [{"source": "services.restore_service", "target": "services.base", "value": 1}, {"source": "services.history_service", "target": "services.base", "value": 1}, {"source": "services.git_service", "target": "services.base", "value": 1}, {"source": "services.deploy_service", "target": "services.base", "value": 1}, {"source": "services.reporter_service", "target": "services.base", "value": 1}, {"source": "services.screenshot_service", "target": "services.base", "value": 1}, {"source": "services.scanner_service", "target": "services.base", "value": 1}, {"source": "services.test_service", "target": "services.base", "value": 1}]};
+        const svg = d3.select("svg");
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const g = svg.append("g");
+
+        const zoom = d3.zoom().on("zoom", (e) => g.attr("transform", e.transform));
+        svg.call(zoom);
+
+        const simulation = d3.forceSimulation(data.nodes)
+            .force("link", d3.forceLink(data.links).id(d => d.id).distance(150))
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+        const link = g.append("g").selectAll("line")
+            .data(data.links)
+            .enter().append("line")
+            .attr("class", "link")
+            .attr("marker-end", "url(#arrowhead)");
+
+        svg.append("defs").append("marker")
+            .attr("id", "arrowhead")
+            .attr("viewBox", "-0 -5 10 10")
+            .attr("refX", 20)
+            .attr("refY", 0)
+            .attr("orient", "auto")
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .append("svg:path")
+            .attr("d", "M 0,-5 L 10 ,0 L 0,5")
+            .attr("fill", "#334155");
+
+        const node = g.append("g").selectAll(".node")
+            .data(data.nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        node.append("circle")
+            .attr("r", 8)
+            .attr("fill", d => d.id.includes("service") ? "#38bdf8" : "#818cf8")
+            .on("mouseover", (e, d) => {
+                const tt = d3.select("#tooltip");
+                tt.style("display", "block")
+                  .html(`<b>${d.id}</b><br>${d.methods.length} methods<br><br>${d.methods.slice(0,5).join('<br>')}`)
+                  .style("left", (e.pageX + 10) + "px")
+                  .style("top", (e.pageY + 10) + "px");
+            })
+            .on("mouseout", () => d3.select("#tooltip").style("display", "none"));
+
+        node.append("text")
+            .attr("dx", 12)
+            .attr("dy", ".35em")
+            .text(d => d.id.split('.').pop());
+
+        simulation.on("tick", () => {
+            link.attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+
+        function dragstarted(event) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            event.subject.fx = event.subject.x;
+            event.subject.fy = event.subject.y;
+        }
+        function dragged(event) {
+            event.subject.fx = event.x;
+            event.subject.fy = event.y;
+        }
+        function dragended(event) {
+            if (!event.active) simulation.alphaTarget(0);
+            event.subject.fx = null;
+            event.subject.fy = null;
+        }
+    </script>
+</body>
+</html>
+        
