@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict
 
 import typer
 from rich.console import Console
@@ -33,6 +33,7 @@ def walk_command(
     patch_dir: Optional[Path],
     console: Console,
     health_timeout: int = 60,
+    cli_overrides: Optional[Dict[str, bool]] = None,
 ) -> None:
     repo = repo.resolve()
     output = output.resolve()
@@ -72,12 +73,42 @@ def walk_command(
     else:
         console.print("  [dim]Brak rebuild.yaml — używam tylko opcji CLI (bez auto-init).[/dim]")
 
+    overrides = cli_overrides or {}
+    if overrides.get("output"):
+        config.output_dir = output
+    if overrides.get("days"):
+        config.days = days
+    if overrides.get("date_from"):
+        config.date_from = date.fromisoformat(date_from) if date_from else None
+    if overrides.get("date_to"):
+        config.date_to = date.fromisoformat(date_to) if date_to else None
+    if overrides.get("deploy"):
+        config.deploy_method = method
+    if overrides.get("replay"):
+        config.replay = replay
+    if overrides.get("service"):
+        config.app_service = service
+    if overrides.get("health_url"):
+        config.health_url = health_url
+    if overrides.get("base_url"):
+        config.base_url = base_url
+    if overrides.get("screenshots"):
+        config.screenshots = screenshots
+    if overrides.get("dry_run"):
+        config.dry_run = dry_run
+    if overrides.get("accelerator"):
+        config.accelerator = accelerator
+    if overrides.get("patch_dir"):
+        config.patch_dir = patch_dir
+    if overrides.get("health_timeout"):
+        config.health_timeout = health_timeout
+
     from ... import __version__
     console.print(f"\n[bold]rebuild walk[/bold] v{__version__}")
     console.print(f"  repo:   {repo}")
-    console.print(f"  output: {output}")
-    console.print(f"  deploy: {method.value} {'(REPLAY)' if replay else ''}")
-    console.print(f"  days:   {days}\n")
+    console.print(f"  output: {config.output_dir}")
+    console.print(f"  deploy: {config.deploy_method.value} {'(REPLAY)' if config.replay else ''}")
+    console.print(f"  days:   {config.days}\n")
 
     pipeline = Pipeline(config, console=console)
     all_results = pipeline.run()
@@ -85,12 +116,12 @@ def walk_command(
     if all_results:
         console.print(f"\n[bold green]✓ Gotowe![/bold green]")
         from ..dashboard import generate_dashboard
-        generate_dashboard(all_results, output, repo=repo)
+        generate_dashboard(all_results, config.output_dir, repo=repo)
         from .helpers import print_report_links, print_summary_table, serve_reports
-        print_report_links(output, port if serve else None, console)
+        print_report_links(config.output_dir, port if serve else None, console)
         print_summary_table(all_results, console)
         if serve:
-            serve_reports(output, port, console)
+            serve_reports(config.output_dir, port, console)
     else:
         console.print("[yellow]Brak wyników do wyświetlenia.[/yellow]")
 

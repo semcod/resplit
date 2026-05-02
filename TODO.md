@@ -52,22 +52,52 @@
 
 ---
 
-## Phase 14: Production Readiness (Następne)
+## Phase 14: Production Readiness ✅ (ukończone 2026-05-01)
+
+### ✅ Zrobione
+- [x] **Test Coverage ≥60%**: 347 testów passing, 60% pokrycie (`pytest --cov`)
+- [x] **--health-timeout CLI**: Nowa opcja `--health-timeout` w `rebuild walk` dla dużych stacków (np. c2004 ARM64 ~300s)
+- [x] **Deploy Error Classification**: Auto-klasyfikacja błędów: `compose_build_fail`, `port_conflict`, `migration_fail`, `missing_env`
+- [x] **Documentation Update**: Zaktualizowane `docs/usage.md`, `docs/architecture.md`, `README.md`
+- [x] **Service Table in Docs**: Kompletna tabela usług w architekturze
+
+---
+
+## Phase 15: c2004 Integration & Stability (AKTYWNY)
 
 ### 🔴 Krytyczne
-- [ ] **PyPI Package**: Publikacja rebuild na PyPI z poprawnymi metadata
-- [ ] **CI/CD Pipeline**: GitHub Actions z testami, linting i publish
-- [ ] **Versioning**: Semantic versioning z changelog automation
-- [ ] **Documentation Site**: Sphinx/MkDocs dla pełnej dokumentacji
+- [ ] **c2004 npm ci fix**: Napraw `identification-frontend` Dockerfile — `npm ci` failuje przez brak `package-lock.json` lub niekompatybilne zależności. Zablokowane: `--deploy docker-compose` nie może zakończyć buildu.
+- [ ] **c2004 Walk z --deploy none**: Uruchomić pełny `rebuild walk` c2004 z `--deploy none` (stack już działa) i zmapować 444 endpointów historycznie przez 30 dni.
+- [ ] **Config Validation**: JSON Schema dla `rebuild.yaml` z walidacją przy starcie — lepsze komunikaty błędów zamiast traceback.
 
 ### 🟠 Wysokie
-- [ ] **Docker Image**: Oficjalny obraz Docker dla rebuild CLI
-- [ ] **Config Validation**: JSON Schema dla rebuild.yaml z walidacją
-- [ ] **Plugin System**: Extensible architecture dla custom scanners/reporters
-- [ ] **Telemetry**: Opcjonalna analityka użycia (opt-in)
+- [ ] **Walk Result Regression Guard**: Automatyczny test regresji — jeśli `health_%` spada o >20% vs poprzedni dzień, flag to w raporcie.
+- [ ] **c2004 Dashboard**: Uruchomić `rebuild serve` na wynikach c2004 i sprawdzić poprawność dashboardu dla 444 endpointów.
+- [ ] **`--output` default respects rebuild.yaml**: Gdy `output.dir` jest w `rebuild.yaml`, powinno nadpisywać domyślne `.rebuild` bez potrzeby flagi CLI.
 
 ### 🟡 Średnie
-- [ ] **TUI Full Features**: Interaktywny terminal UI z nawigacją
-- [ ] **Export Formats**: Dodatkowe formaty (CSV, PDF, Markdown)
-- [ ] **Notification Hooks**: Slack/Discord/Webhook przy błędach
-- [ ] **Snapshot Management**: LRU cache dla snapshotów bazy danych
+- [ ] **Deploy log truncation**: Logi `docker compose` mogą być >1MB w `results.json`. Dodać limit (np. ostatnie 200 linii) z informacją o obcięciu.
+- [ ] **Health verbose summary**: Gdy health check failuje, wyświetlić skrót odpowiedzi HTTP (status + pierwsze 200 bajtów body).
+- [ ] **Endpoint count diff warning**: Jeśli liczba endpointów zmienia się o >10% między dniami, wyświetlić ostrzeżenie w tabeli.
+
+---
+
+## Phase 16: Production Release
+
+### 🔴 Krytyczne
+- [ ] **PyPI Package**: Publikacja `rebuild` na PyPI z poprawnymi metadata i `python_requires`
+- [ ] **CI/CD Pipeline**: GitHub Actions — testy, linting (`ruff`), coverage gate ≥60%, publish on tag
+- [ ] **Semantic Versioning**: Automatyczny bump z `CHANGELOG.md` przy każdym merge
+
+### 🟠 Wysokie
+- [ ] **Docker Image**: Oficjalny obraz `ghcr.io/semcod/rebuild:latest` z CLI i Playwright
+- [ ] **Config Validation**: `pydantic`-based validation dla `rebuild.yaml` z czytelnym komunikatem błędu
+- [ ] **Plugin System**: Extensible scanners i reporters przez entry points
+- [ ] **Documentation Site**: MkDocs z Material theme — hosted na GitHub Pages
+
+### 🟡 Średnie
+- [ ] **TUI Full Features**: Nawigacja klawiaturą, live log view, endpoint browser
+- [ ] **Export Formats**: CSV, Markdown summary raport
+- [ ] **Notification Hooks**: Webhook (Slack/Discord) przy deploy fail lub health regresji
+- [ ] **Snapshot Management**: LRU cache dla DB snapshotów — auto-prune starych
+- [ ] **Test Coverage ≥70%**: Kolejny milestone po aktualnym 60%
