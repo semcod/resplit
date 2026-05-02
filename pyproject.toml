@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rebuild"
-version = "0.1.20"
+version = "0.1.21"
 description = "Historical deployment analysis — walk git history, deploy per day, test all endpoints, capture screenshots, restore working fragments"
 readme = "README.md"
 authors = [{ name = "Tom Sapletta", email = "tom@sapletta.com" }]
@@ -27,6 +27,7 @@ dependencies = [
     "pyyaml>=6",
     "pydantic>=2",
     "deta>=0.1",         # infra scanning
+    "astor>=0.8",        # code generation for refactor executor
     # "wup>=0.1",        # optional: regression watcher
     # "regres>=0.1",     # optional: regression analysis
     # "testql>=1.2",     # optional: endpoint testing DSL,

@@ -69,6 +69,7 @@
 - [x] **c2004 npm ci fix**: Napraw `identification-frontend` Dockerfile — `npm ci` failuje przez brak `package-lock.json` lub niekompatybilne zależności. Zablokowane: `--deploy docker-compose` nie może zakończyć buildu. (Fixed: changed to `if [ -f package-lock.json ]; then npm ci; else npm install; fi`)
 - [x] **c2004 Walk z --deploy none**: Uruchomić pełny `rebuild walk` c2004 z `--deploy none` (stack już działa) i zmapować 444 endpointów historycznie przez 30 dni. (Completed: ran 1-day test walk, found 442 endpoints, generated timeline/dashboard)
 - [x] **Config Validation**: JSON Schema dla `rebuild.yaml` z walidacją przy starcie — lepsze komunikaty błędów zamiast traceback.
+- [x] **PipelineEvent Import Fix**: Napraw `ImportError: cannot import name 'PipelineEvent' from 'rebuild.domain.events'` — przeniesiono `PipelineEvent` do `domain_events.py` jako legacy class, dodano do `__init__.py`, usunięto zbędne importy z `pipeline.py` i `accelerated_pipeline.py`.
 
 ### 🟠 Wysokie
 - [x] **Walk Result Regression Guard**: Automatyczny test regresji — jeśli `health_%` spada o >20% vs poprzedni dzień, flag to w raporcie.

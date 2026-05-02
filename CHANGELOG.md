@@ -2,10 +2,20 @@
 
 ## [Unreleased]
 
+## [0.1.21] - 2026-05-02
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
+
 ## [0.1.20] - 2026-05-02
 
+### Fixed
+- **PipelineEvent Import Fix**: Resolved `ImportError: cannot import name 'PipelineEvent' from 'rebuild.domain.events'` by moving `PipelineEvent` to `domain_events.py` as a legacy class, exporting it from `__init__.py`, and removing unnecessary imports from `pipeline.py` and `accelerated_pipeline.py` while keeping backward compatibility in `base_pipeline.py`.
+- **Missing astor dependency**: Added `astor>=0.8` to dependencies for code generation in refactor executor.
+
 ### Changed
-- refactoring
 - refactoring
 - refactoring
 - refactoring
