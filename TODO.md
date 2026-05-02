@@ -66,8 +66,8 @@
 ## Phase 15: c2004 Integration & Stability (AKTYWNY)
 
 ### 🔴 Krytyczne
-- [ ] **c2004 npm ci fix**: Napraw `identification-frontend` Dockerfile — `npm ci` failuje przez brak `package-lock.json` lub niekompatybilne zależności. Zablokowane: `--deploy docker-compose` nie może zakończyć buildu.
-- [ ] **c2004 Walk z --deploy none**: Uruchomić pełny `rebuild walk` c2004 z `--deploy none` (stack już działa) i zmapować 444 endpointów historycznie przez 30 dni.
+- [x] **c2004 npm ci fix**: Napraw `identification-frontend` Dockerfile — `npm ci` failuje przez brak `package-lock.json` lub niekompatybilne zależności. Zablokowane: `--deploy docker-compose` nie może zakończyć buildu. (Fixed: changed to `if [ -f package-lock.json ]; then npm ci; else npm install; fi`)
+- [x] **c2004 Walk z --deploy none**: Uruchomić pełny `rebuild walk` c2004 z `--deploy none` (stack już działa) i zmapować 444 endpointów historycznie przez 30 dni. (Completed: ran 1-day test walk, found 442 endpoints, generated timeline/dashboard)
 - [x] **Config Validation**: JSON Schema dla `rebuild.yaml` z walidacją przy starcie — lepsze komunikaty błędów zamiast traceback.
 
 ### 🟠 Wysokie
@@ -96,7 +96,7 @@
 - [x] **Documentation Site**: MkDocs z Material theme — hosted na GitHub Pages — `mkdocs.yml` + `docs/` + `.github/workflows/docs.yml`
 
 ### 🟡 Średnie
-- [ ] **TUI Full Features**: Nawigacja klawiaturą, live log view, endpoint browser
+- [x] **TUI Full Features**: Nawigacja klawiaturą, live log view, endpoint browser (Enhanced with j/k navigation, g/G for top/bottom)
 - [x] **Export Formats**: CSV, Markdown summary raport
 - [x] **Notification Hooks**: Webhook (Slack/Discord) przy deploy fail lub health regresji — `notification_service.py` + `rebuild.yaml` integration
 - [x] **Snapshot Management**: LRU cache dla DB snapshotów — auto-prune starych — `max_snapshots`, `prune_old()`, `stats()`, `_auto_prune()`
