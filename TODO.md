@@ -77,7 +77,7 @@
 
 ### 🟡 Średnie
 - [x] **Deploy log truncation**: Logi `docker compose` mogą być >1MB w `results.json`. Dodać limit (np. ostatnie 200 linii) z informacją o obcięciu.
-- [ ] **Health verbose summary**: Gdy health check failuje, wyświetlić skrót odpowiedzi HTTP (status + pierwsze 200 bajtów body).
+- [x] **Health verbose summary**: Gdy health check failuje, wyświetlić skrót odpowiedzi HTTP (status + pierwsze 200 bajtów body).
 - [x] **Endpoint count diff warning**: Jeśli liczba endpointów zmienia się o >10% między dniami, wyświetlić ostrzeżenie w tabeli.
 
 ---

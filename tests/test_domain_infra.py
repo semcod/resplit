@@ -170,6 +170,118 @@ def test_config_loader_apply_retry_settings(tmp_path):
 
 
 # ─────────────────────────────────────────────────────────────
+# ConfigLoader.validate
+# ─────────────────────────────────────────────────────────────
+
+def test_config_validate_empty_is_valid():
+    errors = ConfigLoader.validate({})
+    assert errors == []
+
+
+def test_config_validate_valid_full():
+    data = {
+        "project": {
+            "days": 7,
+            "output": ".rebuild_ci",
+            "deploy": {
+                "method": "docker-compose",
+                "health_url": "http://localhost:8080/health",
+                "health_timeout": 120,
+                "health_interval": 5,
+                "retry_attempts": 3,
+                "retry_backoff_seconds": 5.0,
+            },
+        },
+        "auth": {"Authorization": "Bearer tok"},
+        "test_fixtures": {"user_id": "42"},
+        "test_bodies": {"POST /api/item": {"name": "x"}},
+    }
+    assert ConfigLoader.validate(data) == []
+
+
+def test_config_validate_invalid_days():
+    errors = ConfigLoader.validate({"project": {"days": 0}})
+    assert any("days" in e for e in errors)
+
+
+def test_config_validate_invalid_days_string():
+    errors = ConfigLoader.validate({"project": {"days": "many"}})
+    assert any("days" in e for e in errors)
+
+
+def test_config_validate_invalid_deploy_method():
+    errors = ConfigLoader.validate({"project": {"deploy": {"method": "kubernetes"}}})
+    assert any("deploy.method" in e for e in errors)
+
+
+def test_config_validate_invalid_deploy_string():
+    errors = ConfigLoader.validate({"project": {"deploy": "kubernetes"}})
+    assert any("deploy" in e for e in errors)
+
+
+def test_config_validate_invalid_health_timeout_zero():
+    errors = ConfigLoader.validate({"project": {"deploy": {"health_timeout": 0}}})
+    assert any("health_timeout" in e for e in errors)
+
+
+def test_config_validate_output_missing_dir_key():
+    errors = ConfigLoader.validate({"project": {"output": {"path": ".rebuild"}}})
+    assert any("output" in e for e in errors)
+
+
+def test_config_validate_auth_not_mapping():
+    errors = ConfigLoader.validate({"auth": "Bearer token"})
+    assert any("auth" in e for e in errors)
+
+
+def test_config_validate_test_bodies_not_mapping():
+    errors = ConfigLoader.validate({"test_bodies": ["item1", "item2"]})
+    assert any("test_bodies" in e for e in errors)
+
+
+def test_config_validate_walk_command_aborts_on_invalid_yaml(tmp_path):
+    from rebuild.interfaces.commands.walk_command import walk_command
+    from rich.console import Console
+    from io import StringIO
+    import typer
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (repo / ".git").mkdir()
+
+    yaml_content = "project:\n  days: -5\n"
+    (repo / "rebuild.yaml").write_text(yaml_content)
+
+    buf = StringIO()
+    console = Console(file=buf, highlight=False)
+
+    import click
+    with pytest.raises((click.exceptions.Exit, SystemExit)):
+        walk_command(
+            repo=repo,
+            days=1,
+            date_from=None,
+            date_to=None,
+            output=tmp_path / "out",
+            deploy="none",
+            replay=False,
+            service=None,
+            health_url="http://localhost/health",
+            base_url="http://localhost",
+            screenshots=False,
+            dry_run=True,
+            serve=False,
+            port=8080,
+            accelerator=False,
+            patch_dir=None,
+            console=console,
+            health_timeout=60,
+        )
+
+    assert "rebuild.yaml" in buf.getvalue() or "days" in buf.getvalue()
+
+
+# ─────────────────────────────────────────────────────────────
 # event_service
 # ─────────────────────────────────────────────────────────────
 

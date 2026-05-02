@@ -69,6 +69,12 @@ def walk_command(
     if config_path.exists():
         yaml_data = ConfigLoader.load(config_path)
         if yaml_data:
+            validation_errors = ConfigLoader.validate(yaml_data)
+            if validation_errors:
+                console.print("[bold red]✗ rebuild.yaml zawiera błędy:[/bold red]")
+                for err in validation_errors:
+                    console.print(f"  [red]• {err}[/red]")
+                raise typer.Exit(1)
             ConfigLoader.apply_to_config(config, yaml_data)
     else:
         console.print("  [dim]Brak rebuild.yaml — używam tylko opcji CLI (bez auto-init).[/dim]")
