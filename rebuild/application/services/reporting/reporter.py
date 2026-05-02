@@ -174,6 +174,10 @@ class ReporterService(Service[DayResult, None]):
     def save_timeline_index(self, results: List[DayResult], output_dir: Path) -> None:
         output_dir.mkdir(parents=True, exist_ok=True)
 
+        sorted_asc = sorted(results, key=lambda x: x.day)
+        trend_by_day = self._health_trend_by_day(sorted_asc)
+        endpoint_trend_by_day = self._endpoint_count_trend_by_day(sorted_asc)
+
         export_data = self._results_to_export_data(results)
         (output_dir / "history.json").write_text(
             json.dumps(export_data, indent=2, ensure_ascii=False), encoding="utf-8"
@@ -191,13 +195,25 @@ class ReporterService(Service[DayResult, None]):
             dep_cls = "tag-ok" if r.deploy_success else "tag-fail"
             dep_txt = "✓ OK" if r.deploy_success else "✗ FAIL"
             cat_txt = f' <span style="color:var(--text-dim);font-size:0.75rem">({r.deploy_error_category.value})</span>' if r.deploy_error_category and not r.deploy_success else ""
+            trend = trend_by_day.get(str(r.day), "—")
+            trend_html = (
+                f' <span style="color:var(--fail);font-size:0.75rem">{trend}</span>'
+                if trend.startswith("⚠")
+                else f' <span style="color:var(--text-dim);font-size:0.75rem">{trend}</span>'
+            )
+            endpoint_trend = endpoint_trend_by_day.get(str(r.day), "—")
+            endpoint_trend_html = (
+                f' <span style="color:var(--warn);font-size:0.75rem">{endpoint_trend}</span>'
+                if endpoint_trend.startswith("⚠")
+                else f' <span style="color:var(--text-dim);font-size:0.75rem">{endpoint_trend}</span>'
+            )
             rows += (
                 f'<tr class="day-row">'
                 f'<td><a href="{rel}/report.html" class="day-link">{r.day}</a></td>'
                 f'<td><code class="commit-hash">{r.commit.sha[:8] if r.commit else "—"}</code></td>'
                 f'<td><div class="health-bar-bg"><div class="health-bar-fill" style="width:{r.health_pct}%;background:{hc}"></div></div>'
-                f'<span style="color:{hc};font-weight:700;font-size:0.85rem">{r.health_pct}%</span></td>'
-                f'<td><span class="stat-ok">{r.ok_count}</span> / <span class="stat-total">{len(r.endpoints)}</span></td>'
+                f'<span style="color:{hc};font-weight:700;font-size:0.85rem">{r.health_pct}%</span>{trend_html}</td>'
+                f'<td><span class="stat-ok">{r.ok_count}</span> / <span class="stat-total">{len(r.endpoints)}</span>{endpoint_trend_html}</td>'
                 f'<td><span class="deploy-tag {dep_cls}">{dep_txt}</span>{cat_txt}</td>'
                 f'<td>{r.duration_seconds:.1f}s</td>'
                 f'</tr>'
@@ -268,13 +284,72 @@ function dlFmt(f){{const b=new Blob([JSON.stringify(DATA,null,2)],{{type:'applic
 </body></html>"""
         (output_dir / "index.html").write_text(html, encoding="utf-8")
 
+    def _health_trend_by_day(self, results_asc: List[DayResult], regression_threshold: float = 20.0) -> dict:
+        trend_by_day = {}
+        previous = None
+
+        for r in results_asc:
+            day_key = str(r.day)
+            if previous is None:
+                trend_by_day[day_key] = "—"
+                previous = r.health_pct
+                continue
+
+            delta = round(r.health_pct - previous, 1)
+            if delta <= -regression_threshold:
+                trend_by_day[day_key] = f"⚠ {delta:.1f}pp"
+            elif delta > 0:
+                trend_by_day[day_key] = f"+{delta:.1f}pp"
+            elif delta < 0:
+                trend_by_day[day_key] = f"{delta:.1f}pp"
+            else:
+                trend_by_day[day_key] = "0.0pp"
+
+            previous = r.health_pct
+
+        return trend_by_day
+
+    def _endpoint_count_trend_by_day(self, results_asc: List[DayResult], warning_threshold_pct: float = 10.0) -> dict:
+        trend_by_day = {}
+        previous_total = None
+
+        for r in results_asc:
+            day_key = str(r.day)
+            current_total = len(r.endpoints)
+
+            if previous_total is None or previous_total == 0:
+                trend_by_day[day_key] = "—"
+                previous_total = current_total
+                continue
+
+            delta = current_total - previous_total
+            if delta == 0:
+                trend_by_day[day_key] = "0"
+                previous_total = current_total
+                continue
+
+            pct = abs(delta) / previous_total * 100.0
+            sign = "+" if delta > 0 else ""
+            base = f"{sign}{delta} ({sign}{pct:.1f}%)"
+            trend_by_day[day_key] = f"⚠ {base}" if pct > warning_threshold_pct else base
+            previous_total = current_total
+
+        return trend_by_day
+
     def _results_to_export_data(self, results: List[DayResult]) -> list:
+        sorted_asc = sorted(results, key=lambda x: x.day)
+        trend_by_day = self._health_trend_by_day(sorted_asc)
+        endpoint_trend_by_day = self._endpoint_count_trend_by_day(sorted_asc)
         return [
             {
                 "day": str(r.day),
                 "commit": r.commit.sha if r.commit else None,
                 "commit_message": r.commit.message if r.commit else None,
                 "health_pct": r.health_pct,
+                "health_trend": trend_by_day.get(str(r.day), "—"),
+                "health_regression": trend_by_day.get(str(r.day), "").startswith("⚠"),
+                "endpoint_count_trend": endpoint_trend_by_day.get(str(r.day), "—"),
+                "endpoint_count_warning": endpoint_trend_by_day.get(str(r.day), "").startswith("⚠"),
                 "ok": r.ok_count,
                 "fail": r.fail_count,
                 "total": len(r.endpoints),

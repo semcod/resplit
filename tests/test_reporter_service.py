@@ -180,3 +180,94 @@ def test_save_timeline_index_multiple_days_sorted(tmp_path):
     svc.save_timeline_index(results, tmp_path)
     content = (tmp_path / "index.html").read_text()
     assert content.index("2024-03-15") < content.index("2024-03-13")
+
+
+def test_save_timeline_index_flags_health_regression(tmp_path):
+    ep = _ep()
+
+    d1_dir = tmp_path / "2024-03-14"
+    d2_dir = tmp_path / "2024-03-15"
+    d1_dir.mkdir(parents=True)
+    d2_dir.mkdir(parents=True)
+
+    d1 = DayResult(
+        day=date(2024, 3, 14),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep, ep, ep, ep, ep],
+        endpoint_results=[
+            EndpointResult(endpoint=ep, status=EndpointStatus.OK),
+            EndpointResult(endpoint=ep, status=EndpointStatus.OK),
+            EndpointResult(endpoint=ep, status=EndpointStatus.OK),
+            EndpointResult(endpoint=ep, status=EndpointStatus.OK),
+            EndpointResult(endpoint=ep, status=EndpointStatus.OK),
+        ],
+        output_dir=d1_dir,
+    )
+    d2 = DayResult(
+        day=date(2024, 3, 15),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep, ep, ep, ep, ep],
+        endpoint_results=[
+            EndpointResult(endpoint=ep, status=EndpointStatus.OK),
+            EndpointResult(endpoint=ep, status=EndpointStatus.FAIL),
+            EndpointResult(endpoint=ep, status=EndpointStatus.FAIL),
+            EndpointResult(endpoint=ep, status=EndpointStatus.FAIL),
+            EndpointResult(endpoint=ep, status=EndpointStatus.FAIL),
+        ],
+        output_dir=d2_dir,
+    )
+
+    svc = ReporterService()
+    svc.save_timeline_index([d1, d2], tmp_path)
+
+    index_content = (tmp_path / "index.html").read_text()
+    assert "⚠" in index_content
+
+    history_data = json.loads((tmp_path / "history.json").read_text())
+    reg_row = next(x for x in history_data if x["day"] == "2024-03-15")
+    assert reg_row["health_regression"] is True
+    assert reg_row["health_trend"].startswith("⚠")
+    assert reg_row["endpoint_count_warning"] is False
+
+
+def test_save_timeline_index_flags_endpoint_count_warning(tmp_path):
+    ep = _ep()
+
+    d1_dir = tmp_path / "2024-03-14"
+    d2_dir = tmp_path / "2024-03-15"
+    d1_dir.mkdir(parents=True)
+    d2_dir.mkdir(parents=True)
+
+    d1 = DayResult(
+        day=date(2024, 3, 14),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep] * 10,
+        endpoint_results=[EndpointResult(endpoint=ep, status=EndpointStatus.OK)] * 10,
+        output_dir=d1_dir,
+    )
+    d2 = DayResult(
+        day=date(2024, 3, 15),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep] * 8,
+        endpoint_results=[EndpointResult(endpoint=ep, status=EndpointStatus.OK)] * 8,
+        output_dir=d2_dir,
+    )
+
+    svc = ReporterService()
+    svc.save_timeline_index([d1, d2], tmp_path)
+
+    index_content = (tmp_path / "index.html").read_text()
+    assert "%" in index_content
+
+    history_data = json.loads((tmp_path / "history.json").read_text())
+    warn_row = next(x for x in history_data if x["day"] == "2024-03-15")
+    assert warn_row["endpoint_count_warning"] is True
+    assert warn_row["endpoint_count_trend"].startswith("⚠")

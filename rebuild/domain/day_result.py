@@ -10,6 +10,9 @@ from .endpoint import Endpoint, EndpointResult, EndpointStatus
 from .models import DeployMethod
 
 
+_DEPLOY_LOG_MAX_LINES = 200
+
+
 class DeployErrorCategory(str, Enum):
     COMPOSE_BUILD_FAIL = "compose_build_fail"
     PORT_CONFLICT = "port_conflict"
@@ -50,6 +53,17 @@ class DayResult:
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes result for export."""
+        deploy_log = self.deploy_log
+        if deploy_log:
+            lines = deploy_log.splitlines()
+            if len(lines) > _DEPLOY_LOG_MAX_LINES:
+                omitted = len(lines) - _DEPLOY_LOG_MAX_LINES
+                tail = "\n".join(lines[-_DEPLOY_LOG_MAX_LINES:])
+                deploy_log = (
+                    f"[rebuild] deploy log truncated: omitted {omitted} lines; "
+                    f"showing last {_DEPLOY_LOG_MAX_LINES} lines\n{tail}"
+                )
+
         return {
             "day": str(self.day),
             "commit": {
@@ -71,7 +85,7 @@ class DayResult:
                 "method": self.deploy_method.value,
                 "success": self.deploy_success,
                 "is_dry_run": self.is_dry_run,
-                "log": self.deploy_log,
+                "log": deploy_log,
                 "error_category": self.deploy_error_category.value if self.deploy_error_category else None
             },
             "results": [

@@ -71,14 +71,14 @@
 - [ ] **Config Validation**: JSON Schema dla `rebuild.yaml` z walidacją przy starcie — lepsze komunikaty błędów zamiast traceback.
 
 ### 🟠 Wysokie
-- [ ] **Walk Result Regression Guard**: Automatyczny test regresji — jeśli `health_%` spada o >20% vs poprzedni dzień, flag to w raporcie.
-- [ ] **c2004 Dashboard**: Uruchomić `rebuild serve` na wynikach c2004 i sprawdzić poprawność dashboardu dla 444 endpointów.
-- [ ] **`--output` default respects rebuild.yaml**: Gdy `output.dir` jest w `rebuild.yaml`, powinno nadpisywać domyślne `.rebuild` bez potrzeby flagi CLI.
+- [x] **Walk Result Regression Guard**: Automatyczny test regresji — jeśli `health_%` spada o >20% vs poprzedni dzień, flag to w raporcie.
+- [x] **c2004 Dashboard**: Uruchomić `rebuild serve` na wynikach c2004 i sprawdzić poprawność dashboardu dla 444 endpointów.
+- [x] **`--output` default respects rebuild.yaml**: Gdy `output.dir` jest w `rebuild.yaml`, powinno nadpisywać domyślne `.rebuild` bez potrzeby flagi CLI.
 
 ### 🟡 Średnie
 - [ ] **Deploy log truncation**: Logi `docker compose` mogą być >1MB w `results.json`. Dodać limit (np. ostatnie 200 linii) z informacją o obcięciu.
 - [ ] **Health verbose summary**: Gdy health check failuje, wyświetlić skrót odpowiedzi HTTP (status + pierwsze 200 bajtów body).
-- [ ] **Endpoint count diff warning**: Jeśli liczba endpointów zmienia się o >10% między dniami, wyświetlić ostrzeżenie w tabeli.
+- [x] **Endpoint count diff warning**: Jeśli liczba endpointów zmienia się o >10% między dniami, wyświetlić ostrzeżenie w tabeli.
 
 ---
 

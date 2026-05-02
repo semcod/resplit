@@ -144,7 +144,12 @@ def test_git_clone_for_walk_new(tmp_path):
 # helpers — print_report_links
 # ─────────────────────────────────────────────────────────────
 
-from rebuild.interfaces.commands.helpers import print_report_links, print_summary_table
+from rebuild.interfaces.commands.helpers import (
+    print_report_links,
+    print_summary_table,
+    compute_health_trend_labels,
+    compute_endpoint_count_trend_labels,
+)
 
 
 def test_print_report_links_with_port(tmp_path):
@@ -176,6 +181,65 @@ def test_print_summary_table_with_data():
     console = MagicMock()
     print_summary_table([dr], console)
     console.print.assert_called()
+
+
+def test_compute_health_trend_labels_flags_large_regression():
+    from rebuild.domain.models import DeployMethod
+
+    ep = Endpoint(method="GET", path="/h", base_url="http://x")
+    ok = EndpointResult(endpoint=ep, status=EndpointStatus.OK, http_status=200)
+    fail = EndpointResult(endpoint=ep, status=EndpointStatus.FAIL, http_status=500)
+
+    d1 = DayResult(
+        day=date(2025, 1, 1),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep, ep, ep, ep, ep],
+        endpoint_results=[ok, ok, ok, ok, ok],
+    )
+    d2 = DayResult(
+        day=date(2025, 1, 2),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep, ep, ep, ep, ep],
+        endpoint_results=[ok, fail, fail, fail, fail],
+    )
+
+    labels = compute_health_trend_labels([d1, d2], regression_threshold=20.0)
+
+    assert labels[0] == "—"
+    assert labels[1].startswith("⚠")
+
+
+def test_compute_endpoint_count_trend_labels_flags_large_change():
+    from rebuild.domain.models import DeployMethod
+
+    ep = Endpoint(method="GET", path="/h", base_url="http://x")
+    ok = EndpointResult(endpoint=ep, status=EndpointStatus.OK, http_status=200)
+
+    d1 = DayResult(
+        day=date(2025, 1, 1),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep] * 10,
+        endpoint_results=[ok] * 10,
+    )
+    d2 = DayResult(
+        day=date(2025, 1, 2),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep] * 8,
+        endpoint_results=[ok] * 8,
+    )
+
+    labels = compute_endpoint_count_trend_labels([d1, d2], warning_threshold_pct=10.0)
+
+    assert labels[0] == "—"
+    assert labels[1].startswith("⚠")
 
 
 # ─────────────────────────────────────────────────────────────

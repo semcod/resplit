@@ -17,22 +17,89 @@ def print_report_links(output: Path, port: Optional[int], console: Console) -> N
     console.print(f"  [dim]Per-day:     {base}/YYYY-MM-DD/report.html[/dim]")
 
 
+def compute_health_trend_labels(results: List[DayResult], regression_threshold: float = 20.0) -> List[str]:
+    labels: List[str] = []
+    previous_health: Optional[float] = None
+
+    for r in sorted(results, key=lambda x: x.day):
+        if previous_health is None:
+            labels.append("—")
+            previous_health = r.health_pct
+            continue
+
+        delta = round(r.health_pct - previous_health, 1)
+        if delta <= -regression_threshold:
+            labels.append(f"⚠ {delta:.1f}pp")
+        elif delta > 0:
+            labels.append(f"+{delta:.1f}pp")
+        elif delta < 0:
+            labels.append(f"{delta:.1f}pp")
+        else:
+            labels.append("0.0pp")
+
+        previous_health = r.health_pct
+
+    return labels
+
+
+def compute_endpoint_count_trend_labels(results: List[DayResult], warning_threshold_pct: float = 10.0) -> List[str]:
+    labels: List[str] = []
+    previous_total: Optional[int] = None
+
+    for r in sorted(results, key=lambda x: x.day):
+        current_total = len(r.endpoints)
+        if previous_total is None or previous_total == 0:
+            labels.append("—")
+            previous_total = current_total
+            continue
+
+        delta = current_total - previous_total
+        if delta == 0:
+            labels.append("0")
+            previous_total = current_total
+            continue
+
+        pct = abs(delta) / previous_total * 100.0
+        sign = "+" if delta > 0 else ""
+        base = f"{sign}{delta} ({sign}{pct:.1f}%)"
+        labels.append(f"⚠ {base}" if pct > warning_threshold_pct else base)
+        previous_total = current_total
+
+    return labels
+
+
 def print_summary_table(results: List[DayResult], console: Console) -> None:
     table = Table(title="Podsumowanie walk", show_header=True)
     table.add_column("Dzień", style="bold")
     table.add_column("Commit")
     table.add_column("Health", justify="right")
+    table.add_column("Trend", justify="right")
     table.add_column("OK/Total", justify="right")
+    table.add_column("EP Δ", justify="right")
     table.add_column("Deploy")
     table.add_column("Czas")
 
-    for r in sorted(results, key=lambda x: x.day):
+    ordered = sorted(results, key=lambda x: x.day)
+    trends = compute_health_trend_labels(ordered)
+    endpoint_trends = compute_endpoint_count_trend_labels(ordered)
+
+    for r, trend, ep_trend in zip(ordered, trends, endpoint_trends):
         color = "green" if r.health_pct >= 80 else "yellow" if r.health_pct >= 50 else "red"
+        trend_cell = (
+            f"[red]{trend}[/red]"
+            if trend.startswith("⚠")
+            else f"[green]{trend}[/green]"
+            if trend.startswith("+")
+            else f"[dim]{trend}[/dim]"
+        )
+        ep_trend_cell = f"[yellow]{ep_trend}[/yellow]" if ep_trend.startswith("⚠") else f"[dim]{ep_trend}[/dim]"
         table.add_row(
             str(r.day),
             r.commit.sha[:8] if r.commit else "—",
             f"[{color}]{r.health_pct}%[/{color}]",
+            trend_cell,
             f"{r.ok_count}/{len(r.endpoints)}",
+            ep_trend_cell,
             "✓" if r.deploy_success else "✗",
             f"{r.duration_seconds:.2f}s",
         )
