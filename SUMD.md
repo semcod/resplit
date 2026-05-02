@@ -532,13 +532,13 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# resplit | 56770f 7477721L | typescript:21427,python:21427,shell:11561,javascript:1997,css:249,less:73,rust:36 | 2026-05-02
-# stats: 61712 func | 30496 cls | 56770 mod | CC̄=4.3 | critical:5338 | cycles:0
+# resplit | 56826f 7486733L | python:21443,typescript:21427,shell:11561,javascript:2033,css:253,less:73,rust:36 | 2026-05-02
+# stats: 61723 func | 30555 cls | 56826 mod | CC̄=4.3 | critical:5339 | cycles:0
 # alerts[5]: CC parse_dsl=54; fan-out parse_dsl=46
 # hotspots[5]: parse_dsl fan=46; parse_dsl fan=46; parse_dsl fan=46; parse_dsl fan=46; parse_dsl fan=46
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[56770]:
+M[56826]:
   .rebuild/c2004/patches/frontend/src/components/dsl/singleton.ts,42
   .rebuild/c2004/repo_clone/.rebuild/repo/.regres/barcode-config-doctor-patch-01-92efe1d9.sh,140
   .rebuild/c2004/repo_clone/.rebuild/repo/.regres/barcode-config-doctor-patch-02-77959ed6.sh,140
@@ -57187,6 +57187,7 @@ M[56770]:
   c2004/repo/tools/contracts-gen/validate_source.py,94
   c2004/repo/tree.sh,2
   c2004/repo/update.sh,36
+  docs/stylesheets/extra.css,21
   examples/01-dry-run-walk/run.sh,21
   examples/02-docker-compose-project/run.sh,33
   examples/03-restore-endpoint/mock_results.sh,38
@@ -57205,10 +57206,18 @@ M[56770]:
   rebuild/application/__init__.py,1
   rebuild/application/accelerated_pipeline.py,399
   rebuild/application/base_pipeline.py,102
+  rebuild/application/commands/__init__.py,13
+  rebuild/application/commands/analyze_commands.py,52
+  rebuild/application/commands/base.py,72
+  rebuild/application/commands/snapshot_commands.py,44
+  rebuild/application/commands/walk_commands.py,55
   rebuild/application/pipeline.py,224
+  rebuild/application/queries/__init__.py,15
+  rebuild/application/queries/base.py,70
+  rebuild/application/queries/walk_queries.py,71
   rebuild/application/services/accelerator_deploy.py,452
   rebuild/application/services/base.py,11
-  rebuild/application/services/db_snapshot_manager.py,316
+  rebuild/application/services/db_snapshot_manager.py,371
   rebuild/application/services/deploy_service.py,363
   rebuild/application/services/deploy_strategy.py,31
   rebuild/application/services/event_service.py,115
@@ -57216,6 +57225,7 @@ M[56770]:
   rebuild/application/services/history_service.py,101
   rebuild/application/services/llm_service.py,76
   rebuild/application/services/nlp_service.py,197
+  rebuild/application/services/notification_service.py,233
   rebuild/application/services/override_service.py,31
   rebuild/application/services/parallel_test_engine.py,412
   rebuild/application/services/patcher_service.py,109
@@ -57239,23 +57249,25 @@ M[56770]:
   rebuild/domain/day_result.py,103
   rebuild/domain/dsl.py,257
   rebuild/domain/endpoint.py,50
+  rebuild/domain/events/__init__.py,39
+  rebuild/domain/events/domain_events.py,144
   rebuild/domain/events.py,31
-  rebuild/domain/models.py,54
+  rebuild/domain/models.py,57
   rebuild/domain/mvp_protocol.py,282
   rebuild/domain/timeline.py,140
   rebuild/infrastructure/__init__.py,1
-  rebuild/infrastructure/config_loader.py,125
+  rebuild/infrastructure/config_loader.py,131
   rebuild/infrastructure/config_schema.py,219
   rebuild/infrastructure/http_adapter.py,40
   rebuild/infrastructure/shell_adapter.py,38
   rebuild/interfaces/__init__.py,1
-  rebuild/interfaces/cli.py,482
+  rebuild/interfaces/cli.py,521
   rebuild/interfaces/cli_new.py,1
   rebuild/interfaces/commands/__init__.py,1
   rebuild/interfaces/commands/analyze_command.py,253
   rebuild/interfaces/commands/helpers.py,162
   rebuild/interfaces/commands/refactor_command.py,99
-  rebuild/interfaces/commands/walk_command.py,215
+  rebuild/interfaces/commands/walk_command.py,237
   rebuild/interfaces/dashboard.py,366
   rebuild/interfaces/evolution_viz.py,386
   rebuild/interfaces/tui/__init__.py,4
@@ -57268,6 +57280,9 @@ M[56770]:
   rebuild/interfaces/tui/screens/project_screen.py,87
   rebuild/interfaces/tui/screens/restore_screen.py,151
   rebuild/interfaces/tui/screens/walk_screens.py,173
+  rebuild/plugins/__init__.py,19
+  rebuild/plugins/base.py,78
+  rebuild/plugins/registry.py,151
   rebuild/refactor/recommendation_engine.py,83
   rebuild/refactor/refactor_executor.py,49
   restored_c2004_health/api-health/backend/modules/connect-config-network/api/main.py,92
@@ -57279,6 +57294,45 @@ M[56770]:
   restored_c2004_health/api-health/backend/tests/e2e/all-modules-smoke.spec.ts,111
   restored_c2004_health/api-health/backend/tests/e2e/module-smoke-test-template.spec.ts,147
   scripts/bump_version.py,240
+  site/assets/javascripts/bundle.79ae519e.min.js,17
+  site/assets/javascripts/lunr/min/lunr.ar.min.js,1
+  site/assets/javascripts/lunr/min/lunr.da.min.js,18
+  site/assets/javascripts/lunr/min/lunr.de.min.js,18
+  site/assets/javascripts/lunr/min/lunr.du.min.js,18
+  site/assets/javascripts/lunr/min/lunr.el.min.js,1
+  site/assets/javascripts/lunr/min/lunr.es.min.js,18
+  site/assets/javascripts/lunr/min/lunr.fi.min.js,18
+  site/assets/javascripts/lunr/min/lunr.fr.min.js,18
+  site/assets/javascripts/lunr/min/lunr.he.min.js,1
+  site/assets/javascripts/lunr/min/lunr.hi.min.js,1
+  site/assets/javascripts/lunr/min/lunr.hu.min.js,18
+  site/assets/javascripts/lunr/min/lunr.hy.min.js,1
+  site/assets/javascripts/lunr/min/lunr.it.min.js,18
+  site/assets/javascripts/lunr/min/lunr.ja.min.js,1
+  site/assets/javascripts/lunr/min/lunr.jp.min.js,1
+  site/assets/javascripts/lunr/min/lunr.kn.min.js,1
+  site/assets/javascripts/lunr/min/lunr.ko.min.js,1
+  site/assets/javascripts/lunr/min/lunr.multi.min.js,1
+  site/assets/javascripts/lunr/min/lunr.nl.min.js,18
+  site/assets/javascripts/lunr/min/lunr.no.min.js,18
+  site/assets/javascripts/lunr/min/lunr.pt.min.js,18
+  site/assets/javascripts/lunr/min/lunr.ro.min.js,18
+  site/assets/javascripts/lunr/min/lunr.ru.min.js,18
+  site/assets/javascripts/lunr/min/lunr.sa.min.js,1
+  site/assets/javascripts/lunr/min/lunr.stemmer.support.min.js,1
+  site/assets/javascripts/lunr/min/lunr.sv.min.js,18
+  site/assets/javascripts/lunr/min/lunr.ta.min.js,1
+  site/assets/javascripts/lunr/min/lunr.te.min.js,1
+  site/assets/javascripts/lunr/min/lunr.th.min.js,1
+  site/assets/javascripts/lunr/min/lunr.tr.min.js,18
+  site/assets/javascripts/lunr/min/lunr.vi.min.js,1
+  site/assets/javascripts/lunr/min/lunr.zh.min.js,1
+  site/assets/javascripts/lunr/tinyseg.js,206
+  site/assets/javascripts/lunr/wordcut.js,6708
+  site/assets/javascripts/workers/search.2c215733.min.js,43
+  site/assets/stylesheets/main.484c7ddc.min.css,1
+  site/assets/stylesheets/palette.ab4e12ef.min.css,1
+  site/stylesheets/extra.css,21
   tests/__init__.py,1
   tests/test_accelerated_pipeline.py,264
   tests/test_accelerator_deploy.py,312
@@ -57297,6 +57351,7 @@ M[56770]:
   tests/test_history_service.py,114
   tests/test_interfaces_smoke.py,149
   tests/test_models.py,98
+  tests/test_notification_service.py,308
   tests/test_pipeline.py,158
   tests/test_pipeline_extra.py,157
   tests/test_reporter_service.py,349
@@ -57305,6 +57360,7 @@ M[56770]:
   tests/test_scanner_service.py,159
   tests/test_services_extra.py,394
   tests/test_smart_screenshot.py,201
+  tests/test_snapshot_lru.py,218
   tests/test_test_service.py,56
   tests/test_walk_command_config_precedence.py,103
   tests/test_worktree_db.py,226
@@ -186476,9 +186532,49 @@ D:
   rebuild/application/base_pipeline.py:
     e: BasePipeline
     BasePipeline: __init__(2),_load_state(0),_save_state(0),_emit(1),log(1)  # Shared infrastructure for Pipeline and AcceleratedPipeline.
+  rebuild/application/commands/__init__.py:
+  rebuild/application/commands/analyze_commands.py:
+    e: AnalyzeCommand,AnalyzeCommandResult,NotifyCommand,NotifyCommandResult
+    AnalyzeCommand: _validate_type(2)  # Trigger codebase analysis.
+    AnalyzeCommandResult:  # Result of an AnalyzeCommand.
+    NotifyCommand:  # Send a webhook notification.
+    NotifyCommandResult:  # Result of a NotifyCommand.
+  rebuild/application/commands/base.py:
+    e: Command,CommandResult,CommandHandler,CommandBus
+    Command:  # Base class for all CQRS commands (write side).
+    CommandResult:  # Base class for all command results.
+    CommandHandler: handle(1)  # Handle a single Command type and return a CommandResult.
+    CommandBus: __init__(0),register(2),dispatch(1)  # Dispatch Commands to registered handlers.
+  rebuild/application/commands/snapshot_commands.py:
+    e: CreateSnapshotCommand,CreateSnapshotCommandResult,PruneSnapshotsCommand,PruneSnapshotsCommandResult
+    CreateSnapshotCommand:  # Create a DB snapshot.
+    CreateSnapshotCommandResult:  # Result of CreateSnapshotCommand.
+    PruneSnapshotsCommand:  # Prune old snapshots using LRU policy.
+    PruneSnapshotsCommandResult:  # Result of PruneSnapshotsCommand.
+  rebuild/application/commands/walk_commands.py:
+    e: WalkCommand,WalkCommandResult
+    WalkCommand: _validate_deploy(2),_validate_repo(2)  # Trigger a historical walk of a git repository.
+    WalkCommandResult:  # Result of a WalkCommand.
   rebuild/application/pipeline.py:
     e: Pipeline
     Pipeline: __init__(2),_check_for_manual_fix(2),run(0),run_day(2)  # Orchestrates the analysis process (Command).
+  rebuild/application/queries/__init__.py:
+  rebuild/application/queries/base.py:
+    e: Query,QueryResult,QueryHandler,QueryBus
+    Query:  # Base class for all CQRS queries (read side).
+    QueryResult:  # Base class for all query results.
+    QueryHandler: handle(1)  # Handle a single Query type and return a QueryResult.
+    QueryBus: __init__(0),register(2),dispatch(1)  # Dispatch Queries to registered handlers.
+  rebuild/application/queries/walk_queries.py:
+    e: GetWalkHistoryQuery,WalkHistoryResult,GetDayResultQuery,DayResultQueryResult,GetSnapshotStatsQuery,SnapshotStatsResult,GetPluginsQuery,PluginsQueryResult
+    GetWalkHistoryQuery:  # Get historical walk results from output directory.
+    WalkHistoryResult:  # Result of GetWalkHistoryQuery.
+    GetDayResultQuery:  # Get results for a single day.
+    DayResultQueryResult:  # Result of GetDayResultQuery.
+    GetSnapshotStatsQuery:  # Get statistics about saved DB snapshots.
+    SnapshotStatsResult:  # Result of GetSnapshotStatsQuery.
+    GetPluginsQuery:  # List installed plugins.
+    PluginsQueryResult:  # Result of GetPluginsQuery.
   rebuild/application/services/accelerator_deploy.py:
     e: AcceleratorDeployService
     AcceleratorDeployService: __init__(5),start(1),prepare_runtime(2),_accelerated_compose_up(1),switch_commit(2),_update_bind_mount(2),_sync_code_to_container(4),_get_changed_files(3),_copy_changed_files(3),_get_container_name(1),_trigger_reload(1),_send_hup_signal(1),_send_exec_hup(1),_write_runtime_marker(2),_post_switch_health_timeout(0),_post_switch_health_interval(0),_post_switch_health_cache_ttl(0),_wait_post_switch_healthy(0),_verify_runtime_commit(2),reload(1),stop(1),setup_mount_compose(2),_set_active_path(1)  # 10x faster deployment using:
@@ -186488,7 +186584,7 @@ D:
   rebuild/application/services/db_snapshot_manager.py:
     e: SnapshotInfo,DBSnapshotManager
     SnapshotInfo:  # Metadata about a database snapshot.
-    DBSnapshotManager: __init__(8),_ensure_dirs(0),_load_metadata(0),_save_metadata(0),create(2),_postgres_dump(1),_mysql_dump(1),_sqlite_dump(1),restore(2),_wait_until_ready(0),_ready_check_command(0),_postgres_restore(1),_quick_restore_postgres(1),_mysql_restore(1),_sqlite_restore(1),create_baseline(1),list_snapshots(0),delete(1),execute(1)  # Manages database snapshots for instant state restore.
+    DBSnapshotManager: __init__(9),_ensure_dirs(0),_load_metadata(0),_save_metadata(0),create(2),_auto_prune(0),prune_old(1),stats(0),_postgres_dump(1),_mysql_dump(1),_sqlite_dump(1),restore(2),_wait_until_ready(0),_ready_check_command(0),_postgres_restore(1),_quick_restore_postgres(1),_mysql_restore(1),_sqlite_restore(1),create_baseline(1),list_snapshots(0),delete(1),execute(1)  # Manages database snapshots for instant state restore.
   rebuild/application/services/deploy_service.py:
     e: DeployService
     DeployService: __init__(4),detect_deploy_method(1),start(1),execute(1),wait_healthy(2),reload(1),stop(1),_compose_file(1),_compose_up(1),_compose_down(1),_uvicorn_start(1),_uvicorn_stop(0),_classify_deploy_error(1),_save_deploy_debug(2),_run_with_retry(2),_wait_healthy_with_retry(0),_wait_healthy(2),_sync_code_to_runtime(2),_sync_via_overlay(2),_resolve_container_name(2)  # Service for managing the lifecycle of the service being anal
@@ -186515,6 +186611,16 @@ D:
     Intent:  # Intents for natural language commands.
     NLPCommand:  # Parsed natural language command.
     NLPService: __init__(0),parse(1),_detect_intent(1),_extract_parameters(1),to_dsl(1),to_cli_args(1)  # Service for parsing natural language commands into DSL/CLI c
+  rebuild/application/services/notification_service.py:
+    e: _build_slack_payload,_build_discord_payload,_build_generic_payload,_send_webhook,NotificationEvent,NotificationPayload,WebhookConfig,NotificationService
+    NotificationEvent:
+    NotificationPayload:
+    WebhookConfig:
+    NotificationService: __init__(0),add_webhook(1),remove_webhook(1),clear(0),hooks(0),notify(1),notify_deploy_fail(3),notify_health_regression(4),notify_walk_complete(4),_build_body(2),from_config(2)  # Send webhook notifications on rebuild events.
+    _build_slack_payload(payload)
+    _build_discord_payload(payload)
+    _build_generic_payload(payload)
+    _send_webhook(cfg;body)
   rebuild/application/services/override_service.py:
     e: OverrideService
     OverrideService: execute(2)  # Service for applying manual overrides (patches) to the repo 
@@ -186601,6 +186707,25 @@ D:
     EndpointStatus:
     Endpoint: url(0),slug(0)
     EndpointResult:
+  rebuild/domain/events/__init__.py:
+  rebuild/domain/events/domain_events.py:
+    e: DomainEvent,WalkStartedEvent,CommitCheckedOutEvent,DeployStartedEvent,DeployFinishedEvent,DeployFailedEvent,HealthCheckPassedEvent,HealthCheckFailedEvent,EndpointTestedEvent,DayFinishedEvent,WalkFinishedEvent,AnalysisStartedEvent,AnalysisFinishedEvent,SnapshotCreatedEvent,SnapshotPrunedEvent,NotificationSentEvent
+    DomainEvent: model_post_init(1),to_dict(0)  # Base class for all domain events.
+    WalkStartedEvent:
+    CommitCheckedOutEvent:
+    DeployStartedEvent:
+    DeployFinishedEvent:
+    DeployFailedEvent:
+    HealthCheckPassedEvent:
+    HealthCheckFailedEvent:
+    EndpointTestedEvent:
+    DayFinishedEvent:
+    WalkFinishedEvent:
+    AnalysisStartedEvent:
+    AnalysisFinishedEvent:
+    SnapshotCreatedEvent:
+    SnapshotPrunedEvent:
+    NotificationSentEvent:
   rebuild/domain/events.py:
     e: PipelineEvent
     PipelineEvent: create(2),to_json(0)
@@ -186642,7 +186767,7 @@ D:
     ShellAdapter: __init__(1),run(3),popen(2)  # Adapter for shell command execution.
   rebuild/interfaces/__init__.py:
   rebuild/interfaces/cli.py:
-    e: init,walk,restore,report,dashboard,accelerator,serve,tui,version,auto_pr,evolution,dsl,nlp,mvp,duplicates,vector_build,vector_query,multi_repo,services,truth,plan,pr,execute
+    e: init,walk,restore,report,dashboard,accelerator,serve,tui,version,auto_pr,evolution,dsl,nlp,mvp,duplicates,vector_build,vector_query,multi_repo,services,truth,plan,pr,execute,plugins
     init(path;force)
     walk(ctx;repo;days;date_from;date_to;output;deploy;replay;service;health_url;base_url;screenshots;dry_run;serve;port;accelerator;patch_dir;health_timeout)
     restore(endpoint;repo;output;results_dir)
@@ -186666,6 +186791,7 @@ D:
     plan(path;ai)
     pr(path)
     execute(path;force)
+    plugins(verbose)
   rebuild/interfaces/cli_new.py:
   rebuild/interfaces/commands/__init__.py:
   rebuild/interfaces/commands/analyze_command.py:
@@ -186690,8 +186816,9 @@ D:
     pr_command(path;console)
     execute_command(path;force;console)
   rebuild/interfaces/commands/walk_command.py:
-    e: walk_command,accelerator_command
+    e: walk_command,_fire_notifications,accelerator_command
     walk_command(repo;days;date_from;date_to;output;deploy;replay;service;health_url;base_url;screenshots;dry_run;serve;port;accelerator;patch_dir;console;health_timeout;cli_overrides)
+    _fire_notifications(all_results;config;console)
     accelerator_command(repo;days;date_from;date_to;output;service;db_container;db_type;parallel;smart;health_url;base_url;screenshots;shutdown;serve;port;patch_dir;console)
   rebuild/interfaces/dashboard.py:
     e: get_cc_for_day,_extract_avg_cc,generate_dashboard,_render_html
@@ -186715,6 +186842,18 @@ D:
   rebuild/interfaces/tui/screens/project_screen.py:
   rebuild/interfaces/tui/screens/restore_screen.py:
   rebuild/interfaces/tui/screens/walk_screens.py:
+  rebuild/plugins/__init__.py:
+  rebuild/plugins/base.py:
+    e: ScanResult,BaseScanner,BaseReporter
+    ScanResult:  # Generic result produced by a scanner plugin.
+    BaseScanner: scan(1),configure(1)  # Base class for rebuild scanner plugins.
+    BaseReporter: report(2),configure(1)  # Base class for rebuild reporter plugins.
+  rebuild/plugins/registry.py:
+    e: _load_entry_points,load_plugins,reset_registry,PluginRegistry
+    PluginRegistry: __init__(0),discover(0),register_scanner(2),register_reporter(2),unregister_scanner(1),unregister_reporter(1),scanners(0),reporters(0),get_scanner(1),get_reporter(1),scanner_names(0),reporter_names(0),__repr__(0)  # Central registry for rebuild plugins.
+    _load_entry_points(group)
+    load_plugins()
+    reset_registry()
   rebuild/refactor/recommendation_engine.py:
     e: RefactorSuggestion,RecommendationEngine
     RefactorSuggestion:
@@ -187241,6 +187380,13 @@ D:
     test_walk_config_defaults()
     test_day_result_to_dict_truncates_long_deploy_log()
     test_day_result_to_dict_keeps_short_deploy_log()
+  tests/test_notification_service.py:
+    e: TestPayloadBuilders,TestSendWebhook,TestNotificationService,TestFromConfig,TestConfigLoaderNotifications
+    TestPayloadBuilders: _payload(1),test_slack_has_attachments(0),test_slack_error_color(0),test_slack_warning_color(0),test_discord_has_embeds(0),test_discord_error_color(0),test_generic_has_event_and_message(0)
+    TestSendWebhook: test_success_returns_true(0),test_url_error_returns_false(0),test_exception_returns_false(0),test_http_400_returns_false(0)
+    TestNotificationService: _svc_with_mock(1),_mock_send(1),test_notify_reaches_hook(0),test_disabled_hook_skipped(0),test_event_filter(0),test_multiple_hooks(0),test_remove_webhook(0),test_clear(0),test_notify_deploy_fail(0),test_notify_health_regression(0),test_notify_walk_complete(0),test_slack_platform_uses_attachments(0),test_discord_platform_uses_embeds(0)
+    TestFromConfig: test_empty_list(0),test_single_slack_hook(0),test_disabled_hook(0),test_event_filter_from_config(0),test_extra_headers(0),test_timeout_from_config(0),test_invalid_item_skipped(0),test_non_dict_item_skipped(0)
+    TestConfigLoaderNotifications: test_notifications_loaded_from_yaml(1),test_notifications_root_level(1),test_no_notifications_defaults_empty(1)
   tests/test_pipeline.py:
     e: _config,_commit,test_run_returns_empty_when_no_commits,test_run_day_dry_run_skips_checkout,test_run_day_returns_day_result,test_run_day_deploy_failure_skips_scan,test_run_day_stop_always_called,test_run_processes_all_days
     _config(tmp_path;dry_run)
@@ -187384,6 +187530,14 @@ D:
     test_parallel_engine_dry_run_skips_all(tmp_path)
     test_parallel_engine_empty_input(tmp_path)
     test_parallel_engine_respects_max_concurrent(tmp_path)
+  tests/test_snapshot_lru.py:
+    e: _make_manager,_inject_snapshot,TestStats,TestPruneOld,TestAutoPrune,TestMetadataPersistence
+    TestStats: test_empty(1),test_with_snapshots(1),test_max_snapshots_reflected(1)
+    TestPruneOld: test_prune_keeps_newest(1),test_prune_protects_baseline(1),test_prune_protects_baseline_prefix(1),test_prune_nothing_to_delete(1),test_prune_uses_max_snapshots_default(1),test_files_deleted_on_prune(1),test_metadata_updated_after_prune(1)
+    TestAutoPrune: test_auto_prune_on_create(1),test_auto_prune_disabled_when_zero(1),test_auto_prune_protects_baseline(1)
+    TestMetadataPersistence: test_snapshots_persist_across_instances(1),test_delete_updates_metadata(1),test_list_snapshots_returns_copy(1),test_create_baseline_name(1),test_create_baseline_no_sha(1)
+    _make_manager(tmp_path;max_snapshots)
+    _inject_snapshot(mgr;name;created_at;size)
   tests/test_test_service.py:
     e: _ep,test_test_service_ok,test_test_service_timeout,test_test_service_set_day_dir
     _ep(path;method)
@@ -187427,7 +187581,7 @@ D:
 
 ## Call Graph
 
-*42 nodes · 45 edges · 7 modules · CC̄=0.1*
+*23 nodes · 21 edges · 6 modules · CC̄=0.0*
 
 ### Hubs (by degree)
 
@@ -187435,62 +187589,62 @@ D:
 |----------|----|----|-----|-------|
 | `main` *(in scripts.bump_version)* | 4 | 0 | 20 | **20** |
 | `categorize_commits` *(in scripts.bump_version)* | 14 ⚠ | 1 | 15 | **16** |
-| `update_changelog` *(in scripts.bump_version)* | 5 | 1 | 14 | **15** |
 | `build_new_section` *(in scripts.bump_version)* | 7 | 1 | 14 | **15** |
-| `renderDownloads` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 2 | 11 | **13** |
-| `renderArchitecture` *(in restored_c2004_health.api-health.backend.site.src.main)* | 1 | 2 | 11 | **13** |
-| `checkServiceHealth` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 6 | 7 | **13** |
-| `print` *(in examples.08-nlp-commands.README)* | 0 | 12 | 0 | **12** |
+| `update_changelog` *(in scripts.bump_version)* | 5 | 1 | 14 | **15** |
+| `print` *(in Makefile)* | 0 | 12 | 0 | **12** |
+| `bump` *(in scripts.bump_version)* | 5 | 1 | 7 | **8** |
+| `get_git_log_since_last_tag` *(in scripts.bump_version)* | 7 | 1 | 7 | **8** |
+| `update_pyproject` *(in scripts.bump_version)* | 3 | 1 | 6 | **7** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/resplit
-# nodes: 42 | edges: 45 | modules: 7
-# CC̄=0.1
+# nodes: 23 | edges: 21 | modules: 6
+# CC̄=0.0
 
 HUBS[20]:
   scripts.bump_version.main
     CC=4  in:0  out:20  total:20
   scripts.bump_version.categorize_commits
     CC=14  in:1  out:15  total:16
-  scripts.bump_version.update_changelog
-    CC=5  in:1  out:14  total:15
   scripts.bump_version.build_new_section
     CC=7  in:1  out:14  total:15
-  restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-    CC=4  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-    CC=1  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-    CC=4  in:6  out:7  total:13
-  examples.08-nlp-commands.README.print
+  scripts.bump_version.update_changelog
+    CC=5  in:1  out:14  total:15
+  Makefile.print
     CC=0  in:12  out:0  total:12
-  restored_c2004_health.api-health.backend.site.src.main.renderDocs
-    CC=6  in:2  out:9  total:11
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-    CC=11  in:1  out:10  total:11
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute
-    CC=7  in:0  out:10  total:10
-  scripts.bump_version.get_git_log_since_last_tag
-    CC=7  in:1  out:7  total:8
   scripts.bump_version.bump
     CC=5  in:1  out:7  total:8
-  restored_c2004_health.api-health.backend.site.src.main.route
-    CC=7  in:0  out:8  total:8
+  scripts.bump_version.get_git_log_since_last_tag
+    CC=7  in:1  out:7  total:8
+  scripts.bump_version.update_pyproject
+    CC=3  in:1  out:6  total:7
   scripts.bump_version.update_init
     CC=3  in:1  out:6  total:7
   scripts.bump_version.collect_unreleased_entries
     CC=7  in:1  out:6  total:7
-  scripts.bump_version.update_pyproject
-    CC=3  in:1  out:6  total:7
   scripts.bump_version.read_version
     CC=2  in:2  out:4  total:6
-  restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
-    CC=10  in:1  out:4  total:5
-  restored_c2004_health.api-health.backend.site.src.main.allServices
-    CC=2  in:0  out:5  total:5
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index
+    CC=1  in:0  out:3  total:3
 
 MODULES:
-  examples.08-nlp-commands.README  [1 funcs]
+  Makefile  [1 funcs]
     print  CC=0  out:0
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
@@ -187508,17 +187662,6 @@ MODULES:
     _index_html  CC=2  out:1
     index  CC=1  out:3
     module_index  CC=1  out:3
-  restored_c2004_health.api-health.backend.site.src.main  [19 funcs]
-    allServices  CC=2  out:5
-    checkServiceHealth  CC=4  out:7
-    esc  CC=1  out:1
-    getRoute  CC=2  out:1
-    handleRoute  CC=7  out:10
-    healthyEl  CC=2  out:5
-    renderArchitecture  CC=1  out:11
-    renderDocs  CC=6  out:9
-    renderDownloads  CC=4  out:11
-    renderHome  CC=1  out:2
   scripts.bump_version  [10 funcs]
     build_new_section  CC=7  out:14
     bump  CC=5  out:7
@@ -187540,41 +187683,17 @@ EDGES:
   restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.getRoute
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderHome
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderServices
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderHome
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderServices
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  restored_c2004_health.api-health.backend.site.src.main.renderServices → restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-  restored_c2004_health.api-health.backend.site.src.main.renderServices → restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.summary → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.healthyEl → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.table → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.allServices → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.renderDocs → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  restored_c2004_health.api-health.backend.site.src.main.renderSidebar → restored_c2004_health.api-health.backend.site.src.main.esc
-  scripts.bump_version.update_init → examples.08-nlp-commands.README.print
-  scripts.bump_version.update_pyproject → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_init → Makefile.print
+  scripts.bump_version.update_pyproject → Makefile.print
   scripts.bump_version.build_new_section → scripts.bump_version.categorize_commits
   scripts.bump_version.update_changelog → scripts.bump_version.get_git_log_since_last_tag
   scripts.bump_version.update_changelog → scripts.bump_version.collect_unreleased_entries
   scripts.bump_version.update_changelog → scripts.bump_version.build_new_section
   scripts.bump_version.update_changelog → scripts.bump_version.read_version
-  scripts.bump_version.update_changelog → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_changelog → Makefile.print
   scripts.bump_version.main → scripts.bump_version.read_version
   scripts.bump_version.main → scripts.bump_version.bump
-  scripts.bump_version.main → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → Makefile.print
   scripts.bump_version.main → scripts.bump_version.update_init
   scripts.bump_version.main → scripts.bump_version.update_pyproject
 ```
