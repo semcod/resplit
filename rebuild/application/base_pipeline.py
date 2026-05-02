@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Optional, Set
 
 from ..domain.day_result import DayResult
-from ..domain.events import PipelineEvent
+from ..domain.events import PipelineEvent  # Legacy for backward compatibility
 from ..domain.models import WalkConfig
 
 from .services.git_service import GitService

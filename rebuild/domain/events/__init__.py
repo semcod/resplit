@@ -16,6 +16,7 @@ from .domain_events import (
     SnapshotCreatedEvent,
     SnapshotPrunedEvent,
     NotificationSentEvent,
+    PipelineEvent,  # Legacy for backward compatibility
 )
 
 __all__ = [
@@ -35,4 +36,5 @@ __all__ = [
     "SnapshotCreatedEvent",
     "SnapshotPrunedEvent",
     "NotificationSentEvent",
+    "PipelineEvent",
 ]

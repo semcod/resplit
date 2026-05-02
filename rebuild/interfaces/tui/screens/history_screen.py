@@ -20,6 +20,11 @@ if TEXTUAL_OK:
             Binding("escape", "pop_screen", "Wstecz"),
             Binding("d", "show_diff", "Diff"),
             Binding("r", "restore", "Restore"),
+            Binding("enter", "show_endpoints", "Endpointy"),
+            Binding("j", "cursor_down", "W dół"),
+            Binding("k", "cursor_up", "W górę"),
+            Binding("g", "go_top", "Początek"),
+            Binding("G", "go_bottom", "Koniec"),
         ]
 
         def __init__(self, repo: Path, results_dir: Path) -> None:
@@ -122,6 +127,34 @@ if TEXTUAL_OK:
                     prev_data=self._days[idx - 1] if idx > 0 else None,
                     show_diff=True,
                 ))
+
+        def action_show_endpoints(self) -> None:
+            idx = self._selected_idx()
+            if 0 <= idx < len(self._days):
+                from .endpoint_screens import EndpointDetailScreen
+                self.app.push_screen(EndpointDetailScreen(
+                    day_data=self._days[idx],
+                    prev_data=self._days[idx - 1] if idx > 0 else None,
+                    show_diff=False,
+                ))
+
+        def action_cursor_down(self) -> None:
+            table = self.query_one("#history-table", DataTable)
+            if table.cursor_row < len(self._days) - 1:
+                table.cursor_row += 1
+
+        def action_cursor_up(self) -> None:
+            table = self.query_one("#history-table", DataTable)
+            if table.cursor_row > 0:
+                table.cursor_row -= 1
+
+        def action_go_top(self) -> None:
+            table = self.query_one("#history-table", DataTable)
+            table.cursor_row = 0
+
+        def action_go_bottom(self) -> None:
+            table = self.query_one("#history-table", DataTable)
+            table.cursor_row = len(self._days) - 1
 
         def action_restore(self) -> None:
             idx = self._selected_idx()

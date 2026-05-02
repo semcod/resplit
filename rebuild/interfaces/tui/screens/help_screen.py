@@ -21,9 +21,13 @@ if TEXTUAL_OK:
 |---------|-------|
 | `Ctrl+C` | Wyjdź |
 | `Escape` | Wstecz |
+| `Enter` | Szczegóły endpointów dnia |
 | `D` | Diff vs poprzedni dzień |
 | `R` | Restore wybranego endpointu |
-| `Enter` | Szczegóły endpointów dnia |
+| `J` / `K` | W dół / W górę (nawigacja w tabeli) |
+| `G` | Początek tabeli |
+| `Shift+G` | Koniec tabeli |
+| `F` | Filtruj endpointy (TODO) |
 
 ## Przepływ
 

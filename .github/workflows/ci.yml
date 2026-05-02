@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev]"
+
+      - name: Lint with ruff
+        run: |
+          ruff check rebuild/ --select E,W,F --ignore E501,W503
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=rebuild --cov-report=term-missing --cov-report=xml --tb=short -q
+
+      - name: Coverage gate (≥70%)
+        run: |
+          python - <<'EOF'
+          import xml.etree.ElementTree as ET
+          tree = ET.parse("coverage.xml")
+          root = tree.getroot()
+          rate = float(root.attrib.get("line-rate", 0)) * 100
+          print(f"Coverage: {rate:.1f}%")
+          if rate < 70:
+              print(f"FAIL: Coverage {rate:.1f}% is below the required 70%")
+              raise SystemExit(1)
+          print("PASS: Coverage gate met.")
+          EOF
+
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.11'
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: false

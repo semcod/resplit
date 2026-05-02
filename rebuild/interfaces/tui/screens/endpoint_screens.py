@@ -32,6 +32,11 @@ if TEXTUAL_OK:
         BINDINGS = [
             Binding("escape", "pop_screen", "Wstecz"),
             Binding("r", "restore_selected", "Restore"),
+            Binding("j", "cursor_down", "W dół"),
+            Binding("k", "cursor_up", "W górę"),
+            Binding("g", "go_top", "Początek"),
+            Binding("G", "go_bottom", "Koniec"),
+            Binding("f", "filter", "Filtruj"),
         ]
 
         def __init__(self, day_data: dict, prev_data: Optional[dict], show_diff: bool = False) -> None:
@@ -109,3 +114,26 @@ if TEXTUAL_OK:
                     preselect_endpoint=ep.get("path", ""),
                     day_data=self._day,
                 ))
+
+        def action_cursor_down(self) -> None:
+            table = self.query_one("#ep-table", DataTable)
+            row_count = table.row_count
+            if table.cursor_row < row_count - 1:
+                table.cursor_row += 1
+
+        def action_cursor_up(self) -> None:
+            table = self.query_one("#ep-table", DataTable)
+            if table.cursor_row > 0:
+                table.cursor_row -= 1
+
+        def action_go_top(self) -> None:
+            table = self.query_one("#ep-table", DataTable)
+            table.cursor_row = 0
+
+        def action_go_bottom(self) -> None:
+            table = self.query_one("#ep-table", DataTable)
+            table.cursor_row = table.row_count - 1
+
+        def action_filter(self) -> None:
+            # TODO: Implement filter dialog for endpoints
+            pass

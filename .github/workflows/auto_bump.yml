@@ -1,0 +1,49 @@
+name: Auto Bump Version
+
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "CHANGELOG.md"
+      - "rebuild/__init__.py"
+      - "pyproject.toml"
+      - ".github/**"
+      - "docs/**"
+      - "*.md"
+
+jobs:
+  bump:
+    name: Bump patch version on main push
+    runs-on: ubuntu-latest
+    # Only run if commit message doesn't already contain a version bump
+    if: "!contains(github.event.head_commit.message, 'chore: bump version')"
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump patch version
+        run: python scripts/bump_version.py patch
+
+      - name: Commit and tag
+        run: |
+          VERSION=$(python scripts/bump_version.py --show | sed 's/rebuild v//')
+          git add rebuild/__init__.py pyproject.toml CHANGELOG.md
+          git commit -m "chore: bump version to $VERSION [skip ci]"
+          git tag "v$VERSION"
+          git push
+          git push --tags

@@ -5,11 +5,32 @@ All events are immutable Pydantic models.
 """
 from __future__ import annotations
 
+import json
 import uuid
+from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
+
+
+# Legacy PipelineEvent for backward compatibility
+@dataclass
+class PipelineEvent:
+    event_type: str
+    timestamp: str
+    data: dict
+
+    @classmethod
+    def create(cls, event_type: str, **kwargs) -> PipelineEvent:
+        return cls(
+            event_type=event_type,
+            timestamp=datetime.now().isoformat(),
+            data=kwargs
+        )
+
+    def to_json(self) -> str:
+        return json.dumps(asdict(self))
 
 
 class DomainEvent(BaseModel):

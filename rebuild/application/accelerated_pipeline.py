@@ -13,7 +13,6 @@ from ..domain.models import WalkConfig, DeployMethod
 from ..domain.commit import CommitInfo
 from ..domain.endpoint import Endpoint, EndpointResult, EndpointStatus
 from ..domain.day_result import DayResult
-from ..domain.events import PipelineEvent
 
 from .base_pipeline import BasePipeline
 from .services.worktree_manager import WorktreeManager

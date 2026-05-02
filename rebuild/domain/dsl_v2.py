@@ -78,6 +78,14 @@ class HistoryDSL(BaseModel):
     date_to: Optional[str] = None
 
 
+class PluginsDSL(BaseModel):
+    pass
+
+
+class HelpDSL(BaseModel):
+    pass
+
+
 # ─── Token → schema mapping ───────────────────────────────────────────────────
 
 _COMMAND_SCHEMAS: Dict[str, Tuple[str, Type[BaseModel]]] = {
@@ -87,8 +95,8 @@ _COMMAND_SCHEMAS: Dict[str, Tuple[str, Type[BaseModel]]] = {
     "snapshot": ("snapshot", SnapshotDSL),
     "prune": ("prune", PruneDSL),
     "history": ("history", HistoryDSL),
-    "plugins": ("plugins", BaseModel),
-    "help": ("help", BaseModel),
+    "plugins": ("plugins", PluginsDSL),
+    "help": ("help", HelpDSL),
 }
 
 _ALIAS_MAP: Dict[str, str] = {
@@ -236,8 +244,8 @@ _NLP_RULES: List[Tuple[str, str]] = [
     (r"walk\s+(\S+)\s+for\s+(?:the\s+)?last\s+(\d+)\s+days?", r"walk repo:\1 days:\2"),
     (r"walk\s+(\S+)\s+days?[:\s]+(\d+)", r"walk repo:\1 days:\2"),
     (r"run\s+walk\s+on\s+(\S+)", r"walk repo:\1"),
-    (r"without\s+deploy(?:ing)?", r"deploy:none"),
-    (r"no\s+deploy", r"deploy:none"),
+    (r"without\s+deploy(?:ing)?", "deploy:none"),
+    (r"no\s+deploy(?:ment)?", "deploy:none"),
     (r"dry[- ]run", r"dry-run"),
     (r"dry\s+run", r"dry-run"),
     # English — analyze
@@ -288,22 +296,41 @@ class NLPMapper:
         """Convert natural language text to a DSL string."""
         normalized = text.strip().lower()
 
-        # Direct command pass-through
-        first_word = normalized.split()[0] if normalized.split() else ""
-        if first_word in _COMMAND_SCHEMAS:
-            return text.strip()
+        # First pass: extract modifier tokens from original text
+        modifiers = []
+        _modifier_patterns = [
+            (re.compile(r"without\s+deploy(?:ing)?", re.IGNORECASE), "deploy:none"),
+            (re.compile(r"no\s+deploy(?:ment)?", re.IGNORECASE), "deploy:none"),
+            (re.compile(r"dry[- ]run", re.IGNORECASE), "dry-run"),
+            (re.compile(r"\bdry\s+run\b", re.IGNORECASE), "dry-run"),
+        ]
+        working = normalized
+        for pat, token in _modifier_patterns:
+            if pat.search(working):
+                modifiers.append(token)
+                working = pat.sub("", working).strip()
 
-        result = normalized
-        for pattern, replacement in self._compiled:
-            result = pattern.sub(replacement, result)
+        # Direct command pass-through: if first word is a DSL command
+        first_word = working.split()[0] if working.split() else ""
+        if first_word in _COMMAND_SCHEMAS:
+            base = working
+        else:
+            # Apply main transformation rules
+            base = working
+            for pattern, replacement in self._compiled:
+                base = pattern.sub(replacement, base)
+
+        # Append modifiers
+        if modifiers:
+            base = base.rstrip() + " " + " ".join(modifiers)
 
         # Collapse excess whitespace and clean up
-        result = re.sub(r"\s+", " ", result).strip()
+        base = re.sub(r"\s+", " ", base).strip()
 
-        if self._use_llm and self._llm_service and not self._looks_like_dsl(result):
+        if self._use_llm and self._llm_service and not self._looks_like_dsl(base):
             return self._llm_fallback(text)
 
-        return result
+        return base
 
     def _looks_like_dsl(self, text: str) -> bool:
         """Heuristic: does this look like a valid DSL string?"""

@@ -10,7 +10,6 @@ from ..domain.commit import CommitInfo
 from ..domain.endpoint import Endpoint, EndpointResult, EndpointStatus
 from ..domain.day_result import DayResult
 from ..domain.context import EndpointContext
-from ..domain.events import PipelineEvent
 
 from .base_pipeline import BasePipeline
 from .services.deploy_service import DeployService
