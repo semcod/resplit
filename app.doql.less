@@ -2,7 +2,7 @@
 
 app {
   name: rebuild;
-  version: 0.1.15;
+  version: 0.1.20;
 }
 
 dependencies {
@@ -209,9 +209,49 @@ workflow[name="dashboard"] {
   step-1: run cmd=rebuild dashboard --repo .;
 }
 
+workflow[name="coverage"] {
+  trigger: manual;
+  step-1: run cmd=python -m pytest --cov=rebuild --cov-report=term-missing --cov-report=xml -q;
+  step-2: run cmd=python - <<'EOF';
+  step-3: run cmd=import xml.etree.ElementTree as ET;
+  step-4: run cmd=tree = ET.parse("coverage.xml");
+  step-5: run cmd=rate = float(tree.getroot().attrib.get("line-rate", 0)) * 100;
+  step-6: run cmd=print(f"\nCoverage: {rate:.1f}%");
+  step-7: run cmd=if rate < 70:;
+  step-8: run cmd=raise SystemExit(f"Coverage {rate:.1f}% < 70% required");
+  step-9: run cmd=print("PASS: Coverage gate met ✓");
+  step-10: run cmd=EOF;
+}
+
+workflow[name="version"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py --show;
+}
+
+workflow[name="bump-patch"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py patch;
+}
+
+workflow[name="bump-minor"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py minor;
+}
+
+workflow[name="bump-major"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py major;
+}
+
 workflow[name="build"] {
   trigger: manual;
-  step-1: run cmd=python -m build;
+  step-1: run cmd=python3 -m build;
+}
+
+workflow[name="publish"] {
+  trigger: manual;
+  step-1: run cmd=python3 -m twine check dist/*;
+  step-2: run cmd=python3 -m twine upload dist/*;
 }
 
 workflow[name="clean"] {
@@ -219,6 +259,19 @@ workflow[name="clean"] {
   step-1: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
   step-2: run cmd=find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true;
   step-3: run cmd=rm -rf dist/ build/;
+}
+
+workflow[name="docker-build"] {
+  trigger: manual;
+  step-1: run cmd=docker build -t ghcr.io/semcod/rebuild:latest .;
+}
+
+workflow[name="docker-run"] {
+  trigger: manual;
+  step-1: run cmd=docker run --rm -it \;
+  step-2: run cmd=-v $(PWD):/workspace \;
+  step-3: run cmd=-v /var/run/docker.sock:/var/run/docker.sock \;
+  step-4: run cmd=ghcr.io/semcod/rebuild:latest $(ARGS);
 }
 
 role[name="operator"] {

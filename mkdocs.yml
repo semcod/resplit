@@ -1,0 +1,80 @@
+site_name: rebuild
+site_description: Historical deployment analysis — walk git history, deploy per day, test all endpoints.
+site_url: https://semcod.github.io/resplit
+repo_url: https://github.com/semcod/resplit
+repo_name: semcod/resplit
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+    - Configuration: getting-started/configuration.md
+  - User Guide:
+    - Walk Command: guide/walk.md
+    - Analyze: guide/analyze.md
+    - Refactor: guide/refactor.md
+    - Auto-PR: guide/auto-pr.md
+    - Plugins: guide/plugins.md
+  - Reference:
+    - CLI Reference: reference/cli.md
+    - rebuild.yaml: reference/config.md
+    - Architecture: architecture.md
+  - Case Studies:
+    - c2004: case_study_c2004.md
+  - Changelog: changelog.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/semcod/resplit
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/rebuild/
+
+extra_css:
+  - stylesheets/extra.css

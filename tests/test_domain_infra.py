@@ -211,7 +211,7 @@ def test_config_validate_invalid_days_string():
 
 def test_config_validate_invalid_deploy_method():
     errors = ConfigLoader.validate({"project": {"deploy": {"method": "kubernetes"}}})
-    assert any("deploy.method" in e for e in errors)
+    assert any("deploy" in e and "method" in e for e in errors)
 
 
 def test_config_validate_invalid_deploy_string():

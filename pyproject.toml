@@ -52,6 +52,10 @@ dev = ["pytest>=8", "pytest-cov", "pytest-asyncio", "ruff", "mypy",
 [project.scripts]
 rebuild = "rebuild.interfaces.cli:app"
 
+[project.entry-points."rebuild.scanners"]
+
+[project.entry-points."rebuild.reporters"]
+
 [project.urls]
 Homepage = "https://github.com/semcod/resplit"
 Repository = "https://github.com/semcod/resplit"

@@ -1,0 +1,20 @@
+/* rebuild docs — extra styles */
+
+:root {
+  --rebuild-brand: #3f51b5;
+}
+
+.md-header {
+  background-color: var(--rebuild-brand);
+}
+
+/* Wider code blocks */
+.md-content pre {
+  max-width: 100%;
+}
+
+/* Feature table alignment */
+.md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+}

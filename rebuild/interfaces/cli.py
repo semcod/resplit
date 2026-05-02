@@ -479,3 +479,42 @@ def execute(
     """[Command] Wykonaj automatycznie plan refaktoryzacji."""
     from .commands.refactor_command import execute_command
     execute_command(path, force, console)
+
+
+@app.command()
+def plugins(
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Pokaż szczegóły pluginów"),
+) -> None:
+    """Wylistuj zainstalowane pluginy (scanners, reporters)."""
+    from ..plugins import load_plugins
+    from rich.table import Table
+
+    registry = load_plugins()
+
+    table = Table(title="Rebuild Plugins", show_header=True)
+    table.add_column("Type", style="bold cyan")
+    table.add_column("Name", style="bold")
+    table.add_column("Class")
+    table.add_column("Description")
+
+    for name, cls in sorted(registry.scanners.items()):
+        desc = getattr(cls, "description", "") or ""
+        table.add_row("scanner", name, cls.__qualname__, desc)
+
+    for name, cls in sorted(registry.reporters.items()):
+        desc = getattr(cls, "description", "") or ""
+        table.add_row("reporter", name, cls.__qualname__, desc)
+
+    if not registry.scanners and not registry.reporters:
+        console.print("[dim]Brak zainstalowanych pluginów.[/dim]")
+        console.print(
+            "\n[dim]Zainstaluj pakiety z entry points w grupach "
+            "[bold]rebuild.scanners[/bold] / [bold]rebuild.reporters[/bold].[/dim]"
+        )
+        return
+
+    console.print(table)
+    console.print(
+        f"\n  [dim]{len(registry.scanners)} scanner(s), "
+        f"{len(registry.reporters)} reporter(s)[/dim]"
+    )

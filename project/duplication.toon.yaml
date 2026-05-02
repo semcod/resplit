@@ -6,7 +6,7 @@ SUMMARY:
   dup_groups:    3122
   dup_fragments: 59020
   saved_lines:   1010224
-  scan_ms:       123936
+  scan_ms:       149717
 
 HOTSPOTS[7] (files with most duplication):
   .rebuild/c2004/repo_clone/.rebuild/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)

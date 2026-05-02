@@ -8,6 +8,7 @@ Historical deployment analysis — walk git history, deploy per day, test all en
 - [Architecture](#architecture)
 - [Interfaces](#interfaces)
 - [Workflows](#workflows)
+- [Quality Pipeline (`pyqual.yaml`)](#quality-pipeline-pyqualyaml)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Deployment](#deployment)
@@ -21,12 +22,12 @@ Historical deployment analysis — walk git history, deploy per day, test all en
 ## Metadata
 
 - **name**: `rebuild`
-- **version**: `0.1.15`
+- **version**: `0.1.20`
 - **python_requires**: `>=3.11`
 - **license**: {'text': 'Apache-2.0'}
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, Makefile, testql(2), app.doql.less, goal.yaml, project/(2 analysis files)
+- **generated_from**: pyproject.toml, Makefile, testql(2), app.doql.less, goal.yaml, Dockerfile, project/(2 analysis files)
 
 ## Architecture
 
@@ -41,7 +42,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: rebuild;
-  version: 0.1.15;
+  version: 0.1.20;
 }
 
 dependencies {
@@ -248,9 +249,49 @@ workflow[name="dashboard"] {
   step-1: run cmd=rebuild dashboard --repo .;
 }
 
+workflow[name="coverage"] {
+  trigger: manual;
+  step-1: run cmd=python -m pytest --cov=rebuild --cov-report=term-missing --cov-report=xml -q;
+  step-2: run cmd=python - <<'EOF';
+  step-3: run cmd=import xml.etree.ElementTree as ET;
+  step-4: run cmd=tree = ET.parse("coverage.xml");
+  step-5: run cmd=rate = float(tree.getroot().attrib.get("line-rate", 0)) * 100;
+  step-6: run cmd=print(f"\nCoverage: {rate:.1f}%");
+  step-7: run cmd=if rate < 70:;
+  step-8: run cmd=raise SystemExit(f"Coverage {rate:.1f}% < 70% required");
+  step-9: run cmd=print("PASS: Coverage gate met ✓");
+  step-10: run cmd=EOF;
+}
+
+workflow[name="version"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py --show;
+}
+
+workflow[name="bump-patch"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py patch;
+}
+
+workflow[name="bump-minor"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py minor;
+}
+
+workflow[name="bump-major"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py major;
+}
+
 workflow[name="build"] {
   trigger: manual;
-  step-1: run cmd=python -m build;
+  step-1: run cmd=python3 -m build;
+}
+
+workflow[name="publish"] {
+  trigger: manual;
+  step-1: run cmd=python3 -m twine check dist/*;
+  step-2: run cmd=python3 -m twine upload dist/*;
 }
 
 workflow[name="clean"] {
@@ -258,6 +299,19 @@ workflow[name="clean"] {
   step-1: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
   step-2: run cmd=find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true;
   step-3: run cmd=rm -rf dist/ build/;
+}
+
+workflow[name="docker-build"] {
+  trigger: manual;
+  step-1: run cmd=docker build -t ghcr.io/semcod/rebuild:latest .;
+}
+
+workflow[name="docker-run"] {
+  trigger: manual;
+  step-1: run cmd=docker run --rm -it \;
+  step-2: run cmd=-v $(PWD):/workspace \;
+  step-3: run cmd=-v /var/run/docker.sock:/var/run/docker.sock \;
+  step-4: run cmd=ghcr.io/semcod/rebuild:latest $(ARGS);
 }
 
 role[name="operator"] {
@@ -371,12 +425,27 @@ ASSERT[30]{field, operator, expected}:
 
 ## Workflows
 
+## Quality Pipeline (`pyqual.yaml`)
+
+```yaml markpact:pyqual path=pyqual.yaml
+pipeline:
+  profile: python-minimal
+
+  metrics:
+    cc_max: 15
+    critical_max: 0
+    coverage_min: 60
+
+  env:
+    LLM_MODEL: openrouter/qwen/qwen3-coder-next
+```
+
 ## Configuration
 
 ```yaml
 project:
   name: rebuild
-  version: 0.1.15
+  version: 0.1.20
   env: local
 ```
 
@@ -419,6 +488,12 @@ pip install rebuild
 pip install -e .[dev]
 ```
 
+### Docker
+
+- **base image**: `python:${PYTHON_VERSION}-slim AS builder`
+- **entrypoint**: `["rebuild"]`
+- **label** `org.opencontainers.image.title`: rebuild
+
 ## Release Management (`goal.yaml`)
 
 - **versioning**: `semver`
@@ -441,21 +516,29 @@ pip install -e .[dev]
 - `tui`
 - `walk-dry`
 - `dashboard`
+- `coverage`
+- `version`
+- `bump-patch`
+- `bump-minor`
+- `bump-major`
 - `build`
+- `publish`
 - `clean`
+- `docker-build`
+- `docker-run`
 
 ## Code Analysis
 
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# resplit | 56735f 7471854L | typescript:21427,python:21392,shell:11561,javascript:1997,css:249,less:73,rust:36 | 2026-05-01
-# stats: 61233 func | 30479 cls | 56735 mod | CC̄=4.4 | critical:5337 | cycles:0
+# resplit | 56770f 7477721L | typescript:21427,python:21427,shell:11561,javascript:1997,css:249,less:73,rust:36 | 2026-05-02
+# stats: 61712 func | 30496 cls | 56770 mod | CC̄=4.3 | critical:5338 | cycles:0
 # alerts[5]: CC parse_dsl=54; fan-out parse_dsl=46
 # hotspots[5]: parse_dsl fan=46; parse_dsl fan=46; parse_dsl fan=46; parse_dsl fan=46; parse_dsl fan=46
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[56735]:
+M[56770]:
   .rebuild/c2004/patches/frontend/src/components/dsl/singleton.ts,42
   .rebuild/c2004/repo_clone/.rebuild/repo/.regres/barcode-config-doctor-patch-01-92efe1d9.sh,140
   .rebuild/c2004/repo_clone/.rebuild/repo/.regres/barcode-config-doctor-patch-02-77959ed6.sh,140
@@ -53964,7 +54047,7 @@ M[56735]:
   .rebuild_realtime_test2/repo/tools/contracts-gen/validate_source.py,94
   .rebuild_realtime_test2/repo/tree.sh,2
   .rebuild_realtime_test2/repo/update.sh,36
-  app.doql.less,253
+  app.doql.less,306
   c2004/repo/.regres/barcode-config-doctor-patch-01-92efe1d9.sh,140
   c2004/repo/.regres/barcode-config-doctor-patch-02-77959ed6.sh,140
   c2004/repo/.regres/barcode-config-doctor-patch-03-22cdf724.sh,140
@@ -57120,12 +57203,14 @@ M[56735]:
   rebuild/analysis/service_similarity.py,60
   rebuild/analysis/vector_search.py,216
   rebuild/application/__init__.py,1
-  rebuild/application/accelerated_pipeline.py,434
-  rebuild/application/pipeline.py,293
+  rebuild/application/accelerated_pipeline.py,399
+  rebuild/application/base_pipeline.py,102
+  rebuild/application/pipeline.py,224
   rebuild/application/services/accelerator_deploy.py,452
   rebuild/application/services/base.py,11
   rebuild/application/services/db_snapshot_manager.py,316
   rebuild/application/services/deploy_service.py,363
+  rebuild/application/services/deploy_strategy.py,31
   rebuild/application/services/event_service.py,115
   rebuild/application/services/git_service.py,121
   rebuild/application/services/history_service.py,101
@@ -57135,7 +57220,11 @@ M[56735]:
   rebuild/application/services/parallel_test_engine.py,412
   rebuild/application/services/patcher_service.py,109
   rebuild/application/services/pr_service.py,182
-  rebuild/application/services/reporter_service.py,687
+  rebuild/application/services/reporter_service.py,6
+  rebuild/application/services/reporting/__init__.py,4
+  rebuild/application/services/reporting/chart_builder.py,69
+  rebuild/application/services/reporting/formatters.py,87
+  rebuild/application/services/reporting/reporter.py,426
   rebuild/application/services/restore_service.py,153
   rebuild/application/services/scanner_service.py,326
   rebuild/application/services/screenshot_service.py,74
@@ -57147,26 +57236,38 @@ M[56735]:
   rebuild/domain/__init__.py,1
   rebuild/domain/commit.py,12
   rebuild/domain/context.py,14
-  rebuild/domain/day_result.py,89
+  rebuild/domain/day_result.py,103
   rebuild/domain/dsl.py,257
   rebuild/domain/endpoint.py,50
   rebuild/domain/events.py,31
   rebuild/domain/models.py,54
-  rebuild/domain/mvp_protocol.py,285
+  rebuild/domain/mvp_protocol.py,282
   rebuild/domain/timeline.py,140
   rebuild/infrastructure/__init__.py,1
-  rebuild/infrastructure/config_loader.py,112
+  rebuild/infrastructure/config_loader.py,125
+  rebuild/infrastructure/config_schema.py,219
   rebuild/infrastructure/http_adapter.py,40
   rebuild/infrastructure/shell_adapter.py,38
   rebuild/interfaces/__init__.py,1
-  rebuild/interfaces/cli.py,995
+  rebuild/interfaces/cli.py,482
+  rebuild/interfaces/cli_new.py,1
   rebuild/interfaces/commands/__init__.py,1
   rebuild/interfaces/commands/analyze_command.py,253
-  rebuild/interfaces/commands/helpers.py,95
-  rebuild/interfaces/commands/walk_command.py,178
+  rebuild/interfaces/commands/helpers.py,162
+  rebuild/interfaces/commands/refactor_command.py,99
+  rebuild/interfaces/commands/walk_command.py,215
   rebuild/interfaces/dashboard.py,366
   rebuild/interfaces/evolution_viz.py,386
-  rebuild/interfaces/tui.py,855
+  rebuild/interfaces/tui/__init__.py,4
+  rebuild/interfaces/tui/app.py,47
+  rebuild/interfaces/tui/compat.py,26
+  rebuild/interfaces/tui/screens/__init__.py,1
+  rebuild/interfaces/tui/screens/endpoint_screens.py,112
+  rebuild/interfaces/tui/screens/help_screen.py,41
+  rebuild/interfaces/tui/screens/history_screen.py,134
+  rebuild/interfaces/tui/screens/project_screen.py,87
+  rebuild/interfaces/tui/screens/restore_screen.py,151
+  rebuild/interfaces/tui/screens/walk_screens.py,173
   rebuild/refactor/recommendation_engine.py,83
   rebuild/refactor/refactor_executor.py,49
   restored_c2004_health/api-health/backend/modules/connect-config-network/api/main.py,92
@@ -57177,19 +57278,36 @@ M[56735]:
   restored_c2004_health/api-health/backend/site/vite.config.js,30
   restored_c2004_health/api-health/backend/tests/e2e/all-modules-smoke.spec.ts,111
   restored_c2004_health/api-health/backend/tests/e2e/module-smoke-test-template.spec.ts,147
+  scripts/bump_version.py,240
   tests/__init__.py,1
   tests/test_accelerated_pipeline.py,264
   tests/test_accelerator_deploy.py,312
+  tests/test_accelerator_extra.py,117
+  tests/test_analysis_engine.py,574
+  tests/test_cli_commands.py,195
+  tests/test_coverage_boost.py,557
+  tests/test_coverage_phase16.py,1124
+  tests/test_db_snapshot_extra.py,214
   tests/test_deploy_service.py,94
+  tests/test_domain_infra.py,341
   tests/test_e2e_dsl_nlp_mvp.py,209
+  tests/test_e2e_pipeline.py,777
+  tests/test_git_helpers_extra.py,294
   tests/test_git_service.py,96
   tests/test_history_service.py,114
-  tests/test_models.py,66
+  tests/test_interfaces_smoke.py,149
+  tests/test_models.py,98
   tests/test_pipeline.py,158
-  tests/test_reporter_service.py,183
+  tests/test_pipeline_extra.py,157
+  tests/test_reporter_service.py,349
+  tests/test_restore_override.py,164
   tests/test_restore_service.py,93
   tests/test_scanner_service.py,159
+  tests/test_services_extra.py,394
+  tests/test_smart_screenshot.py,201
   tests/test_test_service.py,56
+  tests/test_walk_command_config_precedence.py,103
+  tests/test_worktree_db.py,226
   tree.sh,2
 D:
   .rebuild/c2004/repo_clone/.rebuild/repo/_archive/backend/api/schemas/menu.py:
@@ -186354,10 +186472,13 @@ D:
   rebuild/application/__init__.py:
   rebuild/application/accelerated_pipeline.py:
     e: AcceleratedPipeline
-    AcceleratedPipeline: __init__(2),_load_state(0),_save_state(0),_emit(1),log(1),run(0),_prewarm_worktrees(1),_create_baseline_snapshot(0),_run_day_fast(2),_needs_rescan(3),_needs_db_restore(3),_diff_names_cached(2),_restore_db_fast(0),cleanup(0)  # Ultra-fast pipeline using:
+    AcceleratedPipeline: __init__(2),_save_state(0),run(0),_prewarm_worktrees(1),_create_baseline_snapshot(0),_run_day_fast(2),_needs_rescan(3),_needs_db_restore(3),_diff_names_cached(2),_restore_db_fast(0),cleanup(0)  # Ultra-fast pipeline using:
+  rebuild/application/base_pipeline.py:
+    e: BasePipeline
+    BasePipeline: __init__(2),_load_state(0),_save_state(0),_emit(1),log(1)  # Shared infrastructure for Pipeline and AcceleratedPipeline.
   rebuild/application/pipeline.py:
     e: Pipeline
-    Pipeline: __init__(2),_load_state(0),_save_state(0),_emit(1),log(1),_check_for_manual_fix(2),run(0),run_day(2)  # Orchestrates the analysis process (Command).
+    Pipeline: __init__(2),_check_for_manual_fix(2),run(0),run_day(2)  # Orchestrates the analysis process (Command).
   rebuild/application/services/accelerator_deploy.py:
     e: AcceleratorDeployService
     AcceleratorDeployService: __init__(5),start(1),prepare_runtime(2),_accelerated_compose_up(1),switch_commit(2),_update_bind_mount(2),_sync_code_to_container(4),_get_changed_files(3),_copy_changed_files(3),_get_container_name(1),_trigger_reload(1),_send_hup_signal(1),_send_exec_hup(1),_write_runtime_marker(2),_post_switch_health_timeout(0),_post_switch_health_interval(0),_post_switch_health_cache_ttl(0),_wait_post_switch_healthy(0),_verify_runtime_commit(2),reload(1),stop(1),setup_mount_compose(2),_set_active_path(1)  # 10x faster deployment using:
@@ -186371,6 +186492,9 @@ D:
   rebuild/application/services/deploy_service.py:
     e: DeployService
     DeployService: __init__(4),detect_deploy_method(1),start(1),execute(1),wait_healthy(2),reload(1),stop(1),_compose_file(1),_compose_up(1),_compose_down(1),_uvicorn_start(1),_uvicorn_stop(0),_classify_deploy_error(1),_save_deploy_debug(2),_run_with_retry(2),_wait_healthy_with_retry(0),_wait_healthy(2),_sync_code_to_runtime(2),_sync_via_overlay(2),_resolve_container_name(2)  # Service for managing the lifecycle of the service being anal
+  rebuild/application/services/deploy_strategy.py:
+    e: DeployStrategy
+    DeployStrategy: start(1),stop(1),last_log(0),last_error_category(0)  # Protocol for deployment strategies.
   rebuild/application/services/event_service.py:
     e: get_event_service,EventType,PipelineEvent,EventService
     EventType:  # Types of pipeline events for real-time monitoring.
@@ -186410,8 +186534,20 @@ D:
     PRService: __init__(1),create_pr(2),_generate_pr_body(2),_create_github_pr(1),_create_gitlab_mr(1)  # Service for creating pull/merge requests on GitHub/GitLab.
     load_config_from_env()
   rebuild/application/services/reporter_service.py:
+  rebuild/application/services/reporting/__init__.py:
+  rebuild/application/services/reporting/chart_builder.py:
+    e: generate_trend_chart,generate_endpoint_diff
+    generate_trend_chart(results)
+    generate_endpoint_diff(results)
+  rebuild/application/services/reporting/formatters.py:
+    e: to_yaml,to_toon,status_badge,classify_error
+    to_yaml(data;indent)
+    to_toon(result)
+    status_badge(status)
+    classify_error(result)
+  rebuild/application/services/reporting/reporter.py:
     e: ReporterService
-    ReporterService: execute(1),to_yaml(2),to_toon(1),save_day(1),_get_js_helpers(0),save_html(1),_results_to_export_data(1),save_timeline_index(2),_status_badge(1),_classify_error(1),_generate_trend_chart(1),_generate_endpoint_diff(1)  # Service for generating HTML, JSON, YAML, and TOON reports.
+    ReporterService: execute(1),to_yaml(2),to_toon(1),save_day(1),_save_html_day(3),save_timeline_index(2),export_csv(2),export_markdown(2),_health_trend_by_day(2),_endpoint_count_trend_by_day(2),_results_to_export_data(1)  # Thin orchestrator: delegates to formatters, chart_builder, a
   rebuild/application/services/restore_service.py:
     e: RestoreService
     RestoreService: __init__(2),execute(1),find_last_working_day(2),extract_endpoint(3),_find_backend_files(1),_is_page_endpoint(1),_write_readme(4)  # Service for restoring a working endpoint from git history.
@@ -186488,7 +186624,16 @@ D:
   rebuild/infrastructure/__init__.py:
   rebuild/infrastructure/config_loader.py:
     e: ConfigLoader
-    ConfigLoader: load(1),apply_to_config(2)  # Loader for rebuild.yaml configuration files.
+    ConfigLoader: load(1),validate(1),apply_to_config(2)  # Loader for rebuild.yaml configuration files.
+  rebuild/infrastructure/config_schema.py:
+    e: load_and_validate,DeployConfig,OutputConfig,AuthConfig,ProjectConfig,RebuildConfig,ConfigSchemaValidator
+    DeployConfig: _valid_method(2)
+    OutputConfig: _non_empty(2)
+    AuthConfig:
+    ProjectConfig: _strict_bool(2),_validate_deploy_and_output(0)
+    RebuildConfig: _must_be_mapping(2),_allow_flat(2)  # Root model for rebuild.yaml.
+    ConfigSchemaValidator: validate(1),parse(1)  # Drop-in pydantic-based replacement for ConfigLoader.validate
+    load_and_validate(path)
   rebuild/infrastructure/http_adapter.py:
     e: HttpAdapter
     HttpAdapter: __init__(2),get(3),post(3),put(3),patch(3),delete(2),close(0)  # Adapter for HTTP requests.
@@ -186497,9 +186642,9 @@ D:
     ShellAdapter: __init__(1),run(3),popen(2)  # Adapter for shell command execution.
   rebuild/interfaces/__init__.py:
   rebuild/interfaces/cli.py:
-    e: init,walk,restore,report,dashboard,accelerator,serve,tui,version,auto_pr,evolution,dsl,nlp,mvp,duplicates,vector_build,vector_query,multi_repo,services,truth,plan,pr,execute,_generate_refactor_plan,_print_report_links,_serve_reports,_print_summary_table
+    e: init,walk,restore,report,dashboard,accelerator,serve,tui,version,auto_pr,evolution,dsl,nlp,mvp,duplicates,vector_build,vector_query,multi_repo,services,truth,plan,pr,execute
     init(path;force)
-    walk(repo;days;date_from;date_to;output;deploy;replay;service;health_url;base_url;screenshots;dry_run;serve;port;accelerator;patch_dir)
+    walk(ctx;repo;days;date_from;date_to;output;deploy;replay;service;health_url;base_url;screenshots;dry_run;serve;port;accelerator;patch_dir;health_timeout)
     restore(endpoint;repo;output;results_dir)
     report(results_dir)
     dashboard(results_dir;repo)
@@ -186521,10 +186666,7 @@ D:
     plan(path;ai)
     pr(path)
     execute(path;force)
-    _generate_refactor_plan(path)
-    _print_report_links(output;port)
-    _serve_reports(output;port)
-    _print_summary_table(results)
+  rebuild/interfaces/cli_new.py:
   rebuild/interfaces/commands/__init__.py:
   rebuild/interfaces/commands/analyze_command.py:
     e: duplicates_command,vector_build_command,vector_query_command,multi_repo_command,services_command,truth_command
@@ -186535,13 +186677,21 @@ D:
     services_command(path;export;console)
     truth_command(file;function;repo;console)
   rebuild/interfaces/commands/helpers.py:
-    e: print_report_links,print_summary_table,serve_reports
+    e: print_report_links,compute_health_trend_labels,compute_endpoint_count_trend_labels,print_summary_table,serve_reports
     print_report_links(output;port;console)
+    compute_health_trend_labels(results;regression_threshold)
+    compute_endpoint_count_trend_labels(results;warning_threshold_pct)
     print_summary_table(results;console)
     serve_reports(output;port;console)
+  rebuild/interfaces/commands/refactor_command.py:
+    e: _generate_refactor_plan,plan_command,pr_command,execute_command
+    _generate_refactor_plan(path)
+    plan_command(path;ai;console)
+    pr_command(path;console)
+    execute_command(path;force;console)
   rebuild/interfaces/commands/walk_command.py:
     e: walk_command,accelerator_command
-    walk_command(repo;days;date_from;date_to;output;deploy;replay;service;health_url;base_url;screenshots;dry_run;serve;port;accelerator;patch_dir;console)
+    walk_command(repo;days;date_from;date_to;output;deploy;replay;service;health_url;base_url;screenshots;dry_run;serve;port;accelerator;patch_dir;console;health_timeout;cli_overrides)
     accelerator_command(repo;days;date_from;date_to;output;service;db_container;db_type;parallel;smart;health_url;base_url;screenshots;shutdown;serve;port;patch_dir;console)
   rebuild/interfaces/dashboard.py:
     e: get_cc_for_day,_extract_avg_cc,generate_dashboard,_render_html
@@ -186553,9 +186703,18 @@ D:
     e: generate_evolution_html,_render_html
     generate_evolution_html(timeline_path;output_path;title)
     _render_html(snapshots;repo_path;title)
-  rebuild/interfaces/tui.py:
+  rebuild/interfaces/tui/__init__.py:
+  rebuild/interfaces/tui/app.py:
     e: launch_tui
     launch_tui()
+  rebuild/interfaces/tui/compat.py:
+  rebuild/interfaces/tui/screens/__init__.py:
+  rebuild/interfaces/tui/screens/endpoint_screens.py:
+  rebuild/interfaces/tui/screens/help_screen.py:
+  rebuild/interfaces/tui/screens/history_screen.py:
+  rebuild/interfaces/tui/screens/project_screen.py:
+  rebuild/interfaces/tui/screens/restore_screen.py:
+  rebuild/interfaces/tui/screens/walk_screens.py:
   rebuild/refactor/recommendation_engine.py:
     e: RefactorSuggestion,RecommendationEngine
     RefactorSuggestion:
@@ -186607,6 +186766,18 @@ D:
     _index_html()
     index()
     module_index()
+  scripts/bump_version.py:
+    e: read_version,bump,update_init,update_pyproject,collect_unreleased_entries,get_git_log_since_last_tag,categorize_commits,build_new_section,update_changelog,main
+    read_version()
+    bump(version;part)
+    update_init(new_version;dry_run)
+    update_pyproject(new_version;dry_run)
+    collect_unreleased_entries()
+    get_git_log_since_last_tag()
+    categorize_commits(commits)
+    build_new_section(new_version;commits;unreleased)
+    update_changelog(new_version;dry_run)
+    main()
   tests/__init__.py:
   tests/test_accelerated_pipeline.py:
     e: _config,_commit,test_run_aborts_when_baseline_snapshot_creation_fails,test_run_day_fast_stops_when_db_restore_fails,test_run_day_fast_stops_when_app_health_fails_after_db_restore,test_run_day_fast_uses_full_health_gate_after_db_restore,test_prewarm_worktrees_calls_get_or_create_for_every_sha,test_prewarm_worktrees_continues_after_individual_failure,test_needs_db_restore_returns_true_when_migration_file_changed,test_needs_db_restore_returns_false_when_no_db_files_changed,test_needs_db_restore_returns_true_when_no_previous_commit,test_needs_db_restore_returns_true_when_diff_fails,test_run_day_fast_skips_db_restore_when_no_db_files_changed,test_needs_rescan_returns_true_when_no_cache,test_needs_rescan_returns_true_when_route_file_changed,test_needs_rescan_returns_false_when_only_non_route_files_changed,test_needs_rescan_returns_true_when_diff_fails,test_run_day_fast_reuses_cached_endpoints_when_no_route_changes,test_diff_names_cached_calls_git_only_once_for_same_pair,test_diff_names_cached_returns_lowercased_paths
@@ -186646,6 +186817,283 @@ D:
     test_sync_code_incremental_when_diff_is_small(tmp_path)
     test_sync_code_falls_back_to_full_copy_when_diff_exceeds_threshold(tmp_path)
     test_trigger_reload_caches_exec_strategy_after_signal_failure(tmp_path)
+  tests/test_accelerator_extra.py:
+    e: _mock_worktrees,_cfg,test_accelerator_start_dry_run,test_accelerator_start_deploy_none,test_accelerator_stop_dry_run,test_accelerator_project_name_set,test_accelerator_volume_name_includes_project,test_accelerator_initial_setup_false,_pcfg,test_parallel_engine_max_concurrent_attribute,test_parallel_engine_open_close_session,test_parallel_engine_is_health_endpoint,test_parallel_engine_set_day_dir,test_parallel_engine_multiple_endpoints
+    _mock_worktrees(tmp_path)
+    _cfg(tmp_path;method)
+    test_accelerator_start_dry_run(tmp_path)
+    test_accelerator_start_deploy_none(tmp_path)
+    test_accelerator_stop_dry_run(tmp_path)
+    test_accelerator_project_name_set(tmp_path)
+    test_accelerator_volume_name_includes_project(tmp_path)
+    test_accelerator_initial_setup_false(tmp_path)
+    _pcfg(tmp_path)
+    test_parallel_engine_max_concurrent_attribute(tmp_path)
+    test_parallel_engine_open_close_session(tmp_path)
+    test_parallel_engine_is_health_endpoint(tmp_path)
+    test_parallel_engine_set_day_dir(tmp_path)
+    test_parallel_engine_multiple_endpoints(tmp_path)
+  tests/test_analysis_engine.py:
+    e: test_scan_empty_dir,test_scan_single_py_file_no_duplicates,test_scan_duplicate_py_functions,test_scan_skips_venv_dirs,test_scan_js_file,test_scan_syntax_error_py_file,test_scan_unsupported_extension_ignored,test_collect_fragments_py,test_extract_fragments_py_vararg_kwarg,test_cosine_similarity_with_list,test_cosine_similarity_zero_vector,test_semantic_group_hash,test_semantic_text_with_name,test_semantic_text_without_name,test_average_group_similarity_single,test_find_semantic_groups_not_enabled,test_find_semantic_groups_no_encoder,test_get_semantic_encoder_no_package,test_fuzzy_matches_produce_group,test_service_graph_empty_dir,test_service_graph_simple_py,test_service_graph_detect_cycles_empty,test_service_graph_detect_no_cycles,test_service_graph_skips_venv,test_service_similarity_empty_dir,test_service_similarity_single_service,test_service_similarity_two_similar,test_recommendation_engine_empty,test_recommendation_engine_with_duplicates,test_recommendation_engine_with_cycles,test_recommendation_engine_with_similarities,test_multi_repo_analyzer_two_empty_repos,test_multi_repo_analyzer_with_py_files,test_multi_repo_analyzer_normalize_keys_collision,test_multi_repo_report_to_dict,test_multi_repo_analyzer_export_json,test_multi_repo_analyzer_pyproject_alias,test_service_graph_with_imports,test_service_graph_cycle_detection,test_git_truth_analyzer_no_git_history,test_git_truth_analyzer_load_historical_results_no_dir,test_git_truth_analyzer_load_historical_results_with_data,test_git_truth_analyzer_analyze_content,test_git_truth_analyzer_analyze_content_not_found,test_git_truth_analyzer_analyze_content_syntax_error,test_git_truth_analyzer_compute_complexity
+    test_scan_empty_dir(tmp_path)
+    test_scan_single_py_file_no_duplicates(tmp_path)
+    test_scan_duplicate_py_functions(tmp_path)
+    test_scan_skips_venv_dirs(tmp_path)
+    test_scan_js_file(tmp_path)
+    test_scan_syntax_error_py_file(tmp_path)
+    test_scan_unsupported_extension_ignored(tmp_path)
+    test_collect_fragments_py(tmp_path)
+    test_extract_fragments_py_vararg_kwarg(tmp_path)
+    test_cosine_similarity_with_list()
+    test_cosine_similarity_zero_vector()
+    test_semantic_group_hash()
+    test_semantic_text_with_name()
+    test_semantic_text_without_name()
+    test_average_group_similarity_single()
+    test_find_semantic_groups_not_enabled()
+    test_find_semantic_groups_no_encoder()
+    test_get_semantic_encoder_no_package()
+    test_fuzzy_matches_produce_group(tmp_path)
+    test_service_graph_empty_dir(tmp_path)
+    test_service_graph_simple_py(tmp_path)
+    test_service_graph_detect_cycles_empty(tmp_path)
+    test_service_graph_detect_no_cycles(tmp_path)
+    test_service_graph_skips_venv(tmp_path)
+    test_service_similarity_empty_dir(tmp_path)
+    test_service_similarity_single_service(tmp_path)
+    test_service_similarity_two_similar(tmp_path)
+    test_recommendation_engine_empty()
+    test_recommendation_engine_with_duplicates()
+    test_recommendation_engine_with_cycles()
+    test_recommendation_engine_with_similarities()
+    test_multi_repo_analyzer_two_empty_repos(tmp_path)
+    test_multi_repo_analyzer_with_py_files(tmp_path)
+    test_multi_repo_analyzer_normalize_keys_collision(tmp_path)
+    test_multi_repo_report_to_dict(tmp_path)
+    test_multi_repo_analyzer_export_json(tmp_path)
+    test_multi_repo_analyzer_pyproject_alias(tmp_path)
+    test_service_graph_with_imports(tmp_path)
+    test_service_graph_cycle_detection(tmp_path)
+    test_git_truth_analyzer_no_git_history(tmp_path)
+    test_git_truth_analyzer_load_historical_results_no_dir(tmp_path)
+    test_git_truth_analyzer_load_historical_results_with_data(tmp_path)
+    test_git_truth_analyzer_analyze_content(tmp_path)
+    test_git_truth_analyzer_analyze_content_not_found(tmp_path)
+    test_git_truth_analyzer_analyze_content_syntax_error(tmp_path)
+    test_git_truth_analyzer_compute_complexity(tmp_path)
+  tests/test_cli_commands.py:
+    e: test_version_command,test_init_creates_files,test_init_force_overwrites,test_init_no_overwrite_existing,test_report_no_results,test_report_with_results,test_dashboard_no_results,test_dashboard_with_results,test_serve_missing_dir,test_walk_no_git_repo,test_walk_dry_run_no_results,test_restore_not_found,test_restore_success,test_auto_pr_missing_file,test_auto_pr_invalid_json,test_auto_pr_no_config,test_auto_pr_unknown_format
+    test_version_command()
+    test_init_creates_files(tmp_path)
+    test_init_force_overwrites(tmp_path)
+    test_init_no_overwrite_existing(tmp_path)
+    test_report_no_results(tmp_path)
+    test_report_with_results(tmp_path)
+    test_dashboard_no_results(tmp_path)
+    test_dashboard_with_results(tmp_path)
+    test_serve_missing_dir(tmp_path)
+    test_walk_no_git_repo(tmp_path)
+    test_walk_dry_run_no_results(tmp_path)
+    test_restore_not_found(tmp_path)
+    test_restore_success(tmp_path)
+    test_auto_pr_missing_file(tmp_path)
+    test_auto_pr_invalid_json(tmp_path)
+    test_auto_pr_no_config(tmp_path)
+    test_auto_pr_unknown_format(tmp_path)
+  tests/test_coverage_boost.py:
+    e: _cfg,test_classify_compose_build_fail,test_classify_port_conflict,test_classify_migration_fail,test_classify_missing_env,test_classify_health_timeout,test_classify_unknown,test_detect_deploy_method_docker_compose,test_detect_deploy_method_uvicorn,test_detect_deploy_method_none,test_start_docker_compose_calls_compose_up,test_stop_docker_compose_calls_down,test_stop_uvicorn_calls_stop,test_run_with_retry_succeeds_first,test_run_with_retry_fails_all,test_dsl_parse_walk,test_dsl_parse_flags,test_dsl_parse_unknown_command,test_dsl_parse_empty,test_dsl_parse_analyze,test_dsl_parse_file,test_dsl_interpreter_walk,test_dsl_interpreter_analyze,test_dsl_interpreter_evolution,test_dsl_interpreter_serve,test_dsl_interpreter_restore,test_dsl_interpreter_accelerator,_make_commit,_make_day_result,test_to_yaml_simple,test_to_yaml_nested,test_to_yaml_list,test_to_toon,test_status_badge_ok,test_status_badge_fail,test_classify_error_ok,test_classify_error_fail_auth,test_classify_error_fail_network,test_classify_error_by_keyword,_make_results,test_generate_trend_chart_empty,test_generate_trend_chart_single,test_generate_trend_chart_multiple,test_generate_endpoint_diff_empty,test_generate_endpoint_diff_detects_added,test_day_result_to_dict_with_error_category,test_day_result_health_pct_all_ok,test_day_result_health_pct_partial,test_day_result_skip_not_counted_as_fail,test_mvp_handle_walk,test_mvp_handle_analyze,test_mvp_unknown_command,test_mvp_missing_command,test_mvp_event_handler,test_mvp_message_roundtrip,test_mvp_handle_dsl,test_mvp_handle_nlp,test_nlp_detect_walk,test_nlp_detect_analyze,test_nlp_to_dsl,test_nlp_to_cli_args,test_nlp_dry_run_flag,test_nlp_semantic_flag,test_nlp_unknown_falls_back_to_help
+    _cfg(tmp_path;method)
+    test_classify_compose_build_fail(tmp_path)
+    test_classify_port_conflict(tmp_path)
+    test_classify_migration_fail(tmp_path)
+    test_classify_missing_env(tmp_path)
+    test_classify_health_timeout(tmp_path)
+    test_classify_unknown(tmp_path)
+    test_detect_deploy_method_docker_compose(tmp_path)
+    test_detect_deploy_method_uvicorn(tmp_path)
+    test_detect_deploy_method_none(tmp_path)
+    test_start_docker_compose_calls_compose_up(tmp_path)
+    test_stop_docker_compose_calls_down(tmp_path)
+    test_stop_uvicorn_calls_stop(tmp_path)
+    test_run_with_retry_succeeds_first(tmp_path)
+    test_run_with_retry_fails_all(tmp_path)
+    test_dsl_parse_walk()
+    test_dsl_parse_flags()
+    test_dsl_parse_unknown_command()
+    test_dsl_parse_empty()
+    test_dsl_parse_analyze()
+    test_dsl_parse_file(tmp_path)
+    test_dsl_interpreter_walk()
+    test_dsl_interpreter_analyze()
+    test_dsl_interpreter_evolution()
+    test_dsl_interpreter_serve()
+    test_dsl_interpreter_restore()
+    test_dsl_interpreter_accelerator()
+    _make_commit()
+    _make_day_result(tmp_path)
+    test_to_yaml_simple()
+    test_to_yaml_nested()
+    test_to_yaml_list()
+    test_to_toon(tmp_path)
+    test_status_badge_ok()
+    test_status_badge_fail()
+    test_classify_error_ok()
+    test_classify_error_fail_auth()
+    test_classify_error_fail_network()
+    test_classify_error_by_keyword()
+    _make_results(n;tmp_path)
+    test_generate_trend_chart_empty()
+    test_generate_trend_chart_single(tmp_path)
+    test_generate_trend_chart_multiple(tmp_path)
+    test_generate_endpoint_diff_empty(tmp_path)
+    test_generate_endpoint_diff_detects_added(tmp_path)
+    test_day_result_to_dict_with_error_category(tmp_path)
+    test_day_result_health_pct_all_ok()
+    test_day_result_health_pct_partial()
+    test_day_result_skip_not_counted_as_fail()
+    test_mvp_handle_walk()
+    test_mvp_handle_analyze()
+    test_mvp_unknown_command()
+    test_mvp_missing_command()
+    test_mvp_event_handler()
+    test_mvp_message_roundtrip()
+    test_mvp_handle_dsl()
+    test_mvp_handle_nlp()
+    test_nlp_detect_walk()
+    test_nlp_detect_analyze()
+    test_nlp_to_dsl()
+    test_nlp_to_cli_args()
+    test_nlp_dry_run_flag()
+    test_nlp_semantic_flag()
+    test_nlp_unknown_falls_back_to_help()
+  tests/test_coverage_phase16.py:
+    e: test_apply_health_verbose,test_apply_retry_backoff_multiplier,test_apply_base_url,test_apply_screenshots_false,test_apply_compose_file_project,test_apply_fixtures_in_project,test_apply_auth_in_project,test_apply_login_url_in_project,test_apply_login_payload_in_project,test_apply_login_url_top_level,test_apply_login_payload_top_level,test_apply_test_bodies_in_project,test_apply_replay_and_service,test_apply_patch_dir_relative,test_apply_patch_dir_absolute,test_apply_output_absolute,test_validate_valid_output_mapping,test_validate_invalid_output_dir_not_string,test_validate_retry_backoff_negative,test_validate_health_url_not_string,test_validate_screenshots_not_bool,test_validate_project_not_mapping,test_validate_test_fixtures_not_mapping,test_validate_deploy_not_string_or_dict,test_validate_base_url_not_string,_ep,_ok,_day,test_print_summary_table_with_regression,test_print_summary_table_with_positive_trend,test_print_summary_table_deploy_fail,test_compute_endpoint_count_no_change,test_compute_endpoint_count_increase_small,test_compute_endpoint_count_first_zero,_make_repo,test_walk_command_no_git_repo_exits,test_walk_command_cli_overrides_applied,test_walk_command_no_yaml,test_walk_command_with_results_generates_exports,test_mvp_message_default_timestamp,test_mvp_message_to_json_roundtrip,test_mvp_handler_handle_event,test_mvp_handler_unknown_command,test_mvp_handler_missing_command_key,test_mvp_handler_walk_command,test_mvp_handler_analyze_command,test_mvp_handler_dsl_command_missing_param,test_mvp_handler_dsl_command_with_dsl,test_mvp_handler_nlp_command_missing_text,test_mvp_handler_evolution_command,test_mvp_handler_auto_pr_command,test_duplicates_command_no_groups,test_duplicates_command_with_groups,test_duplicates_command_semantic_warning,test_multi_repo_command_less_than_2_repos,test_multi_repo_command_missing_repos,test_services_command_no_export,test_services_command_with_cycles,test_vector_query_no_index,test_plan_command_no_suggestions,test_plan_command_with_suggestions,test_execute_command_no_suggestions,test_execute_command_with_force,test_http_adapter_post,test_http_adapter_put,test_http_adapter_patch,test_http_adapter_delete,test_http_adapter_get_retry_then_succeed,test_http_adapter_get_all_retries_fail,test_http_adapter_close,test_truth_command_no_history,test_truth_command_with_history,test_vector_build_command,test_vector_build_command_with_warning,test_vector_query_with_results,test_vector_query_no_results_after_filter,test_multi_repo_command_success,test_multi_repo_command_with_deps_and_clones,test_print_report_links_with_port,test_print_report_links_no_port,test_execute_command_executor_fails,test_plan_command_medium_impact,test_plan_command_low_impact_with_files,test_pr_config_defaults,test_pr_service_github_success,test_pr_service_github_error,test_pr_service_gitlab_success,test_pr_service_gitlab_error,test_pr_service_requests_import_error,test_load_config_from_env_missing_platform,test_load_config_from_env_invalid_platform,test_load_config_from_env_missing_token,test_load_config_from_env_full,test_summary_service_empty_duplication,test_summary_service_with_groups,test_summary_service_high_severity,test_summary_service_from_service_graph_empty,test_refactor_executor_execute_no_files,test_refactor_executor_execute_with_files,test_graph_exporter_export_html,test_graph_exporter_empty,test_render_html_empty_snapshots,test_render_html_with_snapshots,test_generate_evolution_html
+    test_apply_health_verbose(tmp_path)
+    test_apply_retry_backoff_multiplier(tmp_path)
+    test_apply_base_url(tmp_path)
+    test_apply_screenshots_false(tmp_path)
+    test_apply_compose_file_project(tmp_path)
+    test_apply_fixtures_in_project(tmp_path)
+    test_apply_auth_in_project(tmp_path)
+    test_apply_login_url_in_project(tmp_path)
+    test_apply_login_payload_in_project(tmp_path)
+    test_apply_login_url_top_level(tmp_path)
+    test_apply_login_payload_top_level(tmp_path)
+    test_apply_test_bodies_in_project(tmp_path)
+    test_apply_replay_and_service(tmp_path)
+    test_apply_patch_dir_relative(tmp_path)
+    test_apply_patch_dir_absolute(tmp_path)
+    test_apply_output_absolute(tmp_path)
+    test_validate_valid_output_mapping(tmp_path)
+    test_validate_invalid_output_dir_not_string()
+    test_validate_retry_backoff_negative()
+    test_validate_health_url_not_string()
+    test_validate_screenshots_not_bool()
+    test_validate_project_not_mapping()
+    test_validate_test_fixtures_not_mapping()
+    test_validate_deploy_not_string_or_dict()
+    test_validate_base_url_not_string()
+    _ep(path)
+    _ok(ep)
+    _day(day_date;ep_count;ok_count;deploy;duration)
+    test_print_summary_table_with_regression(tmp_path)
+    test_print_summary_table_with_positive_trend(tmp_path)
+    test_print_summary_table_deploy_fail(tmp_path)
+    test_compute_endpoint_count_no_change()
+    test_compute_endpoint_count_increase_small()
+    test_compute_endpoint_count_first_zero()
+    _make_repo(tmp_path)
+    test_walk_command_no_git_repo_exits(tmp_path)
+    test_walk_command_cli_overrides_applied(tmp_path)
+    test_walk_command_no_yaml(tmp_path)
+    test_walk_command_with_results_generates_exports(tmp_path)
+    test_mvp_message_default_timestamp()
+    test_mvp_message_to_json_roundtrip()
+    test_mvp_handler_handle_event()
+    test_mvp_handler_unknown_command()
+    test_mvp_handler_missing_command_key()
+    test_mvp_handler_walk_command()
+    test_mvp_handler_analyze_command()
+    test_mvp_handler_dsl_command_missing_param()
+    test_mvp_handler_dsl_command_with_dsl()
+    test_mvp_handler_nlp_command_missing_text()
+    test_mvp_handler_evolution_command()
+    test_mvp_handler_auto_pr_command()
+    test_duplicates_command_no_groups(tmp_path)
+    test_duplicates_command_with_groups(tmp_path)
+    test_duplicates_command_semantic_warning(tmp_path)
+    test_multi_repo_command_less_than_2_repos(tmp_path)
+    test_multi_repo_command_missing_repos(tmp_path)
+    test_services_command_no_export(tmp_path)
+    test_services_command_with_cycles(tmp_path)
+    test_vector_query_no_index(tmp_path)
+    test_plan_command_no_suggestions(tmp_path)
+    test_plan_command_with_suggestions(tmp_path)
+    test_execute_command_no_suggestions(tmp_path)
+    test_execute_command_with_force(tmp_path)
+    test_http_adapter_post(tmp_path)
+    test_http_adapter_put(tmp_path)
+    test_http_adapter_patch(tmp_path)
+    test_http_adapter_delete(tmp_path)
+    test_http_adapter_get_retry_then_succeed()
+    test_http_adapter_get_all_retries_fail()
+    test_http_adapter_close()
+    test_truth_command_no_history(tmp_path)
+    test_truth_command_with_history(tmp_path)
+    test_vector_build_command(tmp_path)
+    test_vector_build_command_with_warning(tmp_path)
+    test_vector_query_with_results(tmp_path)
+    test_vector_query_no_results_after_filter(tmp_path)
+    test_multi_repo_command_success(tmp_path)
+    test_multi_repo_command_with_deps_and_clones(tmp_path)
+    test_print_report_links_with_port(tmp_path)
+    test_print_report_links_no_port(tmp_path)
+    test_execute_command_executor_fails(tmp_path)
+    test_plan_command_medium_impact(tmp_path)
+    test_plan_command_low_impact_with_files(tmp_path)
+    test_pr_config_defaults()
+    test_pr_service_github_success()
+    test_pr_service_github_error()
+    test_pr_service_gitlab_success()
+    test_pr_service_gitlab_error()
+    test_pr_service_requests_import_error()
+    test_load_config_from_env_missing_platform()
+    test_load_config_from_env_invalid_platform()
+    test_load_config_from_env_missing_token()
+    test_load_config_from_env_full()
+    test_summary_service_empty_duplication()
+    test_summary_service_with_groups()
+    test_summary_service_high_severity()
+    test_summary_service_from_service_graph_empty()
+    test_refactor_executor_execute_no_files(tmp_path)
+    test_refactor_executor_execute_with_files(tmp_path)
+    test_graph_exporter_export_html(tmp_path)
+    test_graph_exporter_empty(tmp_path)
+    test_render_html_empty_snapshots()
+    test_render_html_with_snapshots()
+    test_generate_evolution_html(tmp_path)
+  tests/test_db_snapshot_extra.py:
+    e: _shell,_mgr,test_ready_check_sqlite,test_ready_check_postgres_contains_pg_isready,test_ready_check_mysql_contains_mysqladmin,test_wait_until_ready_sqlite_immediate,test_wait_until_ready_postgres_success,test_wait_until_ready_postgres_timeout,test_save_and_load_metadata,test_load_metadata_ignores_corrupt_file,test_restore_raises_if_not_found,test_restore_raises_if_file_missing,test_mysql_dump_success,test_mysql_dump_failure_raises,test_sqlite_dump_calls_docker_cp,test_create_unsupported_db_type,test_execute_baseline_calls_create_baseline,test_execute_unknown_raises,test_create_baseline_calls_create,test_create_baseline_with_sha_uses_sha_prefix
+    _shell(returncode;stdout;stderr)
+    _mgr(tmp_path;db_type)
+    test_ready_check_sqlite(tmp_path)
+    test_ready_check_postgres_contains_pg_isready(tmp_path)
+    test_ready_check_mysql_contains_mysqladmin(tmp_path)
+    test_wait_until_ready_sqlite_immediate(tmp_path)
+    test_wait_until_ready_postgres_success(tmp_path)
+    test_wait_until_ready_postgres_timeout(tmp_path)
+    test_save_and_load_metadata(tmp_path)
+    test_load_metadata_ignores_corrupt_file(tmp_path)
+    test_restore_raises_if_not_found(tmp_path)
+    test_restore_raises_if_file_missing(tmp_path)
+    test_mysql_dump_success(tmp_path)
+    test_mysql_dump_failure_raises(tmp_path)
+    test_sqlite_dump_calls_docker_cp(tmp_path)
+    test_create_unsupported_db_type(tmp_path)
+    test_execute_baseline_calls_create_baseline(tmp_path)
+    test_execute_unknown_raises(tmp_path)
+    test_create_baseline_calls_create(tmp_path)
+    test_create_baseline_with_sha_uses_sha_prefix(tmp_path)
   tests/test_deploy_service.py:
     e: _config,test_start_dry_run_skips_deploy,test_start_none_method_returns_true,test_stop_dry_run_skips,test_stop_none_method_skips,test_start_none_returns_true,test_compose_file_finds_yml,test_compose_file_finds_yaml,test_compose_file_explicit
     _config(tmp_path;method;dry_run;compose_file)
@@ -186657,6 +187105,43 @@ D:
     test_compose_file_finds_yml(tmp_path)
     test_compose_file_finds_yaml(tmp_path)
     test_compose_file_explicit(tmp_path)
+  tests/test_domain_infra.py:
+    e: _make_snapshot,test_graph_snapshot_to_dict,test_timeline_add_and_get_snapshot,test_timeline_get_by_commit,test_timeline_to_dict,test_timeline_save_and_load,test_timeline_save_creates_parent,test_snapshot_type_incremental,test_config_loader_missing_file,test_config_loader_invalid_yaml,test_config_loader_loads_valid_yaml,test_config_loader_apply_days,test_config_loader_apply_deploy_method,test_config_loader_apply_flat_structure,test_config_loader_apply_output_dir_relative,test_config_loader_apply_output_dir_dict,test_config_loader_apply_health_timeout,test_config_loader_apply_compose_file,test_config_loader_apply_retry_settings,test_config_validate_empty_is_valid,test_config_validate_valid_full,test_config_validate_invalid_days,test_config_validate_invalid_days_string,test_config_validate_invalid_deploy_method,test_config_validate_invalid_deploy_string,test_config_validate_invalid_health_timeout_zero,test_config_validate_output_missing_dir_key,test_config_validate_auth_not_mapping,test_config_validate_test_bodies_not_mapping,test_config_validate_walk_command_aborts_on_invalid_yaml,test_event_service_subscribe_returns_queue,test_event_service_enable_and_emit,test_event_service_get_returns_singleton,test_history_service_no_dir,test_history_service_loads_results
+    _make_snapshot(commit)
+    test_graph_snapshot_to_dict()
+    test_timeline_add_and_get_snapshot()
+    test_timeline_get_by_commit()
+    test_timeline_to_dict()
+    test_timeline_save_and_load(tmp_path)
+    test_timeline_save_creates_parent(tmp_path)
+    test_snapshot_type_incremental()
+    test_config_loader_missing_file(tmp_path)
+    test_config_loader_invalid_yaml(tmp_path)
+    test_config_loader_loads_valid_yaml(tmp_path)
+    test_config_loader_apply_days(tmp_path)
+    test_config_loader_apply_deploy_method(tmp_path)
+    test_config_loader_apply_flat_structure(tmp_path)
+    test_config_loader_apply_output_dir_relative(tmp_path)
+    test_config_loader_apply_output_dir_dict(tmp_path)
+    test_config_loader_apply_health_timeout(tmp_path)
+    test_config_loader_apply_compose_file(tmp_path)
+    test_config_loader_apply_retry_settings(tmp_path)
+    test_config_validate_empty_is_valid()
+    test_config_validate_valid_full()
+    test_config_validate_invalid_days()
+    test_config_validate_invalid_days_string()
+    test_config_validate_invalid_deploy_method()
+    test_config_validate_invalid_deploy_string()
+    test_config_validate_invalid_health_timeout_zero()
+    test_config_validate_output_missing_dir_key()
+    test_config_validate_auth_not_mapping()
+    test_config_validate_test_bodies_not_mapping()
+    test_config_validate_walk_command_aborts_on_invalid_yaml(tmp_path)
+    test_event_service_subscribe_returns_queue()
+    test_event_service_enable_and_emit()
+    test_event_service_get_returns_singleton()
+    test_history_service_no_dir(tmp_path)
+    test_history_service_loads_results(tmp_path)
   tests/test_e2e_dsl_nlp_mvp.py:
     e: test_dsl_parsing,test_dsl_file,test_nlp_parsing,test_nlp_various_commands,test_mvp_protocol,test_mvp_json_serialization,test_cli_dsl_command,test_cli_nlp_command,run_all_e2e_tests
     test_dsl_parsing()
@@ -186668,6 +187153,46 @@ D:
     test_cli_dsl_command()
     test_cli_nlp_command()
     run_all_e2e_tests()
+  tests/test_e2e_pipeline.py:
+    e: _make_git_repo,_make_py_module,TestWalkCommandE2E,TestHelpersE2E,TestAnalysisPipelineE2E,TestVectorSearchE2E,TestConfigLoaderE2E,TestReporterServiceE2E,TestCLISubprocessE2E,TestPRSummaryPipelineE2E
+    TestWalkCommandE2E: test_walk_no_results(1),test_walk_with_results_generates_reports(1),test_walk_with_rebuild_yaml(1),test_walk_invalid_yaml_aborts(1),test_walk_cli_override_takes_precedence(1),test_walk_no_git_repo_exits(1)
+    TestHelpersE2E: _make_day(4),test_health_trend_regression_flag(1),test_health_trend_no_regression(1),test_endpoint_count_trend_warning(1),test_endpoint_count_trend_stable(1),test_print_summary_table_renders(1),test_print_summary_table_with_commit(1)
+    TestAnalysisPipelineE2E: test_duplication_to_recommendation(1),test_service_graph_to_recommendation(1),test_full_analysis_cli_flow(1)
+    TestVectorSearchE2E: test_schema_creation(1),test_upsert_without_model(1),test_build_from_path_no_model(1),test_query_empty_returns_empty(1),test_upsert_with_mock_model(1),test_query_with_mock_model(1),test_fragment_id_is_stable(1),test_to_text_with_and_without_name(1),test_cosine_similarity_orthogonal(1),test_cosine_similarity_parallel(1)
+    TestConfigLoaderE2E: test_full_yaml_load_apply(1),test_minimal_yaml_no_errors(1),test_validation_invalid_deploy_method(0),test_validation_invalid_types(0),test_load_nonexistent_returns_none(1)
+    TestReporterServiceE2E: _make_results(2),test_csv_content(1),test_markdown_content(1),test_csv_health_pct_correct(1)
+    TestCLISubprocessE2E: _run(0),test_version_command(0),test_help_command(0),test_init_creates_files(1),test_init_force_flag(1),test_report_empty_dir(1),test_walk_no_git_repo(1),test_analyze_help(0),test_refactor_help(0),test_dsl_command_parse(0),test_nlp_command_analyze(0),test_serve_missing_dir(1),test_bump_script_dry_run(1),test_bump_script_show(0)
+    TestPRSummaryPipelineE2E: test_summary_from_duplication_to_pr_body(0),test_summary_service_graph_flow(0),test_pr_service_dry_run_body_structure(0)
+    _make_git_repo(tmp_path)
+    _make_py_module(tmp_path;name;code)
+  tests/test_git_helpers_extra.py:
+    e: _shell_ok,_shell_fail,test_git_checkout,test_git_restore_head_default,test_git_restore_head_sha,test_git_get_current_sha,test_git_diff_names_success,test_git_diff_names_error,test_git_days_with_commits_date_filter,test_git_days_with_commits_deduplicates_per_day,test_git_days_with_commits_git_error,test_git_clone_for_walk_existing,test_git_clone_for_walk_new,test_print_report_links_with_port,test_print_report_links_no_port,test_print_summary_table_with_data,test_compute_health_trend_labels_flags_large_regression,test_compute_endpoint_count_trend_labels_flags_large_change,test_dsl_parse_restore,test_dsl_parse_serve,test_dsl_parse_accelerator,test_dsl_parse_auto_pr,test_dsl_interpreter_auto_pr,test_dsl_parse_file_ignores_comments,test_dsl_parse_float_value,test_dsl_parse_string_with_colon_in_value
+    _shell_ok(stdout;stderr)
+    _shell_fail(stderr)
+    test_git_checkout(tmp_path)
+    test_git_restore_head_default(tmp_path)
+    test_git_restore_head_sha(tmp_path)
+    test_git_get_current_sha(tmp_path)
+    test_git_diff_names_success(tmp_path)
+    test_git_diff_names_error(tmp_path)
+    test_git_days_with_commits_date_filter(tmp_path)
+    test_git_days_with_commits_deduplicates_per_day(tmp_path)
+    test_git_days_with_commits_git_error(tmp_path)
+    test_git_clone_for_walk_existing(tmp_path)
+    test_git_clone_for_walk_new(tmp_path)
+    test_print_report_links_with_port(tmp_path)
+    test_print_report_links_no_port(tmp_path)
+    test_print_summary_table_with_data()
+    test_compute_health_trend_labels_flags_large_regression()
+    test_compute_endpoint_count_trend_labels_flags_large_change()
+    test_dsl_parse_restore()
+    test_dsl_parse_serve()
+    test_dsl_parse_accelerator()
+    test_dsl_parse_auto_pr()
+    test_dsl_interpreter_auto_pr()
+    test_dsl_parse_file_ignores_comments(tmp_path)
+    test_dsl_parse_float_value()
+    test_dsl_parse_string_with_colon_in_value()
   tests/test_git_service.py:
     e: test_days_with_commits_parses_log,test_days_with_commits_filters_by_date_range,test_days_with_commits_empty_on_error,test_checkout_calls_git,test_restore_head_calls_git,test_restore_head_with_sha,test_clone_for_walk_creates_clone,test_execute_delegates_to_days_with_commits
     test_days_with_commits_parses_log(tmp_path)
@@ -186690,14 +187215,32 @@ D:
     test_load_history_with_commit(tmp_path)
     test_load_history_status_timeout(tmp_path)
     test_load_history_testql_passed(tmp_path)
+  tests/test_interfaces_smoke.py:
+    e: test_print_summary_table_empty,test_config_loader_roundtrip,test_generate_dashboard_empty,test_dashboard_render_html_no_data,test_evolution_render_html_empty,test_textual_ok_is_bool,_cfg,test_start_replay_checks_health,test_stop_replay_skips_down,test_compose_file_raises_when_missing,test_run_with_retry_success_on_second_attempt,test_classify_error_alembic,test_classify_error_keyerror,test_classify_error_dockerfile
+    test_print_summary_table_empty()
+    test_config_loader_roundtrip(tmp_path)
+    test_generate_dashboard_empty(tmp_path)
+    test_dashboard_render_html_no_data()
+    test_evolution_render_html_empty()
+    test_textual_ok_is_bool()
+    _cfg(tmp_path;method)
+    test_start_replay_checks_health(tmp_path)
+    test_stop_replay_skips_down(tmp_path)
+    test_compose_file_raises_when_missing(tmp_path)
+    test_run_with_retry_success_on_second_attempt(tmp_path)
+    test_classify_error_alembic(tmp_path)
+    test_classify_error_keyerror(tmp_path)
+    test_classify_error_dockerfile(tmp_path)
   tests/test_models.py:
-    e: test_endpoint_url,test_endpoint_url_strips_trailing_slash,test_endpoint_slug,test_day_result_health_pct_empty,test_day_result_health_pct,test_walk_config_defaults
+    e: test_endpoint_url,test_endpoint_url_strips_trailing_slash,test_endpoint_slug,test_day_result_health_pct_empty,test_day_result_health_pct,test_walk_config_defaults,test_day_result_to_dict_truncates_long_deploy_log,test_day_result_to_dict_keeps_short_deploy_log
     test_endpoint_url()
     test_endpoint_url_strips_trailing_slash()
     test_endpoint_slug()
     test_day_result_health_pct_empty()
     test_day_result_health_pct()
     test_walk_config_defaults()
+    test_day_result_to_dict_truncates_long_deploy_log()
+    test_day_result_to_dict_keeps_short_deploy_log()
   tests/test_pipeline.py:
     e: _config,_commit,test_run_returns_empty_when_no_commits,test_run_day_dry_run_skips_checkout,test_run_day_returns_day_result,test_run_day_deploy_failure_skips_scan,test_run_day_stop_always_called,test_run_processes_all_days
     _config(tmp_path;dry_run)
@@ -186708,8 +187251,21 @@ D:
     test_run_day_deploy_failure_skips_scan(tmp_path)
     test_run_day_stop_always_called(tmp_path)
     test_run_processes_all_days(tmp_path)
+  tests/test_pipeline_extra.py:
+    e: _cfg,_commit,test_base_pipeline_processed_shas_persisted,test_base_pipeline_emit_creates_jsonl,test_base_pipeline_log_delegates_to_console,test_pipeline_run_no_commits,test_pipeline_run_dry_run_single_commit,test_pipeline_run_skips_already_processed,test_check_for_manual_fix_returns_none_when_no_fix,test_check_for_manual_fix_finds_fix_commit,test_check_for_manual_fix_ignores_git_error
+    _cfg(tmp_path;dry_run)
+    _commit(day)
+    test_base_pipeline_processed_shas_persisted(tmp_path)
+    test_base_pipeline_emit_creates_jsonl(tmp_path)
+    test_base_pipeline_log_delegates_to_console(tmp_path)
+    test_pipeline_run_no_commits(tmp_path)
+    test_pipeline_run_dry_run_single_commit(tmp_path)
+    test_pipeline_run_skips_already_processed(tmp_path)
+    test_check_for_manual_fix_returns_none_when_no_fix(tmp_path)
+    test_check_for_manual_fix_finds_fix_commit(tmp_path)
+    test_check_for_manual_fix_ignores_git_error(tmp_path)
   tests/test_reporter_service.py:
-    e: _ep,_day_result,test_save_day_creates_results_file,test_save_day_creates_yaml_and_toon,test_save_day_includes_commit_in_json,test_save_day_no_output_dir_skips,test_save_day_health_in_json,test_save_html_creates_report_file,test_save_html_contains_health_pct,test_save_timeline_index_creates_index,test_save_timeline_index_multiple_days_sorted
+    e: _ep,_day_result,test_save_day_creates_results_file,test_save_day_creates_yaml_and_toon,test_save_day_includes_commit_in_json,test_save_day_no_output_dir_skips,test_save_day_health_in_json,test_save_html_creates_report_file,test_save_html_contains_health_pct,test_save_timeline_index_creates_index,test_save_timeline_index_multiple_days_sorted,test_save_timeline_index_flags_health_regression,test_save_timeline_index_flags_endpoint_count_warning,_two_days,test_export_csv_creates_file,test_export_csv_has_header_and_rows,test_export_markdown_creates_file,test_export_markdown_table_rows
     _ep(path;method)
     _day_result(tmp_path;ep_results;commit)
     test_save_day_creates_results_file(tmp_path)
@@ -186721,6 +187277,30 @@ D:
     test_save_html_contains_health_pct(tmp_path)
     test_save_timeline_index_creates_index(tmp_path)
     test_save_timeline_index_multiple_days_sorted(tmp_path)
+    test_save_timeline_index_flags_health_regression(tmp_path)
+    test_save_timeline_index_flags_endpoint_count_warning(tmp_path)
+    _two_days(tmp_path)
+    test_export_csv_creates_file(tmp_path)
+    test_export_csv_has_header_and_rows(tmp_path)
+    test_export_markdown_creates_file(tmp_path)
+    test_export_markdown_table_rows(tmp_path)
+  tests/test_restore_override.py:
+    e: test_find_backend_files_returns_matching,test_find_backend_files_skips_venv,test_is_page_endpoint_api,test_is_page_endpoint_page,test_write_readme,test_write_readme_with_files,test_extract_endpoint_copies_compose,test_extract_endpoint_copies_backend_dockerfile,test_find_last_working_old_schema,test_find_last_working_skips_invalid_day_dirs,test_override_service_no_patch_source,test_override_service_missing_patch_dir,test_override_service_copies_files,test_override_service_overwrites_existing,test_override_service_execute_no_args
+    test_find_backend_files_returns_matching(tmp_path)
+    test_find_backend_files_skips_venv(tmp_path)
+    test_is_page_endpoint_api(tmp_path)
+    test_is_page_endpoint_page(tmp_path)
+    test_write_readme(tmp_path)
+    test_write_readme_with_files(tmp_path)
+    test_extract_endpoint_copies_compose(tmp_path)
+    test_extract_endpoint_copies_backend_dockerfile(tmp_path)
+    test_find_last_working_old_schema(tmp_path)
+    test_find_last_working_skips_invalid_day_dirs(tmp_path)
+    test_override_service_no_patch_source(tmp_path)
+    test_override_service_missing_patch_dir(tmp_path)
+    test_override_service_copies_files(tmp_path)
+    test_override_service_overwrites_existing(tmp_path)
+    test_override_service_execute_no_args(tmp_path)
   tests/test_restore_service.py:
     e: _write_day,test_find_last_working_day_found,test_find_last_working_day_picks_most_recent,test_find_last_working_day_none_when_always_fail,test_find_last_working_day_missing_dir,test_find_last_working_day_ignores_other_endpoints,test_find_last_working_day_skips_invalid_dirs,test_execute_returns_date
     _write_day(results_dir;day;results)
@@ -186745,79 +187325,173 @@ D:
     test_execute_falls_back_to_health(tmp_path)
     test_execute_deta_takes_priority(tmp_path)
     test_execute_deduplicates_openapi_vs_deta(tmp_path)
+  tests/test_services_extra.py:
+    e: _cfg,_mock_shell_result,test_compose_up_success,test_compose_up_fails_classifies_error,test_compose_down_called,test_uvicorn_stop_terminates,test_save_deploy_debug_writes_file,test_wait_healthy_returns_true_on_200,test_wait_healthy_times_out,test_wait_healthy_prints_status_and_body_on_timeout,test_wait_healthy_with_retry_wraps_wait_healthy,_scan_cfg,test_scanner_fallback_health_endpoint,test_scanner_compose_labels_fallback,test_scanner_openapi_deduplication,test_scanner_parse_openapi_substitutes_fixture,test_scanner_parse_openapi_generic_fallback,test_scanner_resolve_test_body_from_config,test_scanner_resolve_test_body_fallback,test_scanner_fastapi_routes_parses_file,test_restore_find_last_working_day,test_restore_no_working_day_returns_none,test_restore_missing_results_dir,test_restore_extract_endpoint_creates_dirs,test_restore_list_working_days,test_patcher_patches_dockerfile_npm_install,test_patcher_no_change_if_no_npm,test_patcher_patch_compose_removes_container_names,test_patcher_execute_counts_patches,test_patcher_apply_manual_overrides,test_patcher_manual_overrides_missing_patch_dir,test_override_service_no_overrides,test_base_pipeline_load_state_empty,test_base_pipeline_save_and_reload_state,test_base_pipeline_emit_writes_jsonl,test_base_pipeline_log_prints_to_console
+    _cfg(tmp_path;method)
+    _mock_shell_result(returncode;stdout;stderr)
+    test_compose_up_success(tmp_path)
+    test_compose_up_fails_classifies_error(tmp_path)
+    test_compose_down_called(tmp_path)
+    test_uvicorn_stop_terminates(tmp_path)
+    test_save_deploy_debug_writes_file(tmp_path)
+    test_wait_healthy_returns_true_on_200(tmp_path)
+    test_wait_healthy_times_out(tmp_path)
+    test_wait_healthy_prints_status_and_body_on_timeout(tmp_path)
+    test_wait_healthy_with_retry_wraps_wait_healthy(tmp_path)
+    _scan_cfg(tmp_path)
+    test_scanner_fallback_health_endpoint(tmp_path)
+    test_scanner_compose_labels_fallback(tmp_path)
+    test_scanner_openapi_deduplication(tmp_path)
+    test_scanner_parse_openapi_substitutes_fixture(tmp_path)
+    test_scanner_parse_openapi_generic_fallback(tmp_path)
+    test_scanner_resolve_test_body_from_config(tmp_path)
+    test_scanner_resolve_test_body_fallback(tmp_path)
+    test_scanner_fastapi_routes_parses_file(tmp_path)
+    test_restore_find_last_working_day(tmp_path)
+    test_restore_no_working_day_returns_none(tmp_path)
+    test_restore_missing_results_dir(tmp_path)
+    test_restore_extract_endpoint_creates_dirs(tmp_path)
+    test_restore_list_working_days(tmp_path)
+    test_patcher_patches_dockerfile_npm_install(tmp_path)
+    test_patcher_no_change_if_no_npm(tmp_path)
+    test_patcher_patch_compose_removes_container_names(tmp_path)
+    test_patcher_execute_counts_patches(tmp_path)
+    test_patcher_apply_manual_overrides(tmp_path)
+    test_patcher_manual_overrides_missing_patch_dir(tmp_path)
+    test_override_service_no_overrides(tmp_path)
+    test_base_pipeline_load_state_empty(tmp_path)
+    test_base_pipeline_save_and_reload_state(tmp_path)
+    test_base_pipeline_emit_writes_jsonl(tmp_path)
+    test_base_pipeline_log_prints_to_console(tmp_path)
+  tests/test_smart_screenshot.py:
+    e: _ep,test_select_tests_no_changes,test_select_tests_migration_change_tests_all,test_select_tests_router_change_selects_affected,test_select_tests_unrelated_change_critical_only,test_analyze_changes_git_error,test_analyze_changes_parse_added,test_analyze_changes_parse_rename,test_execute_wraps_select_tests,_make_er,test_screenshot_skips_non_get,test_screenshot_skips_skipped_status,test_screenshot_no_targets_returns_empty,test_screenshot_playwright_not_installed_marks_error,test_screenshot_config_defaults,_pcfg,test_parallel_engine_dry_run_skips_all,test_parallel_engine_empty_input,test_parallel_engine_respects_max_concurrent
+    _ep(path;method)
+    test_select_tests_no_changes(tmp_path)
+    test_select_tests_migration_change_tests_all(tmp_path)
+    test_select_tests_router_change_selects_affected(tmp_path)
+    test_select_tests_unrelated_change_critical_only(tmp_path)
+    test_analyze_changes_git_error(tmp_path)
+    test_analyze_changes_parse_added(tmp_path)
+    test_analyze_changes_parse_rename(tmp_path)
+    test_execute_wraps_select_tests(tmp_path)
+    _make_er(path;method;status)
+    test_screenshot_skips_non_get(tmp_path)
+    test_screenshot_skips_skipped_status(tmp_path)
+    test_screenshot_no_targets_returns_empty(tmp_path)
+    test_screenshot_playwright_not_installed_marks_error(tmp_path)
+    test_screenshot_config_defaults(tmp_path)
+    _pcfg(tmp_path)
+    test_parallel_engine_dry_run_skips_all(tmp_path)
+    test_parallel_engine_empty_input(tmp_path)
+    test_parallel_engine_respects_max_concurrent(tmp_path)
   tests/test_test_service.py:
     e: _ep,test_test_service_ok,test_test_service_timeout,test_test_service_set_day_dir
     _ep(path;method)
     test_test_service_ok()
     test_test_service_timeout()
     test_test_service_set_day_dir()
+  tests/test_walk_command_config_precedence.py:
+    e: _invoke_walk,test_walk_cli_health_timeout_overrides_yaml_when_explicit,test_walk_uses_yaml_when_option_not_explicit,test_walk_cli_output_overrides_yaml_when_explicit,_CapturePipeline
+    _CapturePipeline: __init__(2),run(0)
+    _invoke_walk(repo)
+    test_walk_cli_health_timeout_overrides_yaml_when_explicit(tmp_path;monkeypatch)
+    test_walk_uses_yaml_when_option_not_explicit(tmp_path;monkeypatch)
+    test_walk_cli_output_overrides_yaml_when_explicit(tmp_path;monkeypatch)
+  tests/test_worktree_db.py:
+    e: _mock_shell,test_worktree_path_deterministic,test_worktree_path_uses_short_sha,test_ensure_base_dir_created,test_list_worktrees_parses_output,test_list_worktrees_returns_empty_on_error,test_get_or_create_cached,test_get_or_create_creates_new,test_get_or_create_already_in_git,test_remove_worktree,test_remove_worktree_force,test_cleanup_all_removes_all,test_cleanup_all_keeps_specified,test_prepare_sequence,test_get_active_path,test_get_or_create_raises_on_failure,_mgr,test_snapshot_manager_init,test_list_snapshots_empty,test_delete_nonexistent_snapshot_returns_true,test_delete_existing_snapshot,test_ready_check_command_postgres,test_ready_check_command_mysql,test_execute_unknown_action_raises
+    _mock_shell(returncode;stdout;stderr)
+    test_worktree_path_deterministic(tmp_path)
+    test_worktree_path_uses_short_sha(tmp_path)
+    test_ensure_base_dir_created(tmp_path)
+    test_list_worktrees_parses_output(tmp_path)
+    test_list_worktrees_returns_empty_on_error(tmp_path)
+    test_get_or_create_cached(tmp_path)
+    test_get_or_create_creates_new(tmp_path)
+    test_get_or_create_already_in_git(tmp_path)
+    test_remove_worktree(tmp_path)
+    test_remove_worktree_force(tmp_path)
+    test_cleanup_all_removes_all(tmp_path)
+    test_cleanup_all_keeps_specified(tmp_path)
+    test_prepare_sequence(tmp_path)
+    test_get_active_path(tmp_path)
+    test_get_or_create_raises_on_failure(tmp_path)
+    _mgr(tmp_path;db_type)
+    test_snapshot_manager_init(tmp_path)
+    test_list_snapshots_empty(tmp_path)
+    test_delete_nonexistent_snapshot_returns_true(tmp_path)
+    test_delete_existing_snapshot(tmp_path)
+    test_ready_check_command_postgres(tmp_path)
+    test_ready_check_command_mysql(tmp_path)
+    test_execute_unknown_action_raises(tmp_path)
 ```
 
 ## Call Graph
 
-*31 nodes · 32 edges · 5 modules · CC̄=0.0*
+*42 nodes · 45 edges · 7 modules · CC̄=0.1*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `checkServiceHealth` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 6 | 7 | **13** |
-| `renderArchitecture` *(in restored_c2004_health.api-health.backend.site.src.main)* | 1 | 2 | 11 | **13** |
+| `main` *(in scripts.bump_version)* | 4 | 0 | 20 | **20** |
+| `categorize_commits` *(in scripts.bump_version)* | 14 ⚠ | 1 | 15 | **16** |
+| `update_changelog` *(in scripts.bump_version)* | 5 | 1 | 14 | **15** |
+| `build_new_section` *(in scripts.bump_version)* | 7 | 1 | 14 | **15** |
 | `renderDownloads` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 2 | 11 | **13** |
-| `runHealthCheck` *(in restored_c2004_health.api-health.backend.site.src.main)* | 11 ⚠ | 1 | 10 | **11** |
-| `renderDocs` *(in restored_c2004_health.api-health.backend.site.src.main)* | 6 | 2 | 9 | **11** |
-| `handleRoute` *(in restored_c2004_health.api-health.backend.site.src.main)* | 7 | 0 | 10 | **10** |
-| `route` *(in restored_c2004_health.api-health.backend.site.src.main)* | 7 | 0 | 8 | **8** |
-| `allServices` *(in restored_c2004_health.api-health.backend.site.src.main)* | 2 | 0 | 5 | **5** |
+| `renderArchitecture` *(in restored_c2004_health.api-health.backend.site.src.main)* | 1 | 2 | 11 | **13** |
+| `checkServiceHealth` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 6 | 7 | **13** |
+| `print` *(in examples.08-nlp-commands.README)* | 0 | 12 | 0 | **12** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/resplit
-# nodes: 31 | edges: 32 | modules: 5
-# CC̄=0.0
+# nodes: 42 | edges: 45 | modules: 7
+# CC̄=0.1
 
 HUBS[20]:
-  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-    CC=4  in:6  out:7  total:13
-  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-    CC=1  in:2  out:11  total:13
+  scripts.bump_version.main
+    CC=4  in:0  out:20  total:20
+  scripts.bump_version.categorize_commits
+    CC=14  in:1  out:15  total:16
+  scripts.bump_version.update_changelog
+    CC=5  in:1  out:14  total:15
+  scripts.bump_version.build_new_section
+    CC=7  in:1  out:14  total:15
   restored_c2004_health.api-health.backend.site.src.main.renderDownloads
     CC=4  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-    CC=11  in:1  out:10  total:11
+  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
+    CC=1  in:2  out:11  total:13
+  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+    CC=4  in:6  out:7  total:13
+  examples.08-nlp-commands.README.print
+    CC=0  in:12  out:0  total:12
   restored_c2004_health.api-health.backend.site.src.main.renderDocs
     CC=6  in:2  out:9  total:11
+  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
+    CC=11  in:1  out:10  total:11
   restored_c2004_health.api-health.backend.site.src.main.handleRoute
     CC=7  in:0  out:10  total:10
+  scripts.bump_version.get_git_log_since_last_tag
+    CC=7  in:1  out:7  total:8
+  scripts.bump_version.bump
+    CC=5  in:1  out:7  total:8
   restored_c2004_health.api-health.backend.site.src.main.route
     CC=7  in:0  out:8  total:8
-  restored_c2004_health.api-health.backend.site.src.main.allServices
-    CC=2  in:0  out:5  total:5
+  scripts.bump_version.update_init
+    CC=3  in:1  out:6  total:7
+  scripts.bump_version.collect_unreleased_entries
+    CC=7  in:1  out:6  total:7
+  scripts.bump_version.update_pyproject
+    CC=3  in:1  out:6  total:7
+  scripts.bump_version.read_version
+    CC=2  in:2  out:4  total:6
   restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
     CC=10  in:1  out:4  total:5
-  restored_c2004_health.api-health.backend.site.src.main.summary
+  restored_c2004_health.api-health.backend.site.src.main.allServices
     CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.table
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.healthyEl
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-    CC=11  in:3  out:1  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
-    CC=4  in:1  out:3  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderHome
-    CC=1  in:2  out:2  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderServices
-    CC=1  in:2  out:2  total:4
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
-    CC=1  in:0  out:3  total:3
 
 MODULES:
+  examples.08-nlp-commands.README  [1 funcs]
+    print  CC=0  out:0
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
     index  CC=1  out:3
@@ -186845,6 +187519,17 @@ MODULES:
     renderDocs  CC=6  out:9
     renderDownloads  CC=4  out:11
     renderHome  CC=1  out:2
+  scripts.bump_version  [10 funcs]
+    build_new_section  CC=7  out:14
+    bump  CC=5  out:7
+    categorize_commits  CC=14  out:15
+    collect_unreleased_entries  CC=7  out:6
+    get_git_log_since_last_tag  CC=7  out:7
+    main  CC=4  out:20
+    read_version  CC=2  out:4
+    update_changelog  CC=5  out:14
+    update_init  CC=3  out:6
+    update_pyproject  CC=3  out:6
 
 EDGES:
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
@@ -186879,6 +187564,19 @@ EDGES:
   restored_c2004_health.api-health.backend.site.src.main.allServices → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
   restored_c2004_health.api-health.backend.site.src.main.renderDocs → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
   restored_c2004_health.api-health.backend.site.src.main.renderSidebar → restored_c2004_health.api-health.backend.site.src.main.esc
+  scripts.bump_version.update_init → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_pyproject → examples.08-nlp-commands.README.print
+  scripts.bump_version.build_new_section → scripts.bump_version.categorize_commits
+  scripts.bump_version.update_changelog → scripts.bump_version.get_git_log_since_last_tag
+  scripts.bump_version.update_changelog → scripts.bump_version.collect_unreleased_entries
+  scripts.bump_version.update_changelog → scripts.bump_version.build_new_section
+  scripts.bump_version.update_changelog → scripts.bump_version.read_version
+  scripts.bump_version.update_changelog → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → scripts.bump_version.read_version
+  scripts.bump_version.main → scripts.bump_version.bump
+  scripts.bump_version.main → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → scripts.bump_version.update_init
+  scripts.bump_version.main → scripts.bump_version.update_pyproject
 ```
 
 ## Test Contracts

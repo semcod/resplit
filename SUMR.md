@@ -7,6 +7,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorizati
 - [Metadata](#metadata)
 - [Architecture](#architecture)
 - [Workflows](#workflows)
+- [Quality Pipeline (`pyqual.yaml`)](#quality-pipeline-pyqualyaml)
 - [Dependencies](#dependencies)
 - [Call Graph](#call-graph)
 - [Test Contracts](#test-contracts)
@@ -16,12 +17,12 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorizati
 ## Metadata
 
 - **name**: `rebuild`
-- **version**: `0.1.15`
+- **version**: `0.1.20`
 - **python_requires**: `>=3.11`
 - **license**: {'text': 'Apache-2.0'}
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, Makefile, testql(2), app.doql.less, goal.yaml, project/(5 analysis files)
+- **generated_from**: pyproject.toml, Makefile, testql(2), app.doql.less, goal.yaml, Dockerfile, project/(5 analysis files)
 
 ## Architecture
 
@@ -36,7 +37,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: rebuild;
-  version: 0.1.15;
+  version: 0.1.20;
 }
 
 dependencies {
@@ -243,9 +244,49 @@ workflow[name="dashboard"] {
   step-1: run cmd=rebuild dashboard --repo .;
 }
 
+workflow[name="coverage"] {
+  trigger: manual;
+  step-1: run cmd=python -m pytest --cov=rebuild --cov-report=term-missing --cov-report=xml -q;
+  step-2: run cmd=python - <<'EOF';
+  step-3: run cmd=import xml.etree.ElementTree as ET;
+  step-4: run cmd=tree = ET.parse("coverage.xml");
+  step-5: run cmd=rate = float(tree.getroot().attrib.get("line-rate", 0)) * 100;
+  step-6: run cmd=print(f"\nCoverage: {rate:.1f}%");
+  step-7: run cmd=if rate < 70:;
+  step-8: run cmd=raise SystemExit(f"Coverage {rate:.1f}% < 70% required");
+  step-9: run cmd=print("PASS: Coverage gate met ✓");
+  step-10: run cmd=EOF;
+}
+
+workflow[name="version"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py --show;
+}
+
+workflow[name="bump-patch"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py patch;
+}
+
+workflow[name="bump-minor"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py minor;
+}
+
+workflow[name="bump-major"] {
+  trigger: manual;
+  step-1: run cmd=python3 scripts/bump_version.py major;
+}
+
 workflow[name="build"] {
   trigger: manual;
-  step-1: run cmd=python -m build;
+  step-1: run cmd=python3 -m build;
+}
+
+workflow[name="publish"] {
+  trigger: manual;
+  step-1: run cmd=python3 -m twine check dist/*;
+  step-2: run cmd=python3 -m twine upload dist/*;
 }
 
 workflow[name="clean"] {
@@ -253,6 +294,19 @@ workflow[name="clean"] {
   step-1: run cmd=find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true;
   step-2: run cmd=find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true;
   step-3: run cmd=rm -rf dist/ build/;
+}
+
+workflow[name="docker-build"] {
+  trigger: manual;
+  step-1: run cmd=docker build -t ghcr.io/semcod/rebuild:latest .;
+}
+
+workflow[name="docker-run"] {
+  trigger: manual;
+  step-1: run cmd=docker run --rm -it \;
+  step-2: run cmd=-v $(PWD):/workspace \;
+  step-3: run cmd=-v /var/run/docker.sock:/var/run/docker.sock \;
+  step-4: run cmd=ghcr.io/semcod/rebuild:latest $(ARGS);
 }
 
 role[name="operator"] {
@@ -288,6 +342,21 @@ environment[name="local"] {
 
 ## Workflows
 
+## Quality Pipeline (`pyqual.yaml`)
+
+```yaml markpact:pyqual path=pyqual.yaml
+pipeline:
+  profile: python-minimal
+
+  metrics:
+    cc_max: 15
+    critical_max: 0
+    coverage_min: 60
+
+  env:
+    LLM_MODEL: openrouter/qwen/qwen3-coder-next
+```
+
 ## Dependencies
 
 ### Runtime
@@ -320,69 +389,71 @@ pfix>=0.1.60
 
 ## Call Graph
 
-*31 nodes · 32 edges · 5 modules · CC̄=0.0*
+*42 nodes · 45 edges · 7 modules · CC̄=0.1*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `checkServiceHealth` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 6 | 7 | **13** |
-| `renderArchitecture` *(in restored_c2004_health.api-health.backend.site.src.main)* | 1 | 2 | 11 | **13** |
+| `main` *(in scripts.bump_version)* | 4 | 0 | 20 | **20** |
+| `categorize_commits` *(in scripts.bump_version)* | 14 ⚠ | 1 | 15 | **16** |
+| `update_changelog` *(in scripts.bump_version)* | 5 | 1 | 14 | **15** |
+| `build_new_section` *(in scripts.bump_version)* | 7 | 1 | 14 | **15** |
 | `renderDownloads` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 2 | 11 | **13** |
-| `runHealthCheck` *(in restored_c2004_health.api-health.backend.site.src.main)* | 11 ⚠ | 1 | 10 | **11** |
-| `renderDocs` *(in restored_c2004_health.api-health.backend.site.src.main)* | 6 | 2 | 9 | **11** |
-| `handleRoute` *(in restored_c2004_health.api-health.backend.site.src.main)* | 7 | 0 | 10 | **10** |
-| `route` *(in restored_c2004_health.api-health.backend.site.src.main)* | 7 | 0 | 8 | **8** |
-| `allServices` *(in restored_c2004_health.api-health.backend.site.src.main)* | 2 | 0 | 5 | **5** |
+| `renderArchitecture` *(in restored_c2004_health.api-health.backend.site.src.main)* | 1 | 2 | 11 | **13** |
+| `checkServiceHealth` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 6 | 7 | **13** |
+| `print` *(in examples.08-nlp-commands.README)* | 0 | 12 | 0 | **12** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/resplit
-# nodes: 31 | edges: 32 | modules: 5
-# CC̄=0.0
+# nodes: 42 | edges: 45 | modules: 7
+# CC̄=0.1
 
 HUBS[20]:
-  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-    CC=4  in:6  out:7  total:13
-  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-    CC=1  in:2  out:11  total:13
+  scripts.bump_version.main
+    CC=4  in:0  out:20  total:20
+  scripts.bump_version.categorize_commits
+    CC=14  in:1  out:15  total:16
+  scripts.bump_version.update_changelog
+    CC=5  in:1  out:14  total:15
+  scripts.bump_version.build_new_section
+    CC=7  in:1  out:14  total:15
   restored_c2004_health.api-health.backend.site.src.main.renderDownloads
     CC=4  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-    CC=11  in:1  out:10  total:11
+  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
+    CC=1  in:2  out:11  total:13
+  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+    CC=4  in:6  out:7  total:13
+  examples.08-nlp-commands.README.print
+    CC=0  in:12  out:0  total:12
   restored_c2004_health.api-health.backend.site.src.main.renderDocs
     CC=6  in:2  out:9  total:11
+  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
+    CC=11  in:1  out:10  total:11
   restored_c2004_health.api-health.backend.site.src.main.handleRoute
     CC=7  in:0  out:10  total:10
+  scripts.bump_version.get_git_log_since_last_tag
+    CC=7  in:1  out:7  total:8
+  scripts.bump_version.bump
+    CC=5  in:1  out:7  total:8
   restored_c2004_health.api-health.backend.site.src.main.route
     CC=7  in:0  out:8  total:8
-  restored_c2004_health.api-health.backend.site.src.main.allServices
-    CC=2  in:0  out:5  total:5
+  scripts.bump_version.update_init
+    CC=3  in:1  out:6  total:7
+  scripts.bump_version.collect_unreleased_entries
+    CC=7  in:1  out:6  total:7
+  scripts.bump_version.update_pyproject
+    CC=3  in:1  out:6  total:7
+  scripts.bump_version.read_version
+    CC=2  in:2  out:4  total:6
   restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
     CC=10  in:1  out:4  total:5
-  restored_c2004_health.api-health.backend.site.src.main.summary
+  restored_c2004_health.api-health.backend.site.src.main.allServices
     CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.table
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.healthyEl
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-    CC=11  in:3  out:1  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
-    CC=4  in:1  out:3  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderHome
-    CC=1  in:2  out:2  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderServices
-    CC=1  in:2  out:2  total:4
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
-    CC=1  in:0  out:3  total:3
 
 MODULES:
+  examples.08-nlp-commands.README  [1 funcs]
+    print  CC=0  out:0
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
     index  CC=1  out:3
@@ -410,6 +481,17 @@ MODULES:
     renderDocs  CC=6  out:9
     renderDownloads  CC=4  out:11
     renderHome  CC=1  out:2
+  scripts.bump_version  [10 funcs]
+    build_new_section  CC=7  out:14
+    bump  CC=5  out:7
+    categorize_commits  CC=14  out:15
+    collect_unreleased_entries  CC=7  out:6
+    get_git_log_since_last_tag  CC=7  out:7
+    main  CC=4  out:20
+    read_version  CC=2  out:4
+    update_changelog  CC=5  out:14
+    update_init  CC=3  out:6
+    update_pyproject  CC=3  out:6
 
 EDGES:
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
@@ -444,6 +526,19 @@ EDGES:
   restored_c2004_health.api-health.backend.site.src.main.allServices → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
   restored_c2004_health.api-health.backend.site.src.main.renderDocs → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
   restored_c2004_health.api-health.backend.site.src.main.renderSidebar → restored_c2004_health.api-health.backend.site.src.main.esc
+  scripts.bump_version.update_init → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_pyproject → examples.08-nlp-commands.README.print
+  scripts.bump_version.build_new_section → scripts.bump_version.categorize_commits
+  scripts.bump_version.update_changelog → scripts.bump_version.get_git_log_since_last_tag
+  scripts.bump_version.update_changelog → scripts.bump_version.collect_unreleased_entries
+  scripts.bump_version.update_changelog → scripts.bump_version.build_new_section
+  scripts.bump_version.update_changelog → scripts.bump_version.read_version
+  scripts.bump_version.update_changelog → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → scripts.bump_version.read_version
+  scripts.bump_version.main → scripts.bump_version.bump
+  scripts.bump_version.main → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → scripts.bump_version.update_init
+  scripts.bump_version.main → scripts.bump_version.update_pyproject
 ```
 
 ## Test Contracts
@@ -466,52 +561,54 @@ EDGES:
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/resplit
-# nodes: 31 | edges: 32 | modules: 5
-# CC̄=0.0
+# nodes: 42 | edges: 45 | modules: 7
+# CC̄=0.1
 
 HUBS[20]:
-  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-    CC=4  in:6  out:7  total:13
-  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-    CC=1  in:2  out:11  total:13
+  scripts.bump_version.main
+    CC=4  in:0  out:20  total:20
+  scripts.bump_version.categorize_commits
+    CC=14  in:1  out:15  total:16
+  scripts.bump_version.update_changelog
+    CC=5  in:1  out:14  total:15
+  scripts.bump_version.build_new_section
+    CC=7  in:1  out:14  total:15
   restored_c2004_health.api-health.backend.site.src.main.renderDownloads
     CC=4  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-    CC=11  in:1  out:10  total:11
+  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
+    CC=1  in:2  out:11  total:13
+  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+    CC=4  in:6  out:7  total:13
+  examples.08-nlp-commands.README.print
+    CC=0  in:12  out:0  total:12
   restored_c2004_health.api-health.backend.site.src.main.renderDocs
     CC=6  in:2  out:9  total:11
+  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
+    CC=11  in:1  out:10  total:11
   restored_c2004_health.api-health.backend.site.src.main.handleRoute
     CC=7  in:0  out:10  total:10
+  scripts.bump_version.get_git_log_since_last_tag
+    CC=7  in:1  out:7  total:8
+  scripts.bump_version.bump
+    CC=5  in:1  out:7  total:8
   restored_c2004_health.api-health.backend.site.src.main.route
     CC=7  in:0  out:8  total:8
-  restored_c2004_health.api-health.backend.site.src.main.allServices
-    CC=2  in:0  out:5  total:5
+  scripts.bump_version.update_init
+    CC=3  in:1  out:6  total:7
+  scripts.bump_version.collect_unreleased_entries
+    CC=7  in:1  out:6  total:7
+  scripts.bump_version.update_pyproject
+    CC=3  in:1  out:6  total:7
+  scripts.bump_version.read_version
+    CC=2  in:2  out:4  total:6
   restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
     CC=10  in:1  out:4  total:5
-  restored_c2004_health.api-health.backend.site.src.main.summary
+  restored_c2004_health.api-health.backend.site.src.main.allServices
     CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.table
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.healthyEl
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-    CC=11  in:3  out:1  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
-    CC=4  in:1  out:3  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderHome
-    CC=1  in:2  out:2  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderServices
-    CC=1  in:2  out:2  total:4
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
-    CC=1  in:0  out:3  total:3
 
 MODULES:
+  examples.08-nlp-commands.README  [1 funcs]
+    print  CC=0  out:0
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
     index  CC=1  out:3
@@ -539,6 +636,17 @@ MODULES:
     renderDocs  CC=6  out:9
     renderDownloads  CC=4  out:11
     renderHome  CC=1  out:2
+  scripts.bump_version  [10 funcs]
+    build_new_section  CC=7  out:14
+    bump  CC=5  out:7
+    categorize_commits  CC=14  out:15
+    collect_unreleased_entries  CC=7  out:6
+    get_git_log_since_last_tag  CC=7  out:7
+    main  CC=4  out:20
+    read_version  CC=2  out:4
+    update_changelog  CC=5  out:14
+    update_init  CC=3  out:6
+    update_pyproject  CC=3  out:6
 
 EDGES:
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
@@ -573,19 +681,32 @@ EDGES:
   restored_c2004_health.api-health.backend.site.src.main.allServices → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
   restored_c2004_health.api-health.backend.site.src.main.renderDocs → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
   restored_c2004_health.api-health.backend.site.src.main.renderSidebar → restored_c2004_health.api-health.backend.site.src.main.esc
+  scripts.bump_version.update_init → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_pyproject → examples.08-nlp-commands.README.print
+  scripts.bump_version.build_new_section → scripts.bump_version.categorize_commits
+  scripts.bump_version.update_changelog → scripts.bump_version.get_git_log_since_last_tag
+  scripts.bump_version.update_changelog → scripts.bump_version.collect_unreleased_entries
+  scripts.bump_version.update_changelog → scripts.bump_version.build_new_section
+  scripts.bump_version.update_changelog → scripts.bump_version.read_version
+  scripts.bump_version.update_changelog → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → scripts.bump_version.read_version
+  scripts.bump_version.main → scripts.bump_version.bump
+  scripts.bump_version.main → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → scripts.bump_version.update_init
+  scripts.bump_version.main → scripts.bump_version.update_pyproject
 ```
 
 ### Code Analysis (`project/analysis.toon.yaml`)
 
 ```toon markpact:analysis path=project/analysis.toon.yaml
-# code2llm | 78f 340501L | md:21,yaml:17,txt:10,json:9,shell:8,python:4,yml:2,javascript:2,toml:1,dsl:1,backend:1 | 2026-05-01
-# CC̄=0.0 | critical:0/5546 | dups:0 | cycles:0
+# code2llm | 79f 347651L | md:21,yaml:17,txt:10,json:9,shell:8,python:5,yml:2,javascript:2,toml:1,dsl:1,backend:1 | 2026-05-02
+# CC̄=0.1 | critical:0/2828 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
 REFACTOR[0]: none needed
 
-PIPELINES[55]:
+PIPELINES[56]:
   [1] Src [health]: health
       PURITY: 100% pure
   [2] Src [get_manifest]: get_manifest
@@ -598,6 +719,9 @@ PIPELINES[55]:
       PURITY: 100% pure
 
 LAYERS:
+  scripts/                        CC̄=5.7    ←in:0  →out:12  !! split
+  │ bump_version               239L  0C   10m  CC=14     ←0
+  │
   restored_c2004_health/          CC̄=2.6    ←in:0  →out:0
   │ !! main.js                    704L  0C   49m  CC=11     ←0
   │ !! docker-compose.yml         507L  0C    0m  CC=0.0    ←0
@@ -610,29 +734,30 @@ LAYERS:
   │ Dockerfile.backend           0L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMD.md                  125099L  0C  2703m  CC=0.0    ←0
-  │ !! SUMR.md                  57671L  0C    0m  CC=0.0    ←0
-  │ !! infra-map.json            1373L  0C    0m  CC=0.0    ←0
+  │ !! SUMD.md                  186898L  0C  2727m  CC=0.0    ←0
+  │ !! SUMR.md                  72389L  0C    0m  CC=0.0    ←0
+  │ !! infra-map.json            1438L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md               262L  0C    0m  CC=0.0    ←0
   │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
-  │ CHANGELOG.md               183L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             104L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             106L  0C    0m  CC=0.0    ←0
+  │ TODO.md                    103L  0C    0m  CC=0.0    ←0
   │ README.md                   91L  0C    0m  CC=0.0    ←0
-  │ TODO.md                     73L  0C    0m  CC=0.0    ←0
   │ project.sh                  27L  0C    0m  CC=0.0    ←0
+  │ pyqual.yaml                 10L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
   │ Makefile                     0L  0C    0m  CC=0.0    ←0
   │
   docs/                           CC̄=0.0    ←in:0  →out:0
-  │ !! README.md                 3811L  0C    1m  CC=0.0    ←0
+  │ !! README.md                 3814L  0C    1m  CC=0.0    ←0
   │ c2004.md                   228L  0C    0m  CC=0.0    ←0
-  │ usage.md                    73L  0C    0m  CC=0.0    ←0
+  │ usage.md                   192L  0C    0m  CC=0.0    ←0
+  │ architecture.md            118L  0C    0m  CC=0.0    ←0
   │ case_study_c2004.md         56L  0C    0m  CC=0.0    ←0
-  │ architecture.md             45L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=0.0    ←in:0  →out:0
-  │ README.md                  239L  0C    3m  CC=0.0    ←0
-  │ README.md                  137L  0C    1m  CC=0.0    ←0
+  │ README.md                  240L  0C    3m  CC=0.0    ←0
+  │ README.md                  137L  0C    1m  CC=0.0    ←1
   │ README.md                   89L  0C    0m  CC=0.0    ←0
   │ README.md                   61L  0C    0m  CC=0.0    ←0
   │ README.md                   54L  0C    0m  CC=0.0    ←0
@@ -646,18 +771,6 @@ LAYERS:
   │ walk_dry_run.sh             13L  0C    0m  CC=0.0    ←0
   │ restore_endpoint.sh         13L  0C    0m  CC=0.0    ←0
   │ Makefile                     0L  0C    0m  CC=0.0    ←0
-  │
-  project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! map.toon.yaml            82036L  0C  2752m  CC=0.0    ←0
-  │ !! duplication.toon.yaml    56904L  0C    0m  CC=0.0    ←0
-  │ !! calls.yaml                5835L  0C    0m  CC=0.0    ←0
-  │ context.md                 342L  0C    0m  CC=0.0    ←0
-  │ README.md                  339L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml         118L  0C    0m  CC=0.0    ←0
-  │ calls.toon.yaml            108L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         54L  0C    0m  CC=0.0    ←0
-  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
   │
   testql-scenarios/               CC̄=0.0    ←in:0  →out:0
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←0
@@ -690,12 +803,29 @@ LAYERS:
   │ pytest-iter6.txt             3L  0C    0m  CC=0.0    ←0
   │ pytest-iter5.txt             3L  0C    0m  CC=0.0    ←0
   │
+  project/                        CC̄=0.0    ←in:0  →out:0
+  │ !! duplication.toon.yaml    71618L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                3161L  0C    0m  CC=0.0    ←0
+  │ context.md                 346L  0C    0m  CC=0.0    ←0
+  │ README.md                  339L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         122L  0C    0m  CC=0.0    ←0
+  │ calls.toon.yaml            108L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         54L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
+  │
   ── zero ──
      Makefile                                  0L
      examples/Makefile                         0L
      restored_c2004_health/api-health/docker/Dockerfile.backend  0L
 
-COUPLING: no cross-package imports detected
+COUPLING:
+                            examples.08-nlp-commands                   scripts
+  examples.08-nlp-commands                        ──                       ←12  hub
+                   scripts                        12                        ──  !! fan-out
+  CYCLES: none
+  HUB: examples.08-nlp-commands/ (fan-in=12)
+  SMELL: scripts/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
@@ -705,15 +835,15 @@ EXTERNAL:
 ### Duplication (`project/duplication.toon.yaml`)
 
 ```toon markpact:analysis path=project/duplication.toon.yaml
-# redup/duplication | 3123 groups | 13850f 1740955L | 2026-05-01
+# redup/duplication | 3122 groups | 13872f 1741440L | 2026-05-02
 
 SUMMARY:
-  files_scanned: 13850
-  total_lines:   1740955
-  dup_groups:    3123
-  dup_fragments: 59021
-  saved_lines:   1010223
-  scan_ms:       126159
+  files_scanned: 13872
+  total_lines:   1741440
+  dup_groups:    3122
+  dup_fragments: 59020
+  saved_lines:   1010224
+  scan_ms:       149717
 
 HOTSPOTS[7] (files with most duplication):
   .rebuild/c2004/repo_clone/.rebuild/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)
@@ -724,7 +854,7 @@ HOTSPOTS[7] (files with most duplication):
   .rebuild_c2004_1d_realtime_live/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)
   .rebuild_c2004_1d_replay_guard/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)
 
-DUPLICATES[3123] (ranked by impact):
+DUPLICATES[3122] (ranked by impact):
   [ee82fd60aa4d2cc2] !! STRU  generate_llm_prompts  L=127 N=32 saved=3937 sim=1.00
       .rebuild/c2004/repo_clone/.rebuild/repo/scripts/archive/refaktoryzacja/23_final_report.py:154-280  (generate_llm_prompts)
       .rebuild/c2004/repo_clone/.rebuild/repo/scripts/archive/refaktoryzacja/23_final_report.py:282-317  (generate_verification_checklist)
@@ -62816,6 +62946,10 @@ DUPLICATES[3123] (ranked by impact):
       .rebuild/c2004/repo_clone/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
       .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
       .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
+  [93a1c1ad1b73076e]   STRU  services  L=7 N=3 saved=14 sim=1.00
+      rebuild/interfaces/cli.py:431-437  (services)
+      rebuild/interfaces/cli.py:456-462  (plan)
+      rebuild/interfaces/cli.py:475-481  (execute)
   [b8c71827db6c113b]   EXAC  hardware_proxy_info  L=5 N=3 saved=10 sim=1.00
       .rebuild/c2004/results/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
       .rebuild/c2004/results_new/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
@@ -62823,9 +62957,6 @@ DUPLICATES[3123] (ranked by impact):
   [8d970f6b56d0f822]   EXAC  _cosine_similarity  L=10 N=2 saved=10 sim=1.00
       rebuild/analysis/duplication_engine.py:193-202  (_cosine_similarity)
       rebuild/analysis/vector_search.py:206-215  (_cosine_similarity)
-  [255654bc7e3c4dd1]   EXAC  _load_state  L=9 N=2 saved=9 sim=1.00
-      rebuild/application/accelerated_pipeline.py:114-122  (_load_state)
-      rebuild/application/pipeline.py:50-57  (_load_state)
   [c5d8baa57f575044]   EXAC  GetCustomer  L=3 N=3 saved=6 sim=1.00
       .rebuild/c2004/repo_clone/.swop/generated/services/connect-data/server.py:44-46  (GetCustomer)
       .rebuild/c2004/results/repo/.swop/generated/services/connect-data/server.py:44-46  (GetCustomer)
@@ -62866,11 +62997,8 @@ DUPLICATES[3123] (ranked by impact):
       .rebuild/c2004/repo_clone/.swop/generated/services/connect-scenario/server.py:46-48  (ListScenarios)
       .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py:46-48  (ListScenarios)
       .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py:46-48  (ListScenarios)
-  [4b74b06d21c108c4]   EXAC  log  L=4 N=2 saved=4 sim=1.00
-      rebuild/application/accelerated_pipeline.py:143-146  (log)
-      rebuild/application/pipeline.py:94-96  (log)
 
-REFACTOR[3123] (ranked by priority):
+REFACTOR[3122] (ranked by priority):
   [1] ◐ extract_module     → utils/generate_llm_prompts.py
       WHY: 32 occurrences of 127-line block across 16 files — saves 3937 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/scripts/archive/refaktoryzacja/23_final_report.py, .rebuild/c2004/repo_clone/scripts/archive/refaktoryzacja/23_final_report.py, .rebuild/c2004/results/repo/scripts/archive/refaktoryzacja/23_final_report.py, .rebuild/c2004/results_new/repo/scripts/archive/refaktoryzacja/23_final_report.py, .rebuild_c2004_1d_fullreal_probe/repo/scripts/archive/refaktoryzacja/23_final_report.py +11 more
@@ -72198,15 +72326,15 @@ REFACTOR[3123] (ranked by priority):
   [3109] ○ extract_class      → .rebuild/c2004/utils/CreateTestScenario.py
       WHY: 3 occurrences of 9-line block across 3 files — saves 18 lines
       FILES: .rebuild/c2004/repo_clone/.swop/generated/services/connect-scenario/server.py, .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py, .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py
-  [3110] ○ extract_function   → utils/hardware_proxy_info.py
+  [3110] ○ extract_function   → rebuild/interfaces/utils/services.py
+      WHY: 3 occurrences of 7-line block across 1 files — saves 14 lines
+      FILES: rebuild/interfaces/cli.py
+  [3111] ○ extract_function   → utils/hardware_proxy_info.py
       WHY: 3 occurrences of 5-line block across 3 files — saves 10 lines
       FILES: .rebuild/c2004/results/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py, .rebuild/c2004/results_new/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py, .rebuild_c2004_7d/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py
-  [3111] ○ extract_function   → rebuild/analysis/utils/_cosine_similarity.py
+  [3112] ○ extract_function   → rebuild/analysis/utils/_cosine_similarity.py
       WHY: 2 occurrences of 10-line block across 2 files — saves 10 lines
       FILES: rebuild/analysis/duplication_engine.py, rebuild/analysis/vector_search.py
-  [3112] ○ extract_function   → rebuild/application/utils/_load_state.py
-      WHY: 2 occurrences of 9-line block across 2 files — saves 9 lines
-      FILES: rebuild/application/accelerated_pipeline.py, rebuild/application/pipeline.py
   [3113] ○ extract_class      → .rebuild/c2004/utils/GetCustomer.py
       WHY: 3 occurrences of 3-line block across 3 files — saves 6 lines
       FILES: .rebuild/c2004/repo_clone/.swop/generated/services/connect-data/server.py, .rebuild/c2004/results/repo/.swop/generated/services/connect-data/server.py, .rebuild/c2004/results_new/repo/.swop/generated/services/connect-data/server.py
@@ -72237,9 +72365,6 @@ REFACTOR[3123] (ranked by priority):
   [3122] ○ extract_class      → .rebuild/c2004/utils/ListScenarios.py
       WHY: 3 occurrences of 3-line block across 3 files — saves 6 lines
       FILES: .rebuild/c2004/repo_clone/.swop/generated/services/connect-scenario/server.py, .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py, .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py
-  [3123] ○ extract_function   → rebuild/application/utils/log.py
-      WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
-      FILES: rebuild/application/accelerated_pipeline.py, rebuild/application/pipeline.py
 
 QUICK_WINS[31] (low risk, high savings — do first):
   [1482] extract_function   saved=232L  → .rebuild/c2004/utils/main.py
@@ -72318,41 +72443,41 @@ EFFORT_ESTIMATE (total ≈ 82793.6h):
   hard   _step2_create_tables                saved=2550L  ~15300min
   hard   main                                saved=2520L  ~15120min
   hard   convert_dsl_syntax                  saved=2505L  ~15030min
-  ... +3113 more (~4790256min)
+  ... +3112 more (~4790258min)
 
 METRICS-TARGET:
-  dup_groups:  3123 → 0
-  saved_lines: 1010223 lines recoverable
+  dup_groups:  3122 → 0
+  saved_lines: 1010224 lines recoverable
 ```
 
 ### Evolution / Churn (`project/evolution.toon.yaml`)
 
 ```toon markpact:analysis path=project/evolution.toon.yaml
-# code2llm/evolution | 5542 func | 9f | 2026-05-01
+# code2llm/evolution | 2814 func | 8f | 2026-05-02
 
 NEXT[3] (ranked by impact):
-  [1] !! SPLIT           rebuild/interfaces/cli.py
-      WHY: 994L, 0 classes, max CC=0
+  [1] !! SPLIT           .rebuild_c2004_1d_replay_recreate_v2/repo/connect-scenario/cql-backend/cql_backend/parser.py
+      WHY: 844L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [2] !! SPLIT           rebuild/interfaces/tui.py
-      WHY: 854L, 0 classes, max CC=0
+  [2] !! SPLIT           .rebuild_c2004_7d_replay_real/repo/connect-scenario/cql-backend/cql_backend/parser.py
+      WHY: 844L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [3] !! SPLIT           .rebuild_c2004_1d_replay_recreate_v2/repo/connect-scenario/cql-backend/cql_backend/parser.py
+  [3] !! SPLIT           .rebuild_c2004_1d_replay_overlay/repo/connect-scenario/cql-backend/cql_backend/parser.py
       WHY: 844L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
 
 RISKS[3]:
-  ⚠ Splitting rebuild/interfaces/cli.py may break 0 import paths
-  ⚠ Splitting rebuild/interfaces/tui.py may break 0 import paths
   ⚠ Splitting .rebuild_c2004_1d_replay_recreate_v2/repo/connect-scenario/cql-backend/cql_backend/parser.py may break 0 import paths
+  ⚠ Splitting .rebuild_c2004_7d_replay_real/repo/connect-scenario/cql-backend/cql_backend/parser.py may break 0 import paths
+  ⚠ Splitting .rebuild_c2004_1d_replay_overlay/repo/connect-scenario/cql-backend/cql_backend/parser.py may break 0 import paths
 
 METRICS-TARGET:
-  CC̄:          0.0 → ≤0.0
+  CC̄:          0.1 → ≤0.1
   max-CC:      11 → ≤5
-  god-modules: 210 → 0
+  god-modules: 213 → 0
   high-CC(≥15): 0 → ≤0
   hub-types:   0 → ≤0
 
@@ -72381,7 +72506,7 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=0.0 → now CC̄=0.0
+  prev CC̄=0.1 → now CC̄=0.1
 ```
 
 ## Intent

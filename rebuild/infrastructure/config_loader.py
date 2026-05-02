@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from ..domain.models import WalkConfig, DeployMethod
+from .config_schema import ConfigSchemaValidator
 
 _VALID_DEPLOY_METHODS = {m.value for m in DeployMethod}
 
@@ -29,80 +30,9 @@ class ConfigLoader:
         """
         Validates rebuild.yaml data and returns a list of human-readable error strings.
         An empty list means the config is valid.
+        Uses pydantic-based ConfigSchemaValidator internally.
         """
-        errors: List[str] = []
-        if not isinstance(yaml_data, dict):
-            return ["rebuild.yaml: root must be a YAML mapping"]
-
-        project = yaml_data.get("project", {})
-        if not isinstance(project, dict):
-            errors.append("project: must be a mapping")
-            project = {}
-
-        if "days" in project:
-            v = project["days"]
-            if not isinstance(v, int) or v < 1:
-                errors.append(f"project.days: must be a positive integer, got {v!r}")
-
-        if "output" in project:
-            out = project["output"]
-            if isinstance(out, dict):
-                if "dir" not in out:
-                    errors.append("project.output: mapping must contain 'dir' key")
-                elif not isinstance(out["dir"], str):
-                    errors.append(f"project.output.dir: must be a string, got {out['dir']!r}")
-            elif not isinstance(out, str):
-                errors.append(f"project.output: must be a string or mapping with 'dir', got {out!r}")
-
-        if "deploy" in project:
-            d = project["deploy"]
-            if isinstance(d, dict):
-                if "method" in d and d["method"] not in _VALID_DEPLOY_METHODS:
-                    errors.append(
-                        f"project.deploy.method: invalid value {d['method']!r}, "
-                        f"allowed: {sorted(_VALID_DEPLOY_METHODS)}"
-                    )
-                for int_field in ("health_timeout", "health_interval", "retry_attempts"):
-                    if int_field in d:
-                        v = d[int_field]
-                        if not isinstance(v, int) or v < 1:
-                            errors.append(
-                                f"project.deploy.{int_field}: must be a positive integer, got {v!r}"
-                            )
-                for float_field in ("retry_backoff_seconds", "retry_backoff_multiplier"):
-                    if float_field in d:
-                        v = d[float_field]
-                        if not isinstance(v, (int, float)) or v < 0:
-                            errors.append(
-                                f"project.deploy.{float_field}: must be a non-negative number, got {v!r}"
-                            )
-                for url_field in ("health_url",):
-                    if url_field in d and not isinstance(d[url_field], str):
-                        errors.append(f"project.deploy.{url_field}: must be a string, got {d[url_field]!r}")
-            elif not isinstance(d, str):
-                errors.append(f"project.deploy: must be a string or mapping, got {d!r}")
-            elif d not in _VALID_DEPLOY_METHODS:
-                errors.append(
-                    f"project.deploy: invalid value {d!r}, allowed: {sorted(_VALID_DEPLOY_METHODS)}"
-                )
-
-        for str_field in ("health_url", "base_url", "compose_file"):
-            if str_field in project and not isinstance(project[str_field], str):
-                errors.append(f"project.{str_field}: must be a string, got {project[str_field]!r}")
-
-        if "screenshots" in project and not isinstance(project["screenshots"], bool):
-            errors.append(f"project.screenshots: must be true or false, got {project['screenshots']!r}")
-
-        if "auth" in yaml_data and not isinstance(yaml_data["auth"], dict):
-            errors.append(f"auth: must be a mapping, got {yaml_data['auth']!r}")
-
-        if "test_fixtures" in yaml_data and not isinstance(yaml_data["test_fixtures"], dict):
-            errors.append(f"test_fixtures: must be a mapping, got {yaml_data['test_fixtures']!r}")
-
-        if "test_bodies" in yaml_data and not isinstance(yaml_data["test_bodies"], dict):
-            errors.append(f"test_bodies: must be a mapping, got {yaml_data['test_bodies']!r}")
-
-        return errors
+        return ConfigSchemaValidator.validate(yaml_data)
 
     @staticmethod
     def apply_to_config(config: WalkConfig, yaml_data: Dict[str, Any]):

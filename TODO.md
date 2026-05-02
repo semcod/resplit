@@ -91,9 +91,9 @@
 
 ### 🟠 Wysokie
 - [x] **Docker Image**: Oficjalny obraz `ghcr.io/semcod/rebuild:latest` z CLI i Playwright — Dockerfile + .github/workflows/docker.yml
-- [ ] **Config Validation**: `pydantic`-based validation dla `rebuild.yaml` z czytelnym komunikatem błędu
-- [ ] **Plugin System**: Extensible scanners i reporters przez entry points
-- [ ] **Documentation Site**: MkDocs z Material theme — hosted na GitHub Pages
+- [x] **Config Validation**: `pydantic`-based validation dla `rebuild.yaml` z czytelnym komunikatem błędu — `config_schema.py` + `ConfigSchemaValidator`
+- [x] **Plugin System**: Extensible scanners i reporters przez entry points — `rebuild/plugins/` + `rebuild plugins` CLI
+- [x] **Documentation Site**: MkDocs z Material theme — hosted na GitHub Pages — `mkdocs.yml` + `docs/` + `.github/workflows/docs.yml`
 
 ### 🟡 Średnie
 - [ ] **TUI Full Features**: Nawigacja klawiaturą, live log view, endpoint browser
