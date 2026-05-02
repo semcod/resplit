@@ -244,13 +244,13 @@ class DeployService(Service[Path, bool]):
                 last_error = str(exc)
             time.sleep(health_interval)
 
-        if getattr(self.config, "health_verbose", False):
-            if last_status is not None:
-                self.console.print(
-                    f"  [dim]health last response:[/dim] status={last_status}, body={last_body or '<empty>'}"
-                )
-            if last_error:
-                self.console.print(f"  [dim]health last error:[/dim] {last_error}")
+        if last_status is not None:
+            self.console.print(
+                f"  [dim]health last response:[/dim] status={last_status}, "
+                f"body={last_body[:200] if last_body else '<empty>'}"
+            )
+        if last_error:
+            self.console.print(f"  [dim]health last error:[/dim] {last_error}")
 
         if getattr(self.config, "health_verbose", False) and self.day_dir:
             try:

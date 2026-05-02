@@ -103,6 +103,24 @@ def test_wait_healthy_times_out(tmp_path):
     assert result is False
 
 
+def test_wait_healthy_prints_status_and_body_on_timeout(tmp_path):
+    cfg = WalkConfig(repo_path=tmp_path, health_timeout=0.05, health_interval=0.01, health_verbose=False)
+    svc = DeployService(cfg)
+    from rich.console import Console
+    from io import StringIO
+    buf = StringIO()
+    svc.console = Console(file=buf, highlight=False)
+    mock_resp = MagicMock()
+    mock_resp.status_code = 503
+    mock_resp.text = "Service Unavailable"
+    with patch.object(svc.http, "get", return_value=mock_resp):
+        result = svc._wait_healthy()
+    assert result is False
+    output = buf.getvalue()
+    assert "503" in output
+    assert "Service Unavailable" in output
+
+
 def test_wait_healthy_with_retry_wraps_wait_healthy(tmp_path):
     cfg = WalkConfig(repo_path=tmp_path, deploy_retry_attempts=1)
     svc = DeployService(cfg)
