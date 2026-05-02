@@ -130,10 +130,32 @@ def walk_command(
         from .helpers import print_report_links, print_summary_table, serve_reports
         print_report_links(config.output_dir, port if serve else None, console)
         print_summary_table(all_results, console)
+        _fire_notifications(all_results, config, console)
         if serve:
             serve_reports(config.output_dir, port, console)
     else:
         console.print("[yellow]Brak wyników do wyświetlenia.[/yellow]")
+
+
+def _fire_notifications(all_results, config, console: Console) -> None:
+    from ...application.services.notification_service import NotificationService
+    hooks_cfg = getattr(config, "notifications", None)
+    if not hooks_cfg:
+        return
+    svc = NotificationService.from_config(hooks_cfg)
+    if not svc.hooks:
+        return
+    failed = [r for r in all_results if not r.deploy_success]
+    for r in failed:
+        commit_sha = r.commit.sha if r.commit else None
+        svc.notify_deploy_fail(r.day, commit_sha, r.deploy_error_category)
+    total = len(all_results)
+    healthy = sum(1 for r in all_results if r.health_pct >= 80)
+    avg = sum(r.health_pct for r in all_results) / total if total else 0.0
+    results = svc.notify_walk_complete(total, healthy, avg, config.output_dir)
+    sent = sum(results)
+    if sent:
+        console.print(f"[dim]  📣 Wysłano {sent} powiadomienie(a)[/dim]")
 
 
 def accelerator_command(

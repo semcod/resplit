@@ -98,6 +98,6 @@
 ### 🟡 Średnie
 - [ ] **TUI Full Features**: Nawigacja klawiaturą, live log view, endpoint browser
 - [x] **Export Formats**: CSV, Markdown summary raport
-- [ ] **Notification Hooks**: Webhook (Slack/Discord) przy deploy fail lub health regresji
-- [ ] **Snapshot Management**: LRU cache dla DB snapshotów — auto-prune starych
+- [x] **Notification Hooks**: Webhook (Slack/Discord) przy deploy fail lub health regresji — `notification_service.py` + `rebuild.yaml` integration
+- [x] **Snapshot Management**: LRU cache dla DB snapshotów — auto-prune starych — `max_snapshots`, `prune_old()`, `stats()`, `_auto_prune()`
 - [x] **Test Coverage ≥70%**: Kolejny milestone po aktualnym 60% — osiągnięto 71%

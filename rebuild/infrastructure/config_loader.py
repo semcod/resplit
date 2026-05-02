@@ -122,3 +122,9 @@ class ConfigLoader:
             if not p.is_absolute():
                 p = (config.repo_path / p).resolve()
             config.patch_dir = p
+
+        # Notification hooks
+        if "notifications" in project and isinstance(project["notifications"], list):
+            config.notifications = project["notifications"]
+        elif "notifications" in yaml_data and isinstance(yaml_data["notifications"], list):
+            config.notifications = yaml_data["notifications"]

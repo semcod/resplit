@@ -1,45 +1,31 @@
 project: /home/tom/github/semcod/resplit
 generated_from: code2llm call graph analysis
 stats:
-  total_nodes: 42
-  total_edges: 45
-  modules_count: 7
+  total_nodes: 23
+  total_edges: 21
+  modules_count: 6
 nodes:
-  restored_c2004_health.api-health.backend.site.src.main.renderServices:
-    name: renderServices
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 416
-    cyclomatic_complexity: 1
-    calls_out: 2
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 60
+    cyclomatic_complexity: 2
+    calls_out: 1
     calls_in: 2
-  examples.08-nlp-commands.README.print:
-    name: print
-    module: examples.08-nlp-commands.README
-    line: 125
-    cyclomatic_complexity: 0
-    calls_out: 0
-    calls_in: 12
-  restored_c2004_health.api-health.backend.site.src.main.renderDocs:
-    name: renderDocs
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 620
-    cyclomatic_complexity: 6
-    calls_out: 9
-    calls_in: 2
-  scripts.bump_version.update_init:
-    name: update_init
-    module: scripts.bump_version
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
     line: 56
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.renderDownloads:
-    name: renderDownloads
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 138
-    cyclomatic_complexity: 4
-    calls_out: 11
+    cyclomatic_complexity: 2
+    calls_out: 1
     calls_in: 2
+  scripts.bump_version.bump:
+    name: bump
+    module: scripts.bump_version
+    line: 41
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 1
   scripts.bump_version.get_git_log_since_last_tag:
     name: get_git_log_since_last_tag
     module: scripts.bump_version
@@ -47,12 +33,75 @@ nodes:
     cyclomatic_complexity: 7
     calls_out: 7
     calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.getRoute:
-    name: getRoute
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 24
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 56
     cyclomatic_complexity: 2
     calls_out: 1
+    calls_in: 2
+  scripts.bump_version.main:
+    name: main
+    module: scripts.bump_version
+    line: 203
+    cyclomatic_complexity: 4
+    calls_out: 20
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  scripts.bump_version.read_version:
+    name: read_version
+    module: scripts.bump_version
+    line: 33
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 2
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  scripts.bump_version.update_pyproject:
+    name: update_pyproject
+    module: scripts.bump_version
+    line: 68
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  scripts.bump_version.update_init:
+    name: update_init
+    module: scripts.bump_version
+    line: 56
+    cyclomatic_complexity: 3
+    calls_out: 6
     calls_in: 1
   scripts.bump_version.categorize_commits:
     name: categorize_commits
@@ -61,61 +110,12 @@ nodes:
     cyclomatic_complexity: 14
     calls_out: 15
     calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.updateActiveNav:
-    name: updateActiveNav
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 57
-    cyclomatic_complexity: 10
-    calls_out: 4
-    calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.allServices:
-    name: allServices
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 519
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.table:
-    name: table
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 514
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  scripts.bump_version.bump:
-    name: bump
+  scripts.bump_version.build_new_section:
+    name: build_new_section
     module: scripts.bump_version
-    line: 41
-    cyclomatic_complexity: 5
-    calls_out: 7
-    calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture:
-    name: renderArchitecture
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 285
-    cyclomatic_complexity: 1
-    calls_out: 11
-    calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  scripts.bump_version.collect_unreleased_entries:
-    name: collect_unreleased_entries
-    module: scripts.bump_version
-    line: 82
+    line: 146
     cyclomatic_complexity: 7
-    calls_out: 6
+    calls_out: 14
     calls_in: 1
   scripts.bump_version.update_changelog:
     name: update_changelog
@@ -138,150 +138,10 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 0
-  scripts.bump_version.build_new_section:
-    name: build_new_section
-    module: scripts.bump_version
-    line: 146
-    cyclomatic_complexity: 7
-    calls_out: 14
-    calls_in: 1
-  scripts.bump_version.main:
-    name: main
-    module: scripts.bump_version
-    line: 203
-    cyclomatic_complexity: 4
-    calls_out: 20
-    calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.healthyEl:
-    name: healthyEl
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 512
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 0
-  scripts.bump_version.update_pyproject:
-    name: update_pyproject
-    module: scripts.bump_version
-    line: 68
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.route:
-    name: route
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 34
-    cyclomatic_complexity: 7
-    calls_out: 8
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 77
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid:
-    name: renderServicesGrid
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 446
-    cyclomatic_complexity: 4
-    calls_out: 3
-    calls_in: 1
-  restored_c2004_health.api-health.backend.site.src.main.esc:
-    name: esc
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 693
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index:
     name: module_index
     module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
     line: 85
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth:
-    name: checkServiceHealth
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 477
-    cyclomatic_complexity: 4
-    calls_out: 7
-    calls_in: 6
-  restored_c2004_health.api-health.backend.site.src.main.renderHome:
-    name: renderHome
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 71
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl:
-    name: unhealthyEl
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 513
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 60
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  restored_c2004_health.api-health.backend.site.src.main.summary:
-    name: summary
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 510
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  scripts.bump_version.read_version:
-    name: read_version
-    module: scripts.bump_version
-    line: 33
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 2
-  restored_c2004_health.api-health.backend.site.src.main.renderSidebar:
-    name: renderSidebar
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 656
-    cyclomatic_complexity: 11
-    calls_out: 1
-    calls_in: 3
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute:
-    name: handleRoute
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 33
-    cyclomatic_complexity: 7
-    calls_out: 10
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 77
     cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 0
@@ -292,13 +152,20 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 1
     calls_in: 2
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck:
-    name: runHealthCheck
-    module: restored_c2004_health.api-health.backend.site.src.main
-    line: 509
-    cyclomatic_complexity: 11
-    calls_out: 10
+  scripts.bump_version.collect_unreleased_entries:
+    name: collect_unreleased_entries
+    module: scripts.bump_version
+    line: 82
+    cyclomatic_complexity: 7
+    calls_out: 6
     calls_in: 1
+  Makefile.print:
+    name: print
+    module: Makefile
+    line: 78
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 12
 edges:
 - caller: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
   callee: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
@@ -324,83 +191,11 @@ edges:
 - caller: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index
   callee: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.handleRoute
-  callee: restored_c2004_health.api-health.backend.site.src.main.getRoute
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.handleRoute
-  callee: restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.handleRoute
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderHome
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.handleRoute
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.handleRoute
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.handleRoute
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.handleRoute
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderServices
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.handleRoute
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.route
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderHome
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.route
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.route
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.route
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.route
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderServices
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.route
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.renderServices
-  callee: restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.renderServices
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-  callee: restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.summary
-  callee: restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.healthyEl
-  callee: restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.unhealthyEl
-  callee: restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.table
-  callee: restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.allServices
-  callee: restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  callee: restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  callee: restored_c2004_health.api-health.backend.site.src.main.esc
-  call_type: resolved
 - caller: scripts.bump_version.update_init
-  callee: examples.08-nlp-commands.README.print
+  callee: Makefile.print
   call_type: resolved
 - caller: scripts.bump_version.update_pyproject
-  callee: examples.08-nlp-commands.README.print
+  callee: Makefile.print
   call_type: resolved
 - caller: scripts.bump_version.build_new_section
   callee: scripts.bump_version.categorize_commits
@@ -418,7 +213,7 @@ edges:
   callee: scripts.bump_version.read_version
   call_type: resolved
 - caller: scripts.bump_version.update_changelog
-  callee: examples.08-nlp-commands.README.print
+  callee: Makefile.print
   call_type: resolved
 - caller: scripts.bump_version.main
   callee: scripts.bump_version.read_version
@@ -427,7 +222,7 @@ edges:
   callee: scripts.bump_version.bump
   call_type: resolved
 - caller: scripts.bump_version.main
-  callee: examples.08-nlp-commands.README.print
+  callee: Makefile.print
   call_type: resolved
 - caller: scripts.bump_version.main
   callee: scripts.bump_version.update_init
@@ -436,8 +231,8 @@ edges:
   callee: scripts.bump_version.update_pyproject
   call_type: resolved
 modules:
-  examples.08-nlp-commands.README:
-  - examples.08-nlp-commands.README.print
+  Makefile:
+  - Makefile.print
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main:
   - restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
   - restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
@@ -454,26 +249,6 @@ modules:
   - restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   - restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
   - restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index
-  restored_c2004_health.api-health.backend.site.src.main:
-  - restored_c2004_health.api-health.backend.site.src.main.allServices
-  - restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  - restored_c2004_health.api-health.backend.site.src.main.esc
-  - restored_c2004_health.api-health.backend.site.src.main.getRoute
-  - restored_c2004_health.api-health.backend.site.src.main.handleRoute
-  - restored_c2004_health.api-health.backend.site.src.main.healthyEl
-  - restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-  - restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  - restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-  - restored_c2004_health.api-health.backend.site.src.main.renderHome
-  - restored_c2004_health.api-health.backend.site.src.main.renderServices
-  - restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
-  - restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  - restored_c2004_health.api-health.backend.site.src.main.route
-  - restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-  - restored_c2004_health.api-health.backend.site.src.main.summary
-  - restored_c2004_health.api-health.backend.site.src.main.table
-  - restored_c2004_health.api-health.backend.site.src.main.unhealthyEl
-  - restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
   scripts.bump_version:
   - scripts.bump_version.build_new_section
   - scripts.bump_version.bump
@@ -585,6 +360,7 @@ entry_points:
 - SUMD._candidate_protogate_pythons
 - SUMD._capture_single_route
 - SUMD._cast_booleans
+- SUMD._cfg
 - SUMD._check_cross_page_fragments
 - SUMD._check_url_status
 - SUMD._classification_tag
@@ -662,6 +438,7 @@ entry_points:
 - SUMD._create_workshops_table
 - SUMD._data_client
 - SUMD._database_urls_share_storage
+- SUMD._day
 - SUMD._day_result
 - SUMD._db_row_exists
 - SUMD._db_sizes
@@ -941,6 +718,7 @@ entry_points:
 - SUMD._install_fake_pymodbus
 - SUMD._install_mock_transport
 - SUMD._int_sort_key
+- SUMD._invoke_walk
 - SUMD._is_allowed_name
 - SUMD._is_bad_token
 - SUMD._is_concrete_handler
@@ -1004,16 +782,24 @@ entry_points:
 - SUMD._load_vars_list
 - SUMD._load_vars_map
 - SUMD._local_tag
+- SUMD._make_commit
+- SUMD._make_day_result
 - SUMD._make_delta_parser
 - SUMD._make_delta_serializer
+- SUMD._make_er
 - SUMD._make_error_result
 - SUMD._make_event
+- SUMD._make_git_repo
 - SUMD._make_message_parser
 - SUMD._make_message_serializer
 - SUMD._make_mock_cqrs
 - SUMD._make_ok_history_result
 - SUMD._make_param_parser
 - SUMD._make_param_serializer
+- SUMD._make_py_module
+- SUMD._make_repo
+- SUMD._make_results
+- SUMD._make_snapshot
 - SUMD._make_step
 - SUMD._make_value_parser
 - SUMD._make_value_serializer
@@ -1038,6 +824,7 @@ entry_points:
 - SUMD._merge_goals_into_lib
 - SUMD._merge_request_into_library
 - SUMD._message_function_to_object_map
+- SUMD._mgr
 - SUMD._migrate_databases
 - SUMD._migrate_function
 - SUMD._migrate_object
@@ -1045,6 +832,9 @@ entry_points:
 - SUMD._migrate_row
 - SUMD._migrate_table
 - SUMD._migrate_types_to_kinds
+- SUMD._mock_shell
+- SUMD._mock_shell_result
+- SUMD._mock_worktrees
 - SUMD._mode_action
 - SUMD._mode_symbol
 - SUMD._new_id
@@ -1167,6 +957,7 @@ entry_points:
 - SUMD._parse_wait
 - SUMD._parse_wait_line
 - SUMD._patch_one
+- SUMD._pcfg
 - SUMD._pg_columns
 - SUMD._pg_default
 - SUMD._pg_dump_one
@@ -1178,10 +969,8 @@ entry_points:
 - SUMD._print_dsl_imports
 - SUMD._print_json
 - SUMD._print_migration_results
-- SUMD._print_report_links
 - SUMD._print_scenario_info
 - SUMD._print_summary
-- SUMD._print_summary_table
 - SUMD._print_validation_result
 - SUMD._print_verify_results
 - SUMD._probe_connect_data
@@ -1300,6 +1089,7 @@ entry_points:
 - SUMD._safe_text
 - SUMD._save_image_file
 - SUMD._save_metadata
+- SUMD._scan_cfg
 - SUMD._scenario_exists
 - SUMD._scenario_text
 - SUMD._scenario_title_from_file_path
@@ -1375,7 +1165,6 @@ entry_points:
 - SUMD._serialize_value_step
 - SUMD._serialize_wait
 - SUMD._serialize_wait_step
-- SUMD._serve_reports
 - SUMD._service_data_contracts
 - SUMD._service_id_contracts
 - SUMD._session_dependency
@@ -1385,6 +1174,9 @@ entry_points:
 - SUMD._set_session_user
 - SUMD._set_sqlite_pragmas
 - SUMD._setup_fk_disable
+- SUMD._shell
+- SUMD._shell_fail
+- SUMD._shell_ok
 - SUMD._short_path
 - SUMD._should_fallback
 - SUMD._should_skip_url
@@ -1427,6 +1219,7 @@ entry_points:
 - SUMD._try_set_step
 - SUMD._try_val_step
 - SUMD._try_wait_step
+- SUMD._two_days
 - SUMD._typed
 - SUMD._unique_preserving_order
 - SUMD._unit_id_for
@@ -1574,6 +1367,7 @@ entry_points:
 - SUMD.build_dsl_log_filters
 - SUMD.build_import_graph
 - SUMD.build_logs_query_service
+- SUMD.build_new_section
 - SUMD.build_output
 - SUMD.build_scenario
 - SUMD.build_scenario_content
@@ -1583,6 +1377,7 @@ entry_points:
 - SUMD.build_yaml
 - SUMD.bulk_replace_table
 - SUMD.bulk_update_menu_access
+- SUMD.bump
 - SUMD.c
 - SUMD.c2004_test_page
 - SUMD.calculate_consistency_score
@@ -1597,6 +1392,7 @@ entry_points:
 - SUMD.canonicalize_dsl_quotes
 - SUMD.capabilities
 - SUMD.capture_screenshots
+- SUMD.categorize_commits
 - SUMD.categorize_icon
 - SUMD.check_api_auth_session
 - SUMD.check_api_config_sections
@@ -1627,6 +1423,7 @@ entry_points:
 - SUMD.check_system_resources
 - SUMD.check_table_existence
 - SUMD.check_table_exists
+- SUMD.classify_error
 - SUMD.classify_external
 - SUMD.classify_type
 - SUMD.clean_menu_config
@@ -1674,6 +1471,7 @@ entry_points:
 - SUMD.collect_daily_stats
 - SUMD.collect_py_files
 - SUMD.collect_schema_files
+- SUMD.collect_unreleased_entries
 - SUMD.column_to_command
 - SUMD.columns_to_commands
 - SUMD.compare_connect_data_menu
@@ -1685,6 +1483,8 @@ entry_points:
 - SUMD.complete_step
 - SUMD.complete_test_session
 - SUMD.complete_test_session_step
+- SUMD.compute_endpoint_count_trend_labels
+- SUMD.compute_health_trend_labels
 - SUMD.compute_next_restart
 - SUMD.compute_optimal_restart_time
 - SUMD.compute_scores
@@ -1875,6 +1675,7 @@ entry_points:
 - SUMD.exec_endpoint
 - SUMD.execute
 - SUMD.execute_ast
+- SUMD.execute_command
 - SUMD.execute_dsl
 - SUMD.execute_dsl_script
 - SUMD.execute_restart
@@ -1970,6 +1771,7 @@ entry_points:
 - SUMD.generate_dsl
 - SUMD.generate_dsl_from_xml_vars
 - SUMD.generate_encoder_test
+- SUMD.generate_endpoint_diff
 - SUMD.generate_evolution_html
 - SUMD.generate_executive_summary
 - SUMD.generate_final_report
@@ -1990,6 +1792,7 @@ entry_points:
 - SUMD.generate_sprite
 - SUMD.generate_task_list
 - SUMD.generate_testql_scenario
+- SUMD.generate_trend_chart
 - SUMD.generate_verification_checklist
 - SUMD.get
 - SUMD.get_activity
@@ -2042,6 +1845,7 @@ entry_points:
 - SUMD.get_first_column
 - SUMD.get_full_diagnostics
 - SUMD.get_function
+- SUMD.get_git_log_since_last_tag
 - SUMD.get_handler
 - SUMD.get_hardware_status
 - SUMD.get_health
@@ -2266,6 +2070,7 @@ entry_points:
 - SUMD.list_users
 - SUMD.list_variables
 - SUMD.list_workshops
+- SUMD.load_and_validate
 - SUMD.load_config
 - SUMD.load_config_from_env
 - SUMD.load_cql
@@ -2372,8 +2177,10 @@ entry_points:
 - SUMD.pg_restore
 - SUMD.pick_best
 - SUMD.plan
+- SUMD.plan_command
 - SUMD.post
 - SUMD.pr
+- SUMD.pr_command
 - SUMD.preview_migration
 - SUMD.preview_template
 - SUMD.print_header
@@ -2433,6 +2240,7 @@ entry_points:
 - SUMD.read_file_safe
 - SUMD.read_quoted_token
 - SUMD.read_vars_from_xml
+- SUMD.read_version
 - SUMD.read_xml_vars
 - SUMD.record_restart
 - SUMD.ref_name
@@ -2604,6 +2412,7 @@ entry_points:
 - SUMD.start_test_session
 - SUMD.startup_event
 - SUMD.status
+- SUMD.status_badge
 - SUMD.step_handler
 - SUMD.stop_execution
 - SUMD.strip_nfo_fallback_blocks
@@ -2617,17 +2426,54 @@ entry_points:
 - SUMD.template_proxy_patch
 - SUMD.template_proxy_post
 - SUMD.test_accelerated_compose_up_uses_runtime_compose_override
+- SUMD.test_accelerator_initial_setup_false
+- SUMD.test_accelerator_project_name_set
+- SUMD.test_accelerator_start_deploy_none
+- SUMD.test_accelerator_start_dry_run
+- SUMD.test_accelerator_stop_dry_run
+- SUMD.test_accelerator_volume_name_includes_project
 - SUMD.test_activities_persisted
+- SUMD.test_analyze_changes_git_error
+- SUMD.test_analyze_changes_parse_added
+- SUMD.test_analyze_changes_parse_rename
 - SUMD.test_api_docs_page
 - SUMD.test_append_frontend_logs_persists_browser_entries
+- SUMD.test_apply_auth_in_project
+- SUMD.test_apply_base_url
 - SUMD.test_apply_changes_limited_caps_updates
 - SUMD.test_apply_changes_limited_zero_means_no_updates
 - SUMD.test_apply_changes_runs_update_per_row
+- SUMD.test_apply_compose_file_project
+- SUMD.test_apply_fixtures_in_project
+- SUMD.test_apply_health_verbose
+- SUMD.test_apply_login_payload_in_project
+- SUMD.test_apply_login_payload_top_level
+- SUMD.test_apply_login_url_in_project
+- SUMD.test_apply_login_url_top_level
+- SUMD.test_apply_output_absolute
+- SUMD.test_apply_patch_dir_absolute
+- SUMD.test_apply_patch_dir_relative
+- SUMD.test_apply_replay_and_service
+- SUMD.test_apply_retry_backoff_multiplier
+- SUMD.test_apply_screenshots_false
+- SUMD.test_apply_test_bodies_in_project
 - SUMD.test_ast_to_xml_returns_indented_xml
+- SUMD.test_auto_pr_invalid_json
+- SUMD.test_auto_pr_missing_file
+- SUMD.test_auto_pr_no_config
+- SUMD.test_auto_pr_unknown_format
+- SUMD.test_average_group_similarity_single
 - SUMD.test_backend_version_endpoints_expose_version
 - SUMD.test_backup_health_endpoint
 - SUMD.test_backup_status_pg_mode
 - SUMD.test_backups_list_delegates_to_service
+- SUMD.test_base_pipeline_emit_creates_jsonl
+- SUMD.test_base_pipeline_emit_writes_jsonl
+- SUMD.test_base_pipeline_load_state_empty
+- SUMD.test_base_pipeline_log_delegates_to_console
+- SUMD.test_base_pipeline_log_prints_to_console
+- SUMD.test_base_pipeline_processed_shas_persisted
+- SUMD.test_base_pipeline_save_and_reload_state
 - SUMD.test_bridge_scenario_returns_404_when_upstream_404
 - SUMD.test_bridge_scenario_returns_503_when_upstream_unreachable
 - SUMD.test_bridge_scenario_returns_upstream_record
@@ -2641,8 +2487,26 @@ entry_points:
 - SUMD.test_canonicalize_text_multiline
 - SUMD.test_capabilities_lists_expected_endpoints
 - SUMD.test_capabilities_lists_implemented_and_no_stubs
+- SUMD.test_check_for_manual_fix_finds_fix_commit
+- SUMD.test_check_for_manual_fix_ignores_git_error
+- SUMD.test_check_for_manual_fix_returns_none_when_no_fix
 - SUMD.test_checked_in_menu_proto_artifacts_are_importable
 - SUMD.test_checkout_calls_git
+- SUMD.test_classify_compose_build_fail
+- SUMD.test_classify_error_alembic
+- SUMD.test_classify_error_by_keyword
+- SUMD.test_classify_error_dockerfile
+- SUMD.test_classify_error_fail_auth
+- SUMD.test_classify_error_fail_network
+- SUMD.test_classify_error_keyerror
+- SUMD.test_classify_error_ok
+- SUMD.test_classify_health_timeout
+- SUMD.test_classify_migration_fail
+- SUMD.test_classify_missing_env
+- SUMD.test_classify_port_conflict
+- SUMD.test_classify_unknown
+- SUMD.test_cleanup_all_keeps_specified
+- SUMD.test_cleanup_all_removes_all
 - SUMD.test_clear_history
 - SUMD.test_cli_dsl_command
 - SUMD.test_cli_nlp_command
@@ -2650,17 +2514,54 @@ entry_points:
 - SUMD.test_clone_for_walk_creates_clone
 - SUMD.test_collect_changes_builds_filters_and_returns_only_changed_rows
 - SUMD.test_collect_changes_supports_limit_and_offset
+- SUMD.test_collect_fragments_py
 - SUMD.test_complete_protocol_forwards_payload
 - SUMD.test_complete_step
 - SUMD.test_complete_test_session_step_proxies_and_maps_response
 - SUMD.test_complete_test_session_step_raises_not_found
+- SUMD.test_compose_down_called
 - SUMD.test_compose_file_explicit
 - SUMD.test_compose_file_finds_yaml
 - SUMD.test_compose_file_finds_yml
+- SUMD.test_compose_file_raises_when_missing
+- SUMD.test_compose_up_fails_classifies_error
+- SUMD.test_compose_up_success
+- SUMD.test_compute_endpoint_count_first_zero
+- SUMD.test_compute_endpoint_count_increase_small
+- SUMD.test_compute_endpoint_count_no_change
+- SUMD.test_compute_endpoint_count_trend_labels_flags_large_change
+- SUMD.test_compute_health_trend_labels_flags_large_regression
+- SUMD.test_config_loader_apply_compose_file
+- SUMD.test_config_loader_apply_days
+- SUMD.test_config_loader_apply_deploy_method
+- SUMD.test_config_loader_apply_flat_structure
+- SUMD.test_config_loader_apply_health_timeout
+- SUMD.test_config_loader_apply_output_dir_dict
+- SUMD.test_config_loader_apply_output_dir_relative
+- SUMD.test_config_loader_apply_retry_settings
+- SUMD.test_config_loader_invalid_yaml
+- SUMD.test_config_loader_loads_valid_yaml
+- SUMD.test_config_loader_missing_file
+- SUMD.test_config_loader_roundtrip
+- SUMD.test_config_validate_auth_not_mapping
+- SUMD.test_config_validate_empty_is_valid
+- SUMD.test_config_validate_invalid_days
+- SUMD.test_config_validate_invalid_days_string
+- SUMD.test_config_validate_invalid_deploy_method
+- SUMD.test_config_validate_invalid_deploy_string
+- SUMD.test_config_validate_invalid_health_timeout_zero
+- SUMD.test_config_validate_output_missing_dir_key
+- SUMD.test_config_validate_test_bodies_not_mapping
+- SUMD.test_config_validate_valid_full
+- SUMD.test_config_validate_walk_command_aborts_on_invalid_yaml
+- SUMD.test_cosine_similarity_with_list
+- SUMD.test_cosine_similarity_zero_vector
 - SUMD.test_cqrs_script_exists
 - SUMD.test_create_and_update_scenario_keep_library_and_legacy_columns_in_sync
 - SUMD.test_create_assignment
 - SUMD.test_create_backup_returns_service_count
+- SUMD.test_create_baseline_calls_create
+- SUMD.test_create_baseline_with_sha_uses_sha_prefix
 - SUMD.test_create_configuration_persists_inactive_state
 - SUMD.test_create_configuration_persists_item_active_and_visible_flags
 - SUMD.test_create_connect_manager_config_and_by_route
@@ -2668,11 +2569,15 @@ entry_points:
 - SUMD.test_create_scenario
 - SUMD.test_create_scenario_with_dsl_supports_legacy_schema_without_duration
 - SUMD.test_create_template
+- SUMD.test_create_unsupported_db_type
 - SUMD.test_customer_devices_projection_empty_list
 - SUMD.test_customer_devices_projection_groups_by_customer
 - SUMD.test_customers_endpoint_envelope
+- SUMD.test_dashboard_no_results
 - SUMD.test_dashboard_page
+- SUMD.test_dashboard_render_html_no_data
 - SUMD.test_dashboard_url_navigation
+- SUMD.test_dashboard_with_results
 - SUMD.test_data_create_customer_proxies_to_connect_data
 - SUMD.test_data_delete_device_proxies_to_connect_data
 - SUMD.test_data_get_device_proxies_to_connect_data
@@ -2682,14 +2587,25 @@ entry_points:
 - SUMD.test_data_list_protocols_proxies_to_connect_protocol
 - SUMD.test_databases_endpoint_returns_configured_pg_labels
 - SUMD.test_day_result_health_pct
+- SUMD.test_day_result_health_pct_all_ok
 - SUMD.test_day_result_health_pct_empty
+- SUMD.test_day_result_health_pct_partial
+- SUMD.test_day_result_skip_not_counted_as_fail
+- SUMD.test_day_result_to_dict_keeps_short_deploy_log
+- SUMD.test_day_result_to_dict_truncates_long_deploy_log
+- SUMD.test_day_result_to_dict_with_error_category
 - SUMD.test_days_with_commits_empty_on_error
 - SUMD.test_days_with_commits_filters_by_date_range
 - SUMD.test_days_with_commits_parses_log
 - SUMD.test_delete_assignment
 - SUMD.test_delete_assignment_not_found
+- SUMD.test_delete_existing_snapshot
+- SUMD.test_delete_nonexistent_snapshot_returns_true
 - SUMD.test_delete_scenario_forwards_reason_to_connect_backend
 - SUMD.test_delete_scenario_without_body_sends_null_json
+- SUMD.test_detect_deploy_method_docker_compose
+- SUMD.test_detect_deploy_method_none
+- SUMD.test_detect_deploy_method_uvicorn
 - SUMD.test_device_list_projection_builds_latest_state
 - SUMD.test_device_list_projection_empty_events
 - SUMD.test_device_list_projection_handles_retired_device
@@ -2699,10 +2615,33 @@ entry_points:
 - SUMD.test_docs_page
 - SUMD.test_dsl_execute_endpoint_returns_deprecation_payload
 - SUMD.test_dsl_file
+- SUMD.test_dsl_interpreter_accelerator
+- SUMD.test_dsl_interpreter_analyze
+- SUMD.test_dsl_interpreter_auto_pr
+- SUMD.test_dsl_interpreter_evolution
+- SUMD.test_dsl_interpreter_restore
+- SUMD.test_dsl_interpreter_serve
+- SUMD.test_dsl_interpreter_walk
 - SUMD.test_dsl_logs_export_has_canonical_logs_route_and_dsl_alias
+- SUMD.test_dsl_parse_accelerator
+- SUMD.test_dsl_parse_analyze
+- SUMD.test_dsl_parse_auto_pr
+- SUMD.test_dsl_parse_empty
+- SUMD.test_dsl_parse_file
+- SUMD.test_dsl_parse_file_ignores_comments
+- SUMD.test_dsl_parse_flags
+- SUMD.test_dsl_parse_float_value
+- SUMD.test_dsl_parse_restore
+- SUMD.test_dsl_parse_serve
+- SUMD.test_dsl_parse_string_with_colon_in_value
+- SUMD.test_dsl_parse_unknown_command
+- SUMD.test_dsl_parse_walk
 - SUMD.test_dsl_parsing
 - SUMD.test_dsl_to_xml_returns_errors_on_bad_input
 - SUMD.test_dsl_to_xml_round_trips_via_xml_to_ast
+- SUMD.test_duplicates_command_no_groups
+- SUMD.test_duplicates_command_semantic_warning
+- SUMD.test_duplicates_command_with_groups
 - SUMD.test_effective_library_bridges_legacy_content_goals_and_def
 - SUMD.test_encoder_activate_no_browser
 - SUMD.test_encoder_cancel_no_browser
@@ -2715,6 +2654,7 @@ entry_points:
 - SUMD.test_endpoint_slug
 - SUMD.test_endpoint_url
 - SUMD.test_endpoint_url_strips_trailing_slash
+- SUMD.test_ensure_base_dir_created
 - SUMD.test_ensure_default_roles_can_seed_access_when_requested
 - SUMD.test_ensure_default_roles_skips_access_seed_by_default
 - SUMD.test_ensure_seed_history_migrates_legacy_runtime_schema
@@ -2724,11 +2664,19 @@ entry_points:
 - SUMD.test_ensure_success_not_found_domain_error
 - SUMD.test_ensure_success_raises_for_invalid_json
 - SUMD.test_ensure_success_returns_payload
+- SUMD.test_event_service_enable_and_emit
+- SUMD.test_event_service_get_returns_singleton
+- SUMD.test_event_service_subscribe_returns_queue
+- SUMD.test_evolution_render_html_empty
 - SUMD.test_exec_returns_ast
 - SUMD.test_exec_returns_plan
 - SUMD.test_exec_simple_dsl
 - SUMD.test_exec_with_condition
 - SUMD.test_exec_with_log
+- SUMD.test_execute_baseline_calls_create_baseline
+- SUMD.test_execute_command_executor_fails
+- SUMD.test_execute_command_no_suggestions
+- SUMD.test_execute_command_with_force
 - SUMD.test_execute_deduplicates_openapi_vs_deta
 - SUMD.test_execute_delegates_to_days_with_commits
 - SUMD.test_execute_deta_takes_priority
@@ -2737,32 +2685,57 @@ entry_points:
 - SUMD.test_execute_scenario_forwards_mode_and_speed
 - SUMD.test_execute_step
 - SUMD.test_execute_step_uses_firmware_execution_id_from_protocol
+- SUMD.test_execute_unknown_action_raises
+- SUMD.test_execute_unknown_raises
+- SUMD.test_execute_wraps_select_tests
 - SUMD.test_execution_lifecycle
+- SUMD.test_export_csv_creates_file
+- SUMD.test_export_csv_has_header_and_rows
 - SUMD.test_export_dsl_emits_replayable_api_lines_and_comments_unknown_entries
+- SUMD.test_export_markdown_creates_file
+- SUMD.test_export_markdown_table_rows
+- SUMD.test_extract_endpoint_copies_backend_dockerfile
+- SUMD.test_extract_endpoint_copies_compose
+- SUMD.test_extract_fragments_py_vararg_kwarg
 - SUMD.test_extract_inline_dsl_accepts_content_and_direct_fields
 - SUMD.test_extract_scenario_id_accepts_frontend_and_cli_keys
 - SUMD.test_files_page
 - SUMD.test_files_url_navigation
 - SUMD.test_finalize_session
+- SUMD.test_find_backend_files_returns_matching
+- SUMD.test_find_backend_files_skips_venv
 - SUMD.test_find_last_working_day_found
 - SUMD.test_find_last_working_day_ignores_other_endpoints
 - SUMD.test_find_last_working_day_missing_dir
 - SUMD.test_find_last_working_day_none_when_always_fail
 - SUMD.test_find_last_working_day_picks_most_recent
 - SUMD.test_find_last_working_day_skips_invalid_dirs
+- SUMD.test_find_last_working_old_schema
+- SUMD.test_find_last_working_skips_invalid_day_dirs
+- SUMD.test_find_semantic_groups_no_encoder
+- SUMD.test_find_semantic_groups_not_enabled
 - SUMD.test_firmware_gateway_get_scenario_uses_detail_endpoint
 - SUMD.test_firmware_gateway_register_dsl_uses_scenarios_endpoint
 - SUMD.test_firmware_gateway_retries_connect_errors_then_succeeds
 - SUMD.test_firmware_health_check_is_quiet_for_unreachable_service
 - SUMD.test_format_dsl_literal_defaults_to_single_quotes
 - SUMD.test_format_dsl_literal_falls_back_to_double_quotes_with_apostrophe
+- SUMD.test_fuzzy_matches_produce_group
+- SUMD.test_generate_dashboard_empty
 - SUMD.test_generate_dsl_from_xml_vars_emits_goal_tasks_and_conditions
 - SUMD.test_generate_dsl_from_xml_vars_emits_wait_and_operator_confirmation
 - SUMD.test_generate_dsl_from_xml_vars_maps_compressor_to_set_with_lpm
 - SUMD.test_generate_dsl_from_xml_vars_maps_outputs_to_set_without_task_keyword
+- SUMD.test_generate_endpoint_diff_detects_added
+- SUMD.test_generate_endpoint_diff_empty
+- SUMD.test_generate_evolution_html
 - SUMD.test_generate_split_scenarios_from_vars_splits_per_transaction
+- SUMD.test_generate_trend_chart_empty
+- SUMD.test_generate_trend_chart_multiple
+- SUMD.test_generate_trend_chart_single
 - SUMD.test_generated_menu_contracts_import_and_instantiation
 - SUMD.test_generated_menu_proto_modules_are_importable
+- SUMD.test_get_active_path
 - SUMD.test_get_assignment_query
 - SUMD.test_get_assignment_query_not_found
 - SUMD.test_get_container_name_caches_compose_ps_fallback_result
@@ -2771,18 +2744,44 @@ entry_points:
 - SUMD.test_get_fallback_scenario_returns_default_for_unknown_device
 - SUMD.test_get_firmware_gateway_uses_settings_base_url
 - SUMD.test_get_menu_by_route_exact_match_flag_controls_prefix_resolution
+- SUMD.test_get_or_create_already_in_git
+- SUMD.test_get_or_create_cached
+- SUMD.test_get_or_create_creates_new
+- SUMD.test_get_or_create_raises_on_failure
 - SUMD.test_get_projection
 - SUMD.test_get_protocol_document_forwards_format_query
 - SUMD.test_get_scenario_by_id
 - SUMD.test_get_scenario_dsl_maps_upstream_payload
 - SUMD.test_get_scenario_not_found
 - SUMD.test_get_scenarios
+- SUMD.test_get_semantic_encoder_no_package
 - SUMD.test_get_service_scenario_health_aggregates_upstream_checks
 - SUMD.test_get_state
 - SUMD.test_get_status
+- SUMD.test_git_checkout
+- SUMD.test_git_clone_for_walk_existing
+- SUMD.test_git_clone_for_walk_new
+- SUMD.test_git_days_with_commits_date_filter
+- SUMD.test_git_days_with_commits_deduplicates_per_day
+- SUMD.test_git_days_with_commits_git_error
+- SUMD.test_git_diff_names_error
+- SUMD.test_git_diff_names_success
+- SUMD.test_git_get_current_sha
+- SUMD.test_git_restore_head_default
+- SUMD.test_git_restore_head_sha
+- SUMD.test_git_truth_analyzer_analyze_content
+- SUMD.test_git_truth_analyzer_analyze_content_not_found
+- SUMD.test_git_truth_analyzer_analyze_content_syntax_error
+- SUMD.test_git_truth_analyzer_compute_complexity
+- SUMD.test_git_truth_analyzer_load_historical_results_no_dir
+- SUMD.test_git_truth_analyzer_load_historical_results_with_data
+- SUMD.test_git_truth_analyzer_no_git_history
 - SUMD.test_goals_from_cql_falls_back_to_legacy_when_parse_cql_raises
 - SUMD.test_goals_from_cql_uses_oqlos_ast_path_for_basic_steps
 - SUMD.test_goals_helpers_accept_legacy_goals_column_payload
+- SUMD.test_graph_exporter_empty
+- SUMD.test_graph_exporter_export_html
+- SUMD.test_graph_snapshot_to_dict
 - SUMD.test_health
 - SUMD.test_health_check
 - SUMD.test_health_check_quiet
@@ -2794,6 +2793,15 @@ entry_points:
 - SUMD.test_health_full_reports_ok_when_maskservice_returns_200
 - SUMD.test_health_full_reports_unreachable_when_maskservice_down
 - SUMD.test_highlight_basic_keywords_are_wrapped
+- SUMD.test_history_service_loads_results
+- SUMD.test_history_service_no_dir
+- SUMD.test_http_adapter_close
+- SUMD.test_http_adapter_delete
+- SUMD.test_http_adapter_get_all_retries_fail
+- SUMD.test_http_adapter_get_retry_then_succeed
+- SUMD.test_http_adapter_patch
+- SUMD.test_http_adapter_post
+- SUMD.test_http_adapter_put
 - SUMD.test_hub_disconnect_nonexistent
 - SUMD.test_hub_is_initialized
 - SUMD.test_hub_no_clients
@@ -2811,14 +2819,26 @@ entry_points:
 - SUMD.test_import_xml_file_returns_single_file_import_details
 - SUMD.test_inbox_event_triggers_identify_to_assignment_saga
 - SUMD.test_index_page
+- SUMD.test_init_creates_files
+- SUMD.test_init_force_overwrites
+- SUMD.test_init_no_overwrite_existing
 - SUMD.test_invalid_session_without_username_is_cleared
+- SUMD.test_is_page_endpoint_api
+- SUMD.test_is_page_endpoint_page
 - SUMD.test_json_schema_endpoint_matches_root_shape
 - SUMD.test_list_assignments_filtered_by_status
 - SUMD.test_list_assignments_query
 - SUMD.test_list_protocols_filters_by_status
 - SUMD.test_list_protocols_forwards_filters_and_pagination
+- SUMD.test_list_snapshots_empty
+- SUMD.test_list_worktrees_parses_output
+- SUMD.test_list_worktrees_returns_empty_on_error
 - SUMD.test_live_protocol_api_flow_reuses_firmware_execution_id
 - SUMD.test_live_protocol_api_lifecycle_delegates_to_firmware
+- SUMD.test_load_config_from_env_full
+- SUMD.test_load_config_from_env_invalid_platform
+- SUMD.test_load_config_from_env_missing_platform
+- SUMD.test_load_config_from_env_missing_token
 - SUMD.test_load_history_empty_dir
 - SUMD.test_load_history_health_pct
 - SUMD.test_load_history_multiple_days_sorted
@@ -2828,6 +2848,7 @@ entry_points:
 - SUMD.test_load_history_status_timeout
 - SUMD.test_load_history_testql_passed
 - SUMD.test_load_history_with_commit
+- SUMD.test_load_metadata_ignores_corrupt_file
 - SUMD.test_logging_after_operations
 - SUMD.test_main_builds_expected_discovery_command
 - SUMD.test_main_returns_error_when_explicit_python_invalid
@@ -2849,8 +2870,40 @@ entry_points:
 - SUMD.test_module_health_endpoint_reports_connect_scenario_module
 - SUMD.test_module_health_endpoint_reports_connect_test_module
 - SUMD.test_module_menu_alias_resolves_to_base_configuration
+- SUMD.test_multi_repo_analyzer_export_json
+- SUMD.test_multi_repo_analyzer_normalize_keys_collision
+- SUMD.test_multi_repo_analyzer_pyproject_alias
+- SUMD.test_multi_repo_analyzer_two_empty_repos
+- SUMD.test_multi_repo_analyzer_with_py_files
+- SUMD.test_multi_repo_command_less_than_2_repos
+- SUMD.test_multi_repo_command_missing_repos
+- SUMD.test_multi_repo_command_success
+- SUMD.test_multi_repo_command_with_deps_and_clones
+- SUMD.test_multi_repo_report_to_dict
+- SUMD.test_mvp_event_handler
+- SUMD.test_mvp_handle_analyze
+- SUMD.test_mvp_handle_dsl
+- SUMD.test_mvp_handle_nlp
+- SUMD.test_mvp_handle_walk
+- SUMD.test_mvp_handler_analyze_command
+- SUMD.test_mvp_handler_auto_pr_command
+- SUMD.test_mvp_handler_dsl_command_missing_param
+- SUMD.test_mvp_handler_dsl_command_with_dsl
+- SUMD.test_mvp_handler_evolution_command
+- SUMD.test_mvp_handler_handle_event
+- SUMD.test_mvp_handler_missing_command_key
+- SUMD.test_mvp_handler_nlp_command_missing_text
+- SUMD.test_mvp_handler_unknown_command
+- SUMD.test_mvp_handler_walk_command
 - SUMD.test_mvp_json_serialization
+- SUMD.test_mvp_message_default_timestamp
+- SUMD.test_mvp_message_roundtrip
+- SUMD.test_mvp_message_to_json_roundtrip
+- SUMD.test_mvp_missing_command
 - SUMD.test_mvp_protocol
+- SUMD.test_mvp_unknown_command
+- SUMD.test_mysql_dump_failure_raises
+- SUMD.test_mysql_dump_success
 - SUMD.test_needs_db_restore_returns_false_when_no_db_files_changed
 - SUMD.test_needs_db_restore_returns_true_when_diff_fails
 - SUMD.test_needs_db_restore_returns_true_when_migration_file_changed
@@ -2860,7 +2913,14 @@ entry_points:
 - SUMD.test_needs_rescan_returns_true_when_no_cache
 - SUMD.test_needs_rescan_returns_true_when_route_file_changed
 - SUMD.test_network_connection
+- SUMD.test_nlp_detect_analyze
+- SUMD.test_nlp_detect_walk
+- SUMD.test_nlp_dry_run_flag
 - SUMD.test_nlp_parsing
+- SUMD.test_nlp_semantic_flag
+- SUMD.test_nlp_to_cli_args
+- SUMD.test_nlp_to_dsl
+- SUMD.test_nlp_unknown_falls_back_to_help
 - SUMD.test_nlp_various_commands
 - SUMD.test_normalize_icon_token_handles_svg_emoji_html_and_names
 - SUMD.test_normalize_line_single_to_double
@@ -2878,6 +2938,20 @@ entry_points:
 - SUMD.test_oql_run_line_set
 - SUMD.test_oql_run_line_unknown
 - SUMD.test_oql_run_line_wait
+- SUMD.test_override_service_copies_files
+- SUMD.test_override_service_execute_no_args
+- SUMD.test_override_service_missing_patch_dir
+- SUMD.test_override_service_no_overrides
+- SUMD.test_override_service_no_patch_source
+- SUMD.test_override_service_overwrites_existing
+- SUMD.test_parallel_engine_dry_run_skips_all
+- SUMD.test_parallel_engine_empty_input
+- SUMD.test_parallel_engine_is_health_endpoint
+- SUMD.test_parallel_engine_max_concurrent_attribute
+- SUMD.test_parallel_engine_multiple_endpoints
+- SUMD.test_parallel_engine_open_close_session
+- SUMD.test_parallel_engine_respects_max_concurrent
+- SUMD.test_parallel_engine_set_day_dir
 - SUMD.test_parse_args_uses_canonical_default_output_dir
 - SUMD.test_parse_empty_returns_error
 - SUMD.test_parse_openapi_empty_paths
@@ -2889,15 +2963,42 @@ entry_points:
 - SUMD.test_parse_with_func
 - SUMD.test_parse_with_task
 - SUMD.test_parse_with_wait
+- SUMD.test_patcher_apply_manual_overrides
+- SUMD.test_patcher_execute_counts_patches
+- SUMD.test_patcher_manual_overrides_missing_patch_dir
+- SUMD.test_patcher_no_change_if_no_npm
+- SUMD.test_patcher_patch_compose_removes_container_names
+- SUMD.test_patcher_patches_dockerfile_npm_install
 - SUMD.test_pause
 - SUMD.test_pause_protocol_forwards_reason
+- SUMD.test_pipeline_run_dry_run_single_commit
+- SUMD.test_pipeline_run_no_commits
+- SUMD.test_pipeline_run_skips_already_processed
 - SUMD.test_placeholder
+- SUMD.test_plan_command_low_impact_with_files
+- SUMD.test_plan_command_medium_impact
+- SUMD.test_plan_command_no_suggestions
+- SUMD.test_plan_command_with_suggestions
 - SUMD.test_ports_to_endpoints
 - SUMD.test_ports_to_endpoints_no_services
+- SUMD.test_pr_config_defaults
+- SUMD.test_pr_service_github_error
+- SUMD.test_pr_service_github_success
+- SUMD.test_pr_service_gitlab_error
+- SUMD.test_pr_service_gitlab_success
+- SUMD.test_pr_service_requests_import_error
 - SUMD.test_prepare_runtime_creates_runtime_compose_and_active_link
+- SUMD.test_prepare_sequence
 - SUMD.test_preview_endpoint_uses_service_override
 - SUMD.test_prewarm_worktrees_calls_get_or_create_for_every_sha
 - SUMD.test_prewarm_worktrees_continues_after_individual_failure
+- SUMD.test_print_report_links_no_port
+- SUMD.test_print_report_links_with_port
+- SUMD.test_print_summary_table_deploy_fail
+- SUMD.test_print_summary_table_empty
+- SUMD.test_print_summary_table_with_data
+- SUMD.test_print_summary_table_with_positive_trend
+- SUMD.test_print_summary_table_with_regression
 - SUMD.test_probe_waveshare_modbus_detects_working_port
 - SUMD.test_probe_waveshare_modbus_reports_adapter_only_when_no_response
 - SUMD.test_protocol_lifecycle_handlers_delegate_to_firmware
@@ -2918,8 +3019,25 @@ entry_points:
 - SUMD.test_read_quoted_token_bare
 - SUMD.test_read_quoted_token_double
 - SUMD.test_read_quoted_token_single
+- SUMD.test_ready_check_command_mysql
+- SUMD.test_ready_check_command_postgres
+- SUMD.test_ready_check_mysql_contains_mysqladmin
+- SUMD.test_ready_check_postgres_contains_pg_isready
+- SUMD.test_ready_check_sqlite
+- SUMD.test_recommendation_engine_empty
+- SUMD.test_recommendation_engine_with_cycles
+- SUMD.test_recommendation_engine_with_duplicates
+- SUMD.test_recommendation_engine_with_similarities
+- SUMD.test_refactor_executor_execute_no_files
+- SUMD.test_refactor_executor_execute_with_files
 - SUMD.test_register_dsl
+- SUMD.test_remove_worktree
+- SUMD.test_remove_worktree_force
+- SUMD.test_render_html_empty_snapshots
+- SUMD.test_render_html_with_snapshots
 - SUMD.test_render_preview_resolves_svg_paths_and_clears_unknown_placeholders
+- SUMD.test_report_no_results
+- SUMD.test_report_with_results
 - SUMD.test_reports_contracts_filename_matches_discriminator
 - SUMD.test_reports_contracts_have_discriminator
 - SUMD.test_reports_contracts_have_kind
@@ -2931,9 +3049,18 @@ entry_points:
 - SUMD.test_resolve_protogate_python_skips_non_executable_env_candidate
 - SUMD.test_resolve_protogate_python_uses_env_candidate
 - SUMD.test_restore_backup_maps_service_errors
+- SUMD.test_restore_extract_endpoint_creates_dirs
+- SUMD.test_restore_find_last_working_day
 - SUMD.test_restore_head_calls_git
 - SUMD.test_restore_head_with_sha
 - SUMD.test_restore_latest_endpoint_dry_run
+- SUMD.test_restore_list_working_days
+- SUMD.test_restore_missing_results_dir
+- SUMD.test_restore_no_working_day_returns_none
+- SUMD.test_restore_not_found
+- SUMD.test_restore_raises_if_file_missing
+- SUMD.test_restore_raises_if_not_found
+- SUMD.test_restore_success
 - SUMD.test_resume
 - SUMD.test_resume_protocol_forwards_endpoint
 - SUMD.test_retry_on_connect_error
@@ -2951,30 +3078,64 @@ entry_points:
 - SUMD.test_run_processes_all_days
 - SUMD.test_run_returns_empty_when_no_commits
 - SUMD.test_run_seeds_accepts_canonical_seed_history_schema
+- SUMD.test_run_with_retry_fails_all
+- SUMD.test_run_with_retry_succeeds_first
+- SUMD.test_run_with_retry_success_on_second_attempt
 - SUMD.test_saga_creates_assignment_for_user_with_hint
 - SUMD.test_saga_ignores_non_user_identifications
 - SUMD.test_saga_is_idempotent_on_correlation_id
 - SUMD.test_saga_skips_event_without_hint
+- SUMD.test_save_and_load_metadata
 - SUMD.test_save_day_creates_results_file
 - SUMD.test_save_day_creates_yaml_and_toon
 - SUMD.test_save_day_health_in_json
 - SUMD.test_save_day_includes_commit_in_json
 - SUMD.test_save_day_no_output_dir_skips
+- SUMD.test_save_deploy_debug_writes_file
 - SUMD.test_save_draft_creates_new_record_without_stable_lookup_keys
 - SUMD.test_save_draft_updates_existing_record_for_matching_preset
 - SUMD.test_save_html_contains_health_pct
 - SUMD.test_save_html_creates_report_file
 - SUMD.test_save_timeline_index_creates_index
+- SUMD.test_save_timeline_index_flags_endpoint_count_warning
+- SUMD.test_save_timeline_index_flags_health_regression
 - SUMD.test_save_timeline_index_multiple_days_sorted
+- SUMD.test_scan_duplicate_py_functions
+- SUMD.test_scan_empty_dir
+- SUMD.test_scan_js_file
 - SUMD.test_scan_scenario_dsl_coverage_counts_missing_and_invalid_rows
+- SUMD.test_scan_single_py_file_no_duplicates
+- SUMD.test_scan_skips_venv_dirs
+- SUMD.test_scan_syntax_error_py_file
+- SUMD.test_scan_unsupported_extension_ignored
 - SUMD.test_scan_via_compose_labels_dict_labels
 - SUMD.test_scan_via_compose_labels_finds_traefik_prefix
 - SUMD.test_scan_via_compose_labels_no_compose_file
+- SUMD.test_scanner_compose_labels_fallback
+- SUMD.test_scanner_fallback_health_endpoint
+- SUMD.test_scanner_fastapi_routes_parses_file
+- SUMD.test_scanner_openapi_deduplication
+- SUMD.test_scanner_parse_openapi_generic_fallback
+- SUMD.test_scanner_parse_openapi_substitutes_fixture
+- SUMD.test_scanner_resolve_test_body_fallback
+- SUMD.test_scanner_resolve_test_body_from_config
 - SUMD.test_scenario_build_returns_dsl
 - SUMD.test_scenario_endpoints_bridge_legacy_columns_from_storage
 - SUMD.test_scenario_session_uses_main_engine_when_urls_match
 - SUMD.test_scenario_survives_new_handler
 - SUMD.test_schedule_periodic_test
+- SUMD.test_screenshot_config_defaults
+- SUMD.test_screenshot_no_targets_returns_empty
+- SUMD.test_screenshot_playwright_not_installed_marks_error
+- SUMD.test_screenshot_skips_non_get
+- SUMD.test_screenshot_skips_skipped_status
+- SUMD.test_select_tests_migration_change_tests_all
+- SUMD.test_select_tests_no_changes
+- SUMD.test_select_tests_router_change_selects_affected
+- SUMD.test_select_tests_unrelated_change_critical_only
+- SUMD.test_semantic_group_hash
+- SUMD.test_semantic_text_with_name
+- SUMD.test_semantic_text_without_name
 - SUMD.test_send_command
 - SUMD.test_send_command_start
 - SUMD.test_send_command_unknown
@@ -2983,6 +3144,7 @@ entry_points:
 - SUMD.test_serialize_simple_ast
 - SUMD.test_serialize_with_if_condition
 - SUMD.test_serialize_with_set_step
+- SUMD.test_serve_missing_dir
 - SUMD.test_service_data_commands_have_transport
 - SUMD.test_service_data_covers_both_modules
 - SUMD.test_service_data_events_have_producers
@@ -2991,6 +3153,13 @@ entry_points:
 - SUMD.test_service_data_layers_python_exists
 - SUMD.test_service_data_queries_have_transport
 - SUMD.test_service_data_slice_has_minimum_contracts
+- SUMD.test_service_graph_cycle_detection
+- SUMD.test_service_graph_detect_cycles_empty
+- SUMD.test_service_graph_detect_no_cycles
+- SUMD.test_service_graph_empty_dir
+- SUMD.test_service_graph_simple_py
+- SUMD.test_service_graph_skips_venv
+- SUMD.test_service_graph_with_imports
 - SUMD.test_service_id_commands_have_transport
 - SUMD.test_service_id_covers_module
 - SUMD.test_service_id_events_have_producers
@@ -3015,10 +3184,15 @@ entry_points:
 - SUMD.test_service_reports_health_checks_structure
 - SUMD.test_service_reports_health_response_shape
 - SUMD.test_service_reports_health_returns_200
+- SUMD.test_service_similarity_empty_dir
+- SUMD.test_service_similarity_single_service
+- SUMD.test_service_similarity_two_similar
 - SUMD.test_service_workshop_health_aggregate_reflects_worst_case
 - SUMD.test_service_workshop_health_checks_structure
 - SUMD.test_service_workshop_health_response_shape
 - SUMD.test_service_workshop_health_returns_200
+- SUMD.test_services_command_no_export
+- SUMD.test_services_command_with_cycles
 - SUMD.test_session_missing_id_is_recovered_and_persisted
 - SUMD.test_session_no_user_returns_none
 - SUMD.test_setup_continues_when_optional_module_registration_fails
@@ -3026,9 +3200,13 @@ entry_points:
 - SUMD.test_setup_uses_module_registration_hooks
 - SUMD.test_sgi_commands_and_query_dispatch_through_bus
 - SUMD.test_sgi_handlers_are_registered_in_buses
+- SUMD.test_snapshot_manager_init
+- SUMD.test_snapshot_type_incremental
 - SUMD.test_spec_file_valid
+- SUMD.test_sqlite_dump_calls_docker_cp
 - SUMD.test_standardize_scenario_dsl_goals_builds_goals_from_real_task_style_dsl
 - SUMD.test_standardize_scenario_dsl_goals_updates_missing_fields
+- SUMD.test_start_docker_compose_calls_compose_up
 - SUMD.test_start_dry_run_skips_deploy
 - SUMD.test_start_execution
 - SUMD.test_start_handler_calls_firmware_and_persists_execution_id
@@ -3036,11 +3214,21 @@ entry_points:
 - SUMD.test_start_none_method_returns_true
 - SUMD.test_start_none_returns_true
 - SUMD.test_start_protocol_forwards_payload
+- SUMD.test_start_replay_checks_health
 - SUMD.test_start_session
+- SUMD.test_status_badge_fail
+- SUMD.test_status_badge_ok
 - SUMD.test_step_without_session
 - SUMD.test_stop
+- SUMD.test_stop_docker_compose_calls_down
 - SUMD.test_stop_dry_run_skips
 - SUMD.test_stop_none_method_skips
+- SUMD.test_stop_replay_skips_down
+- SUMD.test_stop_uvicorn_calls_stop
+- SUMD.test_summary_service_empty_duplication
+- SUMD.test_summary_service_from_service_graph_empty
+- SUMD.test_summary_service_high_severity
+- SUMD.test_summary_service_with_groups
 - SUMD.test_switch_commit_rechecks_health_when_cache_is_stale
 - SUMD.test_switch_commit_sets_current_sha_before_triggering_reload
 - SUMD.test_switch_commit_skips_short_health_probe_when_recent_success_is_cached
@@ -3054,8 +3242,20 @@ entry_points:
 - SUMD.test_test_service_ok
 - SUMD.test_test_service_set_day_dir
 - SUMD.test_test_service_timeout
+- SUMD.test_textual_ok_is_bool
+- SUMD.test_timeline_add_and_get_snapshot
+- SUMD.test_timeline_get_by_commit
+- SUMD.test_timeline_save_and_load
+- SUMD.test_timeline_save_creates_parent
+- SUMD.test_timeline_to_dict
+- SUMD.test_to_toon
+- SUMD.test_to_yaml_list
+- SUMD.test_to_yaml_nested
+- SUMD.test_to_yaml_simple
 - SUMD.test_trigger_reload_caches_exec_strategy_after_signal_failure
 - SUMD.test_trigger_reload_caches_signal_strategy_after_first_success
+- SUMD.test_truth_command_no_history
+- SUMD.test_truth_command_with_history
 - SUMD.test_unquote
 - SUMD.test_update_assignment_status
 - SUMD.test_update_assignment_status_not_found
@@ -3070,6 +3270,7 @@ entry_points:
 - SUMD.test_upsert_main_navigation_connect_manager
 - SUMD.test_url_navigation
 - SUMD.test_url_structure
+- SUMD.test_uvicorn_stop_terminates
 - SUMD.test_v1_auth_session_does_not_500
 - SUMD.test_v3_config_hardware_status_alias
 - SUMD.test_v3_config_reset_defaults
@@ -3092,26 +3293,61 @@ entry_points:
 - SUMD.test_validate_ast_accepts_minimal_valid_ast
 - SUMD.test_validate_ast_rejects_empty_goals_and_funcs
 - SUMD.test_validate_ast_rejects_missing_scenario
+- SUMD.test_validate_base_url_not_string
 - SUMD.test_validate_def_endpoint_returns_errors_for_empty_code
 - SUMD.test_validate_def_endpoint_returns_errors_for_invalid_code
 - SUMD.test_validate_def_endpoint_returns_valid_for_correct_code
+- SUMD.test_validate_deploy_not_string_or_dict
 - SUMD.test_validate_detects_missing_get
 - SUMD.test_validate_detects_missing_scenario
 - SUMD.test_validate_detects_placeholder_star
 - SUMD.test_validate_dsl_text_collects_parse_errors
 - SUMD.test_validate_dsl_text_succeeds_for_valid_dsl
+- SUMD.test_validate_health_url_not_string
+- SUMD.test_validate_invalid_output_dir_not_string
+- SUMD.test_validate_project_not_mapping
+- SUMD.test_validate_retry_backoff_negative
 - SUMD.test_validate_returns_fixed_text
 - SUMD.test_validate_returns_result
+- SUMD.test_validate_screenshots_not_bool
+- SUMD.test_validate_test_fixtures_not_mapping
 - SUMD.test_validate_valid_dsl
+- SUMD.test_validate_valid_output_mapping
+- SUMD.test_vector_build_command
+- SUMD.test_vector_build_command_with_warning
+- SUMD.test_vector_query_no_index
+- SUMD.test_vector_query_no_results_after_filter
+- SUMD.test_vector_query_with_results
+- SUMD.test_version_command
 - SUMD.test_version_compare_reports_match
 - SUMD.test_version_compare_reports_mismatch
+- SUMD.test_wait_healthy_prints_status_and_body_on_timeout
+- SUMD.test_wait_healthy_returns_true_on_200
+- SUMD.test_wait_healthy_times_out
+- SUMD.test_wait_healthy_with_retry_wraps_wait_healthy
+- SUMD.test_wait_until_ready_postgres_success
+- SUMD.test_wait_until_ready_postgres_timeout
+- SUMD.test_wait_until_ready_sqlite_immediate
+- SUMD.test_walk_cli_health_timeout_overrides_yaml_when_explicit
+- SUMD.test_walk_cli_output_overrides_yaml_when_explicit
+- SUMD.test_walk_command_cli_overrides_applied
+- SUMD.test_walk_command_no_git_repo_exits
+- SUMD.test_walk_command_no_yaml
+- SUMD.test_walk_command_with_results_generates_exports
 - SUMD.test_walk_config_defaults
+- SUMD.test_walk_dry_run_no_results
+- SUMD.test_walk_no_git_repo
+- SUMD.test_walk_uses_yaml_when_option_not_explicit
 - SUMD.test_workshop_contracts_filename_matches_discriminator
 - SUMD.test_workshop_contracts_have_discriminator
 - SUMD.test_workshop_contracts_have_kind
 - SUMD.test_workshop_contracts_python_layer_exists
 - SUMD.test_workshop_health_contract_exists
 - SUMD.test_workshop_slice_has_minimum_contracts
+- SUMD.test_worktree_path_deterministic
+- SUMD.test_worktree_path_uses_short_sha
+- SUMD.test_write_readme
+- SUMD.test_write_readme_with_files
 - SUMD.test_xml_migrate_handles_legacy_report
 - SUMD.test_xml_migrate_handles_native_xml
 - SUMD.test_xml_migrate_returns_errors_on_unrelated_xml
@@ -3122,6 +3358,8 @@ entry_points:
 - SUMD.test_xsd_endpoint_returns_static_definition
 - SUMD.text_search
 - SUMD.to_module_label
+- SUMD.to_toon
+- SUMD.to_yaml
 - SUMD.trigger_sync
 - SUMD.truth
 - SUMD.truth_command
@@ -3134,6 +3372,7 @@ entry_points:
 - SUMD.update_activity
 - SUMD.update_assignment
 - SUMD.update_backend_db_config
+- SUMD.update_changelog
 - SUMD.update_config
 - SUMD.update_config_section
 - SUMD.update_configuration
@@ -3145,11 +3384,13 @@ entry_points:
 - SUMD.update_flag_by_key
 - SUMD.update_handler
 - SUMD.update_icon
+- SUMD.update_init
 - SUMD.update_json_data
 - SUMD.update_library
 - SUMD.update_module
 - SUMD.update_navigation_option
 - SUMD.update_protocol
+- SUMD.update_pyproject
 - SUMD.update_redirect
 - SUMD.update_role
 - SUMD.update_role_meta
@@ -3214,6 +3455,11 @@ entry_points:
 - SUMD.yaml_scalar
 - SUMD.zod_expr
 - docs.README.generate_readme
+- docs.getting-started.configuration.print
+- docs.guide.plugins.print
+- docs.guide.plugins.report
+- docs.guide.plugins.scan
+- examples.08-nlp-commands.README.print
 - examples.09-mvp-protocol.README.print
 - examples.09-mvp-protocol.README.sendMVPCommand
 - examples.09-mvp-protocol.README.send_mvp_command
@@ -3249,42 +3495,5 @@ entry_points:
 - restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index
 - restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_model
 - restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_ui
-- restored_c2004_health.api-health.backend.site.src.main.allServices
-- restored_c2004_health.api-health.backend.site.src.main.container
-- restored_c2004_health.api-health.backend.site.src.main.content
-- restored_c2004_health.api-health.backend.site.src.main.controller
-- restored_c2004_health.api-health.backend.site.src.main.coreClass
-- restored_c2004_health.api-health.backend.site.src.main.d
-- restored_c2004_health.api-health.backend.site.src.main.degraded
-- restored_c2004_health.api-health.backend.site.src.main.docPath
-- restored_c2004_health.api-health.backend.site.src.main.dot
-- restored_c2004_health.api-health.backend.site.src.main.grid
-- restored_c2004_health.api-health.backend.site.src.main.handleRoute
-- restored_c2004_health.api-health.backend.site.src.main.hash
-- restored_c2004_health.api-health.backend.site.src.main.health
-- restored_c2004_health.api-health.backend.site.src.main.healthy
-- restored_c2004_health.api-health.backend.site.src.main.healthyEl
-- restored_c2004_health.api-health.backend.site.src.main.html
-- restored_c2004_health.api-health.backend.site.src.main.isActive
-- restored_c2004_health.api-health.backend.site.src.main.loadDockerStatus
-- restored_c2004_health.api-health.backend.site.src.main.manifest
-- restored_c2004_health.api-health.backend.site.src.main.marked
-- restored_c2004_health.api-health.backend.site.src.main.md
-- restored_c2004_health.api-health.backend.site.src.main.navigate
-- restored_c2004_health.api-health.backend.site.src.main.page
-- restored_c2004_health.api-health.backend.site.src.main.res
-- restored_c2004_health.api-health.backend.site.src.main.resp
-- restored_c2004_health.api-health.backend.site.src.main.route
-- restored_c2004_health.api-health.backend.site.src.main.sidebar
-- restored_c2004_health.api-health.backend.site.src.main.start
-- restored_c2004_health.api-health.backend.site.src.main.statusClass
-- restored_c2004_health.api-health.backend.site.src.main.statusText
-- restored_c2004_health.api-health.backend.site.src.main.summary
-- restored_c2004_health.api-health.backend.site.src.main.table
-- restored_c2004_health.api-health.backend.site.src.main.time
-- restored_c2004_health.api-health.backend.site.src.main.timeEl
-- restored_c2004_health.api-health.backend.site.src.main.timeout
-- restored_c2004_health.api-health.backend.site.src.main.unhealthy
-- restored_c2004_health.api-health.backend.site.src.main.unhealthyEl
 - scripts.bump_version.main
 - testql-scenarios.generated-from-pytests.testql.toon.all

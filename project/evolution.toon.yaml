@@ -1,4 +1,4 @@
-# code2llm/evolution | 2814 func | 8f | 2026-05-02
+# code2llm/evolution | 3236 func | 10f | 2026-05-02
 
 NEXT[3] (ranked by impact):
   [1] !! SPLIT           .rebuild_c2004_1d_replay_recreate_v2/repo/connect-scenario/cql-backend/cql_backend/parser.py
@@ -20,9 +20,9 @@ RISKS[3]:
   ⚠ Splitting .rebuild_c2004_1d_replay_overlay/repo/connect-scenario/cql-backend/cql_backend/parser.py may break 0 import paths
 
 METRICS-TARGET:
-  CC̄:          0.1 → ≤0.1
-  max-CC:      11 → ≤5
-  god-modules: 213 → 0
+  CC̄:          0.0 → ≤0.0
+  max-CC:      5 → ≤2
+  god-modules: 214 → 0
   high-CC(≥15): 0 → ≤0
   hub-types:   0 → ≤0
 
@@ -51,4 +51,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=0.1 → now CC̄=0.1
+  prev CC̄=0.1 → now CC̄=0.0

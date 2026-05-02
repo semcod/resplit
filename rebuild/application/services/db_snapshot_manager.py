@@ -6,7 +6,7 @@ from __future__ import annotations
 import time
 import json
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, asdict
 from datetime import datetime
 
@@ -44,6 +44,7 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
         shell: Optional[ShellAdapter] = None,
         ready_timeout: int = 30,
         ready_interval: float = 1.0,
+        max_snapshots: int = 10,
     ):
         self.snapshot_dir = snapshot_dir
         self.db_container = db_container
@@ -53,6 +54,7 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
         self.shell = shell or ShellAdapter()
         self.ready_timeout = ready_timeout
         self.ready_interval = ready_interval
+        self.max_snapshots = max_snapshots
         self._metadata_file = snapshot_dir / "snapshots.json"
         self._snapshots: Dict[str, SnapshotInfo] = {}
         self._ensure_dirs()
@@ -80,9 +82,10 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
     def create(self, name: str, commit_sha: Optional[str] = None) -> SnapshotInfo:
         """
         Create a new database snapshot.
+        Auto-prunes oldest snapshots when max_snapshots is exceeded.
         """
         snapshot_path = self.snapshot_dir / f"{name}.sql"
-        
+
         if self.db_type == "postgres":
             self._postgres_dump(snapshot_path)
         elif self.db_type == "mysql":
@@ -91,21 +94,73 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
             self._sqlite_dump(snapshot_path)
         else:
             raise ValueError(f"Unsupported DB type: {self.db_type}")
-        
-        # Get file size
+
         size = snapshot_path.stat().st_size if snapshot_path.exists() else 0
-        
+
         info = SnapshotInfo(
             name=name,
             created_at=datetime.now().isoformat(),
             commit_sha=commit_sha,
             size_bytes=size,
-            db_type=self.db_type
+            db_type=self.db_type,
         )
-        
+
         self._snapshots[name] = info
         self._save_metadata()
+        self._auto_prune()
         return info
+
+    def _auto_prune(self) -> int:
+        """Remove oldest snapshots when count exceeds max_snapshots. Returns number pruned."""
+        if self.max_snapshots <= 0:
+            return 0
+        protected = {"baseline"}
+        prunable = [
+            (name, info) for name, info in self._snapshots.items()
+            if name not in protected and not name.startswith("baseline_")
+        ]
+        prunable.sort(key=lambda x: x[1].created_at)
+        excess = len(self._snapshots) - self.max_snapshots
+        pruned = 0
+        for name, _ in prunable[:max(0, excess)]:
+            self.delete(name)
+            pruned += 1
+        return pruned
+
+    def prune_old(self, keep: Optional[int] = None) -> int:
+        """
+        Manually prune oldest snapshots, keeping *keep* most recent.
+        Protects 'baseline' and 'baseline_*' snapshots.
+        Returns number of snapshots deleted.
+        """
+        limit = keep if keep is not None else self.max_snapshots
+        protected = {"baseline"}
+        all_sorted = sorted(
+            [(name, info) for name, info in self._snapshots.items()],
+            key=lambda x: x[1].created_at,
+        )
+        to_delete = [
+            name for name, _ in all_sorted
+            if name not in protected and not name.startswith("baseline_")
+        ]
+        # Keep newest `limit` non-protected snapshots
+        excess = to_delete[: max(0, len(to_delete) - limit)]
+        for name in excess:
+            self.delete(name)
+        return len(excess)
+
+    def stats(self) -> Dict[str, Any]:
+        """Return summary stats: count, total_size_bytes, oldest, newest."""
+        snaps = list(self._snapshots.values())
+        total_size = sum(s.size_bytes or 0 for s in snaps)
+        dates = [s.created_at for s in snaps]
+        return {
+            "count": len(snaps),
+            "total_size_bytes": total_size,
+            "oldest": min(dates) if dates else None,
+            "newest": max(dates) if dates else None,
+            "max_snapshots": self.max_snapshots,
+        }
     
     def _postgres_dump(self, output_path: Path):
         """Create PostgreSQL dump using pg_dump in container."""

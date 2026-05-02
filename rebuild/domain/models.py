@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Optional, Dict, List, Any
 
 class DeployMethod(Enum):
     AUTO = "auto"
@@ -51,3 +51,6 @@ class WalkConfig:
     
     # Phase 10: Manual Override / Patching
     patch_dir: Optional[Path] = None  # Path to directory with fixes to apply to clone
+
+    # Phase 16: Notification Hooks
+    notifications: List[Dict[str, Any]] = field(default_factory=list)

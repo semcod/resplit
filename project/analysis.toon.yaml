@@ -1,11 +1,11 @@
-# code2llm | 79f 347651L | md:21,yaml:17,txt:10,json:9,shell:8,python:5,yml:2,javascript:2,toml:1,dsl:1,backend:1 | 2026-05-02
-# CC̄=0.1 | critical:0/2828 | dups:0 | cycles:0
+# code2llm | 91f 347029L | md:33,yaml:17,txt:10,json:9,shell:8,python:5,yml:3,dsl:1,backend:1,toml:1 | 2026-05-02
+# CC̄=0.0 | critical:0/3250 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
 REFACTOR[0]: none needed
 
-PIPELINES[56]:
+PIPELINES[33]:
   [1] Src [health]: health
       PURITY: 100% pure
   [2] Src [get_manifest]: get_manifest
@@ -21,42 +21,35 @@ LAYERS:
   scripts/                        CC̄=5.7    ←in:0  →out:12  !! split
   │ bump_version               239L  0C   10m  CC=14     ←0
   │
-  restored_c2004_health/          CC̄=2.6    ←in:0  →out:0
-  │ !! main.js                    704L  0C   49m  CC=11     ←0
+  restored_c2004_health/          CC̄=2.3    ←in:0  →out:0
   │ !! docker-compose.yml         507L  0C    0m  CC=0.0    ←0
   │ main                        91L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ README.md                   45L  0C    0m  CC=0.0    ←0
-  │ vite.config.js              29L  0C    0m  CC=0.0    ←0
   │ Dockerfile.backend           0L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMD.md                  186898L  0C  2727m  CC=0.0    ←0
-  │ !! SUMR.md                  72389L  0C    0m  CC=0.0    ←0
+  │ !! SUMD.md                  187596L  0C  3193m  CC=0.0    ←0
+  │ !! SUMR.md                  72514L  0C    0m  CC=0.0    ←0
   │ !! infra-map.json            1438L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
   │ CHANGELOG.md               262L  0C    0m  CC=0.0    ←0
   │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             106L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             110L  0C    0m  CC=0.0    ←0
   │ TODO.md                    103L  0C    0m  CC=0.0    ←0
   │ README.md                   91L  0C    0m  CC=0.0    ←0
+  │ mkdocs.yml                  80L  0C    0m  CC=0.0    ←0
   │ project.sh                  27L  0C    0m  CC=0.0    ←0
   │ pyqual.yaml                 10L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
-  │ Makefile                     0L  0C    0m  CC=0.0    ←0
-  │
-  docs/                           CC̄=0.0    ←in:0  →out:0
-  │ !! README.md                 3814L  0C    1m  CC=0.0    ←0
-  │ c2004.md                   228L  0C    0m  CC=0.0    ←0
-  │ usage.md                   192L  0C    0m  CC=0.0    ←0
-  │ architecture.md            118L  0C    0m  CC=0.0    ←0
-  │ case_study_c2004.md         56L  0C    0m  CC=0.0    ←0
+  │ Makefile                     0L  0C    1m  CC=0.0    ←1
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=0.0    ←in:0  →out:0
   │ README.md                  240L  0C    3m  CC=0.0    ←0
-  │ README.md                  137L  0C    1m  CC=0.0    ←1
+  │ README.md                  137L  0C    1m  CC=0.0    ←0
   │ README.md                   89L  0C    0m  CC=0.0    ←0
   │ README.md                   61L  0C    0m  CC=0.0    ←0
   │ README.md                   54L  0C    0m  CC=0.0    ←0
@@ -74,6 +67,25 @@ LAYERS:
   testql-scenarios/               CC̄=0.0    ←in:0  →out:0
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←0
   │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
+  │
+  docs/                           CC̄=0.0    ←in:0  →out:0
+  │ !! README.md                 2110L  0C    1m  CC=0.0    ←0
+  │ c2004.md                   228L  0C    0m  CC=0.0    ←0
+  │ usage.md                   192L  0C    0m  CC=0.0    ←0
+  │ cli.md                     147L  0C    0m  CC=0.0    ←0
+  │ architecture.md            118L  0C    0m  CC=0.0    ←0
+  │ plugins.md                  86L  2C    3m  CC=0.0    ←0
+  │ configuration.md            77L  0C    1m  CC=0.0    ←0
+  │ config.md                   72L  0C    0m  CC=0.0    ←0
+  │ index.md                    68L  0C    0m  CC=0.0    ←0
+  │ quickstart.md               61L  0C    0m  CC=0.0    ←0
+  │ walk.md                     58L  0C    0m  CC=0.0    ←0
+  │ case_study_c2004.md         56L  0C    0m  CC=0.0    ←0
+  │ analyze.md                  48L  0C    0m  CC=0.0    ←0
+  │ installation.md             47L  0C    0m  CC=0.0    ←0
+  │ auto-pr.md                  46L  0C    0m  CC=0.0    ←0
+  │ refactor.md                 27L  0C    0m  CC=0.0    ←0
+  │ changelog.md                 5L  0C    0m  CC=0.0    ←0
   │
   c2004/                          CC̄=0.0    ←in:0  →out:0
   │ !! topology.json              588L  0C    0m  CC=0.0    ←0
@@ -103,27 +115,28 @@ LAYERS:
   │ pytest-iter5.txt             3L  0C    0m  CC=0.0    ←0
   │
   project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! duplication.toon.yaml    71618L  0C    0m  CC=0.0    ←0
-  │ !! calls.yaml                3161L  0C    0m  CC=0.0    ←0
-  │ context.md                 346L  0C    0m  CC=0.0    ←0
+  │ !! duplication.toon.yaml    71613L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                3290L  0C    0m  CC=0.0    ←0
+  │ context.md                 350L  0C    0m  CC=0.0    ←0
   │ README.md                  339L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml         122L  0C    0m  CC=0.0    ←0
-  │ calls.toon.yaml            108L  0C    0m  CC=0.0    ←0
+  │ calls.toon.yaml            134L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         131L  0C    0m  CC=0.0    ←0
   │ evolution.toon.yaml         54L  0C    0m  CC=0.0    ←0
   │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           47L  0C    0m  CC=0.0    ←0
   │
   ── zero ──
+     Dockerfile                                0L
      Makefile                                  0L
      examples/Makefile                         0L
      restored_c2004_health/api-health/docker/Dockerfile.backend  0L
 
 COUPLING:
-                            examples.08-nlp-commands                   scripts
-  examples.08-nlp-commands                        ──                       ←12  hub
-                   scripts                        12                        ──  !! fan-out
+            Makefile   scripts
+  Makefile        ──       ←12  hub
+   scripts        12        ──  !! fan-out
   CYCLES: none
-  HUB: examples.08-nlp-commands/ (fan-in=12)
+  HUB: Makefile/ (fan-in=12)
   SMELL: scripts/ fan-out=12 → split needed
 
 EXTERNAL:

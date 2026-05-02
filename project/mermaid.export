@@ -1,4 +1,7 @@
 flowchart TD
+    subgraph Makefile
+        Makefile__print["print"]
+    end
     subgraph SUMD
         SUMD__all["all"]
         SUMD__run_migration["run_migration"]
@@ -64,6 +67,14 @@ flowchart TD
     subgraph docs__README
         docs__README__generate_readme["generate_readme"]
     end
+    subgraph docs__getting_started
+        docs__getting_started__configuration__print["print"]
+    end
+    subgraph docs__guide
+        docs__guide__plugins__scan["scan"]
+        docs__guide__plugins__report["report"]
+        docs__guide__plugins__print["print"]
+    end
     subgraph examples__08_nlp_commands
         examples__08_nlp_commands__README__print["print"]
     end
@@ -109,30 +120,6 @@ flowchart TD
         restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main___index_html["_index_html"]
         restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__index["index"]
         restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__module_index["module_index"]
-        restored_c2004_health__api_health__backend__site__src__main__marked["marked"]
-        restored_c2004_health__api_health__backend__site__src__main__manifest["manifest"]
-        restored_c2004_health__api_health__backend__site__src__main__sidebar["sidebar"]
-        restored_c2004_health__api_health__backend__site__src__main__content["content"]
-        restored_c2004_health__api_health__backend__site__src__main__getRoute["getRoute"]
-        restored_c2004_health__api_health__backend__site__src__main__hash["hash"]
-        restored_c2004_health__api_health__backend__site__src__main__navigate["navigate"]
-        restored_c2004_health__api_health__backend__site__src__main__handleRoute["handleRoute"]
-        restored_c2004_health__api_health__backend__site__src__main__route["route"]
-        restored_c2004_health__api_health__backend__site__src__main__docPath["docPath"]
-        restored_c2004_health__api_health__backend__site__src__main__updateActiveNav("updateActiveNav CC=10")
-        restored_c2004_health__api_health__backend__site__src__main__page["page"]
-        restored_c2004_health__api_health__backend__site__src__main__renderHome["renderHome"]
-        restored_c2004_health__api_health__backend__site__src__main__renderDownloads["renderDownloads"]
-        restored_c2004_health__api_health__backend__site__src__main__renderArchitecture["renderArchitecture"]
-        restored_c2004_health__api_health__backend__site__src__main__renderServices["renderServices"]
-        restored_c2004_health__api_health__backend__site__src__main__renderServicesGrid["renderServicesGrid"]
-        restored_c2004_health__api_health__backend__site__src__main__grid["grid"]
-        restored_c2004_health__api_health__backend__site__src__main__isActive["isActive"]
-        restored_c2004_health__api_health__backend__site__src__main__coreClass["coreClass"]
-        restored_c2004_health__api_health__backend__site__src__main__checkServiceHealth["checkServiceHealth"]
-        restored_c2004_health__api_health__backend__site__src__main__start["start"]
-        restored_c2004_health__api_health__backend__site__src__main__controller["controller"]
-        restored_c2004_health__api_health__backend__site__src__main__timeout["timeout"]
     end
     subgraph scripts__bump_version
         scripts__bump_version__read_version["read_version"]
@@ -157,45 +144,21 @@ flowchart TD
     restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main___index_html
     restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__index --> restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main___index_html
     restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main___index_html
-    restored_c2004_health__api_health__backend__site__src__main__handleRoute --> restored_c2004_health__api_health__backend__site__src__main__getRoute
-    restored_c2004_health__api_health__backend__site__src__main__handleRoute --> restored_c2004_health__api_health__backend__site__src__main__updateActiveNav
-    restored_c2004_health__api_health__backend__site__src__main__handleRoute --> restored_c2004_health__api_health__backend__site__src__main__renderHome
-    restored_c2004_health__api_health__backend__site__src__main__handleRoute --> restored_c2004_health__api_health__backend__site__src__main__renderSidebar
-    restored_c2004_health__api_health__backend__site__src__main__handleRoute --> restored_c2004_health__api_health__backend__site__src__main__renderDownloads
-    restored_c2004_health__api_health__backend__site__src__main__handleRoute --> restored_c2004_health__api_health__backend__site__src__main__renderArchitecture
-    restored_c2004_health__api_health__backend__site__src__main__handleRoute --> restored_c2004_health__api_health__backend__site__src__main__renderServices
-    restored_c2004_health__api_health__backend__site__src__main__handleRoute --> restored_c2004_health__api_health__backend__site__src__main__renderDocs
-    restored_c2004_health__api_health__backend__site__src__main__route --> restored_c2004_health__api_health__backend__site__src__main__renderHome
-    restored_c2004_health__api_health__backend__site__src__main__route --> restored_c2004_health__api_health__backend__site__src__main__renderSidebar
-    restored_c2004_health__api_health__backend__site__src__main__route --> restored_c2004_health__api_health__backend__site__src__main__renderDownloads
-    restored_c2004_health__api_health__backend__site__src__main__route --> restored_c2004_health__api_health__backend__site__src__main__renderArchitecture
-    restored_c2004_health__api_health__backend__site__src__main__route --> restored_c2004_health__api_health__backend__site__src__main__renderServices
-    restored_c2004_health__api_health__backend__site__src__main__route --> restored_c2004_health__api_health__backend__site__src__main__renderDocs
-    restored_c2004_health__api_health__backend__site__src__main__renderServices --> restored_c2004_health__api_health__backend__site__src__main__runHealthCheck
-    restored_c2004_health__api_health__backend__site__src__main__renderServices --> restored_c2004_health__api_health__backend__site__src__main__renderServicesGrid
-    restored_c2004_health__api_health__backend__site__src__main__runHealthCheck --> restored_c2004_health__api_health__backend__site__src__main__checkServiceHealth
-    restored_c2004_health__api_health__backend__site__src__main__summary --> restored_c2004_health__api_health__backend__site__src__main__checkServiceHealth
-    restored_c2004_health__api_health__backend__site__src__main__healthyEl --> restored_c2004_health__api_health__backend__site__src__main__checkServiceHealth
-    restored_c2004_health__api_health__backend__site__src__main__unhealthyEl --> restored_c2004_health__api_health__backend__site__src__main__checkServiceHealth
-    restored_c2004_health__api_health__backend__site__src__main__table --> restored_c2004_health__api_health__backend__site__src__main__checkServiceHealth
-    restored_c2004_health__api_health__backend__site__src__main__allServices --> restored_c2004_health__api_health__backend__site__src__main__checkServiceHealth
-    restored_c2004_health__api_health__backend__site__src__main__renderDocs --> restored_c2004_health__api_health__backend__site__src__main__renderSidebar
-    restored_c2004_health__api_health__backend__site__src__main__renderSidebar --> restored_c2004_health__api_health__backend__site__src__main__esc
-    scripts__bump_version__update_init --> examples__08_nlp_commands__README__print
-    scripts__bump_version__update_pyproject --> examples__08_nlp_commands__README__print
+    scripts__bump_version__update_init --> Makefile__print
+    scripts__bump_version__update_pyproject --> Makefile__print
     scripts__bump_version__build_new_section --> scripts__bump_version__categorize_commits
     scripts__bump_version__update_changelog --> scripts__bump_version__get_git_log_since_last_tag
     scripts__bump_version__update_changelog --> scripts__bump_version__collect_unreleased_entries
     scripts__bump_version__update_changelog --> scripts__bump_version__build_new_section
     scripts__bump_version__update_changelog --> scripts__bump_version__read_version
-    scripts__bump_version__update_changelog --> examples__08_nlp_commands__README__print
+    scripts__bump_version__update_changelog --> Makefile__print
     scripts__bump_version__main --> scripts__bump_version__read_version
     scripts__bump_version__main --> scripts__bump_version__bump
-    scripts__bump_version__main --> examples__08_nlp_commands__README__print
+    scripts__bump_version__main --> Makefile__print
     scripts__bump_version__main --> scripts__bump_version__update_init
     scripts__bump_version__main --> scripts__bump_version__update_pyproject
     scripts__bump_version__main --> scripts__bump_version__update_changelog
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class restored_c2004_health__api_health__backend__site__src__main__updateActiveNav,restored_c2004_health__api_health__backend__site__src__main__runHealthCheck,restored_c2004_health__api_health__backend__site__src__main__renderSidebar,scripts__bump_version__categorize_commits medCC
+    class scripts__bump_version__categorize_commits medCC
