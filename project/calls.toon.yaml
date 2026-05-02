@@ -1,50 +1,52 @@
 # code2llm call graph | /home/tom/github/semcod/resplit
-# nodes: 31 | edges: 32 | modules: 5
-# CC̄=0.0
+# nodes: 42 | edges: 45 | modules: 7
+# CC̄=0.1
 
 HUBS[20]:
-  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-    CC=4  in:6  out:7  total:13
-  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-    CC=1  in:2  out:11  total:13
+  scripts.bump_version.main
+    CC=4  in:0  out:20  total:20
+  scripts.bump_version.categorize_commits
+    CC=14  in:1  out:15  total:16
+  scripts.bump_version.update_changelog
+    CC=5  in:1  out:14  total:15
+  scripts.bump_version.build_new_section
+    CC=7  in:1  out:14  total:15
   restored_c2004_health.api-health.backend.site.src.main.renderDownloads
     CC=4  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-    CC=11  in:1  out:10  total:11
+  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
+    CC=1  in:2  out:11  total:13
+  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
+    CC=4  in:6  out:7  total:13
+  examples.08-nlp-commands.README.print
+    CC=0  in:12  out:0  total:12
   restored_c2004_health.api-health.backend.site.src.main.renderDocs
     CC=6  in:2  out:9  total:11
+  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
+    CC=11  in:1  out:10  total:11
   restored_c2004_health.api-health.backend.site.src.main.handleRoute
     CC=7  in:0  out:10  total:10
+  scripts.bump_version.get_git_log_since_last_tag
+    CC=7  in:1  out:7  total:8
+  scripts.bump_version.bump
+    CC=5  in:1  out:7  total:8
   restored_c2004_health.api-health.backend.site.src.main.route
     CC=7  in:0  out:8  total:8
-  restored_c2004_health.api-health.backend.site.src.main.allServices
-    CC=2  in:0  out:5  total:5
+  scripts.bump_version.update_init
+    CC=3  in:1  out:6  total:7
+  scripts.bump_version.collect_unreleased_entries
+    CC=7  in:1  out:6  total:7
+  scripts.bump_version.update_pyproject
+    CC=3  in:1  out:6  total:7
+  scripts.bump_version.read_version
+    CC=2  in:2  out:4  total:6
   restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
     CC=10  in:1  out:4  total:5
-  restored_c2004_health.api-health.backend.site.src.main.summary
+  restored_c2004_health.api-health.backend.site.src.main.allServices
     CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.table
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.healthyEl
-    CC=2  in:0  out:5  total:5
-  restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-    CC=11  in:3  out:1  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
-    CC=4  in:1  out:3  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderHome
-    CC=1  in:2  out:2  total:4
-  restored_c2004_health.api-health.backend.site.src.main.renderServices
-    CC=1  in:2  out:2  total:4
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
-    CC=1  in:0  out:3  total:3
 
 MODULES:
+  examples.08-nlp-commands.README  [1 funcs]
+    print  CC=0  out:0
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
     index  CC=1  out:3
@@ -72,6 +74,17 @@ MODULES:
     renderDocs  CC=6  out:9
     renderDownloads  CC=4  out:11
     renderHome  CC=1  out:2
+  scripts.bump_version  [10 funcs]
+    build_new_section  CC=7  out:14
+    bump  CC=5  out:7
+    categorize_commits  CC=14  out:15
+    collect_unreleased_entries  CC=7  out:6
+    get_git_log_since_last_tag  CC=7  out:7
+    main  CC=4  out:20
+    read_version  CC=2  out:4
+    update_changelog  CC=5  out:14
+    update_init  CC=3  out:6
+    update_pyproject  CC=3  out:6
 
 EDGES:
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
@@ -106,3 +119,16 @@ EDGES:
   restored_c2004_health.api-health.backend.site.src.main.allServices → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
   restored_c2004_health.api-health.backend.site.src.main.renderDocs → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
   restored_c2004_health.api-health.backend.site.src.main.renderSidebar → restored_c2004_health.api-health.backend.site.src.main.esc
+  scripts.bump_version.update_init → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_pyproject → examples.08-nlp-commands.README.print
+  scripts.bump_version.build_new_section → scripts.bump_version.categorize_commits
+  scripts.bump_version.update_changelog → scripts.bump_version.get_git_log_since_last_tag
+  scripts.bump_version.update_changelog → scripts.bump_version.collect_unreleased_entries
+  scripts.bump_version.update_changelog → scripts.bump_version.build_new_section
+  scripts.bump_version.update_changelog → scripts.bump_version.read_version
+  scripts.bump_version.update_changelog → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → scripts.bump_version.read_version
+  scripts.bump_version.main → scripts.bump_version.bump
+  scripts.bump_version.main → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → scripts.bump_version.update_init
+  scripts.bump_version.main → scripts.bump_version.update_pyproject

@@ -72,68 +72,6 @@ flowchart TD
         examples__09_mvp_protocol__README__print["print"]
         examples__09_mvp_protocol__README__sendMVPCommand["sendMVPCommand"]
     end
-    subgraph project__map
-        project__map__toon__marked["marked"]
-        project__map__toon__manifest["manifest"]
-        project__map__toon__sidebar["sidebar"]
-        project__map__toon__content["content"]
-        project__map__toon__getRoute["getRoute"]
-        project__map__toon__hash["hash"]
-        project__map__toon__navigate["navigate"]
-        project__map__toon__handleRoute["handleRoute"]
-        project__map__toon__route["route"]
-        project__map__toon__docPath["docPath"]
-        project__map__toon__updateActiveNav["updateActiveNav"]
-        project__map__toon__page["page"]
-        project__map__toon__renderHome["renderHome"]
-        project__map__toon__renderDownloads["renderDownloads"]
-        project__map__toon__renderArchitecture["renderArchitecture"]
-        project__map__toon__renderServices["renderServices"]
-        project__map__toon__renderServicesGrid["renderServicesGrid"]
-        project__map__toon__grid["grid"]
-        project__map__toon__isActive["isActive"]
-        project__map__toon__coreClass["coreClass"]
-        project__map__toon__checkServiceHealth["checkServiceHealth"]
-        project__map__toon__start["start"]
-        project__map__toon__controller["controller"]
-        project__map__toon__timeout["timeout"]
-        project__map__toon__resp["resp"]
-        project__map__toon__time["time"]
-        project__map__toon__runHealthCheck["runHealthCheck"]
-        project__map__toon__summary["summary"]
-        project__map__toon__timeEl["timeEl"]
-        project__map__toon__healthyEl["healthyEl"]
-        project__map__toon__unhealthyEl["unhealthyEl"]
-        project__map__toon__table["table"]
-        project__map__toon__allServices["allServices"]
-        project__map__toon__health["health"]
-        project__map__toon__dot["dot"]
-        project__map__toon__healthy["healthy"]
-        project__map__toon__unhealthy["unhealthy"]
-        project__map__toon__degraded["degraded"]
-        project__map__toon__statusClass["statusClass"]
-        project__map__toon__statusText["statusText"]
-        project__map__toon__loadDockerStatus["loadDockerStatus"]
-        project__map__toon__container["container"]
-        project__map__toon__renderDocs["renderDocs"]
-        project__map__toon__res["res"]
-        project__map__toon__md["md"]
-        project__map__toon__html["html"]
-        project__map__toon__renderSidebar["renderSidebar"]
-        project__map__toon__esc["esc"]
-        project__map__toon__d["d"]
-        project__map__toon__get_manifest["get_manifest"]
-        project__map__toon__list_pages["list_pages"]
-        project__map__toon__serve_ui["serve_ui"]
-        project__map__toon__serve_model["serve_model"]
-        project__map__toon__list_models["list_models"]
-        project__map__toon___index_html["_index_html"]
-        project__map__toon__index["index"]
-        project__map__toon__module_index["module_index"]
-        project__map__toon__all["all"]
-        project__map__toon__generate_readme["generate_readme"]
-        project__map__toon__run_migration["run_migration"]
-    end
     subgraph restored_c2004_health__api_health
         restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__health["health"]
         restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__get_manifest["get_manifest"]
@@ -196,6 +134,18 @@ flowchart TD
         restored_c2004_health__api_health__backend__site__src__main__controller["controller"]
         restored_c2004_health__api_health__backend__site__src__main__timeout["timeout"]
     end
+    subgraph scripts__bump_version
+        scripts__bump_version__read_version["read_version"]
+        scripts__bump_version__bump["bump"]
+        scripts__bump_version__update_init["update_init"]
+        scripts__bump_version__update_pyproject["update_pyproject"]
+        scripts__bump_version__collect_unreleased_entries["collect_unreleased_entries"]
+        scripts__bump_version__get_git_log_since_last_tag["get_git_log_since_last_tag"]
+        scripts__bump_version__categorize_commits("categorize_commits CC=14")
+        scripts__bump_version__build_new_section["build_new_section"]
+        scripts__bump_version__update_changelog["update_changelog"]
+        scripts__bump_version__main["main"]
+    end
     subgraph testql_scenarios__generated_from_pytests
         testql_scenarios__generated_from_pytests__testql__toon__all["all"]
     end
@@ -231,7 +181,21 @@ flowchart TD
     restored_c2004_health__api_health__backend__site__src__main__allServices --> restored_c2004_health__api_health__backend__site__src__main__checkServiceHealth
     restored_c2004_health__api_health__backend__site__src__main__renderDocs --> restored_c2004_health__api_health__backend__site__src__main__renderSidebar
     restored_c2004_health__api_health__backend__site__src__main__renderSidebar --> restored_c2004_health__api_health__backend__site__src__main__esc
+    scripts__bump_version__update_init --> examples__08_nlp_commands__README__print
+    scripts__bump_version__update_pyproject --> examples__08_nlp_commands__README__print
+    scripts__bump_version__build_new_section --> scripts__bump_version__categorize_commits
+    scripts__bump_version__update_changelog --> scripts__bump_version__get_git_log_since_last_tag
+    scripts__bump_version__update_changelog --> scripts__bump_version__collect_unreleased_entries
+    scripts__bump_version__update_changelog --> scripts__bump_version__build_new_section
+    scripts__bump_version__update_changelog --> scripts__bump_version__read_version
+    scripts__bump_version__update_changelog --> examples__08_nlp_commands__README__print
+    scripts__bump_version__main --> scripts__bump_version__read_version
+    scripts__bump_version__main --> scripts__bump_version__bump
+    scripts__bump_version__main --> examples__08_nlp_commands__README__print
+    scripts__bump_version__main --> scripts__bump_version__update_init
+    scripts__bump_version__main --> scripts__bump_version__update_pyproject
+    scripts__bump_version__main --> scripts__bump_version__update_changelog
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class restored_c2004_health__api_health__backend__site__src__main__updateActiveNav,restored_c2004_health__api_health__backend__site__src__main__runHealthCheck,restored_c2004_health__api_health__backend__site__src__main__renderSidebar medCC
+    class restored_c2004_health__api_health__backend__site__src__main__updateActiveNav,restored_c2004_health__api_health__backend__site__src__main__runHealthCheck,restored_c2004_health__api_health__backend__site__src__main__renderSidebar,scripts__bump_version__categorize_commits medCC

@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.1.20] - 2026-05-02
+
+### Changed
+- refactoring
+- refactoring
+- refactoring
+- refactoring
+- refactoring
+
 ## [0.1.19] - 2026-05-01
 
 ### Docs
@@ -250,3 +259,4 @@
 
 ## [0.1.0] - 2026-04-15
 - Initial release as `rebuild` deployment tool.
+[0.1.20]: https://github.com/semcod/resplit/compare/v0.1.20...v0.1.20

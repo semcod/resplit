@@ -1,11 +1,11 @@
-# code2llm | 78f 340501L | md:21,yaml:17,txt:10,json:9,shell:8,python:4,yml:2,javascript:2,toml:1,dsl:1,backend:1 | 2026-05-01
-# CC̄=0.0 | critical:0/5546 | dups:0 | cycles:0
+# code2llm | 79f 347651L | md:21,yaml:17,txt:10,json:9,shell:8,python:5,yml:2,javascript:2,toml:1,dsl:1,backend:1 | 2026-05-02
+# CC̄=0.1 | critical:0/2828 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
 REFACTOR[0]: none needed
 
-PIPELINES[55]:
+PIPELINES[56]:
   [1] Src [health]: health
       PURITY: 100% pure
   [2] Src [get_manifest]: get_manifest
@@ -18,6 +18,9 @@ PIPELINES[55]:
       PURITY: 100% pure
 
 LAYERS:
+  scripts/                        CC̄=5.7    ←in:0  →out:12  !! split
+  │ bump_version               239L  0C   10m  CC=14     ←0
+  │
   restored_c2004_health/          CC̄=2.6    ←in:0  →out:0
   │ !! main.js                    704L  0C   49m  CC=11     ←0
   │ !! docker-compose.yml         507L  0C    0m  CC=0.0    ←0
@@ -30,29 +33,30 @@ LAYERS:
   │ Dockerfile.backend           0L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMD.md                  125099L  0C  2703m  CC=0.0    ←0
-  │ !! SUMR.md                  57671L  0C    0m  CC=0.0    ←0
-  │ !! infra-map.json            1373L  0C    0m  CC=0.0    ←0
+  │ !! SUMD.md                  186898L  0C  2727m  CC=0.0    ←0
+  │ !! SUMR.md                  72389L  0C    0m  CC=0.0    ←0
+  │ !! infra-map.json            1438L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md               262L  0C    0m  CC=0.0    ←0
   │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
-  │ CHANGELOG.md               183L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             104L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             106L  0C    0m  CC=0.0    ←0
+  │ TODO.md                    103L  0C    0m  CC=0.0    ←0
   │ README.md                   91L  0C    0m  CC=0.0    ←0
-  │ TODO.md                     73L  0C    0m  CC=0.0    ←0
   │ project.sh                  27L  0C    0m  CC=0.0    ←0
+  │ pyqual.yaml                 10L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
   │ Makefile                     0L  0C    0m  CC=0.0    ←0
   │
   docs/                           CC̄=0.0    ←in:0  →out:0
-  │ !! README.md                 3811L  0C    1m  CC=0.0    ←0
+  │ !! README.md                 3814L  0C    1m  CC=0.0    ←0
   │ c2004.md                   228L  0C    0m  CC=0.0    ←0
-  │ usage.md                    73L  0C    0m  CC=0.0    ←0
+  │ usage.md                   192L  0C    0m  CC=0.0    ←0
+  │ architecture.md            118L  0C    0m  CC=0.0    ←0
   │ case_study_c2004.md         56L  0C    0m  CC=0.0    ←0
-  │ architecture.md             45L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=0.0    ←in:0  →out:0
-  │ README.md                  239L  0C    3m  CC=0.0    ←0
-  │ README.md                  137L  0C    1m  CC=0.0    ←0
+  │ README.md                  240L  0C    3m  CC=0.0    ←0
+  │ README.md                  137L  0C    1m  CC=0.0    ←1
   │ README.md                   89L  0C    0m  CC=0.0    ←0
   │ README.md                   61L  0C    0m  CC=0.0    ←0
   │ README.md                   54L  0C    0m  CC=0.0    ←0
@@ -66,18 +70,6 @@ LAYERS:
   │ walk_dry_run.sh             13L  0C    0m  CC=0.0    ←0
   │ restore_endpoint.sh         13L  0C    0m  CC=0.0    ←0
   │ Makefile                     0L  0C    0m  CC=0.0    ←0
-  │
-  project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! map.toon.yaml            82036L  0C  2752m  CC=0.0    ←0
-  │ !! duplication.toon.yaml    56904L  0C    0m  CC=0.0    ←0
-  │ !! calls.yaml                5835L  0C    0m  CC=0.0    ←0
-  │ context.md                 342L  0C    0m  CC=0.0    ←0
-  │ README.md                  339L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml         118L  0C    0m  CC=0.0    ←0
-  │ calls.toon.yaml            108L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         54L  0C    0m  CC=0.0    ←0
-  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
   │
   testql-scenarios/               CC̄=0.0    ←in:0  →out:0
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←0
@@ -110,12 +102,29 @@ LAYERS:
   │ pytest-iter6.txt             3L  0C    0m  CC=0.0    ←0
   │ pytest-iter5.txt             3L  0C    0m  CC=0.0    ←0
   │
+  project/                        CC̄=0.0    ←in:0  →out:0
+  │ !! duplication.toon.yaml    71618L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                3161L  0C    0m  CC=0.0    ←0
+  │ context.md                 346L  0C    0m  CC=0.0    ←0
+  │ README.md                  339L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         122L  0C    0m  CC=0.0    ←0
+  │ calls.toon.yaml            108L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         54L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
+  │
   ── zero ──
      Makefile                                  0L
      examples/Makefile                         0L
      restored_c2004_health/api-health/docker/Dockerfile.backend  0L
 
-COUPLING: no cross-package imports detected
+COUPLING:
+                            examples.08-nlp-commands                   scripts
+  examples.08-nlp-commands                        ──                       ←12  hub
+                   scripts                        12                        ──  !! fan-out
+  CYCLES: none
+  HUB: examples.08-nlp-commands/ (fan-in=12)
+  SMELL: scripts/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

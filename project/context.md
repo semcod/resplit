@@ -6,24 +6,24 @@
 - **Primary Language**: md
 - **Languages**: md: 21, yaml: 17, txt: 10, json: 9, shell: 8
 - **Analysis Mode**: static
-- **Total Functions**: 5546
+- **Total Functions**: 2828
 - **Total Classes**: 0
-- **Modules**: 78
-- **Entry Points**: 5530
+- **Modules**: 79
+- **Entry Points**: 2802
 
 ## Architecture by Module
 
-### project.map.toon
-- **Functions**: 81869
-- **File**: `map.toon.yaml`
-
 ### SUMD
-- **Functions**: 40890
+- **Functions**: 61235
 - **File**: `SUMD.md`
 
 ### restored_c2004_health.api-health.backend.site.src.main
 - **Functions**: 52
 - **File**: `main.js`
+
+### scripts.bump_version
+- **Functions**: 10
+- **File**: `bump_version.py`
 
 ### restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
 - **Functions**: 9
@@ -60,6 +60,9 @@
 ## Key Entry Points
 
 Main execution flows into the system:
+
+### scripts.bump_version.main
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, scripts.bump_version.read_version, scripts.bump_version.bump, examples.08-nlp-commands.README.print
 
 ### restored_c2004_health.api-health.backend.site.src.main.handleRoute
 - **Calls**: restored_c2004_health.api-health.backend.site.src.main.getRoute, restored_c2004_health.api-health.backend.site.src.main.updateActiveNav, restored_c2004_health.api-health.backend.site.src.main.renderHome, restored_c2004_health.api-health.backend.site.src.main.renderSidebar, restored_c2004_health.api-health.backend.site.src.main.renderDownloads, restored_c2004_health.api-health.backend.site.src.main.renderArchitecture, restored_c2004_health.api-health.backend.site.src.main.renderServices, restored_c2004_health.api-health.backend.site.src.main.startsWith
@@ -148,21 +151,23 @@ Main execution flows into the system:
 ### restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index
 - **Calls**: app.get, HTMLResponse, restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
 
-### restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
-- **Calls**: app.get, HTMLResponse, restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
-
 ## Process Flows
 
 Key execution flows identified:
 
-### Flow 1: handleRoute
+### Flow 1: main
+```
+main [scripts.bump_version]
+```
+
+### Flow 2: handleRoute
 ```
 handleRoute [restored_c2004_health.api-health.backend.site.src.main]
   └─> getRoute
   └─> updateActiveNav
 ```
 
-### Flow 2: route
+### Flow 3: route
 ```
 route [restored_c2004_health.api-health.backend.site.src.main]
   └─> renderHome
@@ -170,34 +175,29 @@ route [restored_c2004_health.api-health.backend.site.src.main]
       └─> esc
 ```
 
-### Flow 3: serve_ui
+### Flow 4: serve_ui
 ```
 serve_ui [restored_c2004_health.api-health.backend.modules.connect-config-network.api.main]
 ```
 
-### Flow 4: serve_model
+### Flow 5: serve_model
 ```
 serve_model [restored_c2004_health.api-health.backend.modules.connect-config-network.api.main]
 ```
 
-### Flow 5: start
+### Flow 6: start
 ```
 start [restored_c2004_health.api-health.backend.site.src.main]
 ```
 
-### Flow 6: get_manifest
+### Flow 7: get_manifest
 ```
 get_manifest [restored_c2004_health.api-health.backend.modules.connect-config-network.api.main]
 ```
 
-### Flow 7: list_models
+### Flow 8: list_models
 ```
 list_models [restored_c2004_health.api-health.backend.modules.connect-config-network.api.main]
-```
-
-### Flow 8: summary
-```
-summary [restored_c2004_health.api-health.backend.site.src.main]
 ```
 
 ## Data Transformation Functions
@@ -258,6 +258,10 @@ Key functions that process and transform data:
 
 Functions exposed as public API (no underscore prefix):
 
+- `scripts.bump_version.main` - 20 calls
+- `scripts.bump_version.categorize_commits` - 15 calls
+- `scripts.bump_version.build_new_section` - 14 calls
+- `scripts.bump_version.update_changelog` - 14 calls
 - `restored_c2004_health.api-health.backend.site.src.main.renderDownloads` - 11 calls
 - `restored_c2004_health.api-health.backend.site.src.main.renderArchitecture` - 11 calls
 - `restored_c2004_health.api-health.backend.site.src.main.handleRoute` - 10 calls
@@ -274,6 +278,11 @@ Functions exposed as public API (no underscore prefix):
 - `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_model` - 7 calls
 - `restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth` - 7 calls
 - `restored_c2004_health.api-health.backend.site.src.main.start` - 7 calls
+- `scripts.bump_version.bump` - 7 calls
+- `scripts.bump_version.get_git_log_since_last_tag` - 7 calls
+- `scripts.bump_version.update_init` - 6 calls
+- `scripts.bump_version.update_pyproject` - 6 calls
+- `scripts.bump_version.collect_unreleased_entries` - 6 calls
 - `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.get_manifest` - 5 calls
 - `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.list_models` - 5 calls
 - `restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.get_manifest` - 5 calls
@@ -289,15 +298,6 @@ Functions exposed as public API (no underscore prefix):
 - `restored_c2004_health.api-health.backend.site.src.main.allServices` - 5 calls
 - `restored_c2004_health.api-health.backend.site.src.main.marked` - 4 calls
 - `restored_c2004_health.api-health.backend.site.src.main.updateActiveNav` - 4 calls
-- `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index` - 3 calls
-- `restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index` - 3 calls
-- `restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index` - 3 calls
-- `restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index` - 3 calls
-- `restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index` - 3 calls
-- `restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index` - 3 calls
-- `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index` - 3 calls
-- `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index` - 3 calls
-- `restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid` - 3 calls
 
 ## System Interactions
 
@@ -305,6 +305,9 @@ How components interact:
 
 ```mermaid
 graph TD
+    main --> ArgumentParser
+    main --> add_argument
+    main --> parse_args
     handleRoute --> getRoute
     handleRoute --> updateActiveNav
     handleRoute --> renderHome
@@ -332,9 +335,6 @@ graph TD
     start --> clearTimeout
     get_manifest --> get
     get_manifest --> PlainTextResponse
-    get_manifest --> exists
-    get_manifest --> HTTPException
-    get_manifest --> read_text
 ```
 
 ## Reverse Engineering Guidelines

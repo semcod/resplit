@@ -85,19 +85,19 @@
 ## Phase 16: Production Release
 
 ### 🔴 Krytyczne
-- [ ] **PyPI Package**: Publikacja `rebuild` na PyPI z poprawnymi metadata i `python_requires`
-- [ ] **CI/CD Pipeline**: GitHub Actions — testy, linting (`ruff`), coverage gate ≥60%, publish on tag
-- [ ] **Semantic Versioning**: Automatyczny bump z `CHANGELOG.md` przy każdym merge
+- [x] **PyPI Package**: Publikacja `rebuild` na PyPI z poprawnymi metadata i `python_requires` — build+twine PASSED v0.1.20
+- [x] **CI/CD Pipeline**: GitHub Actions — testy, linting (`ruff`), coverage gate ≥70%, publish on tag
+- [x] **Semantic Versioning**: Automatyczny bump z `CHANGELOG.md` przy każdym merge — `scripts/bump_version.py`
 
 ### 🟠 Wysokie
-- [ ] **Docker Image**: Oficjalny obraz `ghcr.io/semcod/rebuild:latest` z CLI i Playwright
+- [x] **Docker Image**: Oficjalny obraz `ghcr.io/semcod/rebuild:latest` z CLI i Playwright — Dockerfile + .github/workflows/docker.yml
 - [ ] **Config Validation**: `pydantic`-based validation dla `rebuild.yaml` z czytelnym komunikatem błędu
 - [ ] **Plugin System**: Extensible scanners i reporters przez entry points
 - [ ] **Documentation Site**: MkDocs z Material theme — hosted na GitHub Pages
 
 ### 🟡 Średnie
 - [ ] **TUI Full Features**: Nawigacja klawiaturą, live log view, endpoint browser
-- [ ] **Export Formats**: CSV, Markdown summary raport
+- [x] **Export Formats**: CSV, Markdown summary raport
 - [ ] **Notification Hooks**: Webhook (Slack/Discord) przy deploy fail lub health regresji
 - [ ] **Snapshot Management**: LRU cache dla DB snapshotów — auto-prune starych
-- [ ] **Test Coverage ≥70%**: Kolejny milestone po aktualnym 60%
+- [x] **Test Coverage ≥70%**: Kolejny milestone po aktualnym 60% — osiągnięto 71%

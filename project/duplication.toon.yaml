@@ -1,12 +1,12 @@
-# redup/duplication | 3123 groups | 13850f 1740955L | 2026-05-01
+# redup/duplication | 3122 groups | 13872f 1741440L | 2026-05-02
 
 SUMMARY:
-  files_scanned: 13850
-  total_lines:   1740955
-  dup_groups:    3123
-  dup_fragments: 59021
-  saved_lines:   1010223
-  scan_ms:       126159
+  files_scanned: 13872
+  total_lines:   1741440
+  dup_groups:    3122
+  dup_fragments: 59020
+  saved_lines:   1010224
+  scan_ms:       123936
 
 HOTSPOTS[7] (files with most duplication):
   .rebuild/c2004/repo_clone/.rebuild/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)
@@ -17,7 +17,7 @@ HOTSPOTS[7] (files with most duplication):
   .rebuild_c2004_1d_realtime_live/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)
   .rebuild_c2004_1d_replay_guard/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)
 
-DUPLICATES[3123] (ranked by impact):
+DUPLICATES[3122] (ranked by impact):
   [ee82fd60aa4d2cc2] !! STRU  generate_llm_prompts  L=127 N=32 saved=3937 sim=1.00
       .rebuild/c2004/repo_clone/.rebuild/repo/scripts/archive/refaktoryzacja/23_final_report.py:154-280  (generate_llm_prompts)
       .rebuild/c2004/repo_clone/.rebuild/repo/scripts/archive/refaktoryzacja/23_final_report.py:282-317  (generate_verification_checklist)
@@ -62109,6 +62109,10 @@ DUPLICATES[3123] (ranked by impact):
       .rebuild/c2004/repo_clone/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
       .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
       .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
+  [93a1c1ad1b73076e]   STRU  services  L=7 N=3 saved=14 sim=1.00
+      rebuild/interfaces/cli.py:431-437  (services)
+      rebuild/interfaces/cli.py:456-462  (plan)
+      rebuild/interfaces/cli.py:475-481  (execute)
   [b8c71827db6c113b]   EXAC  hardware_proxy_info  L=5 N=3 saved=10 sim=1.00
       .rebuild/c2004/results/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
       .rebuild/c2004/results_new/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
@@ -62116,9 +62120,6 @@ DUPLICATES[3123] (ranked by impact):
   [8d970f6b56d0f822]   EXAC  _cosine_similarity  L=10 N=2 saved=10 sim=1.00
       rebuild/analysis/duplication_engine.py:193-202  (_cosine_similarity)
       rebuild/analysis/vector_search.py:206-215  (_cosine_similarity)
-  [255654bc7e3c4dd1]   EXAC  _load_state  L=9 N=2 saved=9 sim=1.00
-      rebuild/application/accelerated_pipeline.py:114-122  (_load_state)
-      rebuild/application/pipeline.py:50-57  (_load_state)
   [c5d8baa57f575044]   EXAC  GetCustomer  L=3 N=3 saved=6 sim=1.00
       .rebuild/c2004/repo_clone/.swop/generated/services/connect-data/server.py:44-46  (GetCustomer)
       .rebuild/c2004/results/repo/.swop/generated/services/connect-data/server.py:44-46  (GetCustomer)
@@ -62159,11 +62160,8 @@ DUPLICATES[3123] (ranked by impact):
       .rebuild/c2004/repo_clone/.swop/generated/services/connect-scenario/server.py:46-48  (ListScenarios)
       .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py:46-48  (ListScenarios)
       .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py:46-48  (ListScenarios)
-  [4b74b06d21c108c4]   EXAC  log  L=4 N=2 saved=4 sim=1.00
-      rebuild/application/accelerated_pipeline.py:143-146  (log)
-      rebuild/application/pipeline.py:94-96  (log)
 
-REFACTOR[3123] (ranked by priority):
+REFACTOR[3122] (ranked by priority):
   [1] ◐ extract_module     → utils/generate_llm_prompts.py
       WHY: 32 occurrences of 127-line block across 16 files — saves 3937 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/scripts/archive/refaktoryzacja/23_final_report.py, .rebuild/c2004/repo_clone/scripts/archive/refaktoryzacja/23_final_report.py, .rebuild/c2004/results/repo/scripts/archive/refaktoryzacja/23_final_report.py, .rebuild/c2004/results_new/repo/scripts/archive/refaktoryzacja/23_final_report.py, .rebuild_c2004_1d_fullreal_probe/repo/scripts/archive/refaktoryzacja/23_final_report.py +11 more
@@ -71491,15 +71489,15 @@ REFACTOR[3123] (ranked by priority):
   [3109] ○ extract_class      → .rebuild/c2004/utils/CreateTestScenario.py
       WHY: 3 occurrences of 9-line block across 3 files — saves 18 lines
       FILES: .rebuild/c2004/repo_clone/.swop/generated/services/connect-scenario/server.py, .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py, .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py
-  [3110] ○ extract_function   → utils/hardware_proxy_info.py
+  [3110] ○ extract_function   → rebuild/interfaces/utils/services.py
+      WHY: 3 occurrences of 7-line block across 1 files — saves 14 lines
+      FILES: rebuild/interfaces/cli.py
+  [3111] ○ extract_function   → utils/hardware_proxy_info.py
       WHY: 3 occurrences of 5-line block across 3 files — saves 10 lines
       FILES: .rebuild/c2004/results/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py, .rebuild/c2004/results_new/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py, .rebuild_c2004_7d/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py
-  [3111] ○ extract_function   → rebuild/analysis/utils/_cosine_similarity.py
+  [3112] ○ extract_function   → rebuild/analysis/utils/_cosine_similarity.py
       WHY: 2 occurrences of 10-line block across 2 files — saves 10 lines
       FILES: rebuild/analysis/duplication_engine.py, rebuild/analysis/vector_search.py
-  [3112] ○ extract_function   → rebuild/application/utils/_load_state.py
-      WHY: 2 occurrences of 9-line block across 2 files — saves 9 lines
-      FILES: rebuild/application/accelerated_pipeline.py, rebuild/application/pipeline.py
   [3113] ○ extract_class      → .rebuild/c2004/utils/GetCustomer.py
       WHY: 3 occurrences of 3-line block across 3 files — saves 6 lines
       FILES: .rebuild/c2004/repo_clone/.swop/generated/services/connect-data/server.py, .rebuild/c2004/results/repo/.swop/generated/services/connect-data/server.py, .rebuild/c2004/results_new/repo/.swop/generated/services/connect-data/server.py
@@ -71530,9 +71528,6 @@ REFACTOR[3123] (ranked by priority):
   [3122] ○ extract_class      → .rebuild/c2004/utils/ListScenarios.py
       WHY: 3 occurrences of 3-line block across 3 files — saves 6 lines
       FILES: .rebuild/c2004/repo_clone/.swop/generated/services/connect-scenario/server.py, .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py, .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py
-  [3123] ○ extract_function   → rebuild/application/utils/log.py
-      WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
-      FILES: rebuild/application/accelerated_pipeline.py, rebuild/application/pipeline.py
 
 QUICK_WINS[31] (low risk, high savings — do first):
   [1482] extract_function   saved=232L  → .rebuild/c2004/utils/main.py
@@ -71611,8 +71606,8 @@ EFFORT_ESTIMATE (total ≈ 82793.6h):
   hard   _step2_create_tables                saved=2550L  ~15300min
   hard   main                                saved=2520L  ~15120min
   hard   convert_dsl_syntax                  saved=2505L  ~15030min
-  ... +3113 more (~4790256min)
+  ... +3112 more (~4790258min)
 
 METRICS-TARGET:
-  dup_groups:  3123 → 0
-  saved_lines: 1010223 lines recoverable
+  dup_groups:  3122 → 0
+  saved_lines: 1010224 lines recoverable
