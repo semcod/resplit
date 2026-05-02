@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class DomainEvent(BaseModel):
@@ -23,12 +23,11 @@ class DomainEvent(BaseModel):
     )
     version: int = 1
 
+    model_config = ConfigDict(frozen=True)
+
     def model_post_init(self, __context: Any) -> None:
         if not self.event_type:
             object.__setattr__(self, "event_type", type(self).__name__)
-
-    class Config:
-        frozen = True
 
     def to_dict(self) -> Dict[str, Any]:
         return self.model_dump()

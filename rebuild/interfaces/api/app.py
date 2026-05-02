@@ -28,6 +28,14 @@ from typing import Any, AsyncGenerator, Dict, Optional
 from pydantic import BaseModel
 
 
+class DSLRequest(BaseModel):
+    dsl: str
+
+
+class NLPRequest(BaseModel):
+    text: str
+
+
 def create_app(
     command_bus=None,
     query_bus=None,
@@ -101,33 +109,35 @@ def create_app(
         result = _command_bus.dispatch(cmd)
         return result.model_dump()
 
-    class DSLRequest(BaseModel):
-        dsl: str
-
-    class NLPRequest(BaseModel):
-        text: str
+    from fastapi import Body as _Body
 
     @app.post("/commands/dsl", tags=["commands"])
-    async def cmd_dsl(req: DSLRequest) -> Dict[str, Any]:
+    async def cmd_dsl(req: DSLRequest = _Body(...)) -> Dict[str, Any]:
         """Parse a DSL string and dispatch the resulting command."""
         parser = DSLParser()
-        cmd = parser.to_cqrs_command(req.dsl)
+        try:
+            cmd = parser.to_cqrs_command(req.dsl)
+        except Exception as exc:
+            return {"error": str(exc), "dsl": req.dsl, "success": False, "command_id": ""}
         if cmd is None:
-            return {"error": "Could not parse DSL", "dsl": req.dsl}
+            return {"error": "Non-command DSL (query verb)", "dsl": req.dsl, "success": False, "command_id": ""}
         result = _command_bus.dispatch(cmd)
         return result.model_dump()
 
     @app.post("/commands/nlp", tags=["commands"])
-    async def cmd_nlp(req: NLPRequest) -> Dict[str, Any]:
+    async def cmd_nlp(req: NLPRequest = _Body(...)) -> Dict[str, Any]:
         """Map natural language to DSL, then dispatch the command."""
         mapper = NLPMapper()
         dsl_str = mapper.to_dsl(req.text)
         if not dsl_str:
-            return {"error": "Could not interpret request", "text": req.text}
+            return {"error": "Could not interpret request", "text": req.text, "success": False, "command_id": ""}
         parser = DSLParser()
-        cmd = parser.to_cqrs_command(dsl_str)
+        try:
+            cmd = parser.to_cqrs_command(dsl_str)
+        except Exception as exc:
+            return {"error": str(exc), "dsl": dsl_str, "success": False, "command_id": ""}
         if cmd is None:
-            return {"error": "DSL parse failed", "dsl": dsl_str}
+            return {"error": "Non-command DSL", "dsl": dsl_str, "success": False, "command_id": ""}
         result = _command_bus.dispatch(cmd)
         return {**result.model_dump(), "dsl": dsl_str}
 

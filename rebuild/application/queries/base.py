@@ -8,19 +8,18 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from typing import Dict, Generic, List, Optional, Type, TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Query(BaseModel):
     """Base class for all CQRS queries (read side)."""
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     query_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     issued_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class QueryResult(BaseModel):

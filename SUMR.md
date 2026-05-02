@@ -389,7 +389,7 @@ pfix>=0.1.60
 
 ## Call Graph
 
-*42 nodes · 45 edges · 7 modules · CC̄=0.1*
+*23 nodes · 21 edges · 6 modules · CC̄=0.0*
 
 ### Hubs (by degree)
 
@@ -397,62 +397,62 @@ pfix>=0.1.60
 |----------|----|----|-----|-------|
 | `main` *(in scripts.bump_version)* | 4 | 0 | 20 | **20** |
 | `categorize_commits` *(in scripts.bump_version)* | 14 ⚠ | 1 | 15 | **16** |
-| `update_changelog` *(in scripts.bump_version)* | 5 | 1 | 14 | **15** |
 | `build_new_section` *(in scripts.bump_version)* | 7 | 1 | 14 | **15** |
-| `renderDownloads` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 2 | 11 | **13** |
-| `renderArchitecture` *(in restored_c2004_health.api-health.backend.site.src.main)* | 1 | 2 | 11 | **13** |
-| `checkServiceHealth` *(in restored_c2004_health.api-health.backend.site.src.main)* | 4 | 6 | 7 | **13** |
-| `print` *(in examples.08-nlp-commands.README)* | 0 | 12 | 0 | **12** |
+| `update_changelog` *(in scripts.bump_version)* | 5 | 1 | 14 | **15** |
+| `print` *(in Makefile)* | 0 | 12 | 0 | **12** |
+| `bump` *(in scripts.bump_version)* | 5 | 1 | 7 | **8** |
+| `get_git_log_since_last_tag` *(in scripts.bump_version)* | 7 | 1 | 7 | **8** |
+| `update_pyproject` *(in scripts.bump_version)* | 3 | 1 | 6 | **7** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/resplit
-# nodes: 42 | edges: 45 | modules: 7
-# CC̄=0.1
+# nodes: 23 | edges: 21 | modules: 6
+# CC̄=0.0
 
 HUBS[20]:
   scripts.bump_version.main
     CC=4  in:0  out:20  total:20
   scripts.bump_version.categorize_commits
     CC=14  in:1  out:15  total:16
-  scripts.bump_version.update_changelog
-    CC=5  in:1  out:14  total:15
   scripts.bump_version.build_new_section
     CC=7  in:1  out:14  total:15
-  restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-    CC=4  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-    CC=1  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-    CC=4  in:6  out:7  total:13
-  examples.08-nlp-commands.README.print
+  scripts.bump_version.update_changelog
+    CC=5  in:1  out:14  total:15
+  Makefile.print
     CC=0  in:12  out:0  total:12
-  restored_c2004_health.api-health.backend.site.src.main.renderDocs
-    CC=6  in:2  out:9  total:11
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-    CC=11  in:1  out:10  total:11
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute
-    CC=7  in:0  out:10  total:10
-  scripts.bump_version.get_git_log_since_last_tag
-    CC=7  in:1  out:7  total:8
   scripts.bump_version.bump
     CC=5  in:1  out:7  total:8
-  restored_c2004_health.api-health.backend.site.src.main.route
-    CC=7  in:0  out:8  total:8
+  scripts.bump_version.get_git_log_since_last_tag
+    CC=7  in:1  out:7  total:8
+  scripts.bump_version.update_pyproject
+    CC=3  in:1  out:6  total:7
   scripts.bump_version.update_init
     CC=3  in:1  out:6  total:7
   scripts.bump_version.collect_unreleased_entries
     CC=7  in:1  out:6  total:7
-  scripts.bump_version.update_pyproject
-    CC=3  in:1  out:6  total:7
   scripts.bump_version.read_version
     CC=2  in:2  out:4  total:6
-  restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
-    CC=10  in:1  out:4  total:5
-  restored_c2004_health.api-health.backend.site.src.main.allServices
-    CC=2  in:0  out:5  total:5
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index
+    CC=1  in:0  out:3  total:3
 
 MODULES:
-  examples.08-nlp-commands.README  [1 funcs]
+  Makefile  [1 funcs]
     print  CC=0  out:0
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
@@ -470,17 +470,6 @@ MODULES:
     _index_html  CC=2  out:1
     index  CC=1  out:3
     module_index  CC=1  out:3
-  restored_c2004_health.api-health.backend.site.src.main  [19 funcs]
-    allServices  CC=2  out:5
-    checkServiceHealth  CC=4  out:7
-    esc  CC=1  out:1
-    getRoute  CC=2  out:1
-    handleRoute  CC=7  out:10
-    healthyEl  CC=2  out:5
-    renderArchitecture  CC=1  out:11
-    renderDocs  CC=6  out:9
-    renderDownloads  CC=4  out:11
-    renderHome  CC=1  out:2
   scripts.bump_version  [10 funcs]
     build_new_section  CC=7  out:14
     bump  CC=5  out:7
@@ -502,41 +491,17 @@ EDGES:
   restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.getRoute
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderHome
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderServices
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderHome
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderServices
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  restored_c2004_health.api-health.backend.site.src.main.renderServices → restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-  restored_c2004_health.api-health.backend.site.src.main.renderServices → restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.summary → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.healthyEl → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.table → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.allServices → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.renderDocs → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  restored_c2004_health.api-health.backend.site.src.main.renderSidebar → restored_c2004_health.api-health.backend.site.src.main.esc
-  scripts.bump_version.update_init → examples.08-nlp-commands.README.print
-  scripts.bump_version.update_pyproject → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_init → Makefile.print
+  scripts.bump_version.update_pyproject → Makefile.print
   scripts.bump_version.build_new_section → scripts.bump_version.categorize_commits
   scripts.bump_version.update_changelog → scripts.bump_version.get_git_log_since_last_tag
   scripts.bump_version.update_changelog → scripts.bump_version.collect_unreleased_entries
   scripts.bump_version.update_changelog → scripts.bump_version.build_new_section
   scripts.bump_version.update_changelog → scripts.bump_version.read_version
-  scripts.bump_version.update_changelog → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_changelog → Makefile.print
   scripts.bump_version.main → scripts.bump_version.read_version
   scripts.bump_version.main → scripts.bump_version.bump
-  scripts.bump_version.main → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → Makefile.print
   scripts.bump_version.main → scripts.bump_version.update_init
   scripts.bump_version.main → scripts.bump_version.update_pyproject
 ```
@@ -561,53 +526,53 @@ EDGES:
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/resplit
-# nodes: 42 | edges: 45 | modules: 7
-# CC̄=0.1
+# nodes: 23 | edges: 21 | modules: 6
+# CC̄=0.0
 
 HUBS[20]:
   scripts.bump_version.main
     CC=4  in:0  out:20  total:20
   scripts.bump_version.categorize_commits
     CC=14  in:1  out:15  total:16
-  scripts.bump_version.update_changelog
-    CC=5  in:1  out:14  total:15
   scripts.bump_version.build_new_section
     CC=7  in:1  out:14  total:15
-  restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-    CC=4  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-    CC=1  in:2  out:11  total:13
-  restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-    CC=4  in:6  out:7  total:13
-  examples.08-nlp-commands.README.print
+  scripts.bump_version.update_changelog
+    CC=5  in:1  out:14  total:15
+  Makefile.print
     CC=0  in:12  out:0  total:12
-  restored_c2004_health.api-health.backend.site.src.main.renderDocs
-    CC=6  in:2  out:9  total:11
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-    CC=11  in:1  out:10  total:11
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute
-    CC=7  in:0  out:10  total:10
-  scripts.bump_version.get_git_log_since_last_tag
-    CC=7  in:1  out:7  total:8
   scripts.bump_version.bump
     CC=5  in:1  out:7  total:8
-  restored_c2004_health.api-health.backend.site.src.main.route
-    CC=7  in:0  out:8  total:8
+  scripts.bump_version.get_git_log_since_last_tag
+    CC=7  in:1  out:7  total:8
+  scripts.bump_version.update_pyproject
+    CC=3  in:1  out:6  total:7
   scripts.bump_version.update_init
     CC=3  in:1  out:6  total:7
   scripts.bump_version.collect_unreleased_entries
     CC=7  in:1  out:6  total:7
-  scripts.bump_version.update_pyproject
-    CC=3  in:1  out:6  total:7
   scripts.bump_version.read_version
     CC=2  in:2  out:4  total:6
-  restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
-    CC=10  in:1  out:4  total:5
-  restored_c2004_health.api-health.backend.site.src.main.allServices
-    CC=2  in:0  out:5  total:5
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+    CC=2  in:2  out:1  total:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index
+    CC=1  in:0  out:3  total:3
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index
+    CC=1  in:0  out:3  total:3
 
 MODULES:
-  examples.08-nlp-commands.README  [1 funcs]
+  Makefile  [1 funcs]
     print  CC=0  out:0
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
@@ -625,17 +590,6 @@ MODULES:
     _index_html  CC=2  out:1
     index  CC=1  out:3
     module_index  CC=1  out:3
-  restored_c2004_health.api-health.backend.site.src.main  [19 funcs]
-    allServices  CC=2  out:5
-    checkServiceHealth  CC=4  out:7
-    esc  CC=1  out:1
-    getRoute  CC=2  out:1
-    handleRoute  CC=7  out:10
-    healthyEl  CC=2  out:5
-    renderArchitecture  CC=1  out:11
-    renderDocs  CC=6  out:9
-    renderDownloads  CC=4  out:11
-    renderHome  CC=1  out:2
   scripts.bump_version  [10 funcs]
     build_new_section  CC=7  out:14
     bump  CC=5  out:7
@@ -657,41 +611,17 @@ EDGES:
   restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.getRoute
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.updateActiveNav
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderHome
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderServices
-  restored_c2004_health.api-health.backend.site.src.main.handleRoute → restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderHome
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderDownloads
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderArchitecture
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderServices
-  restored_c2004_health.api-health.backend.site.src.main.route → restored_c2004_health.api-health.backend.site.src.main.renderDocs
-  restored_c2004_health.api-health.backend.site.src.main.renderServices → restored_c2004_health.api-health.backend.site.src.main.runHealthCheck
-  restored_c2004_health.api-health.backend.site.src.main.renderServices → restored_c2004_health.api-health.backend.site.src.main.renderServicesGrid
-  restored_c2004_health.api-health.backend.site.src.main.runHealthCheck → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.summary → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.healthyEl → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.unhealthyEl → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.table → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.allServices → restored_c2004_health.api-health.backend.site.src.main.checkServiceHealth
-  restored_c2004_health.api-health.backend.site.src.main.renderDocs → restored_c2004_health.api-health.backend.site.src.main.renderSidebar
-  restored_c2004_health.api-health.backend.site.src.main.renderSidebar → restored_c2004_health.api-health.backend.site.src.main.esc
-  scripts.bump_version.update_init → examples.08-nlp-commands.README.print
-  scripts.bump_version.update_pyproject → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_init → Makefile.print
+  scripts.bump_version.update_pyproject → Makefile.print
   scripts.bump_version.build_new_section → scripts.bump_version.categorize_commits
   scripts.bump_version.update_changelog → scripts.bump_version.get_git_log_since_last_tag
   scripts.bump_version.update_changelog → scripts.bump_version.collect_unreleased_entries
   scripts.bump_version.update_changelog → scripts.bump_version.build_new_section
   scripts.bump_version.update_changelog → scripts.bump_version.read_version
-  scripts.bump_version.update_changelog → examples.08-nlp-commands.README.print
+  scripts.bump_version.update_changelog → Makefile.print
   scripts.bump_version.main → scripts.bump_version.read_version
   scripts.bump_version.main → scripts.bump_version.bump
-  scripts.bump_version.main → examples.08-nlp-commands.README.print
+  scripts.bump_version.main → Makefile.print
   scripts.bump_version.main → scripts.bump_version.update_init
   scripts.bump_version.main → scripts.bump_version.update_pyproject
 ```
@@ -699,14 +629,14 @@ EDGES:
 ### Code Analysis (`project/analysis.toon.yaml`)
 
 ```toon markpact:analysis path=project/analysis.toon.yaml
-# code2llm | 79f 347651L | md:21,yaml:17,txt:10,json:9,shell:8,python:5,yml:2,javascript:2,toml:1,dsl:1,backend:1 | 2026-05-02
-# CC̄=0.1 | critical:0/2828 | dups:0 | cycles:0
+# code2llm | 91f 347029L | md:33,yaml:17,txt:10,json:9,shell:8,python:5,yml:3,dsl:1,backend:1,toml:1 | 2026-05-02
+# CC̄=0.0 | critical:0/3250 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
 REFACTOR[0]: none needed
 
-PIPELINES[56]:
+PIPELINES[33]:
   [1] Src [health]: health
       PURITY: 100% pure
   [2] Src [get_manifest]: get_manifest
@@ -722,42 +652,35 @@ LAYERS:
   scripts/                        CC̄=5.7    ←in:0  →out:12  !! split
   │ bump_version               239L  0C   10m  CC=14     ←0
   │
-  restored_c2004_health/          CC̄=2.6    ←in:0  →out:0
-  │ !! main.js                    704L  0C   49m  CC=11     ←0
+  restored_c2004_health/          CC̄=2.3    ←in:0  →out:0
   │ !! docker-compose.yml         507L  0C    0m  CC=0.0    ←0
   │ main                        91L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ README.md                   45L  0C    0m  CC=0.0    ←0
-  │ vite.config.js              29L  0C    0m  CC=0.0    ←0
   │ Dockerfile.backend           0L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMD.md                  186898L  0C  2727m  CC=0.0    ←0
-  │ !! SUMR.md                  72389L  0C    0m  CC=0.0    ←0
+  │ !! SUMD.md                  187596L  0C  3193m  CC=0.0    ←0
+  │ !! SUMR.md                  72514L  0C    0m  CC=0.0    ←0
   │ !! infra-map.json            1438L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
   │ CHANGELOG.md               262L  0C    0m  CC=0.0    ←0
   │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             106L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             110L  0C    0m  CC=0.0    ←0
   │ TODO.md                    103L  0C    0m  CC=0.0    ←0
   │ README.md                   91L  0C    0m  CC=0.0    ←0
+  │ mkdocs.yml                  80L  0C    0m  CC=0.0    ←0
   │ project.sh                  27L  0C    0m  CC=0.0    ←0
   │ pyqual.yaml                 10L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
-  │ Makefile                     0L  0C    0m  CC=0.0    ←0
-  │
-  docs/                           CC̄=0.0    ←in:0  →out:0
-  │ !! README.md                 3814L  0C    1m  CC=0.0    ←0
-  │ c2004.md                   228L  0C    0m  CC=0.0    ←0
-  │ usage.md                   192L  0C    0m  CC=0.0    ←0
-  │ architecture.md            118L  0C    0m  CC=0.0    ←0
-  │ case_study_c2004.md         56L  0C    0m  CC=0.0    ←0
+  │ Makefile                     0L  0C    1m  CC=0.0    ←1
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=0.0    ←in:0  →out:0
   │ README.md                  240L  0C    3m  CC=0.0    ←0
-  │ README.md                  137L  0C    1m  CC=0.0    ←1
+  │ README.md                  137L  0C    1m  CC=0.0    ←0
   │ README.md                   89L  0C    0m  CC=0.0    ←0
   │ README.md                   61L  0C    0m  CC=0.0    ←0
   │ README.md                   54L  0C    0m  CC=0.0    ←0
@@ -775,6 +698,25 @@ LAYERS:
   testql-scenarios/               CC̄=0.0    ←in:0  →out:0
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←0
   │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
+  │
+  docs/                           CC̄=0.0    ←in:0  →out:0
+  │ !! README.md                 2110L  0C    1m  CC=0.0    ←0
+  │ c2004.md                   228L  0C    0m  CC=0.0    ←0
+  │ usage.md                   192L  0C    0m  CC=0.0    ←0
+  │ cli.md                     147L  0C    0m  CC=0.0    ←0
+  │ architecture.md            118L  0C    0m  CC=0.0    ←0
+  │ plugins.md                  86L  2C    3m  CC=0.0    ←0
+  │ configuration.md            77L  0C    1m  CC=0.0    ←0
+  │ config.md                   72L  0C    0m  CC=0.0    ←0
+  │ index.md                    68L  0C    0m  CC=0.0    ←0
+  │ quickstart.md               61L  0C    0m  CC=0.0    ←0
+  │ walk.md                     58L  0C    0m  CC=0.0    ←0
+  │ case_study_c2004.md         56L  0C    0m  CC=0.0    ←0
+  │ analyze.md                  48L  0C    0m  CC=0.0    ←0
+  │ installation.md             47L  0C    0m  CC=0.0    ←0
+  │ auto-pr.md                  46L  0C    0m  CC=0.0    ←0
+  │ refactor.md                 27L  0C    0m  CC=0.0    ←0
+  │ changelog.md                 5L  0C    0m  CC=0.0    ←0
   │
   c2004/                          CC̄=0.0    ←in:0  →out:0
   │ !! topology.json              588L  0C    0m  CC=0.0    ←0
@@ -804,27 +746,28 @@ LAYERS:
   │ pytest-iter5.txt             3L  0C    0m  CC=0.0    ←0
   │
   project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! duplication.toon.yaml    71618L  0C    0m  CC=0.0    ←0
-  │ !! calls.yaml                3161L  0C    0m  CC=0.0    ←0
-  │ context.md                 346L  0C    0m  CC=0.0    ←0
+  │ !! duplication.toon.yaml    71613L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                3290L  0C    0m  CC=0.0    ←0
+  │ context.md                 350L  0C    0m  CC=0.0    ←0
   │ README.md                  339L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml         122L  0C    0m  CC=0.0    ←0
-  │ calls.toon.yaml            108L  0C    0m  CC=0.0    ←0
+  │ calls.toon.yaml            134L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         131L  0C    0m  CC=0.0    ←0
   │ evolution.toon.yaml         54L  0C    0m  CC=0.0    ←0
   │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           44L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           47L  0C    0m  CC=0.0    ←0
   │
   ── zero ──
+     Dockerfile                                0L
      Makefile                                  0L
      examples/Makefile                         0L
      restored_c2004_health/api-health/docker/Dockerfile.backend  0L
 
 COUPLING:
-                            examples.08-nlp-commands                   scripts
-  examples.08-nlp-commands                        ──                       ←12  hub
-                   scripts                        12                        ──  !! fan-out
+            Makefile   scripts
+  Makefile        ──       ←12  hub
+   scripts        12        ──  !! fan-out
   CYCLES: none
-  HUB: examples.08-nlp-commands/ (fan-in=12)
+  HUB: Makefile/ (fan-in=12)
   SMELL: scripts/ fan-out=12 → split needed
 
 EXTERNAL:
@@ -835,15 +778,15 @@ EXTERNAL:
 ### Duplication (`project/duplication.toon.yaml`)
 
 ```toon markpact:analysis path=project/duplication.toon.yaml
-# redup/duplication | 3122 groups | 13872f 1741440L | 2026-05-02
+# redup/duplication | 3122 groups | 13877f 1742190L | 2026-05-02
 
 SUMMARY:
-  files_scanned: 13872
-  total_lines:   1741440
+  files_scanned: 13877
+  total_lines:   1742190
   dup_groups:    3122
-  dup_fragments: 59020
-  saved_lines:   1010224
-  scan_ms:       149717
+  dup_fragments: 59021
+  saved_lines:   1010228
+  scan_ms:       126932
 
 HOTSPOTS[7] (files with most duplication):
   .rebuild/c2004/repo_clone/.rebuild/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)
@@ -56784,6 +56727,24 @@ DUPLICATES[3122] (ranked by impact):
       .rebuild/c2004/results_new/repo/.swop/generated/services/connect-data/publisher.py:83-90  (__init__)
       .rebuild/c2004/results_new/repo/.swop/generated/services/connect-id/publisher.py:83-90  (__init__)
       .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/publisher.py:83-90  (__init__)
+  [860d8e60e53e8508] ! STRU  clear_schema_cache  L=4 N=17 saved=64 sim=1.00
+      .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild/c2004/repo_clone/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild/c2004/results/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild/c2004/results_new/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_1d_fullreal_probe/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_1d_realtime_live/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_1d_replay_guard/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_1d_replay_overlay/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_1d_replay_recreate/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_1d_replay_recreate_v2/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_3d_replay_real_fix/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_7d/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_7d_fresh/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_7d_real/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      .rebuild_c2004_7d_replay_real/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      c2004/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
+      rebuild/plugins/registry.py:147-150  (reset_registry)
   [062abe55133df759] ! EXAC  __init__  L=4 N=16 saved=60 sim=1.00
       .rebuild/c2004/repo_clone/.rebuild/repo/_archive/backend/scripts/generate_typescript_types.py:43-46  (__init__)
       .rebuild/c2004/repo_clone/_archive/backend/scripts/generate_typescript_types.py:43-46  (__init__)
@@ -57277,23 +57238,6 @@ DUPLICATES[3122] (ranked by impact):
       .rebuild_c2004_7d_real/repo/backend/api/routes/v1/endpoints/data_helpers.py:272-275  (text_search)
       .rebuild_c2004_7d_replay_real/repo/backend/api/routes/v1/endpoints/data_helpers.py:272-275  (text_search)
       c2004/repo/backend/api/routes/v1/endpoints/data_helpers.py:272-275  (text_search)
-  [6d8e76018fb7bd3d] ! EXAC  clear_schema_cache  L=4 N=16 saved=60 sim=1.00
-      .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild/c2004/repo_clone/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild/c2004/results/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild/c2004/results_new/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_1d_fullreal_probe/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_1d_realtime_live/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_1d_replay_guard/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_1d_replay_overlay/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_1d_replay_recreate/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_1d_replay_recreate_v2/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_3d_replay_real_fix/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_7d/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_7d_fresh/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_7d_real/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      .rebuild_c2004_7d_replay_real/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
-      c2004/repo/backend/api/routes/v1/endpoints/schema_helpers.py:146-149  (clear_schema_cache)
   [11831e5186d9b131] ! EXAC  delete_activity  L=4 N=16 saved=60 sim=1.00
       .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v3/activities.py:100-103  (delete_activity)
       .rebuild/c2004/repo_clone/backend/api/routes/v3/activities.py:100-103  (delete_activity)
@@ -71213,96 +71157,96 @@ REFACTOR[3122] (ranked by priority):
   [2738] ○ extract_class      → .rebuild/c2004/utils/__init__.py
       WHY: 9 occurrences of 8-line block across 9 files — saves 64 lines
       FILES: .rebuild/c2004/repo_clone/.swop/generated/services/connect-data/publisher.py, .rebuild/c2004/repo_clone/.swop/generated/services/connect-id/publisher.py, .rebuild/c2004/repo_clone/.swop/generated/services/connect-scenario/publisher.py, .rebuild/c2004/results/repo/.swop/generated/services/connect-data/publisher.py, .rebuild/c2004/results/repo/.swop/generated/services/connect-id/publisher.py +4 more
-  [2739] ● extract_class      → utils/__init__.py
+  [2739] ● extract_function   → utils/clear_schema_cache.py
+      WHY: 17 occurrences of 4-line block across 17 files — saves 64 lines
+      FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v1/endpoints/schema_helpers.py, .rebuild/c2004/repo_clone/backend/api/routes/v1/endpoints/schema_helpers.py, .rebuild/c2004/results/repo/backend/api/routes/v1/endpoints/schema_helpers.py, .rebuild/c2004/results_new/repo/backend/api/routes/v1/endpoints/schema_helpers.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/api/routes/v1/endpoints/schema_helpers.py +12 more
+  [2740] ● extract_class      → utils/__init__.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/_archive/backend/scripts/generate_typescript_types.py, .rebuild/c2004/repo_clone/_archive/backend/scripts/generate_typescript_types.py, .rebuild/c2004/results/repo/_archive/backend/scripts/generate_typescript_types.py, .rebuild/c2004/results_new/repo/_archive/backend/scripts/generate_typescript_types.py, .rebuild_c2004_1d_fullreal_probe/repo/_archive/backend/scripts/generate_typescript_types.py +11 more
-  [2740] ● extract_class      → utils/snake_to_camel.py
+  [2741] ● extract_class      → utils/snake_to_camel.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/_archive/backend/scripts/generate_typescript_types.py, .rebuild/c2004/repo_clone/_archive/backend/scripts/generate_typescript_types.py, .rebuild/c2004/results/repo/_archive/backend/scripts/generate_typescript_types.py, .rebuild/c2004/results_new/repo/_archive/backend/scripts/generate_typescript_types.py, .rebuild_c2004_1d_fullreal_probe/repo/_archive/backend/scripts/generate_typescript_types.py +11 more
-  [2741] ● extract_class      → utils/__init__.py
+  [2742] ● extract_class      → utils/__init__.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/_archive/dsl/firmware_adapter.py, .rebuild/c2004/repo_clone/_archive/dsl/firmware_adapter.py, .rebuild/c2004/results/repo/_archive/dsl/firmware_adapter.py, .rebuild/c2004/results_new/repo/_archive/dsl/firmware_adapter.py, .rebuild_c2004_1d_fullreal_probe/repo/_archive/dsl/firmware_adapter.py +11 more
-  [2742] ● extract_class      → utils/close.py
+  [2743] ● extract_class      → utils/close.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/_archive/dsl/firmware_adapter.py, .rebuild/c2004/repo_clone/_archive/dsl/firmware_adapter.py, .rebuild/c2004/results/repo/_archive/dsl/firmware_adapter.py, .rebuild/c2004/results_new/repo/_archive/dsl/firmware_adapter.py, .rebuild_c2004_1d_fullreal_probe/repo/_archive/dsl/firmware_adapter.py +11 more
-  [2743] ● extract_class      → utils/_resolve_peripheral.py
+  [2744] ● extract_class      → utils/_resolve_peripheral.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/_archive/dsl/firmware_adapter.py, .rebuild/c2004/repo_clone/_archive/dsl/firmware_adapter.py, .rebuild/c2004/results/repo/_archive/dsl/firmware_adapter.py, .rebuild/c2004/results_new/repo/_archive/dsl/firmware_adapter.py, .rebuild_c2004_1d_fullreal_probe/repo/_archive/dsl/firmware_adapter.py +11 more
-  [2744] ● extract_class      → utils/reset_peripherals.py
+  [2745] ● extract_class      → utils/reset_peripherals.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/_archive/dsl/firmware_adapter.py, .rebuild/c2004/repo_clone/_archive/dsl/firmware_adapter.py, .rebuild/c2004/results/repo/_archive/dsl/firmware_adapter.py, .rebuild/c2004/results_new/repo/_archive/dsl/firmware_adapter.py, .rebuild_c2004_1d_fullreal_probe/repo/_archive/dsl/firmware_adapter.py +11 more
-  [2745] ● extract_function   → utils/slow_function.py
+  [2746] ● extract_function   → utils/slow_function.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/archive/scripts/performance_demo.py, .rebuild/c2004/repo_clone/archive/scripts/performance_demo.py, .rebuild/c2004/results/repo/archive/scripts/performance_demo.py, .rebuild/c2004/results_new/repo/archive/scripts/performance_demo.py, .rebuild_c2004_1d_fullreal_probe/repo/archive/scripts/performance_demo.py +11 more
-  [2746] ● extract_function   → utils/async_slow_function.py
+  [2747] ● extract_function   → utils/async_slow_function.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/archive/scripts/performance_demo.py, .rebuild/c2004/repo_clone/archive/scripts/performance_demo.py, .rebuild/c2004/results/repo/archive/scripts/performance_demo.py, .rebuild/c2004/results_new/repo/archive/scripts/performance_demo.py, .rebuild_c2004_1d_fullreal_probe/repo/archive/scripts/performance_demo.py +11 more
-  [2747] ● extract_function   → utils/export_performance.py
+  [2748] ● extract_function   → utils/export_performance.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/archive/scripts/performance_monitor.py, .rebuild/c2004/repo_clone/archive/scripts/performance_monitor.py, .rebuild/c2004/results/repo/archive/scripts/performance_monitor.py, .rebuild/c2004/results_new/repo/archive/scripts/performance_monitor.py, .rebuild_c2004_1d_fullreal_probe/repo/archive/scripts/performance_monitor.py +11 more
-  [2748] ● extract_function   → utils/_get_applied.py
+  [2749] ● extract_function   → utils/_get_applied.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/seeds/seed_runner.py, .rebuild/c2004/repo_clone/backend/alembic/main/seeds/seed_runner.py, .rebuild/c2004/results/repo/backend/alembic/main/seeds/seed_runner.py, .rebuild/c2004/results_new/repo/backend/alembic/main/seeds/seed_runner.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/seeds/seed_runner.py +11 more
-  [2749] ● extract_function   → utils/_seed_scenario_data.py
+  [2750] ● extract_function   → utils/_seed_scenario_data.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c10_backfill_01.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c10_backfill_01.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c10_backfill_01.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c10_backfill_01.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c10_backfill_01.py +11 more
-  [2750] ● extract_function   → utils/_collect_operation_ids.py
+  [2751] ● extract_function   → utils/_collect_operation_ids.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c10_backfill_01.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c10_backfill_01.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c10_backfill_01.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c10_backfill_01.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c10_backfill_01.py +11 more
-  [2751] ● extract_function   → utils/_build_scenario_row.py
+  [2752] ● extract_function   → utils/_build_scenario_row.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c10_backfill_01.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c10_backfill_01.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c10_backfill_01.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c10_backfill_01.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c10_backfill_01.py +11 more
-  [2752] ● extract_function   → utils/_collect_transaction_ids.py
+  [2753] ● extract_function   → utils/_collect_transaction_ids.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c10_seed_from_xml.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c10_seed_from_xml.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c10_seed_from_xml.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c10_seed_from_xml.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c10_seed_from_xml.py +11 more
-  [2753] ● extract_function   → utils/_extract_transaction_ids.py
+  [2754] ● extract_function   → utils/_extract_transaction_ids.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c10_seed_workshop_from_xml.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml.py +11 more
-  [2754] ● extract_function   → utils/_extract_operation_ids.py
+  [2755] ● extract_function   → utils/_extract_operation_ids.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c10_seed_workshop_from_xml.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml.py +11 more
-  [2755] ● extract_function   → utils/_insert_customer.py
+  [2756] ● extract_function   → utils/_insert_customer.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py +11 more
-  [2756] ● extract_function   → utils/_insert_workshop.py
+  [2757] ● extract_function   → utils/_insert_workshop.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c10_seed_workshop_from_xml_fixpath.py +11 more
-  [2757] ● extract_function   → utils/_process_steps.py
+  [2758] ● extract_function   → utils/_process_steps.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py +11 more
-  [2758] ● extract_function   → utils/_process_tasks.py
+  [2759] ● extract_function   → utils/_process_tasks.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c16_seed_dsl_object_functions_from_scenarios.py +11 more
-  [2759] ● extract_function   → utils/downgrade.py
+  [2760] ● extract_function   → utils/downgrade.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c27_create_protocols_structure.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c27_create_protocols_structure.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c27_create_protocols_structure.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c27_create_protocols_structure.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c27_create_protocols_structure.py +11 more
-  [2760] ● extract_function   → utils/_load_objects.py
+  [2761] ● extract_function   → utils/_load_objects.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py +11 more
-  [2761] ● extract_function   → utils/_load_functions.py
+  [2762] ● extract_function   → utils/_load_functions.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py +11 more
-  [2762] ● extract_function   → utils/_load_params.py
+  [2763] ● extract_function   → utils/_load_params.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py +11 more
-  [2763] ● extract_function   → utils/_load_units.py
+  [2764] ● extract_function   → utils/_load_units.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c41_migrate_dsl_tables_to_def.py +11 more
-  [2764] ● extract_function   → utils/downgrade.py
+  [2765] ● extract_function   → utils/downgrade.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/alembic/main/versions/c43_add_template_json_data.py, .rebuild/c2004/repo_clone/backend/alembic/main/versions/c43_add_template_json_data.py, .rebuild/c2004/results/repo/backend/alembic/main/versions/c43_add_template_json_data.py, .rebuild/c2004/results_new/repo/backend/alembic/main/versions/c43_add_template_json_data.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/alembic/main/versions/c43_add_template_json_data.py +11 more
-  [2765] ● extract_function   → utils/logout.py
+  [2766] ● extract_function   → utils/logout.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v1/endpoints/auth.py, .rebuild/c2004/repo_clone/backend/api/routes/v1/endpoints/auth.py, .rebuild/c2004/results/repo/backend/api/routes/v1/endpoints/auth.py, .rebuild/c2004/results_new/repo/backend/api/routes/v1/endpoints/auth.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/api/routes/v1/endpoints/auth.py +11 more
-  [2766] ● extract_function   → utils/remap_reserved_columns.py
+  [2767] ● extract_function   → utils/remap_reserved_columns.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v1/endpoints/data_helpers.py, .rebuild/c2004/repo_clone/backend/api/routes/v1/endpoints/data_helpers.py, .rebuild/c2004/results/repo/backend/api/routes/v1/endpoints/data_helpers.py, .rebuild/c2004/results_new/repo/backend/api/routes/v1/endpoints/data_helpers.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/api/routes/v1/endpoints/data_helpers.py +11 more
-  [2767] ● extract_function   → utils/text_search.py
+  [2768] ● extract_function   → utils/text_search.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v1/endpoints/data_helpers.py, .rebuild/c2004/repo_clone/backend/api/routes/v1/endpoints/data_helpers.py, .rebuild/c2004/results/repo/backend/api/routes/v1/endpoints/data_helpers.py, .rebuild/c2004/results_new/repo/backend/api/routes/v1/endpoints/data_helpers.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/api/routes/v1/endpoints/data_helpers.py +11 more
-  [2768] ● extract_function   → utils/clear_schema_cache.py
-      WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
-      FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v1/endpoints/schema_helpers.py, .rebuild/c2004/repo_clone/backend/api/routes/v1/endpoints/schema_helpers.py, .rebuild/c2004/results/repo/backend/api/routes/v1/endpoints/schema_helpers.py, .rebuild/c2004/results_new/repo/backend/api/routes/v1/endpoints/schema_helpers.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/api/routes/v1/endpoints/schema_helpers.py +11 more
   [2769] ● extract_function   → utils/delete_activity.py
       WHY: 16 occurrences of 4-line block across 16 files — saves 60 lines
       FILES: .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v3/activities.py, .rebuild/c2004/repo_clone/backend/api/routes/v3/activities.py, .rebuild/c2004/results/repo/backend/api/routes/v3/activities.py, .rebuild/c2004/results_new/repo/backend/api/routes/v3/activities.py, .rebuild_c2004_1d_fullreal_probe/repo/backend/api/routes/v3/activities.py +11 more
@@ -72413,6 +72357,12 @@ DEPENDENCY_RISK[3093] (duplicates spanning multiple packages):
       .rebuild/c2004/repo_clone/.rebuild/repo/modules/connect-manager-library/api/main.py
       .rebuild/c2004/repo_clone/.rebuild/repo/modules/connect-reports-month/api/main.py
       +64 more
+  clear_schema_cache  packages=14  files=17
+      .rebuild/c2004/repo_clone/.rebuild/repo/backend/api/routes/v1/endpoints/schema_helpers.py
+      .rebuild/c2004/repo_clone/backend/api/routes/v1/endpoints/schema_helpers.py
+      .rebuild/c2004/results/repo/backend/api/routes/v1/endpoints/schema_helpers.py
+      .rebuild/c2004/results_new/repo/backend/api/routes/v1/endpoints/schema_helpers.py
+      +13 more
   generate_llm_prompts  packages=13  files=16
       .rebuild/c2004/repo_clone/.rebuild/repo/scripts/archive/refaktoryzacja/23_final_report.py
       .rebuild/c2004/repo_clone/scripts/archive/refaktoryzacja/23_final_report.py
@@ -72425,14 +72375,8 @@ DEPENDENCY_RISK[3093] (duplicates spanning multiple packages):
       .rebuild/c2004/repo_clone/backend/app/services/dsl/dsl_db_sync.py
       .rebuild/c2004/repo_clone/connect-devtools/backend/dsl/dsl_db_sync.py
       +28 more
-  define_menu_models  packages=13  files=16
-      .rebuild/c2004/repo_clone/.rebuild/repo/packages/backend-shared-py/src/shared/menu_models.py
-      .rebuild/c2004/repo_clone/packages/backend-shared-py/src/shared/menu_models.py
-      .rebuild/c2004/results/repo/packages/backend-shared-py/src/shared/menu_models.py
-      .rebuild/c2004/results_new/repo/packages/backend-shared-py/src/shared/menu_models.py
-      +12 more
 
-EFFORT_ESTIMATE (total ≈ 82793.6h):
+EFFORT_ESTIMATE (total ≈ 82793.9h):
   hard   generate_llm_prompts                saved=3937L  ~23622min
   hard   _sync_base_entities                 saved=3534L  ~21204min
   hard   define_menu_models                  saved=2985L  ~17910min
@@ -72443,17 +72387,17 @@ EFFORT_ESTIMATE (total ≈ 82793.6h):
   hard   _step2_create_tables                saved=2550L  ~15300min
   hard   main                                saved=2520L  ~15120min
   hard   convert_dsl_syntax                  saved=2505L  ~15030min
-  ... +3112 more (~4790258min)
+  ... +3112 more (~4790274min)
 
 METRICS-TARGET:
   dup_groups:  3122 → 0
-  saved_lines: 1010224 lines recoverable
+  saved_lines: 1010228 lines recoverable
 ```
 
 ### Evolution / Churn (`project/evolution.toon.yaml`)
 
 ```toon markpact:analysis path=project/evolution.toon.yaml
-# code2llm/evolution | 2814 func | 8f | 2026-05-02
+# code2llm/evolution | 3236 func | 10f | 2026-05-02
 
 NEXT[3] (ranked by impact):
   [1] !! SPLIT           .rebuild_c2004_1d_replay_recreate_v2/repo/connect-scenario/cql-backend/cql_backend/parser.py
@@ -72475,9 +72419,9 @@ RISKS[3]:
   ⚠ Splitting .rebuild_c2004_1d_replay_overlay/repo/connect-scenario/cql-backend/cql_backend/parser.py may break 0 import paths
 
 METRICS-TARGET:
-  CC̄:          0.1 → ≤0.1
-  max-CC:      11 → ≤5
-  god-modules: 213 → 0
+  CC̄:          0.0 → ≤0.0
+  max-CC:      5 → ≤2
+  god-modules: 214 → 0
   high-CC(≥15): 0 → ≤0
   hub-types:   0 → ≤0
 
@@ -72506,7 +72450,7 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=0.1 → now CC̄=0.1
+  prev CC̄=0.1 → now CC̄=0.0
 ```
 
 ## Intent

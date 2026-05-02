@@ -8,23 +8,24 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Command(BaseModel):
     """Base class for all CQRS commands (write side)."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     command_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     issued_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
 
-    class Config:
-        arbitrary_types_allowed = True
-
 
 class CommandResult(BaseModel):
     """Base class for all command results."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     command_id: str
     success: bool

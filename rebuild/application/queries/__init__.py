@@ -4,6 +4,7 @@ from .walk_queries import (
     GetWalkHistoryQuery, WalkHistoryResult,
     GetDayResultQuery, DayResultQueryResult,
     GetSnapshotStatsQuery, SnapshotStatsResult,
+    GetPluginsQuery, PluginsQueryResult,
 )
 
 __all__ = [
@@ -11,4 +12,5 @@ __all__ = [
     "GetWalkHistoryQuery", "WalkHistoryResult",
     "GetDayResultQuery", "DayResultQueryResult",
     "GetSnapshotStatsQuery", "SnapshotStatsResult",
+    "GetPluginsQuery", "PluginsQueryResult",
 ]

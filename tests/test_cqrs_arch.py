@@ -96,6 +96,7 @@ class TestWalkCommand:
 
     def test_notifications_default_empty(self, tmp_path):
         from rebuild.application.commands.walk_commands import WalkCommand
+        (tmp_path / ".git").mkdir()
         cmd = WalkCommand(repo=str(tmp_path))
         assert cmd.notifications == []
 
@@ -503,6 +504,7 @@ class TestDSLParser:
             self._parser().parse("   ")
 
     def test_to_cqrs_walk_command(self, tmp_path):
+        (tmp_path / ".git").mkdir()
         from rebuild.application.commands.walk_commands import WalkCommand
         cmd = self._parser().to_cqrs_command(f"walk repo:{tmp_path} days:3 deploy:none")
         assert isinstance(cmd, WalkCommand)
@@ -525,11 +527,11 @@ class TestDSLParser:
         assert isinstance(cmd, PruneSnapshotsCommand)
         assert cmd.keep == 2
 
-    def test_plugins_returns_none(self):
+    def test_plugins_returns_none(self, tmp_path):
         cmd = self._parser().to_cqrs_command("plugins")
         assert cmd is None
 
-    def test_history_returns_none(self):
+    def test_history_returns_none(self, tmp_path):
         cmd = self._parser().to_cqrs_command("history dir:.rebuild")
         assert cmd is None
 
@@ -546,7 +548,7 @@ class TestDSLParser:
 
     def test_validation_error_on_bad_days(self):
         from rebuild.domain.dsl_v2 import DSLParseError
-        with pytest.raises(DSLParseError, match="Validation"):
+        with pytest.raises(DSLParseError, match="DSL validation error"):
             self._parser().parse("walk repo:/app days:-1")
 
 
@@ -569,7 +571,7 @@ class TestNLPMapper:
 
     def test_english_no_deploy(self):
         result = self._nlp().to_dsl("walk /app for the last 5 days without deploying")
-        assert "deploy:none" in result or "none" in result
+        assert "none" in result
 
     def test_english_dry_run(self):
         result = self._nlp().to_dsl("walk /app dry-run")
@@ -608,6 +610,7 @@ class TestNLPMapper:
 
 class TestDSLShell:
     def test_process_line_walk(self, tmp_path):
+        (tmp_path / ".git").mkdir()
         from rebuild.domain.dsl_v2 import DSLShell
         from rebuild.application.commands.walk_commands import WalkCommand
         shell = DSLShell(nlp=False)
@@ -628,6 +631,7 @@ class TestDSLShell:
         assert cmd is None
 
     def test_shell_dispatches_to_bus(self, tmp_path):
+        (tmp_path / ".git").mkdir()
         from rebuild.domain.dsl_v2 import DSLShell
         from rebuild.application.commands.base import CommandBus, CommandResult
         from rebuild.application.commands.walk_commands import WalkCommand, WalkCommandResult
@@ -717,7 +721,8 @@ class TestAPISmoke:
         except ImportError:
             pytest.skip("fastapi not installed")
 
-        from rebuild.application.commands.base import CommandBus, CommandResult
+        (tmp_path / ".git").mkdir()
+        from rebuild.application.commands.base import CommandBus
         from rebuild.application.commands.walk_commands import WalkCommand, WalkCommandResult
 
         class FakeWalkHandler:
@@ -744,6 +749,7 @@ class TestAPISmoke:
         except ImportError:
             pytest.skip("fastapi not installed")
 
+        (tmp_path / ".git").mkdir()
         from rebuild.application.commands.base import CommandBus
         from rebuild.application.commands.walk_commands import WalkCommand, WalkCommandResult
 
