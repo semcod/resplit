@@ -123,6 +123,10 @@ def walk_command(
         console.print(f"\n[bold green]✓ Gotowe![/bold green]")
         from ..dashboard import generate_dashboard
         generate_dashboard(all_results, config.output_dir, repo=repo)
+        from ...application.services.reporting.reporter import ReporterService
+        reporter = ReporterService()
+        reporter.export_csv(all_results, config.output_dir)
+        reporter.export_markdown(all_results, config.output_dir)
         from .helpers import print_report_links, print_summary_table, serve_reports
         print_report_links(config.output_dir, port if serve else None, console)
         print_summary_table(all_results, console)

@@ -271,3 +271,78 @@ def test_save_timeline_index_flags_endpoint_count_warning(tmp_path):
     warn_row = next(x for x in history_data if x["day"] == "2024-03-15")
     assert warn_row["endpoint_count_warning"] is True
     assert warn_row["endpoint_count_trend"].startswith("⚠")
+
+
+# ──────────────────────────────────────────────
+# export_csv / export_markdown
+# ──────────────────────────────────────────────
+
+def _two_days(tmp_path: Path):
+    ep = _ep()
+    ok = EndpointResult(endpoint=ep, status=EndpointStatus.OK)
+    d1_dir = tmp_path / "2024-03-14"
+    d2_dir = tmp_path / "2024-03-15"
+    d1_dir.mkdir(parents=True)
+    d2_dir.mkdir(parents=True)
+    d1 = DayResult(
+        day=date(2024, 3, 14),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep, ep],
+        endpoint_results=[ok, ok],
+        output_dir=d1_dir,
+        duration_seconds=1.5,
+    )
+    d2 = DayResult(
+        day=date(2024, 3, 15),
+        commit=None,
+        deploy_method=DeployMethod.NONE,
+        deploy_success=True,
+        endpoints=[ep],
+        endpoint_results=[ok],
+        output_dir=d2_dir,
+        duration_seconds=2.0,
+    )
+    return d1, d2
+
+
+def test_export_csv_creates_file(tmp_path):
+    d1, d2 = _two_days(tmp_path)
+    svc = ReporterService()
+    dest = svc.export_csv([d1, d2], tmp_path)
+    assert dest.exists()
+    content = dest.read_text()
+    assert "day" in content
+    assert "2024-03-14" in content
+    assert "2024-03-15" in content
+
+
+def test_export_csv_has_header_and_rows(tmp_path):
+    import csv, io
+    d1, d2 = _two_days(tmp_path)
+    svc = ReporterService()
+    dest = svc.export_csv([d1, d2], tmp_path)
+    reader = list(csv.DictReader(io.StringIO(dest.read_text())))
+    assert len(reader) == 2
+    assert "health_pct" in reader[0]
+    assert "deploy_success" in reader[0]
+
+
+def test_export_markdown_creates_file(tmp_path):
+    d1, d2 = _two_days(tmp_path)
+    svc = ReporterService()
+    dest = svc.export_markdown([d1, d2], tmp_path)
+    assert dest.exists()
+    content = dest.read_text()
+    assert "# rebuild walk summary" in content
+    assert "2024-03-14" in content
+    assert "| Day |" in content
+
+
+def test_export_markdown_table_rows(tmp_path):
+    d1, d2 = _two_days(tmp_path)
+    svc = ReporterService()
+    dest = svc.export_markdown([d1, d2], tmp_path)
+    lines = [l for l in dest.read_text().splitlines() if l.startswith("|")]
+    assert len(lines) >= 4  # header + separator + 2 data rows

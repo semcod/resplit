@@ -68,7 +68,7 @@
 ### 🔴 Krytyczne
 - [ ] **c2004 npm ci fix**: Napraw `identification-frontend` Dockerfile — `npm ci` failuje przez brak `package-lock.json` lub niekompatybilne zależności. Zablokowane: `--deploy docker-compose` nie może zakończyć buildu.
 - [ ] **c2004 Walk z --deploy none**: Uruchomić pełny `rebuild walk` c2004 z `--deploy none` (stack już działa) i zmapować 444 endpointów historycznie przez 30 dni.
-- [ ] **Config Validation**: JSON Schema dla `rebuild.yaml` z walidacją przy starcie — lepsze komunikaty błędów zamiast traceback.
+- [x] **Config Validation**: JSON Schema dla `rebuild.yaml` z walidacją przy starcie — lepsze komunikaty błędów zamiast traceback.
 
 ### 🟠 Wysokie
 - [x] **Walk Result Regression Guard**: Automatyczny test regresji — jeśli `health_%` spada o >20% vs poprzedni dzień, flag to w raporcie.
