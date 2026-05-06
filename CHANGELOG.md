@@ -2,6 +2,29 @@
 
 ## [Unreleased]
 
+## [0.1.23] - 2026-05-06
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update docs/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Other
+- Update .gitignore
+- Update VERSION
+- Update app.doql.less
+- Update project.sh
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- Update project/duplication.toon.yaml
+- ... and 26 more files
+
 ## [0.1.22] - 2026-05-02
 
 ### Changed

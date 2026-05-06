@@ -137,3 +137,13 @@ if TEXTUAL_OK:
         def action_filter(self) -> None:
             # TODO: Implement filter dialog for endpoints
             pass
+else:
+    class EndpointDetailScreen:
+        """Fallback export used when Textual is not installed."""
+
+        BINDINGS = []
+
+        def __init__(self, day_data: dict, prev_data: Optional[dict], show_diff: bool = False) -> None:
+            self._day = day_data
+            self._prev = prev_data
+            self._show_diff = show_diff

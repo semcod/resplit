@@ -2,7 +2,7 @@ from __future__ import annotations
 import ast
 import hashlib
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, List, Dict, Set, Optional
 
@@ -98,16 +98,26 @@ class DuplicationEngine:
         if encoder is None:
             return []
 
-        candidates = [f for f in fragments if id(f) not in seen_frags]
+        candidates = self._semantic_candidates(fragments, seen_frags)
         if len(candidates) < 2:
             return []
 
-        if len(candidates) > self.semantic_max_fragments:
-            candidates = candidates[: self.semantic_max_fragments]
+        embeddings = self._encode_semantic_candidates(encoder, candidates)
+        if embeddings is None:
+            return []
 
-        texts = [self._semantic_text(f) for f in candidates]
+        return self._semantic_duplicate_groups(candidates, embeddings, seen_frags)
+
+    def _semantic_candidates(
+        self, fragments: List[CodeFragment], seen_frags: Set[int]
+    ) -> List[CodeFragment]:
+        candidates = [fragment for fragment in fragments if id(fragment) not in seen_frags]
+        return candidates[: self.semantic_max_fragments]
+
+    def _encode_semantic_candidates(self, encoder, candidates: List[CodeFragment]):
+        texts = [self._semantic_text(fragment) for fragment in candidates]
         try:
-            embeddings = encoder.encode(
+            return encoder.encode(
                 texts,
                 convert_to_numpy=True,
                 normalize_embeddings=True,
@@ -115,39 +125,67 @@ class DuplicationEngine:
             )
         except Exception as exc:
             self.semantic_warning = f"embedding encode failed: {exc}"
-            return []
+            return None
 
+    def _semantic_duplicate_groups(
+        self,
+        candidates: List[CodeFragment],
+        embeddings: Any,
+        seen_frags: Set[int],
+    ) -> List[DuplicateGroup]:
         groups: List[DuplicateGroup] = []
         used_indices: Set[int] = set()
         for i in range(len(candidates)):
             if i in used_indices:
                 continue
 
-            members = [i]
-            for j in range(i + 1, len(candidates)):
-                if j in used_indices:
-                    continue
-                similarity = self._cosine_similarity(embeddings[i], embeddings[j])
-                if similarity >= self.semantic_threshold:
-                    members.append(j)
-
+            members = self._semantic_group_members(i, candidates, embeddings, used_indices)
             if len(members) < 2:
                 continue
 
-            used_indices.update(members)
-            grouped = [candidates[idx] for idx in members]
-            seen_frags.update(id(f) for f in grouped)
-            average_similarity = self._average_group_similarity(embeddings, members)
-            groups.append(
-                DuplicateGroup(
-                    fragments=grouped,
-                    similarity=average_similarity,
-                    representative_hash=self._semantic_group_hash(grouped),
-                    reason=f"Semantic embedding match ({self.semantic_model_name})",
-                )
-            )
+            groups.append(self._build_semantic_group(candidates, embeddings, members))
+            self._mark_semantic_group_seen(candidates, members, used_indices, seen_frags)
 
         return groups
+
+    def _semantic_group_members(
+        self,
+        start_index: int,
+        candidates: List[CodeFragment],
+        embeddings: Any,
+        used_indices: Set[int],
+    ) -> List[int]:
+        members = [start_index]
+        for candidate_index in range(start_index + 1, len(candidates)):
+            if candidate_index in used_indices:
+                continue
+            similarity = self._cosine_similarity(
+                embeddings[start_index], embeddings[candidate_index]
+            )
+            if similarity >= self.semantic_threshold:
+                members.append(candidate_index)
+        return members
+
+    def _build_semantic_group(
+        self, candidates: List[CodeFragment], embeddings: Any, members: List[int]
+    ) -> DuplicateGroup:
+        grouped = [candidates[index] for index in members]
+        return DuplicateGroup(
+            fragments=grouped,
+            similarity=self._average_group_similarity(embeddings, members),
+            representative_hash=self._semantic_group_hash(grouped),
+            reason=f"Semantic embedding match ({self.semantic_model_name})",
+        )
+
+    def _mark_semantic_group_seen(
+        self,
+        candidates: List[CodeFragment],
+        members: List[int],
+        used_indices: Set[int],
+        seen_frags: Set[int],
+    ) -> None:
+        used_indices.update(members)
+        seen_frags.update(id(candidates[index]) for index in members)
 
     def _get_semantic_encoder(self):
         if self._semantic_model is not None:
@@ -255,7 +293,8 @@ class DuplicationEngine:
             brace_count = 0
             end_pos = -1
             for i in range(start_pos, len(content)):
-                if content[i] == '{': brace_count += 1
+                if content[i] == '{':
+                    brace_count += 1
                 elif content[i] == '}':
                     brace_count -= 1
                     if brace_count == 0:

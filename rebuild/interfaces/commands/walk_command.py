@@ -37,22 +37,76 @@ def walk_command(
 ) -> None:
     repo = repo.resolve()
     output = output.resolve()
+    _ensure_git_repo(repo, console)
+
+    method = _resolve_deploy_method(repo, deploy, dry_run)
+    config = _build_walk_config(
+        repo, output, days, date_from, date_to, method, health_url, base_url,
+        screenshots, dry_run, replay, service, accelerator, patch_dir, health_timeout,
+    )
+    _load_yaml_config(config, repo, console)
+    _apply_cli_overrides(
+        config,
+        cli_overrides or {},
+        output=output,
+        days=days,
+        date_from=date_from,
+        date_to=date_to,
+        method=method,
+        replay=replay,
+        service=service,
+        health_url=health_url,
+        base_url=base_url,
+        screenshots=screenshots,
+        dry_run=dry_run,
+        accelerator=accelerator,
+        patch_dir=patch_dir,
+        health_timeout=health_timeout,
+    )
+
+    _print_walk_header(config, repo, console)
+    all_results = Pipeline(config, console=console).run()
+    _handle_walk_results(all_results, config, repo, serve, port, console)
+
+
+def _ensure_git_repo(repo: Path, console: Console) -> None:
     if not (repo / ".git").exists():
         console.print(f"[red]✗ {repo} nie jest repozytorium git[/red]")
         raise typer.Exit(1)
 
-    deploy_svc = DeployService(WalkConfig(repo_path=repo))
-    if deploy == "auto":
-        method = deploy_svc.detect_deploy_method(repo) if not dry_run else DeployMethod.NONE
-    else:
-        method = DeployMethod(deploy)
 
-    config = WalkConfig(
+def _resolve_deploy_method(repo: Path, deploy: str, dry_run: bool) -> DeployMethod:
+    if deploy != "auto":
+        return DeployMethod(deploy)
+    if dry_run:
+        return DeployMethod.NONE
+    deploy_svc = DeployService(WalkConfig(repo_path=repo))
+    return deploy_svc.detect_deploy_method(repo)
+
+
+def _build_walk_config(
+    repo: Path,
+    output: Path,
+    days: int,
+    date_from: Optional[str],
+    date_to: Optional[str],
+    method: DeployMethod,
+    health_url: str,
+    base_url: str,
+    screenshots: bool,
+    dry_run: bool,
+    replay: bool,
+    service: Optional[str],
+    accelerator: bool,
+    patch_dir: Optional[Path],
+    health_timeout: int,
+) -> WalkConfig:
+    return WalkConfig(
         repo_path=repo,
         output_dir=output,
         days=days,
-        date_from=date.fromisoformat(date_from) if date_from else None,
-        date_to=date.fromisoformat(date_to) if date_to else None,
+        date_from=_parse_date(date_from),
+        date_to=_parse_date(date_to),
         deploy_method=method,
         health_url=health_url,
         base_url=base_url,
@@ -65,6 +119,12 @@ def walk_command(
         health_timeout=health_timeout,
     )
 
+
+def _parse_date(value: Optional[str]):
+    return date.fromisoformat(value) if value else None
+
+
+def _load_yaml_config(config: WalkConfig, repo: Path, console: Console) -> None:
     config_path = repo / "rebuild.yaml"
     if config_path.exists():
         yaml_data = ConfigLoader.load(config_path)
@@ -79,36 +139,30 @@ def walk_command(
     else:
         console.print("  [dim]Brak rebuild.yaml — używam tylko opcji CLI (bez auto-init).[/dim]")
 
-    overrides = cli_overrides or {}
-    if overrides.get("output"):
-        config.output_dir = output
-    if overrides.get("days"):
-        config.days = days
-    if overrides.get("date_from"):
-        config.date_from = date.fromisoformat(date_from) if date_from else None
-    if overrides.get("date_to"):
-        config.date_to = date.fromisoformat(date_to) if date_to else None
-    if overrides.get("deploy"):
-        config.deploy_method = method
-    if overrides.get("replay"):
-        config.replay = replay
-    if overrides.get("service"):
-        config.app_service = service
-    if overrides.get("health_url"):
-        config.health_url = health_url
-    if overrides.get("base_url"):
-        config.base_url = base_url
-    if overrides.get("screenshots"):
-        config.screenshots = screenshots
-    if overrides.get("dry_run"):
-        config.dry_run = dry_run
-    if overrides.get("accelerator"):
-        config.accelerator = accelerator
-    if overrides.get("patch_dir"):
-        config.patch_dir = patch_dir
-    if overrides.get("health_timeout"):
-        config.health_timeout = health_timeout
 
+def _apply_cli_overrides(config: WalkConfig, overrides: Dict[str, bool], **values) -> None:
+    attr_values = {
+        "output": ("output_dir", values["output"]),
+        "days": ("days", values["days"]),
+        "date_from": ("date_from", _parse_date(values["date_from"])),
+        "date_to": ("date_to", _parse_date(values["date_to"])),
+        "deploy": ("deploy_method", values["method"]),
+        "replay": ("replay", values["replay"]),
+        "service": ("app_service", values["service"]),
+        "health_url": ("health_url", values["health_url"]),
+        "base_url": ("base_url", values["base_url"]),
+        "screenshots": ("screenshots", values["screenshots"]),
+        "dry_run": ("dry_run", values["dry_run"]),
+        "accelerator": ("accelerator", values["accelerator"]),
+        "patch_dir": ("patch_dir", values["patch_dir"]),
+        "health_timeout": ("health_timeout", values["health_timeout"]),
+    }
+    for key, (attr, value) in attr_values.items():
+        if overrides.get(key):
+            setattr(config, attr, value)
+
+
+def _print_walk_header(config: WalkConfig, repo: Path, console: Console) -> None:
     from ... import __version__
     console.print(f"\n[bold]rebuild walk[/bold] v{__version__}")
     console.print(f"  repo:   {repo}")
@@ -116,11 +170,17 @@ def walk_command(
     console.print(f"  deploy: {config.deploy_method.value} {'(REPLAY)' if config.replay else ''}")
     console.print(f"  days:   {config.days}\n")
 
-    pipeline = Pipeline(config, console=console)
-    all_results = pipeline.run()
 
+def _handle_walk_results(
+    all_results,
+    config: WalkConfig,
+    repo: Path,
+    serve: bool,
+    port: int,
+    console: Console,
+) -> None:
     if all_results:
-        console.print(f"\n[bold green]✓ Gotowe![/bold green]")
+        console.print("\n[bold green]✓ Gotowe![/bold green]")
         from ..dashboard import generate_dashboard
         generate_dashboard(all_results, config.output_dir, repo=repo)
         from ...application.services.reporting.reporter import ReporterService
@@ -224,7 +284,7 @@ def accelerator_command(
             pipeline.cleanup()
 
     if all_results:
-        console.print(f"\n[bold green]✓ Accelerator done![/bold green]")
+        console.print("\n[bold green]✓ Accelerator done![/bold green]")
         from ..dashboard import generate_dashboard
         generate_dashboard(all_results, output, repo=repo)
         from .helpers import print_report_links, print_summary_table, serve_reports

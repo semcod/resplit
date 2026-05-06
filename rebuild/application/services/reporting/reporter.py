@@ -67,39 +67,8 @@ class ReporterService(Service[DayResult, None]):
         json_data = json.dumps(data, indent=2)
         yaml_data = to_yaml(data)
         toon_data = to_toon(result)
-
-        rows = ""
-        for r in result.endpoint_results:
-            rt = f"{r.response_time_ms:.0f}ms" if r.response_time_ms is not None else "—"
-            error_cat = classify_error(r)
-            cat_badge = f'<span class="badge badge-cat">{error_cat}</span>' if error_cat else ""
-            rows += (
-                f'<tr class="endpoint-row">'
-                f'<td><span class="method-tag method-{r.endpoint.method.lower()}">{r.endpoint.method}</span></td>'
-                f'<td class="path-cell">'
-                f'<div class="path-text" title="{r.endpoint.url}">{r.endpoint.path}</div>'
-                + (f'<div class="path-template">{r.endpoint.template_path}</div>'
-                   if r.endpoint.template_path and r.endpoint.template_path != r.endpoint.path else "")
-                + f'</td>'
-                f'<td>{status_badge(r.status)}</td>'
-                f'<td><span class="status-code code-{str(r.http_status)[0] if r.http_status else "x"}">'
-                f'{r.http_status or "—"}</span></td>'
-                f'<td class="time-cell">{rt}</td>'
-                f'<td>{cat_badge}</td>'
-                f'</tr>'
-            )
-
-        deploy_section = ""
-        if not result.is_dry_run:
-            cls = "success" if result.deploy_success else "fail"
-            title = "✓ Deployment Successful" if result.deploy_success else "✗ Deployment Failed"
-            desc = ("Infrastructure started successfully." if result.deploy_success
-                    else "The service failed to reach healthy state. See logs below.")
-            log_html = f'<div class="log-box">{result.deploy_log or "No logs captured."}</div>' if not result.deploy_success else ""
-            cat_html = ""
-            if result.deploy_error_category:
-                cat_html = f'<div style="margin-top:8px;color:var(--warn)">Category: <strong>{result.deploy_error_category.value}</strong></div>'
-            deploy_section = f'<div class="deploy-status {cls}"><h3 style="margin-top:0">{title}</h3><p style="color:var(--text-dim)">{desc}</p>{cat_html}{log_html}</div>'
+        rows = self._endpoint_rows(result)
+        deploy_section = self._deploy_section(result)
 
         html = f"""<!DOCTYPE html>
 <html lang="pl"><head>
@@ -170,6 +139,63 @@ class ReporterService(Service[DayResult, None]):
   <div id="data-toon" class="hidden-data">{toon_data}</div>
 </div></body></html>"""
         (out / "report.html").write_text(html, encoding="utf-8")
+
+    def _endpoint_rows(self, result: DayResult) -> str:
+        return "".join(self._endpoint_row(r) for r in result.endpoint_results)
+
+    def _endpoint_row(self, endpoint_result) -> str:
+        r = endpoint_result
+        rt = f"{r.response_time_ms:.0f}ms" if r.response_time_ms is not None else "—"
+        error_cat = classify_error(r)
+        cat_badge = f'<span class="badge badge-cat">{error_cat}</span>' if error_cat else ""
+        template_html = (
+            f'<div class="path-template">{r.endpoint.template_path}</div>'
+            if r.endpoint.template_path and r.endpoint.template_path != r.endpoint.path
+            else ""
+        )
+        code_class = str(r.http_status)[0] if r.http_status else "x"
+        return (
+            f'<tr class="endpoint-row">'
+            f'<td><span class="method-tag method-{r.endpoint.method.lower()}">{r.endpoint.method}</span></td>'
+            f'<td class="path-cell">'
+            f'<div class="path-text" title="{r.endpoint.url}">{r.endpoint.path}</div>'
+            f'{template_html}</td>'
+            f'<td>{status_badge(r.status)}</td>'
+            f'<td><span class="status-code code-{code_class}">{r.http_status or "—"}</span></td>'
+            f'<td class="time-cell">{rt}</td>'
+            f'<td>{cat_badge}</td>'
+            f'</tr>'
+        )
+
+    def _deploy_section(self, result: DayResult) -> str:
+        if result.is_dry_run:
+            return ""
+        cls = "success" if result.deploy_success else "fail"
+        title = "✓ Deployment Successful" if result.deploy_success else "✗ Deployment Failed"
+        desc = (
+            "Infrastructure started successfully."
+            if result.deploy_success
+            else "The service failed to reach healthy state. See logs below."
+        )
+        log_html = self._deploy_log_html(result)
+        cat_html = self._deploy_category_html(result)
+        return (
+            f'<div class="deploy-status {cls}"><h3 style="margin-top:0">{title}</h3>'
+            f'<p style="color:var(--text-dim)">{desc}</p>{cat_html}{log_html}</div>'
+        )
+
+    def _deploy_log_html(self, result: DayResult) -> str:
+        if result.deploy_success:
+            return ""
+        return f'<div class="log-box">{result.deploy_log or "No logs captured."}</div>'
+
+    def _deploy_category_html(self, result: DayResult) -> str:
+        if not result.deploy_error_category:
+            return ""
+        return (
+            f'<div style="margin-top:8px;color:var(--warn)">Category: '
+            f'<strong>{result.deploy_error_category.value}</strong></div>'
+        )
 
     def save_timeline_index(self, results: List[DayResult], output_dir: Path) -> None:
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -286,7 +312,8 @@ function dlFmt(f){{const b=new Blob([JSON.stringify(DATA,null,2)],{{type:'applic
 
     def export_csv(self, results: List[DayResult], output_dir: Path) -> Path:
         """Write summary.csv with one row per day."""
-        import csv, io
+        import csv
+        import io
         output_dir.mkdir(parents=True, exist_ok=True)
         dest = output_dir / "summary.csv"
         rows = sorted(results, key=lambda x: x.day)

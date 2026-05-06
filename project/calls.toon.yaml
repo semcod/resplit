@@ -1,52 +1,120 @@
-# code2llm call graph | /home/tom/github/semcod/resplit
-# nodes: 23 | edges: 21 | modules: 6
-# CC̄=0.0
+# code2llm call graph | /home/tom/github/semcod/rebuild
+# generated in 0.14s
+# nodes: 94 | edges: 68 | modules: 24
+# CC̄=0.5
 
 HUBS[20]:
+  rebuild.interfaces.commands.helpers.serve_reports
+    CC=2  in:0  out:28  total:28
+  Makefile.print
+    CC=0  in:25  out:0  total:25
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
+    CC=14  in:0  out:23  total:23
+  rebuild.domain.mvp_protocol.MVPServer.start
+    CC=1  in:0  out:23  total:23
+  rebuild.interfaces.cli.plugins
+    CC=7  in:0  out:22  total:22
   scripts.bump_version.main
     CC=4  in:0  out:20  total:20
+  rebuild.infrastructure.event_bus.EventBus.publish
+    CC=14  in:0  out:20  total:20
+  rebuild.interfaces.commands.refactor_command.plan_command
+    CC=11  in:0  out:19  total:19
   scripts.bump_version.categorize_commits
     CC=14  in:1  out:15  total:16
   scripts.bump_version.build_new_section
     CC=7  in:1  out:14  total:15
+  rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+    CC=5  in:3  out:12  total:15
   scripts.bump_version.update_changelog
     CC=5  in:1  out:14  total:15
-  Makefile.print
-    CC=0  in:12  out:0  total:12
-  scripts.bump_version.bump
-    CC=5  in:1  out:7  total:8
-  scripts.bump_version.get_git_log_since_last_tag
-    CC=7  in:1  out:7  total:8
-  scripts.bump_version.update_pyproject
-    CC=3  in:1  out:6  total:7
-  scripts.bump_version.update_init
-    CC=3  in:1  out:6  total:7
-  scripts.bump_version.collect_unreleased_entries
-    CC=7  in:1  out:6  total:7
-  scripts.bump_version.read_version
-    CC=2  in:2  out:4  total:6
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
-    CC=2  in:2  out:1  total:3
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
-    CC=2  in:2  out:1  total:3
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
-    CC=2  in:2  out:1  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index
-    CC=1  in:0  out:3  total:3
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index
-    CC=1  in:0  out:3  total:3
+  rebuild.interfaces.cli.evolution
+    CC=2  in:0  out:12  total:12
+  rebuild.interfaces.commands.refactor_command.pr_command
+    CC=4  in:0  out:11  total:11
+  rebuild.domain.dsl_v2.DSLShell._process
+    CC=7  in:0  out:11  total:11
+  rebuild.application.services.pr_service.load_config_from_env
+    CC=4  in:0  out:11  total:11
+  rebuild.interfaces.cli.dashboard
+    CC=2  in:0  out:10  total:10
+  rebuild.domain.dsl_v2.DSLShell.run
+    CC=7  in:0  out:10  total:10
+  rebuild.plugins.registry.PluginRegistry.discover
+    CC=7  in:0  out:10  total:10
+  rebuild.interfaces.cli.serve
+    CC=2  in:0  out:9  total:9
 
 MODULES:
   Makefile  [1 funcs]
     print  CC=0  out:0
+  SUMD  [26 funcs]
+    _build_discord_payload  CC=0  out:0
+    _build_generic_payload  CC=0  out:0
+    _build_slack_payload  CC=0  out:0
+    _load_entry_points  CC=0  out:0
+    _send_webhook  CC=0  out:0
+    classify_error  CC=0  out:0
+    duplicates_command  CC=0  out:0
+    execute_command  CC=0  out:0
+    generate_dashboard  CC=0  out:0
+    generate_endpoint_diff  CC=0  out:0
+  rebuild.application.base_pipeline  [1 funcs]
+    __init__  CC=1  out:9
+  rebuild.application.services.db_snapshot_manager  [1 funcs]
+    _postgres_restore  CC=4  out:4
+  rebuild.application.services.notification_service  [2 funcs]
+    _build_body  CC=3  out:3
+    notify  CC=5  out:6
+  rebuild.application.services.pr_service  [1 funcs]
+    load_config_from_env  CC=4  out:11
+  rebuild.application.services.reporting.reporter  [5 funcs]
+    _save_html_day  CC=16  out:8
+    save_day  CC=2  out:9
+    save_timeline_index  CC=14  out:23
+    to_toon  CC=1  out:1
+    to_yaml  CC=1  out:1
+  rebuild.domain.dsl  [1 funcs]
+    execute  CC=2  out:3
+  rebuild.domain.dsl_v2  [2 funcs]
+    _process  CC=7  out:11
+    run  CC=7  out:10
+  rebuild.domain.mvp_protocol  [3 funcs]
+    _handle_command  CC=3  out:6
+    handle_message  CC=4  out:5
+    start  CC=1  out:23
+  rebuild.infrastructure.event_bus  [1 funcs]
+    publish  CC=14  out:20
+  rebuild.interfaces.cli  [14 funcs]
+    dashboard  CC=2  out:10
+    duplicates  CC=1  out:9
+    evolution  CC=2  out:12
+    execute  CC=1  out:5
+    multi_repo  CC=1  out:5
+    plan  CC=1  out:5
+    plugins  CC=7  out:22
+    pr  CC=1  out:4
+    serve  CC=2  out:9
+    services  CC=1  out:5
+  rebuild.interfaces.commands.helpers  [1 funcs]
+    serve_reports  CC=2  out:28
+  rebuild.interfaces.commands.refactor_command  [4 funcs]
+    _generate_refactor_plan  CC=5  out:12
+    execute_command  CC=6  out:7
+    plan_command  CC=11  out:19
+    pr_command  CC=4  out:11
+  rebuild.interfaces.dashboard  [4 funcs]
+    _extract_avg_cc  CC=5  out:6
+    _render_html  CC=4  out:4
+    generate_dashboard  CC=5  out:9
+    get_cc_for_day  CC=3  out:5
+  rebuild.interfaces.evolution_viz  [2 funcs]
+    _render_html  CC=1  out:4
+    generate_evolution_html  CC=1  out:7
+  rebuild.interfaces.tui.app  [1 funcs]
+    launch_tui  CC=2  out:4
+  rebuild.plugins.registry  [1 funcs]
+    discover  CC=7  out:10
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
     index  CC=1  out:3
@@ -74,14 +142,11 @@ MODULES:
     update_changelog  CC=5  out:14
     update_init  CC=3  out:6
     update_pyproject  CC=3  out:6
+  testql-scenarios.generated-from-pytests.testql.toon  [1 funcs]
+    all  CC=0  out:0
 
 EDGES:
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+  rebuild.infrastructure.event_bus.EventBus.publish → SUMD.handler
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   scripts.bump_version.update_init → Makefile.print
@@ -97,3 +162,37 @@ EDGES:
   scripts.bump_version.main → Makefile.print
   scripts.bump_version.main → scripts.bump_version.update_init
   scripts.bump_version.main → scripts.bump_version.update_pyproject
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  rebuild.application.base_pipeline.BasePipeline.__init__ → SUMD.get_event_service
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → SUMD.classify_error
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → SUMD.status_badge
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → SUMD.generate_trend_chart
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → SUMD.generate_endpoint_diff
+  rebuild.plugins.registry.PluginRegistry.discover → SUMD._load_entry_points
+  rebuild.interfaces.dashboard.get_cc_for_day → rebuild.interfaces.dashboard._extract_avg_cc
+  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard._render_html
+  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard.get_cc_for_day
+  rebuild.interfaces.evolution_viz.generate_evolution_html → rebuild.interfaces.evolution_viz._render_html
+  rebuild.interfaces.cli.dashboard → SUMD.generate_dashboard
+  rebuild.interfaces.cli.serve → SUMD.print_report_links
+  rebuild.interfaces.cli.serve → SUMD.serve_reports
+  rebuild.interfaces.cli.tui → SUMD.launch_tui
+  rebuild.interfaces.cli.evolution → SUMD.generate_evolution_html
+  rebuild.interfaces.cli.duplicates → SUMD.duplicates_command
+  rebuild.interfaces.cli.vector_build → SUMD.vector_build_command
+  rebuild.interfaces.cli.vector_query → SUMD.vector_query_command
+  rebuild.interfaces.cli.multi_repo → SUMD.multi_repo_command
+  rebuild.interfaces.cli.services → SUMD.services_command
+  rebuild.interfaces.cli.truth → SUMD.truth_command
+  rebuild.interfaces.cli.plan → SUMD.plan_command
+  rebuild.interfaces.cli.pr → SUMD.pr_command
+  rebuild.interfaces.cli.execute → SUMD.execute_command

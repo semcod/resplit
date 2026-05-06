@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 from ....application.services.tui_data_service import TUIDataService
 from ..compat import TEXTUAL_OK
@@ -164,3 +163,12 @@ if TEXTUAL_OK:
                     repo=self._repo, results_dir=self._results_dir,
                     preselect_day=self._days[idx]["day"], day_data=self._days[idx],
                 ))
+else:
+    class HistoryScreen:
+        """Fallback export used when Textual is not installed."""
+
+        BINDINGS = []
+
+        def __init__(self, repo: Path, results_dir: Path) -> None:
+            self._repo = repo
+            self._results_dir = results_dir

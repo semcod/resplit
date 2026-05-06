@@ -1,40 +1,54 @@
-# resplit | 3250 func | 13f | 30950186L | md | 2026-05-02
+# rebuild | 3722 func | 77f | 349916L | python | 2026-05-06
+# generated in 0.00s
 
 HEALTH:
-  CC̄=0.0  critical=1 (limit:10)  dup=0  cycles=0
+  CC̄=0.5  critical=41 (limit:10)  dup=4  cycles=0
 
-ALERTS[2]:
-  !   high_fan_out     update_changelog = 13 (limit:10)
-  !   high_fan_out     main = 10 (limit:10)
+ALERTS[20]:
+  !!! cc_exceeded      ConfigLoader.apply_to_config = 44 (limit:15)
+  !!! high_fan_out     create_app = 34 (limit:10)
+  !!! cc_exceeded      walk_command = 31 (limit:15)
+  !!! high_fan_out     walk_command = 25 (limit:10)
+  !!! high_fan_out     HistoryService.load_history = 24 (limit:10)
+  !!! high_fan_out     AcceleratedPipeline._run_day_fast = 23 (limit:10)
+  !!! high_fan_out     serve_reports = 21 (limit:10)
+  !!! high_fan_out     Pipeline.run_day = 20 (limit:10)
+  !!! high_fan_out     auto_pr = 20 (limit:10)
+  !!! high_fan_out     multi_repo_command = 20 (limit:10)
 
-MODULES[91] (top by size):
-  M[SUMD.md] 187596L C:0 F:3193 CC↑0 D:0 (md)
-  M[SUMR.md] 72514L C:0 F:0 CC↑0 D:0 (md)
-  M[project/duplication.toon.yaml] 71613L C:0 F:0 CC↑0 D:0 (yaml)
-  M[project/calls.yaml] 3290L C:0 F:0 CC↑0 D:0 (yaml)
-  M[docs/README.md] 2110L C:0 F:1 CC↑0 D:0 (md)
-  M[infra-map.json] 1438L C:0 F:0 CC↑0 D:0 (json)
-  M[c2004/repo/.testql/topology.json] 588L C:0 F:0 CC↑0 D:0 (json)
-  M[c2004/repo/.testql/reports/topology-iter6.json] 587L C:0 F:0 CC↑0 D:0 (json)
-  M[c2004/repo/.testql/reports/topology.json] 587L C:0 F:0 CC↑0 D:0 (json)
+MODULES[165] (top by size):
+  M[SUMD.md] 187666L C:0 F:3205 CC↑0 D:10 (md)
+  M[SUMR.md] 72142L C:0 F:0 CC↑0 D:0 (md)
+  M[project/duplication.toon.yaml] 71632L C:0 F:0 CC↑0 D:0 (yaml)
+  M[rebuild/interfaces/cli.py] 520L C:0 F:24 CC↑15 D:0 (python)
   M[goal.yaml] 513L C:0 F:0 CC↑0 D:0 (yaml)
   M[restored_c2004_health/api-health/docker/docker-compose.yml] 507L C:0 F:0 CC↑0 D:0 (yml)
-  M[project/context.md] 350L C:0 F:0 CC↑0 D:0 (md)
-  M[project/README.md] 339L C:0 F:0 CC↑0 D:0 (md)
-  M[CHANGELOG.md] 262L C:0 F:0 CC↑0 D:0 (md)
-  M[c2004/repo/.testql/generated/generated-from-pytests.testql.toon.yaml] 261L C:0 F:0 CC↑0 D:0 (yaml)
-  LANGS: md:33/yaml:17/txt:10/json:9/shell:8/python:5/other:3/yml:3/dsl:1/toml:1/backend:1
+  M[rebuild/domain/dsl_v2.py] 455L C:11 F:11 CC↑11 D:0 (python)
+  M[rebuild/application/services/accelerator_deploy.py] 451L C:1 F:23 CC↑9 D:0 (python)
+  M[rebuild/application/services/reporting/reporter.py] 425L C:1 F:11 CC↑16 D:0 (python)
+  M[rebuild/application/services/parallel_test_engine.py] 411L C:3 F:19 CC↑18 D:0 (python)
+  M[rebuild/application/accelerated_pipeline.py] 397L C:1 F:11 CC↑15 D:0 (python)
+  M[rebuild/interfaces/evolution_viz.py] 385L C:0 F:2 CC↑1 D:0 (python)
+  M[rebuild/application/services/db_snapshot_manager.py] 370L C:2 F:22 CC↑9 D:0 (python)
+  M[rebuild/interfaces/dashboard.py] 365L C:0 F:4 CC↑5 D:0 (python)
+  M[rebuild/application/services/deploy_service.py] 362L C:1 F:20 CC↑15 D:0 (python)
+  LANGS: python:99/md:32/yaml:15/shell:8/other:3/yml:3/dsl:1/json:1/txt:1/toml:1/frontend:1
 
-HOTSPOTS[2]:
-  ★ update_changelog fan=13  // Orchestrates 13 calls
-  ★ main fan=10  // Orchestrates 10 calls
+HOTSPOTS[10]:
+  ★ create_app fan=34  // Create and return a FastAPI application.
 
-REFACTOR[11]:
-  [1] H/H Split god module SUMD.md (187596L, 0 classes)
-  [2] H/H Split god module SUMR.md (72514L, 0 classes)
-  [3] H/H Split god module c2004/repo/.testql/reports/topology-iter6.json (587L, 0 classes)
-  [4] H/H Split god module c2004/repo/.testql/reports/topology.json (587L, 0 classes)
-  [5] H/H Split god module c2004/repo/.testql/topology.json (588L, 0 classes)
+All dependencies are injected — ideal 
+  ★ walk_command fan=25  // Orchestrates 25 calls
+  ★ HistoryService.load_history fan=24  // Orchestrates 24 calls
+  ★ AcceleratedPipeline._run_day_fast fan=23  // Execute single day analysis with maximum speed.
+  ★ serve_reports fan=21  // Orchestrates 21 calls
+
+REFACTOR[15]:
+  [1] H/L Split ConfigLoader.apply_to_config (CC=44)
+  [2] H/L Split walk_command (CC=31)
+  [3] H/H Split god module rebuild/interfaces/cli.py (520L, 0 classes)
+  [4] H/H Split god module SUMD.md (187666L, 0 classes)
+  [5] H/H Split god module SUMR.md (72142L, 0 classes)
 
 EVOLUTION:
-  2026-05-02 CC̄=0.0 crit=1 30950186L // Automated analysis
+  2026-05-06 CC̄=0.5 crit=41 349916L // Automated analysis

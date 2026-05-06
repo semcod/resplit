@@ -7,11 +7,11 @@ import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
-from typing import List, Optional, Set, Dict
+from typing import List, Optional, Dict
 
-from ..domain.models import WalkConfig, DeployMethod
+from ..domain.models import WalkConfig
 from ..domain.commit import CommitInfo
-from ..domain.endpoint import Endpoint, EndpointResult, EndpointStatus
+from ..domain.endpoint import Endpoint
 from ..domain.day_result import DayResult
 
 from .base_pipeline import BasePipeline
@@ -222,100 +222,22 @@ class AcceleratedPipeline(BasePipeline):
         t0 = time.perf_counter()
         
         self.log(f"--- [bold]{day}[/bold]  {commit.sha[:8]}  {commit.message[:50]}")
-        
-        result = DayResult(
-            day=day,
-            commit=commit,
-            deploy_method=self.config.deploy_method,
-            deploy_success=False,
-            output_dir=day_dir,
-            is_dry_run=self.config.dry_run
-        )
+        result = self._make_fast_day_result(day, commit, day_dir)
         
         try:
-            # 1. Switch code via worktree (INSTANT - no checkout overhead)
-            self._emit("CODE_SWITCH_STARTED", sha=commit.sha)
-            switch_ok = self.deploy.switch_commit(commit.sha, self.config.repo_path)
-            
-            if not switch_ok:
-                result.error = "Code switch failed"
-                self.log("  [red]✗ Code switch failed[/red]")
-                result.duration_seconds = time.perf_counter() - t0
+            wt_path = self._switch_fast_day_commit(result, commit, t0)
+            if wt_path is None:
                 return result
-            
-            self._emit("CODE_SWITCH_FINISHED", sha=commit.sha)
-            result.deploy_success = True
-            wt_path = self.worktrees.get_active_path(commit.sha)
 
-            # Manual overrides from patch_dir (configurable)
-            patch_dir = getattr(self.config, "patch_dir", None) or (self.output_dir / "patch")
-            if patch_dir.exists():
-                overrides = self.overrider.execute(wt_path, patch_dir)
-                if overrides:
-                    self.log(f"  [bold green]✓ Zastosowano {overrides} poprawek manualnych z {patch_dir}[/bold green]")
-                    self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(patch_dir))
-            
-            # Compute diff once; reused by DB restore check, rescan check, and smart selector.
-            if self._previous_commit:
-                changed_modules = self.smart_selector.get_changed_modules(
-                    self._previous_commit, commit.sha
-                )
-                changed_paths = [str(m.path).lower() for m in changed_modules]
-                # Populate diff cache so _needs_* helpers skip redundant git calls
-                self._diff_cache[(self._previous_commit, commit.sha)] = changed_paths
-            else:
-                changed_modules = []
-                changed_paths = None
+            self._apply_fast_overrides(wt_path)
+            changed_modules, changed_paths = self._changed_modules_for_fast_day(commit)
 
-            # 2. Restore DB to baseline (INSTANT - no re-seed)
-            if self._baseline_snapshot:
-                needs_restore = self._needs_db_restore(
-                    self._previous_commit, commit.sha, changed_paths
-                )
-                if needs_restore:
-                    try:
-                        self._restore_db_fast()
-                    except Exception as exc:
-                        result.error = str(exc)
-                        self._emit("ERROR_OCCURRED", stage="db_restore", sha=commit.sha, error=str(exc))
-                        self.log(f"  [red]✗ {exc}[/red]")
-                        result.duration_seconds = time.perf_counter() - t0
-                        return result
-                else:
-                    self.log("  [dim]DB restore skipped (no schema/data changes)[/dim]")
-            
-            # 3. Scan endpoints (cached when route files are unchanged)
-            if self._needs_rescan(self._previous_commit, commit.sha, changed_paths):
-                result.endpoints = self.scanner.execute(wt_path)
-                self._cached_endpoints = result.endpoints
-            else:
-                result.endpoints = list(self._cached_endpoints)  # type: ignore[arg-type]
-                self.log("  [dim]Endpoint scan skipped (no route changes)[/dim]")
-            
-            # 4. Smart test selection (only test changed endpoints)
-            endpoints_to_test = result.endpoints
-            if self._previous_commit and getattr(self.config, 'smart_select', True):
-                selection = self.smart_selector.select_tests(
-                    result.endpoints,
-                    changed_modules,
-                    self._previous_commit
-                )
-                endpoints_to_test = selection.endpoints_to_test
-                self.log(f"  Smart select: {len(endpoints_to_test)}/{len(result.endpoints)} endpoints")
-            
-            # 5. Parallel test execution
-            self._emit("TEST_STARTED", endpoint_count=len(endpoints_to_test))
-            self.tester.set_day_dir(day_dir)
-            result.endpoint_results = self.tester.execute_sync(endpoints_to_test)
-            self._emit("TEST_FINISHED", ok=result.ok_count, total=len(result.endpoint_results))
-            
-            # 6. Screenshots (parallel-capable)
-            if self.config.screenshots:
-                self.screenshots.config.output_dir = day_dir / "screenshots"
-                result.endpoint_results = self.screenshots.execute(result.endpoint_results)
-            
-            # 7. Save results
-            self.reporter.save_day(result)
+            if not self._restore_db_for_fast_day(result, commit, changed_paths, t0):
+                return result
+
+            self._populate_fast_endpoints(result, wt_path, commit, changed_paths)
+            endpoints_to_test = self._select_fast_endpoints(result, changed_modules)
+            self._test_and_save_fast_day(result, day_dir, endpoints_to_test)
             
             duration = time.perf_counter() - t0
             self.log(f"  [green]✓ Done in {duration:.1f}s[/green] "
@@ -328,6 +250,119 @@ class AcceleratedPipeline(BasePipeline):
         
         result.duration_seconds = time.perf_counter() - t0
         return result
+
+    def _make_fast_day_result(self, day: date, commit: CommitInfo, day_dir: Path) -> DayResult:
+        return DayResult(
+            day=day,
+            commit=commit,
+            deploy_method=self.config.deploy_method,
+            deploy_success=False,
+            output_dir=day_dir,
+            is_dry_run=self.config.dry_run,
+        )
+
+    def _switch_fast_day_commit(
+        self, result: DayResult, commit: CommitInfo, started_at: float
+    ) -> Optional[Path]:
+        self._emit("CODE_SWITCH_STARTED", sha=commit.sha)
+        switch_ok = self.deploy.switch_commit(commit.sha, self.config.repo_path)
+        if not switch_ok:
+            result.error = "Code switch failed"
+            self.log("  [red]✗ Code switch failed[/red]")
+            result.duration_seconds = time.perf_counter() - started_at
+            return None
+
+        self._emit("CODE_SWITCH_FINISHED", sha=commit.sha)
+        result.deploy_success = True
+        return self.worktrees.get_active_path(commit.sha)
+
+    def _apply_fast_overrides(self, wt_path: Path) -> None:
+        patch_dir = getattr(self.config, "patch_dir", None) or (self.output_dir / "patch")
+        if not patch_dir.exists():
+            return
+        overrides = self.overrider.execute(wt_path, patch_dir)
+        if overrides:
+            self.log(
+                f"  [bold green]✓ Zastosowano {overrides} poprawek manualnych z {patch_dir}[/bold green]"
+            )
+            self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(patch_dir))
+
+    def _changed_modules_for_fast_day(self, commit: CommitInfo):
+        if not self._previous_commit:
+            return [], None
+
+        changed_modules = self.smart_selector.get_changed_modules(
+            self._previous_commit, commit.sha
+        )
+        changed_paths = [str(m.path).lower() for m in changed_modules]
+        self._diff_cache[(self._previous_commit, commit.sha)] = changed_paths
+        return changed_modules, changed_paths
+
+    def _restore_db_for_fast_day(
+        self,
+        result: DayResult,
+        commit: CommitInfo,
+        changed_paths: Optional[List[str]],
+        started_at: float,
+    ) -> bool:
+        if not self._baseline_snapshot:
+            return True
+
+        needs_restore = self._needs_db_restore(self._previous_commit, commit.sha, changed_paths)
+        if not needs_restore:
+            self.log("  [dim]DB restore skipped (no schema/data changes)[/dim]")
+            return True
+
+        try:
+            self._restore_db_fast()
+            return True
+        except Exception as exc:
+            result.error = str(exc)
+            self._emit("ERROR_OCCURRED", stage="db_restore", sha=commit.sha, error=str(exc))
+            self.log(f"  [red]✗ {exc}[/red]")
+            result.duration_seconds = time.perf_counter() - started_at
+            return False
+
+    def _populate_fast_endpoints(
+        self,
+        result: DayResult,
+        wt_path: Path,
+        commit: CommitInfo,
+        changed_paths: Optional[List[str]],
+    ) -> None:
+        if self._needs_rescan(self._previous_commit, commit.sha, changed_paths):
+            result.endpoints = self.scanner.execute(wt_path)
+            self._cached_endpoints = result.endpoints
+            return
+
+        result.endpoints = list(self._cached_endpoints)  # type: ignore[arg-type]
+        self.log("  [dim]Endpoint scan skipped (no route changes)[/dim]")
+
+    def _select_fast_endpoints(self, result: DayResult, changed_modules) -> List[Endpoint]:
+        endpoints_to_test = result.endpoints
+        if self._previous_commit and getattr(self.config, 'smart_select', True):
+            selection = self.smart_selector.select_tests(
+                result.endpoints,
+                changed_modules,
+                self._previous_commit,
+            )
+            endpoints_to_test = selection.endpoints_to_test
+            self.log(f"  Smart select: {len(endpoints_to_test)}/{len(result.endpoints)} endpoints")
+        return endpoints_to_test
+
+    def _test_and_save_fast_day(
+        self, result: DayResult, day_dir: Path, endpoints_to_test: List[Endpoint]
+    ) -> None:
+        self._emit("TEST_STARTED", endpoint_count=len(endpoints_to_test))
+        self.tester.set_day_dir(day_dir)
+        result.endpoint_results = self.tester.execute_sync(endpoints_to_test)
+        self._emit("TEST_FINISHED", ok=result.ok_count, total=len(result.endpoint_results))
+
+        if self.config.screenshots:
+            self.screenshots.config.output_dir = day_dir / "screenshots"
+            result.endpoint_results = self.screenshots.execute(result.endpoint_results)
+
+        self.reporter.save_day(result)
     
     def _needs_rescan(self, from_sha: Optional[str], to_sha: str, changed_paths: Optional[List[str]] = None) -> bool:
         """

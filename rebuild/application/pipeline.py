@@ -1,18 +1,16 @@
 from __future__ import annotations
 import time
-import json
 from datetime import date
 from pathlib import Path
 from typing import List, Optional, Set
 
-from ..domain.models import WalkConfig, DeployMethod
+from ..domain.models import WalkConfig
 from ..domain.commit import CommitInfo
-from ..domain.endpoint import Endpoint, EndpointResult, EndpointStatus
 from ..domain.day_result import DayResult
-from ..domain.context import EndpointContext
 
 from .base_pipeline import BasePipeline
 from .services.deploy_service import DeployService
+from .services.git_service import GitService
 from .services.test_service import TestService
 
 class Pipeline(BasePipeline):
@@ -126,87 +124,17 @@ class Pipeline(BasePipeline):
         self.log(f"--- [bold]{day}[/bold]  {commit.sha[:8]}  {commit.message[:60]}")
 
         t0 = time.perf_counter()
-        result = DayResult(
-            day=day,
-            commit=commit,
-            deploy_method=self.config.deploy_method,
-            deploy_success=False,
-            output_dir=day_dir,
-            is_dry_run=self.config.dry_run
-        )
-
+        result = self._make_day_result(day, commit, day_dir)
         walk_git = getattr(self, "_walk_git", self.git)
         manual_patch_dir = self.config.output_dir / "patch"
 
         try:
-            # 1. Checkout in clone (original repo untouched)
-            if not self.config.dry_run:
-                walk_git.checkout(commit.sha)
-                self._emit("COMMIT_CHECKOUT", sha=commit.sha, day=str(day))
-
-                overrides = self.patcher.apply_manual_overrides(manual_patch_dir, walk_git.repo_path)
-                if overrides:
-                    self.log(f"  [dim]Manual override: applied {overrides} file(s) from {manual_patch_dir}[/dim]")
-                    self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(manual_patch_dir))
-
-                # Check for manual fix commit in clone (for health recovery)
-                fix_sha = self._check_for_manual_fix(walk_git, commit.sha)
-                if fix_sha:
-                    self.log(f"  [cyan]Manual fix detected: {fix_sha[:8]}, applying...[/cyan]")
-                    walk_git.checkout(fix_sha)
-                    self._emit("MANUAL_FIX_APPLIED", original_sha=commit.sha, fix_sha=fix_sha)
-
-            # Clone path for static file scanning; original path for docker
-            scan_repo = walk_git.repo_path
-
-            if self.config.accelerator and not self.config.dry_run:
-                patched = self.patcher.execute(scan_repo)
-                if patched:
-                    self.log(f"  [dim]Spatchowano {patched} plików Dockerfile (accelerator).[/dim]")
-
-            # 3. Apply manual overrides (fixes for historical bugs)
-            if self.config.patch_dir and not self.config.dry_run:
-                overridden = self.overrider.execute(scan_repo, self.config.patch_dir)
-                if overridden:
-                    self.log(f"  [bold green]✓ Zastosowano {overridden} poprawek manualnych.[/bold green]")
-
-            # 2. Deploy/Reload
-            self.deploy.day_dir = day_dir
-            if self.config.replay:
-                self._emit("DEPLOY_RELOAD_STARTED", service=self.config.app_service)
-                result.deploy_success = self.deploy.reload(walk_git.repo_path)
-                result.deploy_log = self.deploy.last_log
-                result.deploy_error_category = self.deploy.last_error_category
-                self._emit("DEPLOY_RELOAD_FINISHED", success=result.deploy_success)
-            else:
-                result.deploy_success = self.deploy.start(walk_git.repo_path)
-                result.deploy_log = self.deploy.last_log
-                result.deploy_error_category = self.deploy.last_error_category
-                self._emit("DEPLOY_FINISHED", success=result.deploy_success)
-
-            if not result.deploy_success and not self.config.dry_run:
-                self.log("  [red]✗ deploy/reload failed — skip endpoints[/red]")
-                result.duration_seconds = time.perf_counter() - t0
-                self.reporter.save_day(result)
+            scan_repo = self._prepare_day_repo(walk_git, commit, manual_patch_dir)
+            self._deploy_day(walk_git.repo_path, day_dir, result)
+            if self._save_if_deploy_failed(result, t0):
                 return result
 
-            # 3. Scan endpoints (uses clone for static openapi.json lookup)
-            result.endpoints = self.scanner.execute(scan_repo)
-            self._emit("SCAN_FINISHED", endpoint_count=len(result.endpoints))
-            self.log(f"  Endpointów: [bold]{len(result.endpoints)}[/bold]")
-
-            # 4. Test endpoints
-            self.tester.set_day_dir(day_dir)
-            result.endpoint_results = self.tester.execute(result.endpoints)
-            self._emit("TEST_FINISHED", ok=result.ok_count)
-
-            # 5. Screenshots
-            if self.config.screenshots:
-                self.screenshots.config.output_dir = day_dir / "screenshots"
-                result.endpoint_results = self.screenshots.execute(result.endpoint_results)
-                self._emit("SCREENSHOTS_FINISHED")
-
-            # 6. Report
+            self._scan_test_and_capture(result, scan_repo, day_dir)
             self.reporter.save_day(result)
             self._emit("DAY_FINISHED", day=str(day), health=result.health_pct)
 
@@ -220,3 +148,91 @@ class Pipeline(BasePipeline):
             result.duration_seconds = time.perf_counter() - t0
 
         return result
+
+    def _make_day_result(self, day: date, commit: CommitInfo, day_dir: Path) -> DayResult:
+        return DayResult(
+            day=day,
+            commit=commit,
+            deploy_method=self.config.deploy_method,
+            deploy_success=False,
+            output_dir=day_dir,
+            is_dry_run=self.config.dry_run,
+        )
+
+    def _prepare_day_repo(self, walk_git, commit: CommitInfo, manual_patch_dir: Path) -> Path:
+        if not self.config.dry_run:
+            self._checkout_commit_for_day(walk_git, commit, manual_patch_dir)
+
+        scan_repo = walk_git.repo_path
+        self._apply_accelerator_patches(scan_repo)
+        self._apply_configured_overrides(scan_repo)
+        return scan_repo
+
+    def _checkout_commit_for_day(
+        self, walk_git, commit: CommitInfo, manual_patch_dir: Path
+    ) -> None:
+        walk_git.checkout(commit.sha)
+        self._emit("COMMIT_CHECKOUT", sha=commit.sha, day=str(commit.date))
+
+        overrides = self.patcher.apply_manual_overrides(manual_patch_dir, walk_git.repo_path)
+        if overrides:
+            self.log(
+                f"  [dim]Manual override: applied {overrides} file(s) from {manual_patch_dir}[/dim]"
+            )
+            self._emit("MANUAL_OVERRIDE_APPLIED", files=overrides, source=str(manual_patch_dir))
+
+        fix_sha = self._check_for_manual_fix(walk_git, commit.sha)
+        if fix_sha:
+            self.log(f"  [cyan]Manual fix detected: {fix_sha[:8]}, applying...[/cyan]")
+            walk_git.checkout(fix_sha)
+            self._emit("MANUAL_FIX_APPLIED", original_sha=commit.sha, fix_sha=fix_sha)
+
+    def _apply_accelerator_patches(self, scan_repo: Path) -> None:
+        if not (self.config.accelerator and not self.config.dry_run):
+            return
+        patched = self.patcher.execute(scan_repo)
+        if patched:
+            self.log(f"  [dim]Spatchowano {patched} plików Dockerfile (accelerator).[/dim]")
+
+    def _apply_configured_overrides(self, scan_repo: Path) -> None:
+        if not (self.config.patch_dir and not self.config.dry_run):
+            return
+        overridden = self.overrider.execute(scan_repo, self.config.patch_dir)
+        if overridden:
+            self.log(
+                f"  [bold green]✓ Zastosowano {overridden} poprawek manualnych.[/bold green]"
+            )
+
+    def _deploy_day(self, repo_path: Path, day_dir: Path, result: DayResult) -> None:
+        self.deploy.day_dir = day_dir
+        if self.config.replay:
+            self._emit("DEPLOY_RELOAD_STARTED", service=self.config.app_service)
+            result.deploy_success = self.deploy.reload(repo_path)
+            self._emit("DEPLOY_RELOAD_FINISHED", success=result.deploy_success)
+        else:
+            result.deploy_success = self.deploy.start(repo_path)
+            self._emit("DEPLOY_FINISHED", success=result.deploy_success)
+        result.deploy_log = self.deploy.last_log
+        result.deploy_error_category = self.deploy.last_error_category
+
+    def _save_if_deploy_failed(self, result: DayResult, started_at: float) -> bool:
+        if result.deploy_success or self.config.dry_run:
+            return False
+        self.log("  [red]✗ deploy/reload failed — skip endpoints[/red]")
+        result.duration_seconds = time.perf_counter() - started_at
+        self.reporter.save_day(result)
+        return True
+
+    def _scan_test_and_capture(self, result: DayResult, scan_repo: Path, day_dir: Path) -> None:
+        result.endpoints = self.scanner.execute(scan_repo)
+        self._emit("SCAN_FINISHED", endpoint_count=len(result.endpoints))
+        self.log(f"  Endpointów: [bold]{len(result.endpoints)}[/bold]")
+
+        self.tester.set_day_dir(day_dir)
+        result.endpoint_results = self.tester.execute(result.endpoints)
+        self._emit("TEST_FINISHED", ok=result.ok_count)
+
+        if self.config.screenshots:
+            self.screenshots.config.output_dir = day_dir / "screenshots"
+            result.endpoint_results = self.screenshots.execute(result.endpoint_results)
+            self._emit("SCREENSHOTS_FINISHED")

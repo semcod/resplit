@@ -109,70 +109,79 @@ class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
         Select which endpoints to test based on changed files.
         """
         if not changed_modules:
-            # No changes detected - run critical only
-            critical = [ep for ep in all_endpoints if ep.path in self._critical_endpoints]
-            skipped = [(ep, "No relevant changes") for ep in all_endpoints if ep not in critical]
-            return TestSelection(
-                endpoints_to_test=critical,
-                skipped_endpoints=skipped,
-                changed_modules=[],
-                confidence="high"
-            )
-        
-        # Find affected endpoint patterns
-        affected_patterns: Set[str] = set()
-        
-        for module in changed_modules:
-            path_str = str(module.path)
-            
-            # Check against all patterns
-            for pattern, endpoints in self._path_patterns.items():
-                if re.search(pattern, path_str):
-                    affected_patterns.update(endpoints)
-        
-        # If migrations or core files changed, test everything
-        test_all = any(
-            str(m.path).startswith(("migrations/", "core/", "config"))
-            for m in changed_modules
-        )
-        
-        if test_all:
+            return self._critical_only_selection(all_endpoints, "No relevant changes", [])
+
+        affected_patterns = self._affected_endpoint_patterns(changed_modules)
+
+        if self._requires_full_selection(changed_modules):
             return TestSelection(
                 endpoints_to_test=all_endpoints,
                 skipped_endpoints=[],
                 changed_modules=changed_modules,
-                confidence="low"  # Low confidence = test everything
+                confidence="low",
             )
-        
-        # Select endpoints to test
-        to_test: List[Endpoint] = []
-        skipped: List[Tuple[Endpoint, str]] = []
-        
-        for ep in all_endpoints:
-            # Always test critical endpoints
-            if ep.path in self._critical_endpoints:
-                to_test.append(ep)
-                continue
-            
-            # Test if matches affected pattern
-            should_test = any(
-                self._path_matches(ep.path, pattern)
-                for pattern in affected_patterns
-            )
-            
-            if should_test:
-                to_test.append(ep)
-            else:
-                skipped.append((ep, "No affected code paths"))
-        
+
+        to_test, skipped = self._select_affected_endpoints(all_endpoints, affected_patterns)
         confidence = "high" if affected_patterns else "medium"
-        
+
         return TestSelection(
             endpoints_to_test=to_test,
             skipped_endpoints=skipped,
             changed_modules=changed_modules,
-            confidence=confidence
+            confidence=confidence,
         )
+
+    def _critical_only_selection(
+        self,
+        all_endpoints: List[Endpoint],
+        reason: str,
+        changed_modules: List[ChangedModule],
+    ) -> TestSelection:
+        critical = [ep for ep in all_endpoints if ep.path in self._critical_endpoints]
+        skipped = [(ep, reason) for ep in all_endpoints if ep not in critical]
+        return TestSelection(
+            endpoints_to_test=critical,
+            skipped_endpoints=skipped,
+            changed_modules=changed_modules,
+            confidence="high",
+        )
+
+    def _affected_endpoint_patterns(self, changed_modules: List[ChangedModule]) -> Set[str]:
+        affected_patterns: Set[str] = set()
+        for module in changed_modules:
+            path_str = str(module.path)
+            for pattern, endpoints in self._path_patterns.items():
+                if re.search(pattern, path_str):
+                    affected_patterns.update(endpoints)
+        return affected_patterns
+
+    def _requires_full_selection(self, changed_modules: List[ChangedModule]) -> bool:
+        return any(
+            str(module.path).startswith(("migrations/", "core/", "config"))
+            for module in changed_modules
+        )
+
+    def _select_affected_endpoints(
+        self, all_endpoints: List[Endpoint], affected_patterns: Set[str]
+    ) -> Tuple[List[Endpoint], List[Tuple[Endpoint, str]]]:
+        to_test: List[Endpoint] = []
+        skipped: List[Tuple[Endpoint, str]] = []
+
+        for ep in all_endpoints:
+            if ep.path in self._critical_endpoints:
+                to_test.append(ep)
+                continue
+
+            should_test = any(
+                self._path_matches(ep.path, pattern)
+                for pattern in affected_patterns
+            )
+            if should_test:
+                to_test.append(ep)
+            else:
+                skipped.append((ep, "No affected code paths"))
+
+        return to_test, skipped
     
     def _path_matches(self, endpoint_path: str, pattern: str) -> bool:
         """Check if endpoint matches a path pattern."""

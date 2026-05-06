@@ -170,3 +170,36 @@ if TEXTUAL_OK:
             if self._proc:
                 self._proc.terminate()
             self.app.pop_screen()
+else:
+    class WalkConfigScreen:
+        """Fallback export used when Textual is not installed."""
+
+        BINDINGS = []
+
+        def __init__(self, repo: Path) -> None:
+            self._repo = repo
+
+    class WalkProgressScreen:
+        """Fallback export used when Textual is not installed."""
+
+        BINDINGS = []
+
+        def __init__(
+            self,
+            repo: Path,
+            days: int,
+            deploy: str,
+            health_url: str,
+            base_url: str,
+            output: Path,
+            screenshots: bool,
+            dry_run: bool,
+        ) -> None:
+            self._repo = repo
+            self._days = days
+            self._deploy = deploy
+            self._health_url = health_url
+            self._base_url = base_url
+            self._output = output
+            self._screenshots = screenshots
+            self._dry_run = dry_run

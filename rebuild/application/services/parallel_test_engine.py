@@ -3,7 +3,6 @@ Parallel test execution with dependency graph and health-first strategy.
 """
 from __future__ import annotations
 import asyncio
-import concurrent.futures
 import threading
 import time
 from pathlib import Path
@@ -209,60 +208,100 @@ class ParallelTestEngine:
         await self._login_if_configured()
         if not endpoints:
             return []
-        
-        # Separate health endpoints
-        health_eps = [ep for ep in endpoints if self._is_health_endpoint(ep)]
-        other_eps = [ep for ep in endpoints if not self._is_health_endpoint(ep)]
+
+        health_eps, other_eps = self._split_health_endpoints(endpoints)
         
         results: Dict[str, EndpointResult] = {}
         failed: Set[str] = set()
-        
-        # Phase 1: Health checks (sequential, critical)
-        if self.health_first and health_eps:
-            health_results = await self._run_batch(health_eps, sequential=True, client=client)
-            for r in health_results:
-                results[r.endpoint.path] = r
-                if r.status != EndpointStatus.OK:
-                    failed.add(r.endpoint.path)
-            
-            # Abort if health fails
-            if failed:
-                # Mark remaining as skipped
-                for ep in other_eps:
-                    results[ep.path] = EndpointResult(
-                        endpoint=ep,
-                        status=EndpointStatus.SKIP,
-                        error="Health checks failed - skipping remaining tests",
-                        response_time_ms=0
-                    )
-                return list(results.values())
-        
-        # Phase 2: Other endpoints (grouped by dependency)
-        phases = self.dependency_graph.get_execution_order(other_eps)
-        
+
+        if await self._run_health_phase(health_eps, results, failed, client):
+            self._mark_health_dependents_skipped(other_eps, results)
+            return list(results.values())
+
+        await self._run_dependency_phases(other_eps, results, failed, client)
+        return list(results.values())
+
+    def _split_health_endpoints(self, endpoints: List[Endpoint]) -> Tuple[List[Endpoint], List[Endpoint]]:
+        health_eps = []
+        other_eps = []
+        for ep in endpoints:
+            target = health_eps if self._is_health_endpoint(ep) else other_eps
+            target.append(ep)
+        return health_eps, other_eps
+
+    async def _run_health_phase(
+        self,
+        health_eps: List[Endpoint],
+        results: Dict[str, EndpointResult],
+        failed: Set[str],
+        client: Optional[httpx.AsyncClient],
+    ) -> bool:
+        if not (self.health_first and health_eps):
+            return False
+
+        health_results = await self._run_batch(health_eps, sequential=True, client=client)
+        for result in health_results:
+            results[result.endpoint.path] = result
+            if result.status != EndpointStatus.OK:
+                failed.add(result.endpoint.path)
+        return bool(failed)
+
+    def _mark_health_dependents_skipped(
+        self, endpoints: List[Endpoint], results: Dict[str, EndpointResult]
+    ) -> None:
+        for ep in endpoints:
+            results[ep.path] = EndpointResult(
+                endpoint=ep,
+                status=EndpointStatus.SKIP,
+                error="Health checks failed - skipping remaining tests",
+                response_time_ms=0,
+            )
+
+    async def _run_dependency_phases(
+        self,
+        endpoints: List[Endpoint],
+        results: Dict[str, EndpointResult],
+        failed: Set[str],
+        client: Optional[httpx.AsyncClient],
+    ) -> None:
+        phases = self.dependency_graph.get_execution_order(endpoints)
+
         for phase in phases:
-            # Filter out skipped endpoints
-            to_run = []
-            for ep in phase:
-                skip_reason = self.dependency_graph.should_skip_due_to_failure(ep.path, failed)
-                if skip_reason:
-                    results[ep.path] = EndpointResult(
-                        endpoint=ep,
-                        status=EndpointStatus.SKIP,
-                        error=skip_reason,
-                        response_time_ms=0
-                    )
-                else:
-                    to_run.append(ep)
-            
+            to_run = self._runnable_phase_endpoints(phase, results, failed)
             if to_run:
                 batch_results = await self._run_batch(to_run, sequential=False, client=client)
-                for r in batch_results:
-                    results[r.endpoint.path] = r
-                    if r.status != EndpointStatus.OK:
-                        failed.add(r.endpoint.path)
-        
-        return list(results.values())
+                self._record_batch_results(batch_results, results, failed)
+
+    def _runnable_phase_endpoints(
+        self,
+        phase: List[Endpoint],
+        results: Dict[str, EndpointResult],
+        failed: Set[str],
+    ) -> List[Endpoint]:
+        to_run = []
+        for ep in phase:
+            skip_reason = self.dependency_graph.should_skip_due_to_failure(ep.path, failed)
+            if skip_reason:
+                results[ep.path] = EndpointResult(
+                    endpoint=ep,
+                    status=EndpointStatus.SKIP,
+                    error=skip_reason,
+                    response_time_ms=0,
+                )
+            else:
+                to_run.append(ep)
+        return to_run
+
+    def _record_batch_results(
+        self,
+        batch_results: List[EndpointResult],
+        results: Dict[str, EndpointResult],
+        failed: Set[str],
+    ) -> None:
+        for result in batch_results:
+            results[result.endpoint.path] = result
+            if result.status != EndpointStatus.OK:
+                failed.add(result.endpoint.path)
     
     def _is_health_endpoint(self, ep: Endpoint) -> bool:
         """Check if endpoint is a health check."""

@@ -3,7 +3,7 @@ import time
 import hashlib
 import json
 from pathlib import Path
-from typing import Optional, List, Any
+from typing import Optional, Any
 
 from rich.console import Console
 
@@ -45,7 +45,7 @@ class DeployService(Service[Path, bool]):
 
         # In replay mode: infra is already up — just verify health
         if self.config.replay:
-            self.console.print(f"  [dim]replay: checking existing infra health...[/dim]")
+            self.console.print("  [dim]replay: checking existing infra health...[/dim]")
             return self._wait_healthy_with_retry()
 
         if method == DeployMethod.DOCKER_COMPOSE:
@@ -85,7 +85,7 @@ class DeployService(Service[Path, bool]):
             result = self.shell.run(["docker", "restart", service])
             if result.returncode != 0:
                 # Fallback: compose restart with explicit file
-                self.console.print(f"  [dim]Fallback: compose restart...[/dim]")
+                self.console.print("  [dim]Fallback: compose restart...[/dim]")
                 try:
                     cf = self._compose_file(repo)
                     result = self.shell.run(
@@ -117,10 +117,12 @@ class DeployService(Service[Path, bool]):
 
     def _compose_file(self, repo: Path) -> Path:
         explicit = repo / self.config.compose_file
-        if explicit.exists(): return explicit
+        if explicit.exists():
+            return explicit
         for name in ("docker-compose.yml", "docker-compose.yaml"):
             p = repo / name
-            if p.exists(): return p
+            if p.exists():
+                return p
         raise FileNotFoundError(f"Nie znaleziono pliku docker-compose w {repo}")
 
     def _compose_up(self, repo: Path) -> bool:
@@ -232,18 +234,47 @@ class DeployService(Service[Path, bool]):
         last_status: Optional[int] = None
         last_body: Optional[str] = None
         last_error: Optional[str] = None
+
         while time.time() < deadline:
-            try:
-                r = self.http.get(self.config.health_url)
-                last_status = r.status_code
-                last_body = r.text[:500]
-                if r.status_code < 500:
+            status, body, error = self._probe_health()
+            if status is not None:
+                last_status = status
+                last_body = body
+                if status < 500:
                     self.console.print(f"  [green]✓ healthy[/green] ({self.config.health_url})")
                     return True
-            except Exception as exc:
-                last_error = str(exc)
+            if error:
+                last_error = error
             time.sleep(health_interval)
 
+        self._report_health_timeout(health_timeout, last_status, last_body, last_error)
+        self.last_error_category = DeployErrorCategory.HEALTH_TIMEOUT
+        return False
+
+    def _probe_health(self) -> tuple[Optional[int], Optional[str], Optional[str]]:
+        try:
+            response = self.http.get(self.config.health_url)
+            return response.status_code, response.text[:500], None
+        except Exception as exc:
+            return None, None, str(exc)
+
+    def _report_health_timeout(
+        self,
+        health_timeout: float,
+        last_status: Optional[int],
+        last_body: Optional[str],
+        last_error: Optional[str],
+    ) -> None:
+        self._print_health_last_seen(last_status, last_body, last_error)
+        self._write_health_debug(last_status, last_body, last_error)
+        self.console.print(f"  [red]✗ health timeout ({health_timeout}s)[/red]")
+
+    def _print_health_last_seen(
+        self,
+        last_status: Optional[int],
+        last_body: Optional[str],
+        last_error: Optional[str],
+    ) -> None:
         if last_status is not None:
             self.console.print(
                 f"  [dim]health last response:[/dim] status={last_status}, "
@@ -252,23 +283,29 @@ class DeployService(Service[Path, bool]):
         if last_error:
             self.console.print(f"  [dim]health last error:[/dim] {last_error}")
 
-        if getattr(self.config, "health_verbose", False) and self.day_dir:
-            try:
-                debug_file = self.day_dir / "deploy_debug.txt"
-                debug_file.parent.mkdir(parents=True, exist_ok=True)
-                with open(debug_file, "a", encoding="utf-8") as f:
-                    import datetime
-                    f.write(f"\n=== health timeout {datetime.datetime.now().isoformat()} url={self.config.health_url} ===\n")
-                    if last_status is not None:
-                        f.write(f"status={last_status} body={last_body or '<empty>'}\n")
-                    if last_error:
-                        f.write(f"error={last_error}\n")
-            except Exception:
-                pass
-
-        self.console.print(f"  [red]✗ health timeout ({health_timeout}s)[/red]")
-        self.last_error_category = DeployErrorCategory.HEALTH_TIMEOUT
-        return False
+    def _write_health_debug(
+        self,
+        last_status: Optional[int],
+        last_body: Optional[str],
+        last_error: Optional[str],
+    ) -> None:
+        if not (getattr(self.config, "health_verbose", False) and self.day_dir):
+            return
+        try:
+            debug_file = self.day_dir / "deploy_debug.txt"
+            debug_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(debug_file, "a", encoding="utf-8") as f:
+                import datetime
+                f.write(
+                    f"\n=== health timeout {datetime.datetime.now().isoformat()} "
+                    f"url={self.config.health_url} ===\n"
+                )
+                if last_status is not None:
+                    f.write(f"status={last_status} body={last_body or '<empty>'}\n")
+                if last_error:
+                    f.write(f"error={last_error}\n")
+        except Exception:
+            pass
 
     def _sync_code_to_runtime(self, repo: Path, service: str) -> bool:
         """Copy checked-out repository into /app of the running service container."""
@@ -307,7 +344,7 @@ class DeployService(Service[Path, bool]):
         overlay_dir = "/tmp/rebuild-overlay"
 
         # Clean and create overlay directory
-        clean = self.shell.run(["docker", "exec", container, "rm", "-rf", overlay_dir])
+        self.shell.run(["docker", "exec", container, "rm", "-rf", overlay_dir])
         prep = self.shell.run(["docker", "exec", container, "mkdir", "-p", overlay_dir])
         if prep.returncode != 0:
             return False

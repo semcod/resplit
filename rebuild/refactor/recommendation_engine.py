@@ -29,8 +29,16 @@ class RecommendationEngine:
         cycles: List[List[str]]
     ) -> List[RefactorSuggestion]:
         suggestions = []
-        
-        # 1. Duplication Recommendations
+        suggestions.extend(self._duplicate_suggestions(duplicates))
+        suggestions.extend(self._similarity_suggestions(similarities))
+        suggestions.extend(self._adapter_suggestions(graph))
+        suggestions.extend(self._cycle_suggestions(cycles))
+        return sorted(suggestions, key=lambda x: x.impact, reverse=True)
+
+    def _duplicate_suggestions(
+        self, duplicates: List[DuplicateGroup]
+    ) -> List[RefactorSuggestion]:
+        suggestions = []
         for group in duplicates:
             if group.similarity >= 0.9:
                 suggestions.append(RefactorSuggestion(
@@ -41,8 +49,12 @@ class RecommendationEngine:
                     files=[f.file for f in group.fragments],
                     rationale=f"Structural similarity: {group.similarity:.2f}. Reason: {group.reason}"
                 ))
+        return suggestions
 
-        # 2. Service Similarity Recommendations
+    def _similarity_suggestions(
+        self, similarities: List[ServiceSimilarity]
+    ) -> List[RefactorSuggestion]:
+        suggestions = []
         for sim in similarities:
             if sim.overlap > 0.4:
                 suggestions.append(RefactorSuggestion(
@@ -53,11 +65,12 @@ class RecommendationEngine:
                     files=[Path(sim.service_a), Path(sim.service_b)],
                     rationale=f"Method overlap: {sim.overlap:.2f}"
                 ))
+        return suggestions
 
-        # 3. Architectural Pattern: Adapter Pattern Suggestion
+    def _adapter_suggestions(self, graph: Dict[str, ServiceNode]) -> List[RefactorSuggestion]:
+        suggestions = []
         for name, node in graph.items():
-            # If a service depends on many infrastructure-like names
-            infra_deps = [d for d in node.dependencies if any(x in d.lower() for x in ["git", "http", "docker", "subprocess"])]
+            infra_deps = self._infra_dependencies(node)
             if len(infra_deps) >= 2:
                 suggestions.append(RefactorSuggestion(
                     title=f"Apply Adapter Pattern to {name.split('.')[-1]}",
@@ -67,8 +80,14 @@ class RecommendationEngine:
                     files=[Path(name.replace(".", "/") + ".py")],
                     rationale=f"Direct dependencies on: {', '.join(infra_deps)}. This hinders mockability."
                 ))
+        return suggestions
 
-        # 4. Architectural Pattern: Interface Extraction for Cycles
+    def _infra_dependencies(self, node: ServiceNode) -> List[str]:
+        markers = ["git", "http", "docker", "subprocess"]
+        return [dep for dep in node.dependencies if any(marker in dep.lower() for marker in markers)]
+
+    def _cycle_suggestions(self, cycles: List[List[str]]) -> List[RefactorSuggestion]:
+        suggestions = []
         for cycle in cycles:
             suggestions.append(RefactorSuggestion(
                 title=f"Break Circular Dependency: {' -> '.join(cycle)}",
@@ -78,5 +97,4 @@ class RecommendationEngine:
                 files=[Path(c.replace(".", "/") + ".py") for c in cycle],
                 rationale="Cycles prevent modularity and lead to fragile builds."
             ))
-
-        return sorted(suggestions, key=lambda x: x.impact, reverse=True)
+        return suggestions

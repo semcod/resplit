@@ -84,3 +84,8 @@ if TEXTUAL_OK:
         def action_help(self) -> None:
             from .help_screen import HelpScreen
             self.app.push_screen(HelpScreen())
+else:
+    class ProjectScreen:
+        """Fallback export used when Textual is not installed."""
+
+        BINDINGS = []

@@ -1,39 +1,120 @@
 flowchart LR
+%% generated in 0.03s
     subgraph Makefile
         Makefile__print["print"]
     end
+    subgraph SUMD
+        SUMD__serve_reports["serve_reports"]
+        SUMD__generate_dashboard["generate_dashboard"]
+        SUMD__truth_command["truth_command"]
+        SUMD__vector_build_command["vector_build_command"]
+        SUMD__duplicates_command["duplicates_command"]
+        SUMD__handler["handler"]
+        SUMD___send_webhook["_send_webhook"]
+        SUMD__generate_endpoint_diff["generate_endpoint_diff"]
+        SUMD___build_discord_payload["_build_discord_payload"]
+        SUMD__classify_error["classify_error"]
+        SUMD__load_plugins["load_plugins"]
+        SUMD___build_generic_payload["_build_generic_payload"]
+        SUMD__generate_evolution_html["generate_evolution_html"]
+        SUMD__plan_command["plan_command"]
+        SUMD__pr_command["pr_command"]
+        SUMD__get_event_service["get_event_service"]
+        SUMD___build_slack_payload["_build_slack_payload"]
+        SUMD__services_command["services_command"]
+        SUMD__multi_repo_command["multi_repo_command"]
+        SUMD__execute_command["execute_command"]
+        SUMD__print_report_links["print_report_links"]
+        SUMD__generate_trend_chart["generate_trend_chart"]
+        SUMD__vector_query_command["vector_query_command"]
+        SUMD__status_badge["status_badge"]
+        SUMD___load_entry_points["_load_entry_points"]
+        SUMD__launch_tui["launch_tui"]
+    end
+    subgraph rebuild__application
+        rebuild__application__services__db_snapshot_manager__DBSnapshotManager___postgres_restore["_postgres_restore"]
+        rebuild__application__services__reporting__reporter__ReporterService__to_yaml["to_yaml"]
+        rebuild__application__services__reporting__reporter__ReporterService__save_timeline_index["save_timeline_index"]
+        rebuild__application__services__notification_service__NotificationService___build_body["_build_body"]
+        rebuild__application__base_pipeline__BasePipeline____init__["__init__"]
+        rebuild__application__services__reporting__reporter__ReporterService__save_day["save_day"]
+        rebuild__application__services__reporting__reporter__ReporterService__to_toon["to_toon"]
+        rebuild__application__services__reporting__reporter__ReporterService___save_html_day["_save_html_day"]
+        rebuild__application__services__notification_service__NotificationService__notify["notify"]
+        rebuild__application__services__pr_service__load_config_from_env["load_config_from_env"]
+    end
+    subgraph rebuild__domain
+        rebuild__domain__mvp_protocol__MVPProtocolHandler___handle_command["_handle_command"]
+        rebuild__domain__mvp_protocol__MVPProtocolHandler__handle_message["handle_message"]
+        rebuild__domain__mvp_protocol__MVPServer__start["start"]
+        rebuild__domain__dsl_v2__DSLShell__run["run"]
+        rebuild__domain__dsl__DSLInterpreter__execute["execute"]
+        rebuild__domain__dsl_v2__DSLShell___process["_process"]
+    end
+    subgraph rebuild__infrastructure
+        rebuild__infrastructure__event_bus__EventBus__publish["publish"]
+    end
+    subgraph rebuild__interfaces
+        rebuild__interfaces__cli__pr["pr"]
+        rebuild__interfaces__cli__plan["plan"]
+        rebuild__interfaces__cli__vector_query["vector_query"]
+        rebuild__interfaces__commands__refactor_command__execute_command["execute_command"]
+        rebuild__interfaces__commands__refactor_command___generate_refactor_plan["_generate_refactor_plan"]
+        rebuild__interfaces__cli__vector_build["vector_build"]
+        rebuild__interfaces__commands__helpers__serve_reports["serve_reports"]
+        rebuild__interfaces__cli__serve["serve"]
+        rebuild__interfaces__cli__plugins["plugins"]
+        rebuild__interfaces__cli__dashboard["dashboard"]
+        rebuild__interfaces__cli__evolution["evolution"]
+        rebuild__interfaces__cli__multi_repo["multi_repo"]
+        rebuild__interfaces__cli__services["services"]
+        rebuild__interfaces__cli__truth["truth"]
+        rebuild__interfaces__dashboard___render_html["_render_html"]
+        rebuild__interfaces__cli__tui["tui"]
+        rebuild__interfaces__dashboard__generate_dashboard["generate_dashboard"]
+        rebuild__interfaces__evolution_viz___render_html["_render_html"]
+        rebuild__interfaces__dashboard__get_cc_for_day["get_cc_for_day"]
+        rebuild__interfaces__dashboard___extract_avg_cc["_extract_avg_cc"]
+        rebuild__interfaces__evolution_viz__generate_evolution_html["generate_evolution_html"]
+        rebuild__interfaces__cli__execute["execute"]
+        rebuild__interfaces__commands__refactor_command__pr_command["pr_command"]
+        rebuild__interfaces__tui__app__launch_tui["launch_tui"]
+        rebuild__interfaces__commands__refactor_command__plan_command["plan_command"]
+        rebuild__interfaces__cli__duplicates["duplicates"]
+    end
+    subgraph rebuild__plugins
+        rebuild__plugins__registry__PluginRegistry__discover["discover"]
+    end
     subgraph restored_c2004_health__api_health
-        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main___index_html["_index_html"]
-        restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main___index_html["_index_html"]
-        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__index["index"]
-        restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main___index_html["_index_html"]
-        restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__index["index"]
-        restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__module_index["module_index"]
-        restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__index["index"]
-        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__module_index["module_index"]
-        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__index["index"]
         restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__module_index["module_index"]
+        restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__module_index["module_index"]
+        restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__index["index"]
+        restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main___index_html["_index_html"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main___index_html["_index_html"]
+        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__module_index["module_index"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__index["index"]
+        restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__index["index"]
         restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__module_index["module_index"]
+        restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main___index_html["_index_html"]
+        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__index["index"]
         restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main___index_html["_index_html"]
     end
     subgraph scripts__bump_version
-        scripts__bump_version__bump["bump"]
-        scripts__bump_version__get_git_log_since_last_tag["get_git_log_since_last_tag"]
-        scripts__bump_version__main["main"]
-        scripts__bump_version__read_version["read_version"]
         scripts__bump_version__update_pyproject["update_pyproject"]
-        scripts__bump_version__update_init["update_init"]
+        scripts__bump_version__bump["bump"]
         scripts__bump_version__categorize_commits["categorize_commits"]
         scripts__bump_version__build_new_section["build_new_section"]
+        scripts__bump_version__get_git_log_since_last_tag["get_git_log_since_last_tag"]
+        scripts__bump_version__read_version["read_version"]
+        scripts__bump_version__update_init["update_init"]
         scripts__bump_version__update_changelog["update_changelog"]
         scripts__bump_version__collect_unreleased_entries["collect_unreleased_entries"]
+        scripts__bump_version__main["main"]
     end
-    restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__index --> restored_c2004_health__api_health__backend__modules__connect_config_network__api__main___index_html
-    restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_config_network__api__main___index_html
-    restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__index --> restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main___index_html
-    restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main___index_html
-    restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__index --> restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main___index_html
-    restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main___index_html
+    subgraph testql_scenarios__generated_from_pytests
+        testql_scenarios__generated_from_pytests__testql__toon__all["all"]
+    end
+    rebuild__infrastructure__event_bus__EventBus__publish --> SUMD__handler
     restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__index --> restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main___index_html
     restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main___index_html
     scripts__bump_version__update_init --> Makefile__print
@@ -49,3 +130,55 @@ flowchart LR
     scripts__bump_version__main --> Makefile__print
     scripts__bump_version__main --> scripts__bump_version__update_init
     scripts__bump_version__main --> scripts__bump_version__update_pyproject
+    restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__index --> restored_c2004_health__api_health__backend__modules__connect_config_network__api__main___index_html
+    restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_config_network__api__main___index_html
+    rebuild__application__base_pipeline__BasePipeline____init__ --> SUMD__get_event_service
+    restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__index --> restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main___index_html
+    restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main___index_html
+    restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__index --> restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main___index_html
+    restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main___index_html
+    rebuild__application__services__reporting__reporter__ReporterService__save_day --> rebuild__application__services__reporting__reporter__ReporterService__to_yaml
+    rebuild__application__services__reporting__reporter__ReporterService__save_day --> rebuild__application__services__reporting__reporter__ReporterService__to_toon
+    rebuild__application__services__reporting__reporter__ReporterService___save_html_day --> rebuild__application__services__reporting__reporter__ReporterService__to_yaml
+    rebuild__application__services__reporting__reporter__ReporterService___save_html_day --> rebuild__application__services__reporting__reporter__ReporterService__to_toon
+    rebuild__application__services__reporting__reporter__ReporterService___save_html_day --> SUMD__classify_error
+    rebuild__application__services__reporting__reporter__ReporterService___save_html_day --> SUMD__status_badge
+    rebuild__application__services__reporting__reporter__ReporterService__save_timeline_index --> SUMD__generate_trend_chart
+    rebuild__application__services__reporting__reporter__ReporterService__save_timeline_index --> SUMD__generate_endpoint_diff
+    rebuild__plugins__registry__PluginRegistry__discover --> SUMD___load_entry_points
+    rebuild__interfaces__dashboard__get_cc_for_day --> rebuild__interfaces__dashboard___extract_avg_cc
+    rebuild__interfaces__dashboard__generate_dashboard --> rebuild__interfaces__dashboard___render_html
+    rebuild__interfaces__dashboard__generate_dashboard --> rebuild__interfaces__dashboard__get_cc_for_day
+    rebuild__interfaces__evolution_viz__generate_evolution_html --> rebuild__interfaces__evolution_viz___render_html
+    rebuild__interfaces__cli__dashboard --> SUMD__generate_dashboard
+    rebuild__interfaces__cli__serve --> SUMD__print_report_links
+    rebuild__interfaces__cli__serve --> SUMD__serve_reports
+    rebuild__interfaces__cli__tui --> SUMD__launch_tui
+    rebuild__interfaces__cli__evolution --> SUMD__generate_evolution_html
+    rebuild__interfaces__cli__duplicates --> SUMD__duplicates_command
+    rebuild__interfaces__cli__vector_build --> SUMD__vector_build_command
+    rebuild__interfaces__cli__vector_query --> SUMD__vector_query_command
+    rebuild__interfaces__cli__multi_repo --> SUMD__multi_repo_command
+    rebuild__interfaces__cli__services --> SUMD__services_command
+    rebuild__interfaces__cli__truth --> SUMD__truth_command
+    rebuild__interfaces__cli__plan --> SUMD__plan_command
+    rebuild__interfaces__cli__pr --> SUMD__pr_command
+    rebuild__interfaces__cli__execute --> SUMD__execute_command
+    rebuild__interfaces__cli__plugins --> SUMD__load_plugins
+    rebuild__interfaces__commands__refactor_command__plan_command --> rebuild__interfaces__commands__refactor_command___generate_refactor_plan
+    rebuild__interfaces__commands__refactor_command__pr_command --> rebuild__interfaces__commands__refactor_command___generate_refactor_plan
+    rebuild__interfaces__commands__refactor_command__execute_command --> rebuild__interfaces__commands__refactor_command___generate_refactor_plan
+    rebuild__interfaces__tui__app__launch_tui --> Makefile__print
+    rebuild__application__services__db_snapshot_manager__DBSnapshotManager___postgres_restore --> Makefile__print
+    rebuild__domain__dsl__DSLInterpreter__execute --> SUMD__handler
+    rebuild__application__services__pr_service__load_config_from_env --> testql_scenarios__generated_from_pytests__testql__toon__all
+    rebuild__interfaces__commands__helpers__serve_reports --> SUMD__get_event_service
+    rebuild__application__services__notification_service__NotificationService__notify --> SUMD___send_webhook
+    rebuild__application__services__notification_service__NotificationService___build_body --> SUMD___build_generic_payload
+    rebuild__application__services__notification_service__NotificationService___build_body --> SUMD___build_slack_payload
+    rebuild__application__services__notification_service__NotificationService___build_body --> SUMD___build_discord_payload
+    rebuild__domain__mvp_protocol__MVPProtocolHandler__handle_message --> SUMD__handler
+    rebuild__domain__mvp_protocol__MVPProtocolHandler___handle_command --> SUMD__handler
+    rebuild__domain__mvp_protocol__MVPServer__start --> Makefile__print
+    rebuild__domain__dsl_v2__DSLShell__run --> Makefile__print
+    rebuild__domain__dsl_v2__DSLShell___process --> Makefile__print

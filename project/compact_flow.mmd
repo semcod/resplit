@@ -1,4 +1,22 @@
 flowchart TD
+%% generated in 0.03s
     Makefile["Makefile<br/>1 funcs"]
+    SUMD["SUMD<br/>3205 funcs"]
+    rebuild__application["rebuild.application<br/>242 funcs"]
+    rebuild__domain["rebuild.domain<br/>52 funcs"]
+    rebuild__infrastructure["rebuild.infrastructure<br/>42 funcs"]
+    rebuild__interfaces["rebuild.interfaces<br/>50 funcs"]
+    rebuild__plugins["rebuild.plugins<br/>18 funcs"]
     scripts__bump_version["scripts.bump_version<br/>10 funcs"]
+    testql_scenarios__generated_from_pytests["testql-scenarios.generated-from-pytests<br/>1 funcs"]
+    rebuild__interfaces ==>|27| SUMD
     scripts__bump_version ==>|12| Makefile
+    rebuild__domain ==>|11| Makefile
+    rebuild__application ==>|9| SUMD
+    rebuild__infrastructure ==>|4| SUMD
+    rebuild__domain -->|3| SUMD
+    rebuild__plugins -->|2| SUMD
+    rebuild__interfaces -->|1| Makefile
+    rebuild__application -->|1| Makefile
+    rebuild__application -->|1| testql_scenarios__generated_from_pytests
+    rebuild__interfaces -->|1| rebuild__infrastructure

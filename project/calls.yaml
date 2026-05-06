@@ -1,24 +1,24 @@
-project: /home/tom/github/semcod/resplit
+project: /home/tom/github/semcod/rebuild
 generated_from: code2llm call graph analysis
 stats:
-  total_nodes: 23
-  total_edges: 21
-  modules_count: 6
+  total_nodes: 94
+  total_edges: 68
+  modules_count: 24
 nodes:
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 60
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
+  SUMD.serve_reports:
+    name: serve_reports
+    module: SUMD
+    line: 186848
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 3
+  scripts.bump_version.update_pyproject:
+    name: update_pyproject
+    module: scripts.bump_version
+    line: 68
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
   scripts.bump_version.bump:
     name: bump
     module: scripts.bump_version
@@ -26,6 +26,132 @@ nodes:
     cyclomatic_complexity: 5
     calls_out: 7
     calls_in: 1
+  SUMD.generate_dashboard:
+    name: generate_dashboard
+    module: SUMD
+    line: 186864
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 3
+  SUMD.truth_command:
+    name: truth_command
+    module: SUMD
+    line: 186841
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  scripts.bump_version.categorize_commits:
+    name: categorize_commits
+    module: scripts.bump_version
+    line: 119
+    cyclomatic_complexity: 14
+    calls_out: 15
+    calls_in: 1
+  SUMD.vector_build_command:
+    name: vector_build_command
+    module: SUMD
+    line: 186837
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.interfaces.cli.pr:
+    name: pr
+    module: rebuild.interfaces.cli
+    line: 466
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  scripts.bump_version.build_new_section:
+    name: build_new_section
+    module: scripts.bump_version
+    line: 146
+    cyclomatic_complexity: 7
+    calls_out: 14
+    calls_in: 1
+  rebuild.interfaces.cli.plan:
+    name: plan
+    module: rebuild.interfaces.cli
+    line: 456
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_command:
+    name: _handle_command
+    module: rebuild.domain.mvp_protocol
+    line: 103
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 0
+  rebuild.interfaces.cli.vector_query:
+    name: vector_query
+    module: rebuild.interfaces.cli
+    line: 407
+    cyclomatic_complexity: 1
+    calls_out: 8
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.commands.refactor_command.execute_command:
+    name: execute_command
+    module: rebuild.interfaces.commands.refactor_command
+    line: 80
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 0
+  rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore:
+    name: _postgres_restore
+    module: rebuild.application.services.db_snapshot_manager
+    line: 258
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 0
+  rebuild.interfaces.commands.refactor_command._generate_refactor_plan:
+    name: _generate_refactor_plan
+    module: rebuild.interfaces.commands.refactor_command
+    line: 11
+    cyclomatic_complexity: 5
+    calls_out: 12
+    calls_in: 3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.cli.vector_build:
+    name: vector_build
+    module: rebuild.interfaces.cli
+    line: 395
+    cyclomatic_complexity: 1
+    calls_out: 8
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService.to_yaml:
+    name: to_yaml
+    module: rebuild.application.services.reporting.reporter
+    line: 48
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  rebuild.interfaces.commands.helpers.serve_reports:
+    name: serve_reports
+    module: rebuild.interfaces.commands.helpers
+    line: 109
+    cyclomatic_complexity: 2
+    calls_out: 28
+    calls_in: 0
+  rebuild.interfaces.cli.serve:
+    name: serve
+    module: rebuild.interfaces.cli
+    line: 183
+    cyclomatic_complexity: 2
+    calls_out: 9
+    calls_in: 0
   scripts.bump_version.get_git_log_since_last_tag:
     name: get_git_log_since_last_tag
     module: scripts.bump_version
@@ -33,33 +159,19 @@ nodes:
     cyclomatic_complexity: 7
     calls_out: 7
     calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  scripts.bump_version.main:
-    name: main
-    module: scripts.bump_version
-    line: 203
-    cyclomatic_complexity: 4
-    calls_out: 20
-    calls_in: 0
   restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index:
     name: index
     module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
     line: 77
     cyclomatic_complexity: 1
     calls_out: 3
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index:
+    name: save_timeline_index
+    module: rebuild.application.services.reporting.reporter
+    line: 174
+    cyclomatic_complexity: 14
+    calls_out: 23
     calls_in: 0
   scripts.bump_version.read_version:
     name: read_version
@@ -68,32 +180,25 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 4
     calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  scripts.bump_version.update_pyproject:
-    name: update_pyproject
-    module: scripts.bump_version
-    line: 68
-    cyclomatic_complexity: 3
-    calls_out: 6
+  SUMD.duplicates_command:
+    name: duplicates_command
+    module: SUMD
+    line: 186836
+    cyclomatic_complexity: 0
+    calls_out: 0
     calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index:
-    name: index
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html:
+    name: _index_html
     module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 77
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 81
-    cyclomatic_complexity: 1
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  rebuild.application.services.notification_service.NotificationService._build_body:
+    name: _build_body
+    module: rebuild.application.services.notification_service
+    line: 209
+    cyclomatic_complexity: 3
     calls_out: 3
     calls_in: 0
   scripts.bump_version.update_init:
@@ -103,20 +208,139 @@ nodes:
     cyclomatic_complexity: 3
     calls_out: 6
     calls_in: 1
-  scripts.bump_version.categorize_commits:
-    name: categorize_commits
-    module: scripts.bump_version
-    line: 119
-    cyclomatic_complexity: 14
-    calls_out: 15
-    calls_in: 1
-  scripts.bump_version.build_new_section:
-    name: build_new_section
-    module: scripts.bump_version
-    line: 146
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 60
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  SUMD.handler:
+    name: handler
+    module: SUMD
+    line: 183831
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 7
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.cli.plugins:
+    name: plugins
+    module: rebuild.interfaces.cli
+    line: 485
     cyclomatic_complexity: 7
-    calls_out: 14
+    calls_out: 22
+    calls_in: 0
+  rebuild.domain.mvp_protocol.MVPProtocolHandler.handle_message:
+    name: handle_message
+    module: rebuild.domain.mvp_protocol
+    line: 85
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 0
+  rebuild.interfaces.cli.dashboard:
+    name: dashboard
+    module: rebuild.interfaces.cli
+    line: 140
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 0
+  SUMD._send_webhook:
+    name: _send_webhook
+    module: SUMD
+    line: 186632
+    cyclomatic_complexity: 0
+    calls_out: 0
     calls_in: 1
+  rebuild.interfaces.cli.evolution:
+    name: evolution
+    module: rebuild.interfaces.cli
+    line: 287
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 0
+  SUMD.generate_endpoint_diff:
+    name: generate_endpoint_diff
+    module: SUMD
+    line: 186656
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.interfaces.cli.multi_repo:
+    name: multi_repo
+    module: rebuild.interfaces.cli
+    line: 420
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  rebuild.interfaces.cli.services:
+    name: services
+    module: rebuild.interfaces.cli
+    line: 431
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  SUMD._build_discord_payload:
+    name: _build_discord_payload
+    module: SUMD
+    line: 186630
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.cli.truth:
+    name: truth
+    module: rebuild.interfaces.cli
+    line: 441
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  SUMD.classify_error:
+    name: classify_error
+    module: SUMD
+    line: 186662
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  SUMD.load_plugins:
+    name: load_plugins
+    module: SUMD
+    line: 186892
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  SUMD._build_generic_payload:
+    name: _build_generic_payload
+    module: SUMD
+    line: 186631
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.domain.mvp_protocol.MVPServer.start:
+    name: start
+    module: rebuild.domain.mvp_protocol
+    line: 247
+    cyclomatic_complexity: 1
+    calls_out: 23
+    calls_in: 0
   scripts.bump_version.update_changelog:
     name: update_changelog
     module: scripts.bump_version
@@ -124,19 +348,40 @@ nodes:
     cyclomatic_complexity: 5
     calls_out: 14
     calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 77
+  rebuild.interfaces.dashboard._render_html:
+    name: _render_html
+    module: rebuild.interfaces.dashboard
+    line: 93
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  rebuild.interfaces.cli.tui:
+    name: tui
+    module: rebuild.interfaces.cli
+    line: 197
     cyclomatic_complexity: 1
-    calls_out: 3
+    calls_out: 2
     calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 81
+  rebuild.interfaces.dashboard.generate_dashboard:
+    name: generate_dashboard
+    module: rebuild.interfaces.dashboard
+    line: 60
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 0
+  rebuild.interfaces.evolution_viz._render_html:
+    name: _render_html
+    module: rebuild.interfaces.evolution_viz
+    line: 31
     cyclomatic_complexity: 1
-    calls_out: 3
+    calls_out: 4
+    calls_in: 1
+  rebuild.domain.dsl_v2.DSLShell.run:
+    name: run
+    module: rebuild.domain.dsl_v2
+    line: 399
+    cyclomatic_complexity: 7
+    calls_out: 10
     calls_in: 0
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index:
     name: module_index
@@ -145,13 +390,34 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
+  rebuild.interfaces.dashboard.get_cc_for_day:
+    name: get_cc_for_day
+    module: rebuild.interfaces.dashboard
+    line: 27
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  rebuild.interfaces.dashboard._extract_avg_cc:
+    name: _extract_avg_cc
+    module: rebuild.interfaces.dashboard
+    line: 45
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  rebuild.interfaces.evolution_viz.generate_evolution_html:
+    name: generate_evolution_html
+    module: rebuild.interfaces.evolution_viz
+    line: 12
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 0
+  rebuild.application.base_pipeline.BasePipeline.__init__:
+    name: __init__
+    module: rebuild.application.base_pipeline
+    line: 34
+    cyclomatic_complexity: 1
+    calls_out: 9
+    calls_in: 0
   scripts.bump_version.collect_unreleased_entries:
     name: collect_unreleased_entries
     module: scripts.bump_version
@@ -159,31 +425,247 @@ nodes:
     cyclomatic_complexity: 7
     calls_out: 6
     calls_in: 1
+  SUMD.generate_evolution_html:
+    name: generate_evolution_html
+    module: SUMD
+    line: 186868
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  SUMD.plan_command:
+    name: plan_command
+    module: SUMD
+    line: 186852
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.application.services.reporting.reporter.ReporterService.save_day:
+    name: save_day
+    module: rebuild.application.services.reporting.reporter
+    line: 54
+    cyclomatic_complexity: 2
+    calls_out: 9
+    calls_in: 0
+  rebuild.interfaces.cli.execute:
+    name: execute
+    module: rebuild.interfaces.cli
+    line: 475
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  SUMD.pr_command:
+    name: pr_command
+    module: SUMD
+    line: 186853
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.application.services.reporting.reporter.ReporterService.to_toon:
+    name: to_toon
+    module: rebuild.application.services.reporting.reporter
+    line: 51
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  SUMD.get_event_service:
+    name: get_event_service
+    module: SUMD
+    line: 186608
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 2
+  SUMD._build_slack_payload:
+    name: _build_slack_payload
+    module: SUMD
+    line: 186629
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  testql-scenarios.generated-from-pytests.testql.toon.all:
+    name: all
+    module: testql-scenarios.generated-from-pytests.testql.toon
+    line: 28
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  SUMD.services_command:
+    name: services_command
+    module: SUMD
+    line: 186840
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  SUMD.multi_repo_command:
+    name: multi_repo_command
+    module: SUMD
+    line: 186839
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.interfaces.commands.refactor_command.pr_command:
+    name: pr_command
+    module: rebuild.interfaces.commands.refactor_command
+    line: 60
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 0
   Makefile.print:
     name: print
     module: Makefile
     line: 78
     cyclomatic_complexity: 0
     calls_out: 0
-    calls_in: 12
+    calls_in: 25
+  SUMD.execute_command:
+    name: execute_command
+    module: SUMD
+    line: 186854
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.interfaces.tui.app.launch_tui:
+    name: launch_tui
+    module: rebuild.interfaces.tui.app
+    line: 41
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day:
+    name: _save_html_day
+    module: rebuild.application.services.reporting.reporter
+    line: 66
+    cyclomatic_complexity: 16
+    calls_out: 8
+    calls_in: 0
+  SUMD.print_report_links:
+    name: print_report_links
+    module: SUMD
+    line: 186844
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 3
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  rebuild.interfaces.commands.refactor_command.plan_command:
+    name: plan_command
+    module: rebuild.interfaces.commands.refactor_command
+    line: 32
+    cyclomatic_complexity: 11
+    calls_out: 19
+    calls_in: 0
+  rebuild.application.services.notification_service.NotificationService.notify:
+    name: notify
+    module: rebuild.application.services.notification_service
+    line: 148
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  SUMD.generate_trend_chart:
+    name: generate_trend_chart
+    module: SUMD
+    line: 186655
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.domain.dsl.DSLInterpreter.execute:
+    name: execute
+    module: rebuild.domain.dsl
+    line: 117
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  rebuild.domain.dsl_v2.DSLShell._process:
+    name: _process
+    module: rebuild.domain.dsl_v2
+    line: 420
+    cyclomatic_complexity: 7
+    calls_out: 11
+    calls_in: 0
+  scripts.bump_version.main:
+    name: main
+    module: scripts.bump_version
+    line: 203
+    cyclomatic_complexity: 4
+    calls_out: 20
+    calls_in: 0
+  SUMD.vector_query_command:
+    name: vector_query_command
+    module: SUMD
+    line: 186838
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.plugins.registry.PluginRegistry.discover:
+    name: discover
+    module: rebuild.plugins.registry
+    line: 65
+    cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 0
+  SUMD.status_badge:
+    name: status_badge
+    module: SUMD
+    line: 186661
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  SUMD._load_entry_points:
+    name: _load_entry_points
+    module: SUMD
+    line: 186891
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 2
+  rebuild.interfaces.cli.duplicates:
+    name: duplicates
+    module: rebuild.interfaces.cli
+    line: 381
+    cyclomatic_complexity: 1
+    calls_out: 9
+    calls_in: 0
+  SUMD.launch_tui:
+    name: launch_tui
+    module: SUMD
+    line: 186873
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  rebuild.infrastructure.event_bus.EventBus.publish:
+    name: publish
+    module: rebuild.infrastructure.event_bus
+    line: 93
+    cyclomatic_complexity: 14
+    calls_out: 20
+    calls_in: 0
+  rebuild.application.services.pr_service.load_config_from_env:
+    name: load_config_from_env
+    module: rebuild.application.services.pr_service
+    line: 155
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
 edges:
-- caller: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
-  callee: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index
-  callee: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index
-  callee: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index
-  callee: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
-  callee: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
-  call_type: resolved
-- caller: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
-  callee: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+- caller: rebuild.infrastructure.event_bus.EventBus.publish
+  callee: SUMD.handler
   call_type: resolved
 - caller: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index
   callee: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
@@ -230,9 +712,252 @@ edges:
 - caller: scripts.bump_version.main
   callee: scripts.bump_version.update_pyproject
   call_type: resolved
+- caller: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
+  callee: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  call_type: resolved
+- caller: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index
+  callee: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  call_type: resolved
+- caller: rebuild.application.base_pipeline.BasePipeline.__init__
+  callee: SUMD.get_event_service
+  call_type: resolved
+- caller: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index
+  callee: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  call_type: resolved
+- caller: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index
+  callee: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  call_type: resolved
+- caller: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index
+  callee: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+  call_type: resolved
+- caller: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index
+  callee: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.save_day
+  callee: rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.save_day
+  callee: rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._save_html_day
+  callee: rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._save_html_day
+  callee: rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._save_html_day
+  callee: SUMD.classify_error
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._save_html_day
+  callee: SUMD.status_badge
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
+  callee: SUMD.generate_trend_chart
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
+  callee: SUMD.generate_endpoint_diff
+  call_type: resolved
+- caller: rebuild.plugins.registry.PluginRegistry.discover
+  callee: SUMD._load_entry_points
+  call_type: resolved
+- caller: rebuild.interfaces.dashboard.get_cc_for_day
+  callee: rebuild.interfaces.dashboard._extract_avg_cc
+  call_type: resolved
+- caller: rebuild.interfaces.dashboard.generate_dashboard
+  callee: rebuild.interfaces.dashboard._render_html
+  call_type: resolved
+- caller: rebuild.interfaces.dashboard.generate_dashboard
+  callee: rebuild.interfaces.dashboard.get_cc_for_day
+  call_type: resolved
+- caller: rebuild.interfaces.evolution_viz.generate_evolution_html
+  callee: rebuild.interfaces.evolution_viz._render_html
+  call_type: resolved
+- caller: rebuild.interfaces.cli.dashboard
+  callee: SUMD.generate_dashboard
+  call_type: resolved
+- caller: rebuild.interfaces.cli.serve
+  callee: SUMD.print_report_links
+  call_type: resolved
+- caller: rebuild.interfaces.cli.serve
+  callee: SUMD.serve_reports
+  call_type: resolved
+- caller: rebuild.interfaces.cli.tui
+  callee: SUMD.launch_tui
+  call_type: resolved
+- caller: rebuild.interfaces.cli.evolution
+  callee: SUMD.generate_evolution_html
+  call_type: resolved
+- caller: rebuild.interfaces.cli.duplicates
+  callee: SUMD.duplicates_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.vector_build
+  callee: SUMD.vector_build_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.vector_query
+  callee: SUMD.vector_query_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.multi_repo
+  callee: SUMD.multi_repo_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.services
+  callee: SUMD.services_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.truth
+  callee: SUMD.truth_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.plan
+  callee: SUMD.plan_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.pr
+  callee: SUMD.pr_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.execute
+  callee: SUMD.execute_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.plugins
+  callee: SUMD.load_plugins
+  call_type: resolved
+- caller: rebuild.interfaces.commands.refactor_command.plan_command
+  callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  call_type: resolved
+- caller: rebuild.interfaces.commands.refactor_command.pr_command
+  callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  call_type: resolved
+- caller: rebuild.interfaces.commands.refactor_command.execute_command
+  callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  call_type: resolved
+- caller: rebuild.interfaces.tui.app.launch_tui
+  callee: Makefile.print
+  call_type: resolved
+- caller: rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore
+  callee: Makefile.print
+  call_type: resolved
+- caller: rebuild.domain.dsl.DSLInterpreter.execute
+  callee: SUMD.handler
+  call_type: resolved
+- caller: rebuild.application.services.pr_service.load_config_from_env
+  callee: testql-scenarios.generated-from-pytests.testql.toon.all
+  call_type: resolved
+- caller: rebuild.interfaces.commands.helpers.serve_reports
+  callee: SUMD.get_event_service
+  call_type: resolved
+- caller: rebuild.application.services.notification_service.NotificationService.notify
+  callee: SUMD._send_webhook
+  call_type: resolved
+- caller: rebuild.application.services.notification_service.NotificationService._build_body
+  callee: SUMD._build_generic_payload
+  call_type: resolved
+- caller: rebuild.application.services.notification_service.NotificationService._build_body
+  callee: SUMD._build_slack_payload
+  call_type: resolved
+- caller: rebuild.application.services.notification_service.NotificationService._build_body
+  callee: SUMD._build_discord_payload
+  call_type: resolved
+- caller: rebuild.domain.mvp_protocol.MVPProtocolHandler.handle_message
+  callee: SUMD.handler
+  call_type: resolved
+- caller: rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_command
+  callee: SUMD.handler
+  call_type: resolved
+- caller: rebuild.domain.mvp_protocol.MVPServer.start
+  callee: Makefile.print
+  call_type: resolved
+- caller: rebuild.domain.dsl_v2.DSLShell.run
+  callee: Makefile.print
+  call_type: resolved
+- caller: rebuild.domain.dsl_v2.DSLShell._process
+  callee: Makefile.print
+  call_type: resolved
 modules:
   Makefile:
   - Makefile.print
+  SUMD:
+  - SUMD._build_discord_payload
+  - SUMD._build_generic_payload
+  - SUMD._build_slack_payload
+  - SUMD._load_entry_points
+  - SUMD._send_webhook
+  - SUMD.classify_error
+  - SUMD.duplicates_command
+  - SUMD.execute_command
+  - SUMD.generate_dashboard
+  - SUMD.generate_endpoint_diff
+  - SUMD.generate_evolution_html
+  - SUMD.generate_trend_chart
+  - SUMD.get_event_service
+  - SUMD.handler
+  - SUMD.launch_tui
+  - SUMD.load_plugins
+  - SUMD.multi_repo_command
+  - SUMD.plan_command
+  - SUMD.pr_command
+  - SUMD.print_report_links
+  - SUMD.serve_reports
+  - SUMD.services_command
+  - SUMD.status_badge
+  - SUMD.truth_command
+  - SUMD.vector_build_command
+  - SUMD.vector_query_command
+  rebuild.application.base_pipeline:
+  - rebuild.application.base_pipeline.BasePipeline.__init__
+  rebuild.application.services.db_snapshot_manager:
+  - rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore
+  rebuild.application.services.notification_service:
+  - rebuild.application.services.notification_service.NotificationService._build_body
+  - rebuild.application.services.notification_service.NotificationService.notify
+  rebuild.application.services.pr_service:
+  - rebuild.application.services.pr_service.load_config_from_env
+  rebuild.application.services.reporting.reporter:
+  - rebuild.application.services.reporting.reporter.ReporterService._save_html_day
+  - rebuild.application.services.reporting.reporter.ReporterService.save_day
+  - rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
+  - rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  - rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.domain.dsl:
+  - rebuild.domain.dsl.DSLInterpreter.execute
+  rebuild.domain.dsl_v2:
+  - rebuild.domain.dsl_v2.DSLShell._process
+  - rebuild.domain.dsl_v2.DSLShell.run
+  rebuild.domain.mvp_protocol:
+  - rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_command
+  - rebuild.domain.mvp_protocol.MVPProtocolHandler.handle_message
+  - rebuild.domain.mvp_protocol.MVPServer.start
+  rebuild.infrastructure.event_bus:
+  - rebuild.infrastructure.event_bus.EventBus.publish
+  rebuild.interfaces.cli:
+  - rebuild.interfaces.cli.dashboard
+  - rebuild.interfaces.cli.duplicates
+  - rebuild.interfaces.cli.evolution
+  - rebuild.interfaces.cli.execute
+  - rebuild.interfaces.cli.multi_repo
+  - rebuild.interfaces.cli.plan
+  - rebuild.interfaces.cli.plugins
+  - rebuild.interfaces.cli.pr
+  - rebuild.interfaces.cli.serve
+  - rebuild.interfaces.cli.services
+  - rebuild.interfaces.cli.truth
+  - rebuild.interfaces.cli.tui
+  - rebuild.interfaces.cli.vector_build
+  - rebuild.interfaces.cli.vector_query
+  rebuild.interfaces.commands.helpers:
+  - rebuild.interfaces.commands.helpers.serve_reports
+  rebuild.interfaces.commands.refactor_command:
+  - rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  - rebuild.interfaces.commands.refactor_command.execute_command
+  - rebuild.interfaces.commands.refactor_command.plan_command
+  - rebuild.interfaces.commands.refactor_command.pr_command
+  rebuild.interfaces.dashboard:
+  - rebuild.interfaces.dashboard._extract_avg_cc
+  - rebuild.interfaces.dashboard._render_html
+  - rebuild.interfaces.dashboard.generate_dashboard
+  - rebuild.interfaces.dashboard.get_cc_for_day
+  rebuild.interfaces.evolution_viz:
+  - rebuild.interfaces.evolution_viz._render_html
+  - rebuild.interfaces.evolution_viz.generate_evolution_html
+  rebuild.interfaces.tui.app:
+  - rebuild.interfaces.tui.app.launch_tui
+  rebuild.plugins.registry:
+  - rebuild.plugins.registry.PluginRegistry.discover
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main:
   - restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
   - restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
@@ -260,6 +985,8 @@ modules:
   - scripts.bump_version.update_changelog
   - scripts.bump_version.update_init
   - scripts.bump_version.update_pyproject
+  testql-scenarios.generated-from-pytests.testql.toon:
+  - testql-scenarios.generated-from-pytests.testql.toon.all
 entry_points:
 - SUMD._add_condition_to_goal
 - SUMD._add_error
@@ -576,6 +1303,7 @@ entry_points:
 - SUMD._find_first_off_task_index
 - SUMD._find_free_port
 - SUMD._finish_run
+- SUMD._fire_notifications
 - SUMD._first_direct_child
 - SUMD._flush_missing_get_declarations
 - SUMD._flush_missing_goal_ends
@@ -704,6 +1432,7 @@ entry_points:
 - SUMD._import_single_xml_file
 - SUMD._index_html
 - SUMD._inject_pressure_bounds
+- SUMD._inject_snapshot
 - SUMD._insert_customer
 - SUMD._insert_get_declaration
 - SUMD._insert_if_missing
@@ -790,6 +1519,7 @@ entry_points:
 - SUMD._make_error_result
 - SUMD._make_event
 - SUMD._make_git_repo
+- SUMD._make_manager
 - SUMD._make_message_parser
 - SUMD._make_message_serializer
 - SUMD._make_mock_cqrs
@@ -1284,7 +2014,6 @@ entry_points:
 - SUMD._ws_batch_single_op
 - SUMD._yaml_quote
 - SUMD.accelerator
-- SUMD.accelerator_command
 - SUMD.add_ConnectDataCommandServiceServicer_to_server
 - SUMD.add_ConnectDataQueryServiceServicer_to_server
 - SUMD.add_ConnectIdCommandServiceServicer_to_server
@@ -1423,7 +2152,6 @@ entry_points:
 - SUMD.check_system_resources
 - SUMD.check_table_existence
 - SUMD.check_table_exists
-- SUMD.classify_error
 - SUMD.classify_external
 - SUMD.classify_type
 - SUMD.clean_menu_config
@@ -1631,7 +2359,6 @@ entry_points:
 - SUMD.dsl_to_xml_endpoint
 - SUMD.dsl_verify_xml_import
 - SUMD.duplicates
-- SUMD.duplicates_command
 - SUMD.early_return_if_table_missing
 - SUMD.edge_bucket
 - SUMD.edit_mappings
@@ -1675,7 +2402,6 @@ entry_points:
 - SUMD.exec_endpoint
 - SUMD.execute
 - SUMD.execute_ast
-- SUMD.execute_command
 - SUMD.execute_dsl
 - SUMD.execute_dsl_script
 - SUMD.execute_restart
@@ -1764,15 +2490,12 @@ entry_points:
 - SUMD.generate_cql
 - SUMD.generate_cqrs_recommendations
 - SUMD.generate_create_table_sql
-- SUMD.generate_dashboard
 - SUMD.generate_def_code
 - SUMD.generate_di_recommendations
 - SUMD.generate_dot_graph
 - SUMD.generate_dsl
 - SUMD.generate_dsl_from_xml_vars
 - SUMD.generate_encoder_test
-- SUMD.generate_endpoint_diff
-- SUMD.generate_evolution_html
 - SUMD.generate_executive_summary
 - SUMD.generate_final_report
 - SUMD.generate_goals_json
@@ -1792,7 +2515,6 @@ entry_points:
 - SUMD.generate_sprite
 - SUMD.generate_task_list
 - SUMD.generate_testql_scenario
-- SUMD.generate_trend_chart
 - SUMD.generate_verification_checklist
 - SUMD.get
 - SUMD.get_activity
@@ -1835,7 +2557,6 @@ entry_points:
 - SUMD.get_env
 - SUMD.get_error_logs
 - SUMD.get_event_bus
-- SUMD.get_event_service
 - SUMD.get_event_store
 - SUMD.get_execution_logs
 - SUMD.get_execution_status
@@ -1949,7 +2670,6 @@ entry_points:
 - SUMD.handle_delete_sgi
 - SUMD.handle_load_sgi
 - SUMD.handle_save_sgi
-- SUMD.handler
 - SUMD.hardware_diagnostic_command
 - SUMD.hardware_health_proxy
 - SUMD.hardware_identify_proxy
@@ -2007,7 +2727,6 @@ entry_points:
 - SUMD.item_to_command
 - SUMD.iter_python_files
 - SUMD.json_schema_endpoint
-- SUMD.launch_tui
 - SUMD.lifespan
 - SUMD.link_object_functions_from_steps
 - SUMD.list_activities
@@ -2072,7 +2791,6 @@ entry_points:
 - SUMD.list_workshops
 - SUMD.load_and_validate
 - SUMD.load_config
-- SUMD.load_config_from_env
 - SUMD.load_cql
 - SUMD.load_docs
 - SUMD.load_dsl_data
@@ -2106,7 +2824,6 @@ entry_points:
 - SUMD.module_index
 - SUMD.module_parts_for
 - SUMD.multi_repo
-- SUMD.multi_repo_command
 - SUMD.mvp
 - SUMD.needs_backup
 - SUMD.nested_to_flat_route
@@ -2177,22 +2894,19 @@ entry_points:
 - SUMD.pg_restore
 - SUMD.pick_best
 - SUMD.plan
-- SUMD.plan_command
+- SUMD.plugins
 - SUMD.post
 - SUMD.pr
-- SUMD.pr_command
 - SUMD.preview_migration
 - SUMD.preview_template
 - SUMD.print_header
 - SUMD.print_json
 - SUMD.print_priority_report
 - SUMD.print_report
-- SUMD.print_report_links
 - SUMD.print_separator
 - SUMD.print_service_report
 - SUMD.print_status
 - SUMD.print_summary
-- SUMD.print_summary_table
 - SUMD.process_file
 - SUMD.process_scenario
 - SUMD.process_scenario_row
@@ -2282,6 +2996,7 @@ entry_points:
 - SUMD.reset_flags
 - SUMD.reset_modules
 - SUMD.reset_navigation_options
+- SUMD.reset_registry
 - SUMD.reset_search_index_service
 - SUMD.reset_table
 - SUMD.resolve_absolute
@@ -2372,14 +3087,13 @@ entry_points:
 - SUMD.serialize_endpoint
 - SUMD.serve
 - SUMD.serve_model
-- SUMD.serve_reports
 - SUMD.serve_ui
 - SUMD.service_data_contracts
 - SUMD.service_id_contracts
 - SUMD.services
-- SUMD.services_command
 - SUMD.set_admin_full_access
 - SUMD.set_default
+- SUMD.set_event_bus
 - SUMD.set_key
 - SUMD.set_menu_access
 - SUMD.setup_cqrs
@@ -2412,7 +3126,6 @@ entry_points:
 - SUMD.start_test_session
 - SUMD.startup_event
 - SUMD.status
-- SUMD.status_badge
 - SUMD.step_handler
 - SUMD.stop_execution
 - SUMD.strip_nfo_fallback_blocks
@@ -3362,7 +4075,6 @@ entry_points:
 - SUMD.to_yaml
 - SUMD.trigger_sync
 - SUMD.truth
-- SUMD.truth_command
 - SUMD.try_sgi_upsert
 - SUMD.ts_lit
 - SUMD.tsconfig_json
@@ -3431,16 +4143,13 @@ entry_points:
 - SUMD.validate_schema_file
 - SUMD.validate_types
 - SUMD.vector_build
-- SUMD.vector_build_command
 - SUMD.vector_query
-- SUMD.vector_query_command
 - SUMD.verify_admin_access
 - SUMD.verify_migration
 - SUMD.verify_password
 - SUMD.verify_xml_import
 - SUMD.version
 - SUMD.walk
-- SUMD.walk_command
 - SUMD.was_cancel_requested
 - SUMD.websocket_endpoint
 - SUMD.with_default
@@ -3463,6 +4172,454 @@ entry_points:
 - examples.09-mvp-protocol.README.print
 - examples.09-mvp-protocol.README.sendMVPCommand
 - examples.09-mvp-protocol.README.send_mvp_command
+- rebuild.analysis.duplication_engine.DuplicationEngine.__init__
+- rebuild.analysis.duplication_engine.DuplicationEngine._average_group_similarity
+- rebuild.analysis.duplication_engine.DuplicationEngine._compute_fuzzy_signature_py
+- rebuild.analysis.duplication_engine.DuplicationEngine._compute_structural_hash_py
+- rebuild.analysis.duplication_engine.DuplicationEngine._cosine_similarity
+- rebuild.analysis.duplication_engine.DuplicationEngine._extract_fragments
+- rebuild.analysis.duplication_engine.DuplicationEngine._extract_py_fragments
+- rebuild.analysis.duplication_engine.DuplicationEngine._extract_regex_fragments
+- rebuild.analysis.duplication_engine.DuplicationEngine._find_semantic_groups
+- rebuild.analysis.duplication_engine.DuplicationEngine._get_semantic_encoder
+- rebuild.analysis.duplication_engine.DuplicationEngine._semantic_group_hash
+- rebuild.analysis.duplication_engine.DuplicationEngine._semantic_text
+- rebuild.analysis.duplication_engine.DuplicationEngine.collect_fragments
+- rebuild.analysis.duplication_engine.DuplicationEngine.scan
+- rebuild.analysis.git_truth_analyzer.GitTruthAnalyzer.__init__
+- rebuild.analysis.git_truth_analyzer.GitTruthAnalyzer._analyze_content
+- rebuild.analysis.git_truth_analyzer.GitTruthAnalyzer._compute_complexity
+- rebuild.analysis.git_truth_analyzer.GitTruthAnalyzer._load_historical_results
+- rebuild.analysis.git_truth_analyzer.GitTruthAnalyzer.analyze_function_history
+- rebuild.analysis.graph_exporter.GraphExporter.__init__
+- rebuild.analysis.graph_exporter.GraphExporter._prepare_d3_data
+- rebuild.analysis.graph_exporter.GraphExporter.export_html
+- rebuild.analysis.service_graph.MultiRepoAnalyzer.__init__
+- rebuild.analysis.service_graph.MultiRepoAnalyzer._analyze_dependencies
+- rebuild.analysis.service_graph.MultiRepoAnalyzer._analyze_shared_clones
+- rebuild.analysis.service_graph.MultiRepoAnalyzer._belongs_to_other_repo
+- rebuild.analysis.service_graph.MultiRepoAnalyzer._import_roots
+- rebuild.analysis.service_graph.MultiRepoAnalyzer._iter_code_files
+- rebuild.analysis.service_graph.MultiRepoAnalyzer._iter_fragment_files
+- rebuild.analysis.service_graph.MultiRepoAnalyzer._iter_python_files
+- rebuild.analysis.service_graph.MultiRepoAnalyzer._normalize_repo_keys
+- rebuild.analysis.service_graph.MultiRepoAnalyzer._repo_aliases
+- rebuild.analysis.service_graph.MultiRepoAnalyzer.analyze
+- rebuild.analysis.service_graph.MultiRepoAnalyzer.export_json
+- rebuild.analysis.service_graph.MultiRepoReport.to_dict
+- rebuild.analysis.service_graph.ServiceGraphBuilder.__init__
+- rebuild.analysis.service_graph.ServiceGraphBuilder._analyze_file
+- rebuild.analysis.service_graph.ServiceGraphBuilder.build
+- rebuild.analysis.service_graph.ServiceGraphBuilder.detect_cycles
+- rebuild.analysis.service_similarity.ServiceSimilarityAnalyzer._extract_methods
+- rebuild.analysis.service_similarity.ServiceSimilarityAnalyzer.analyze_directory
+- rebuild.analysis.vector_search.VectorSearchIndex.__init__
+- rebuild.analysis.vector_search.VectorSearchIndex._cosine_similarity
+- rebuild.analysis.vector_search.VectorSearchIndex._ensure_schema
+- rebuild.analysis.vector_search.VectorSearchIndex._fragment_id
+- rebuild.analysis.vector_search.VectorSearchIndex._get_model
+- rebuild.analysis.vector_search.VectorSearchIndex._load_rows
+- rebuild.analysis.vector_search.VectorSearchIndex._to_text
+- rebuild.analysis.vector_search.VectorSearchIndex.build_from_path
+- rebuild.analysis.vector_search.VectorSearchIndex.count
+- rebuild.analysis.vector_search.VectorSearchIndex.query
+- rebuild.analysis.vector_search.VectorSearchIndex.upsert_fragments
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline.__init__
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline._create_baseline_snapshot
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline._diff_names_cached
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline._needs_db_restore
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline._needs_rescan
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline._prewarm_worktrees
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline._restore_db_fast
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline._run_day_fast
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline._save_state
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline.cleanup
+- rebuild.application.accelerated_pipeline.AcceleratedPipeline.run
+- rebuild.application.base_pipeline.BasePipeline.__init__
+- rebuild.application.base_pipeline.BasePipeline._emit
+- rebuild.application.base_pipeline.BasePipeline._load_state
+- rebuild.application.base_pipeline.BasePipeline._save_state
+- rebuild.application.base_pipeline.BasePipeline.log
+- rebuild.application.commands.analyze_commands.AnalyzeCommand._validate_type
+- rebuild.application.commands.base.CommandBus.__init__
+- rebuild.application.commands.base.CommandBus.dispatch
+- rebuild.application.commands.base.CommandBus.register
+- rebuild.application.commands.base.CommandHandler.handle
+- rebuild.application.commands.walk_commands.WalkCommand._validate_deploy
+- rebuild.application.commands.walk_commands.WalkCommand._validate_repo
+- rebuild.application.pipeline.Pipeline.__init__
+- rebuild.application.pipeline.Pipeline._check_for_manual_fix
+- rebuild.application.pipeline.Pipeline.run
+- rebuild.application.pipeline.Pipeline.run_day
+- rebuild.application.queries.base.QueryBus.__init__
+- rebuild.application.queries.base.QueryBus.dispatch
+- rebuild.application.queries.base.QueryBus.register
+- rebuild.application.queries.base.QueryHandler.handle
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService.__init__
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._accelerated_compose_up
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._copy_changed_files
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._get_changed_files
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._get_container_name
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._post_switch_health_cache_ttl
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._post_switch_health_interval
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._post_switch_health_timeout
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._send_exec_hup
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._send_hup_signal
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._set_active_path
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._sync_code_to_container
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._trigger_reload
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._update_bind_mount
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._verify_runtime_commit
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._wait_post_switch_healthy
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService._write_runtime_marker
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService.prepare_runtime
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService.reload
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService.setup_mount_compose
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService.start
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService.stop
+- rebuild.application.services.accelerator_deploy.AcceleratorDeployService.switch_commit
+- rebuild.application.services.base.Service.execute
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager.__init__
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._auto_prune
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._ensure_dirs
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._load_metadata
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._mysql_dump
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._mysql_restore
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_dump
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._quick_restore_postgres
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._ready_check_command
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._save_metadata
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._sqlite_dump
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._sqlite_restore
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager._wait_until_ready
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager.create
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager.create_baseline
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager.delete
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager.execute
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager.list_snapshots
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager.prune_old
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager.restore
+- rebuild.application.services.db_snapshot_manager.DBSnapshotManager.stats
+- rebuild.application.services.deploy_service.DeployService.__init__
+- rebuild.application.services.deploy_service.DeployService._classify_deploy_error
+- rebuild.application.services.deploy_service.DeployService._compose_down
+- rebuild.application.services.deploy_service.DeployService._compose_file
+- rebuild.application.services.deploy_service.DeployService._compose_up
+- rebuild.application.services.deploy_service.DeployService._resolve_container_name
+- rebuild.application.services.deploy_service.DeployService._run_with_retry
+- rebuild.application.services.deploy_service.DeployService._save_deploy_debug
+- rebuild.application.services.deploy_service.DeployService._sync_code_to_runtime
+- rebuild.application.services.deploy_service.DeployService._sync_via_overlay
+- rebuild.application.services.deploy_service.DeployService._uvicorn_start
+- rebuild.application.services.deploy_service.DeployService._uvicorn_stop
+- rebuild.application.services.deploy_service.DeployService._wait_healthy
+- rebuild.application.services.deploy_service.DeployService._wait_healthy_with_retry
+- rebuild.application.services.deploy_service.DeployService.detect_deploy_method
+- rebuild.application.services.deploy_service.DeployService.execute
+- rebuild.application.services.deploy_service.DeployService.reload
+- rebuild.application.services.deploy_service.DeployService.start
+- rebuild.application.services.deploy_service.DeployService.stop
+- rebuild.application.services.deploy_service.DeployService.wait_healthy
+- rebuild.application.services.deploy_strategy.DeployStrategy.start
+- rebuild.application.services.deploy_strategy.DeployStrategy.stop
+- rebuild.application.services.event_service.EventService.__init__
+- rebuild.application.services.event_service.EventService.disable
+- rebuild.application.services.event_service.EventService.emit
+- rebuild.application.services.event_service.EventService.enable
+- rebuild.application.services.event_service.EventService.publish
+- rebuild.application.services.event_service.EventService.subscribe
+- rebuild.application.services.event_service.EventService.unsubscribe
+- rebuild.application.services.event_service.PipelineEvent.to_sse
+- rebuild.application.services.event_service.get_event_service
+- rebuild.application.services.git_service.GitService.__init__
+- rebuild.application.services.git_service.GitService._run_git
+- rebuild.application.services.git_service.GitService.checkout
+- rebuild.application.services.git_service.GitService.clone_for_walk
+- rebuild.application.services.git_service.GitService.days_with_commits
+- rebuild.application.services.git_service.GitService.diff_names
+- rebuild.application.services.git_service.GitService.execute
+- rebuild.application.services.git_service.GitService.get_current_sha
+- rebuild.application.services.git_service.GitService.restore_head
+- rebuild.application.services.git_service.GitService.sync_current_state
+- rebuild.application.services.history_service.HistoryService._load_commit
+- rebuild.application.services.history_service.HistoryService.execute
+- rebuild.application.services.history_service.HistoryService.load_history
+- rebuild.application.services.llm_service.LLMService.__init__
+- rebuild.application.services.llm_service.LLMService.generate_pr_description
+- rebuild.application.services.llm_service.LLMService.is_available
+- rebuild.application.services.llm_service.LLMService.summarize_refactor_plan
+- rebuild.application.services.nlp_service.NLPService.__init__
+- rebuild.application.services.nlp_service.NLPService._detect_intent
+- rebuild.application.services.nlp_service.NLPService._extract_parameters
+- rebuild.application.services.nlp_service.NLPService.parse
+- rebuild.application.services.nlp_service.NLPService.to_cli_args
+- rebuild.application.services.nlp_service.NLPService.to_dsl
+- rebuild.application.services.notification_service.NotificationService.__init__
+- rebuild.application.services.notification_service.NotificationService._build_body
+- rebuild.application.services.notification_service.NotificationService.add_webhook
+- rebuild.application.services.notification_service.NotificationService.clear
+- rebuild.application.services.notification_service.NotificationService.from_config
+- rebuild.application.services.notification_service.NotificationService.notify
+- rebuild.application.services.notification_service.NotificationService.notify_deploy_fail
+- rebuild.application.services.notification_service.NotificationService.notify_health_regression
+- rebuild.application.services.notification_service.NotificationService.notify_walk_complete
+- rebuild.application.services.notification_service.NotificationService.remove_webhook
+- rebuild.application.services.notification_service._build_discord_payload
+- rebuild.application.services.notification_service._build_generic_payload
+- rebuild.application.services.notification_service._build_slack_payload
+- rebuild.application.services.notification_service._send_webhook
+- rebuild.application.services.override_service.OverrideService.execute
+- rebuild.application.services.parallel_test_engine.EndpointDependencyGraph.__init__
+- rebuild.application.services.parallel_test_engine.EndpointDependencyGraph.add_dependency
+- rebuild.application.services.parallel_test_engine.EndpointDependencyGraph.add_group
+- rebuild.application.services.parallel_test_engine.EndpointDependencyGraph.get_execution_order
+- rebuild.application.services.parallel_test_engine.EndpointDependencyGraph.should_skip_due_to_failure
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine.__init__
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine._close_client
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine._is_health_endpoint
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine._login_if_configured
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine._open_client
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine._run_batch
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine._run_with_client
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine._setup_default_dependencies
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine._test_single
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine.close_session
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine.execute
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine.execute_sync
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine.open_session
+- rebuild.application.services.parallel_test_engine.ParallelTestEngine.set_day_dir
+- rebuild.application.services.patcher_service.PatcherService._patch_compose
+- rebuild.application.services.patcher_service.PatcherService._patch_dockerfile
+- rebuild.application.services.patcher_service.PatcherService.apply_manual_overrides
+- rebuild.application.services.patcher_service.PatcherService.execute
+- rebuild.application.services.pr_service.PRService.__init__
+- rebuild.application.services.pr_service.PRService._create_github_pr
+- rebuild.application.services.pr_service.PRService._create_gitlab_mr
+- rebuild.application.services.pr_service.PRService._generate_pr_body
+- rebuild.application.services.pr_service.PRService.create_pr
+- rebuild.application.services.pr_service.load_config_from_env
+- rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
+- rebuild.application.services.reporting.chart_builder.generate_trend_chart
+- rebuild.application.services.reporting.formatters.classify_error
+- rebuild.application.services.reporting.formatters.status_badge
+- rebuild.application.services.reporting.formatters.to_toon
+- rebuild.application.services.reporting.reporter.ReporterService._endpoint_count_trend_by_day
+- rebuild.application.services.reporting.reporter.ReporterService._health_trend_by_day
+- rebuild.application.services.reporting.reporter.ReporterService._results_to_export_data
+- rebuild.application.services.reporting.reporter.ReporterService._save_html_day
+- rebuild.application.services.reporting.reporter.ReporterService.execute
+- rebuild.application.services.reporting.reporter.ReporterService.export_csv
+- rebuild.application.services.reporting.reporter.ReporterService.export_markdown
+- rebuild.application.services.reporting.reporter.ReporterService.save_day
+- rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
+- rebuild.application.services.restore_service.RestoreService.__init__
+- rebuild.application.services.restore_service.RestoreService._find_backend_files
+- rebuild.application.services.restore_service.RestoreService._is_page_endpoint
+- rebuild.application.services.restore_service.RestoreService._write_readme
+- rebuild.application.services.restore_service.RestoreService.execute
+- rebuild.application.services.restore_service.RestoreService.extract_endpoint
+- rebuild.application.services.restore_service.RestoreService.find_last_working_day
+- rebuild.application.services.scanner_service.ScannerService.__init__
+- rebuild.application.services.scanner_service.ScannerService._collect_router_prefixes
+- rebuild.application.services.scanner_service.ScannerService._extract_route_path
+- rebuild.application.services.scanner_service.ScannerService._join_route_path
+- rebuild.application.services.scanner_service.ScannerService._parse_openapi
+- rebuild.application.services.scanner_service.ScannerService._ports_to_endpoints
+- rebuild.application.services.scanner_service.ScannerService._resolve_test_body
+- rebuild.application.services.scanner_service.ScannerService._scan_via_compose_labels
+- rebuild.application.services.scanner_service.ScannerService._scan_via_deta
+- rebuild.application.services.scanner_service.ScannerService._scan_via_fastapi_routes
+- rebuild.application.services.scanner_service.ScannerService._scan_via_openapi
+- rebuild.application.services.scanner_service.ScannerService._scan_via_openapi_file
+- rebuild.application.services.scanner_service.ScannerService._substitute_params
+- rebuild.application.services.scanner_service.ScannerService.execute
+- rebuild.application.services.screenshot_service.ScreenshotService.__init__
+- rebuild.application.services.screenshot_service.ScreenshotService.execute
+- rebuild.application.services.smart_test_selector.SmartTestSelector.__init__
+- rebuild.application.services.smart_test_selector.SmartTestSelector._path_matches
+- rebuild.application.services.smart_test_selector.SmartTestSelector.add_mapping
+- rebuild.application.services.smart_test_selector.SmartTestSelector.analyze_changes
+- rebuild.application.services.smart_test_selector.SmartTestSelector.execute
+- rebuild.application.services.smart_test_selector.SmartTestSelector.get_changed_modules
+- rebuild.application.services.smart_test_selector.SmartTestSelector.select_tests
+- rebuild.application.services.summary_service.SummaryService.__init__
+- rebuild.application.services.summary_service.SummaryService._generate_summary_text
+- rebuild.application.services.summary_service.SummaryService.format_suggestions_for_pr
+- rebuild.application.services.summary_service.SummaryService.generate_from_duplication
+- rebuild.application.services.summary_service.SummaryService.generate_from_service_graph
+- rebuild.application.services.tui_data_service.TUIDataService.calc_health
+- rebuild.application.services.tui_data_service.TUIDataService.endpoint_diff
+- rebuild.application.services.tui_data_service.TUIDataService.get_git_repo_toplevel
+- rebuild.application.services.tui_data_service.TUIDataService.health_bar
+- rebuild.application.services.tui_data_service.TUIDataService.load_day_results
+- rebuild.application.services.worktree_manager.WorktreeManager.__init__
+- rebuild.application.services.worktree_manager.WorktreeManager._ensure_base_dir
+- rebuild.application.services.worktree_manager.WorktreeManager._list_worktrees
+- rebuild.application.services.worktree_manager.WorktreeManager._remove_worktree
+- rebuild.application.services.worktree_manager.WorktreeManager._worktree_path
+- rebuild.application.services.worktree_manager.WorktreeManager.cleanup_all
+- rebuild.application.services.worktree_manager.WorktreeManager.execute
+- rebuild.application.services.worktree_manager.WorktreeManager.get_active_path
+- rebuild.application.services.worktree_manager.WorktreeManager.get_or_create
+- rebuild.application.services.worktree_manager.WorktreeManager.prepare_sequence
+- rebuild.domain.day_result.DayResult.to_dict
+- rebuild.domain.dsl.DSLInterpreter.__init__
+- rebuild.domain.dsl.DSLInterpreter._handle_accelerator
+- rebuild.domain.dsl.DSLInterpreter._handle_analyze
+- rebuild.domain.dsl.DSLInterpreter._handle_auto_pr
+- rebuild.domain.dsl.DSLInterpreter._handle_evolution
+- rebuild.domain.dsl.DSLInterpreter._handle_restore
+- rebuild.domain.dsl.DSLInterpreter._handle_serve
+- rebuild.domain.dsl.DSLInterpreter._handle_walk
+- rebuild.domain.dsl.DSLInterpreter.execute
+- rebuild.domain.dsl.DSLInterpreter.execute_file
+- rebuild.domain.dsl.DSLParser.__init__
+- rebuild.domain.dsl.DSLParser.parse
+- rebuild.domain.dsl.DSLParser.parse_file
+- rebuild.domain.dsl_v2.DSLParser.parse
+- rebuild.domain.dsl_v2.DSLParser.parse_tokens
+- rebuild.domain.dsl_v2.DSLParser.to_cqrs_command
+- rebuild.domain.dsl_v2.DSLShell.__init__
+- rebuild.domain.dsl_v2.DSLShell._process
+- rebuild.domain.dsl_v2.DSLShell.process_line
+- rebuild.domain.dsl_v2.DSLShell.run
+- rebuild.domain.dsl_v2.NLPMapper.__init__
+- rebuild.domain.dsl_v2.NLPMapper._llm_fallback
+- rebuild.domain.dsl_v2.NLPMapper._looks_like_dsl
+- rebuild.domain.dsl_v2.NLPMapper.to_dsl
+- rebuild.domain.events.PipelineEvent.create
+- rebuild.domain.events.PipelineEvent.to_json
+- rebuild.domain.events.domain_events.DomainEvent.model_post_init
+- rebuild.domain.events.domain_events.DomainEvent.to_dict
+- rebuild.domain.events.domain_events.PipelineEvent.create
+- rebuild.domain.events.domain_events.PipelineEvent.to_json
+- rebuild.domain.mvp_protocol.MVPMessage.from_json
+- rebuild.domain.mvp_protocol.MVPMessage.to_json
+- rebuild.domain.mvp_protocol.MVPProtocolHandler.__init__
+- rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_analyze
+- rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_auto_pr
+- rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_command
+- rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_dsl
+- rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_event
+- rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_evolution
+- rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_nlp
+- rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_walk
+- rebuild.domain.mvp_protocol.MVPProtocolHandler.handle_message
+- rebuild.domain.mvp_protocol.MVPServer.__init__
+- rebuild.domain.mvp_protocol.MVPServer.start
+- rebuild.domain.timeline.GraphSnapshot.to_dict
+- rebuild.domain.timeline.Timeline.add_snapshot
+- rebuild.domain.timeline.Timeline.get_snapshot_at_index
+- rebuild.domain.timeline.Timeline.get_snapshot_by_commit
+- rebuild.domain.timeline.Timeline.load
+- rebuild.domain.timeline.Timeline.save
+- rebuild.domain.timeline.Timeline.to_dict
+- rebuild.infrastructure.config_loader.ConfigLoader.apply_to_config
+- rebuild.infrastructure.config_loader.ConfigLoader.load
+- rebuild.infrastructure.config_loader.ConfigLoader.validate
+- rebuild.infrastructure.config_schema.ConfigSchemaValidator.parse
+- rebuild.infrastructure.config_schema.ConfigSchemaValidator.validate
+- rebuild.infrastructure.config_schema.DeployConfig._valid_method
+- rebuild.infrastructure.config_schema.OutputConfig._non_empty
+- rebuild.infrastructure.config_schema.ProjectConfig._strict_bool
+- rebuild.infrastructure.config_schema.ProjectConfig._validate_deploy_and_output
+- rebuild.infrastructure.config_schema.RebuildConfig._allow_flat
+- rebuild.infrastructure.config_schema.RebuildConfig._must_be_mapping
+- rebuild.infrastructure.config_schema.load_and_validate
+- rebuild.infrastructure.event_bus.EventBus.__init__
+- rebuild.infrastructure.event_bus.EventBus.create_ws_queue
+- rebuild.infrastructure.event_bus.EventBus.publish
+- rebuild.infrastructure.event_bus.EventBus.publish_many
+- rebuild.infrastructure.event_bus.EventBus.remove_ws_queue
+- rebuild.infrastructure.event_bus.EventBus.subscribe
+- rebuild.infrastructure.event_bus.EventBus.subscribe_all
+- rebuild.infrastructure.event_bus.EventBus.subscribe_all_async
+- rebuild.infrastructure.event_bus.EventBus.subscribe_async
+- rebuild.infrastructure.event_bus.EventBus.unsubscribe
+- rebuild.infrastructure.event_bus.set_event_bus
+- rebuild.infrastructure.event_store.EventStore.__init__
+- rebuild.infrastructure.event_store.EventStore._conn
+- rebuild.infrastructure.event_store.EventStore.append
+- rebuild.infrastructure.event_store.EventStore.append_many
+- rebuild.infrastructure.event_store.EventStore.count
+- rebuild.infrastructure.event_store.EventStore.load
+- rebuild.infrastructure.event_store.EventStore.load_raw
+- rebuild.infrastructure.event_store.EventStore.prune_before
+- rebuild.infrastructure.http_adapter.HttpAdapter.__init__
+- rebuild.infrastructure.http_adapter.HttpAdapter.close
+- rebuild.infrastructure.http_adapter.HttpAdapter.delete
+- rebuild.infrastructure.http_adapter.HttpAdapter.get
+- rebuild.infrastructure.http_adapter.HttpAdapter.patch
+- rebuild.infrastructure.http_adapter.HttpAdapter.post
+- rebuild.infrastructure.http_adapter.HttpAdapter.put
+- rebuild.infrastructure.shell_adapter.ShellAdapter.__init__
+- rebuild.infrastructure.shell_adapter.ShellAdapter.popen
+- rebuild.infrastructure.shell_adapter.ShellAdapter.run
+- rebuild.interfaces.api.app.create_app
+- rebuild.interfaces.cli.accelerator
+- rebuild.interfaces.cli.auto_pr
+- rebuild.interfaces.cli.dashboard
+- rebuild.interfaces.cli.dsl
+- rebuild.interfaces.cli.duplicates
+- rebuild.interfaces.cli.evolution
+- rebuild.interfaces.cli.execute
+- rebuild.interfaces.cli.init
+- rebuild.interfaces.cli.multi_repo
+- rebuild.interfaces.cli.mvp
+- rebuild.interfaces.cli.nlp
+- rebuild.interfaces.cli.plan
+- rebuild.interfaces.cli.plugins
+- rebuild.interfaces.cli.pr
+- rebuild.interfaces.cli.report
+- rebuild.interfaces.cli.restore
+- rebuild.interfaces.cli.serve
+- rebuild.interfaces.cli.services
+- rebuild.interfaces.cli.truth
+- rebuild.interfaces.cli.tui
+- rebuild.interfaces.cli.vector_build
+- rebuild.interfaces.cli.vector_query
+- rebuild.interfaces.cli.version
+- rebuild.interfaces.cli.walk
+- rebuild.interfaces.commands.analyze_command.duplicates_command
+- rebuild.interfaces.commands.analyze_command.multi_repo_command
+- rebuild.interfaces.commands.analyze_command.services_command
+- rebuild.interfaces.commands.analyze_command.truth_command
+- rebuild.interfaces.commands.analyze_command.vector_build_command
+- rebuild.interfaces.commands.analyze_command.vector_query_command
+- rebuild.interfaces.commands.helpers.print_report_links
+- rebuild.interfaces.commands.helpers.print_summary_table
+- rebuild.interfaces.commands.helpers.serve_reports
+- rebuild.interfaces.commands.refactor_command.execute_command
+- rebuild.interfaces.commands.refactor_command.plan_command
+- rebuild.interfaces.commands.refactor_command.pr_command
+- rebuild.interfaces.commands.walk_command.accelerator_command
+- rebuild.interfaces.commands.walk_command.walk_command
+- rebuild.interfaces.dashboard.generate_dashboard
+- rebuild.interfaces.evolution_viz.generate_evolution_html
+- rebuild.interfaces.tui.app.launch_tui
+- rebuild.plugins.base.BaseReporter.configure
+- rebuild.plugins.base.BaseReporter.report
+- rebuild.plugins.base.BaseScanner.configure
+- rebuild.plugins.base.BaseScanner.scan
+- rebuild.plugins.registry.PluginRegistry.__init__
+- rebuild.plugins.registry.PluginRegistry.__repr__
+- rebuild.plugins.registry.PluginRegistry.discover
+- rebuild.plugins.registry.PluginRegistry.get_reporter
+- rebuild.plugins.registry.PluginRegistry.get_scanner
+- rebuild.plugins.registry.PluginRegistry.register_reporter
+- rebuild.plugins.registry.PluginRegistry.register_scanner
+- rebuild.plugins.registry.PluginRegistry.reporter_names
+- rebuild.plugins.registry.PluginRegistry.scanner_names
+- rebuild.plugins.registry.PluginRegistry.unregister_reporter
+- rebuild.plugins.registry.PluginRegistry.unregister_scanner
+- rebuild.plugins.registry._load_entry_points
+- rebuild.plugins.registry.load_plugins
+- rebuild.plugins.registry.reset_registry
+- rebuild.refactor.recommendation_engine.RecommendationEngine.generate_plan
+- rebuild.refactor.refactor_executor.RefactorExecutor.__init__
+- rebuild.refactor.refactor_executor.RefactorExecutor._merge_duplicates
+- rebuild.refactor.refactor_executor.RefactorExecutor.execute_suggestion
 - restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.get_manifest
 - restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.health
 - restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
@@ -3496,4 +4653,3 @@ entry_points:
 - restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_model
 - restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_ui
 - scripts.bump_version.main
-- testql-scenarios.generated-from-pytests.testql.toon.all

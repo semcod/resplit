@@ -22,7 +22,7 @@ Log { height: 12; margin: 0 2; border: solid $accent; }
 """
 
 if TEXTUAL_OK:
-    from textual.app import App, ComposeResult
+    from textual.app import App
     from textual.binding import Binding
 
     class RebuildTUI(App):
@@ -36,6 +36,16 @@ if TEXTUAL_OK:
         def on_mount(self) -> None:
             from .screens.project_screen import ProjectScreen
             self.push_screen(ProjectScreen())
+else:
+    class RebuildTUI:
+        """Fallback export used when Textual is not installed."""
+
+        TITLE = "rebuild"
+        SUB_TITLE = "Historical Deployment Analysis"
+        BINDINGS = []
+
+        def run(self) -> None:
+            raise RuntimeError("rebuild TUI requires textual>=0.60")
 
 
 def launch_tui() -> None:

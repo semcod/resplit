@@ -219,18 +219,42 @@ def auto_pr(
     dry_run: bool = typer.Option(False, "--dry-run", help="Pokaż PR bez tworzenia"),
 ) -> None:
     """Utwórz Pull/Merge Request z AI-generated summary z wyników analizy."""
-    from ..application.services.pr_service import PRService, PRConfig, Platform, load_config_from_env
-    from ..application.services.summary_service import SummaryService
+    analysis_data = _load_analysis_data(analysis_file)
+    pr_config = _resolve_pr_config(
+        platform, token, repo_owner, repo_name, base_branch, head_branch, title
+    )
+    summary_service, summary_result = _generate_auto_pr_summary(analysis_data)
 
+    _print_auto_pr_summary(summary_result)
+    if dry_run:
+        console.print("\n[yellow]Dry run mode - PR nie został utworzony.[/yellow]")
+        return
+
+    _create_auto_pr(pr_config, summary_service, summary_result)
+
+
+def _load_analysis_data(analysis_file: Path) -> dict:
     if not analysis_file.exists():
         console.print(f"[red]✗ Plik {analysis_file} nie istnieje.[/red]")
         raise typer.Exit(1)
 
     try:
-        analysis_data = json.loads(analysis_file.read_text())
+        return json.loads(analysis_file.read_text())
     except Exception as e:
         console.print(f"[red]✗ Błąd wczytywania pliku analizy:[/red] {e}")
         raise typer.Exit(1)
+
+
+def _resolve_pr_config(
+    platform: str,
+    token: Optional[str],
+    repo_owner: Optional[str],
+    repo_name: Optional[str],
+    base_branch: str,
+    head_branch: str,
+    title: str,
+):
+    from ..application.services.pr_service import PRConfig, Platform, load_config_from_env
 
     if token and repo_owner and repo_name:
         try:
@@ -238,14 +262,28 @@ def auto_pr(
         except ValueError:
             console.print(f"[red]✗ Nieobsługiwana platforma: {platform}[/red]")
             raise typer.Exit(1)
-        pr_config = PRConfig(platform=pr_platform, token=token, repo_owner=repo_owner,
-                             repo_name=repo_name, base_branch=base_branch,
-                             head_branch=head_branch, title=title)
-    else:
-        pr_config = load_config_from_env()
-        if not pr_config:
-            console.print("[red]✗ Brak konfiguracji PR. Podaj --token, --repo-owner, --repo-name lub ustaw zmienne środowiskowe.[/red]")
-            raise typer.Exit(1)
+        return PRConfig(
+            platform=pr_platform,
+            token=token,
+            repo_owner=repo_owner,
+            repo_name=repo_name,
+            base_branch=base_branch,
+            head_branch=head_branch,
+            title=title,
+        )
+
+    pr_config = load_config_from_env()
+    if not pr_config:
+        console.print(
+            "[red]✗ Brak konfiguracji PR. Podaj --token, --repo-owner, --repo-name "
+            "lub ustaw zmienne środowiskowe.[/red]"
+        )
+        raise typer.Exit(1)
+    return pr_config
+
+
+def _generate_auto_pr_summary(analysis_data: dict):
+    from ..application.services.summary_service import SummaryService
 
     summary_service = SummaryService()
     console.print("[bold cyan]Generowanie podsumowania...[/bold cyan]")
@@ -257,8 +295,11 @@ def auto_pr(
     else:
         console.print("[red]✗ Nieznany format pliku analizy.[/red]")
         raise typer.Exit(1)
+    return summary_service, summary_result
 
-    console.print(f"\n[bold]Podsumowanie:[/bold]")
+
+def _print_auto_pr_summary(summary_result) -> None:
+    console.print("\n[bold]Podsumowanie:[/bold]")
     console.print(summary_result.summary)
     console.print(f"\n[bold]Sugestie refactor ({len(summary_result.suggestions)}):[/bold]")
     for suggestion in summary_result.suggestions[:10]:
@@ -266,9 +307,9 @@ def auto_pr(
     if len(summary_result.suggestions) > 10:
         console.print(f"  ... i jeszcze {len(summary_result.suggestions) - 10}")
 
-    if dry_run:
-        console.print("\n[yellow]Dry run mode - PR nie został utworzony.[/yellow]")
-        return
+
+def _create_auto_pr(pr_config, summary_service, summary_result) -> None:
+    from ..application.services.pr_service import PRService
 
     console.print(f"\n[bold cyan]Tworzenie PR na {pr_config.platform.value}...[/bold cyan]")
     pr_service = PRService(pr_config)
@@ -297,7 +338,7 @@ def evolution(
     console.print("[bold cyan]Generowanie wizualizacji Code Evolution...[/bold cyan]")
     output_path = generate_evolution_html(timeline_file, output, title)
     console.print(f"[green]✓ Wizualizacja zapisana:[/green] {output_path}")
-    console.print(f"  [dim]Otwórz w przeglądarce aby zobaczyć playback[/dim]")
+    console.print("  [dim]Otwórz w przeglądarce aby zobaczyć playback[/dim]")
 
 
 @app.command()
@@ -334,7 +375,7 @@ def dsl(
         if execute:
             result = interpreter.execute(cmd)
             console.print(f"  [dim]Status: {result.get('status')}[/dim]")
-            console.print(f"  [green]✓ Zinterpretowano[/green]")
+            console.print("  [green]✓ Zinterpretowano[/green]")
 
 
 @app.command()
@@ -365,10 +406,10 @@ def mvp(
 ) -> None:
     """Uruchom MVP protocol server."""
     from ..domain.mvp_protocol import MVPServer
-    console.print(f"[bold cyan]Uruchamianie MVP Server...[/bold cyan]")
+    console.print("[bold cyan]Uruchamianie MVP Server...[/bold cyan]")
     console.print(f"  Host: {host}")
     console.print(f"  Port: {port}")
-    console.print(f"  Protocol: JSON over HTTP")
+    console.print("  Protocol: JSON over HTTP")
     server = MVPServer(host=host, port=port)
     server.start()
 

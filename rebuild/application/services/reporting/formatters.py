@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from ....domain.day_result import DayResult
 from ....domain.endpoint import EndpointResult, EndpointStatus
@@ -28,7 +28,7 @@ def to_yaml(data: Dict[str, Any], indent: int = 0) -> str:
 
 def to_toon(result: DayResult) -> str:
     lines = [
-        f"type: rebuild_report",
+        "type: rebuild_report",
         f"day: {result.day}",
         f"health: {result.health_pct}%",
         f"stats: {result.ok_count}/{len(result.endpoints)}",
@@ -60,27 +60,34 @@ def status_badge(status: EndpointStatus) -> str:
 
 
 def classify_error(result: EndpointResult) -> str:
-    if result.status == EndpointStatus.OK or result.status == EndpointStatus.SKIP:
+    if result.status in {EndpointStatus.OK, EndpointStatus.SKIP}:
         return ""
-    if result.status == EndpointStatus.FAIL_AUTH:
-        return "auth"
-    if result.status == EndpointStatus.FAIL_TEMPLATE:
-        return "template"
-    if result.status == EndpointStatus.FAIL_NETWORK:
-        return "network"
-    if result.status == EndpointStatus.FAIL_SERVER:
-        return "server"
+
+    status_category = {
+        EndpointStatus.FAIL_AUTH: "auth",
+        EndpointStatus.FAIL_TEMPLATE: "template",
+        EndpointStatus.FAIL_NETWORK: "network",
+        EndpointStatus.FAIL_SERVER: "server",
+    }.get(result.status)
+    if status_category:
+        return status_category
+
     if not result.error:
         return "unknown"
-    err_lower = result.error.lower()
-    if any(k in err_lower for k in ["unauthorized", "401", "forbidden", "403", "auth", "token"]):
-        return "auth"
-    if any(k in err_lower for k in ["not found", "404", "missing", "template", "param"]):
-        return "template"
-    if "timeout" in err_lower:
-        return "timeout"
-    if any(k in err_lower for k in ["500", "internal", "server error"]):
-        return "server"
-    if any(k in err_lower for k in ["connection", "network", "refused"]):
-        return "network"
-    return "other"
+
+    return _classify_error_text(result.error) or "other"
+
+
+def _classify_error_text(error: str) -> str:
+    err_lower = error.lower()
+    keyword_groups = [
+        ("auth", ["unauthorized", "401", "forbidden", "403", "auth", "token"]),
+        ("template", ["not found", "404", "missing", "template", "param"]),
+        ("timeout", ["timeout"]),
+        ("server", ["500", "internal", "server error"]),
+        ("network", ["connection", "network", "refused"]),
+    ]
+    for category, keywords in keyword_groups:
+        if any(k in err_lower for k in keywords):
+            return category
+    return ""
