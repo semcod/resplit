@@ -166,7 +166,61 @@ Materiał case-study + dowód wydajności. Patrz [ANALYSIS.md](ANALYSIS.md) Spri
 - `bash -n scripts/run_c2004_full.sh` → syntax OK
 - Benchmark realny: `python scripts/benchmark_scanner_cache.py --commits 30 --files 200 --churn 0.05` → **5.5× speedup, 91.8% hit rate**
 
+### Sprint 4 — Reuse Bibliotek + Watch Mode (2026-05-07) [partial]
+
+Pierwsza realna integracja `[full]` extras. Patrz [ANALYSIS.md](ANALYSIS.md) Sprint 4.
+
+#### Added
+- **`rebuild watch` command** ([`watch_command.py`](rebuild/interfaces/commands/watch_command.py)) — long-running mode oparty o `wup.WupWatcher`:
+  - File-watching, debouncing (default 2s), CPU throttling, test cooldowns delegowane do `wup`.
+  - Custom `on_change` handler wywołuje `rebuild walk --dry-run --days 1` w subprocess z timeout 120s.
+  - Skonfigurowane wykluczenia: `.git`, `.venv`, `node_modules`, `__pycache__`, `.rebuild`, `.pytest_cache`, `.mypy_cache`, `.ruff_cache`.
+  - Watcher factory injection (`_watcher_factory` parameter) dla pełnego mockowania w testach.
+  - `wup` jest **optional dependency** — `_require_wup()` raise'uje przyjazny `RuntimeError` z instrukcją instalacji.
+- **`tests/test_watch_command.py`** — 12 testów: cala ścieżka happy-path, error handling (timeout, non-zero exit), graceful KeyboardInterrupt, custom on_change override, weryfikacja `WupConfig` struktury (project/watch/services).
+- **Mutation testing infrastructure** (Sprint 4b):
+  - **`[tool.mutmut]`** w [`pyproject.toml`](pyproject.toml) z `paths_to_mutate = "rebuild/domain/"`.
+  - **[`scripts/run_mutation_tests.sh`](scripts/run_mutation_tests.sh)** — wrapper z baseline-check + Markdown report + threshold gate (default 75% mutation score).
+  - **[`.github/workflows/mutation.yml`](.github/workflows/mutation.yml)** — nightly @ 03:00 UTC + `workflow_dispatch`. Non-blocking dla PRs (zbyt wolne dla feedback loop). Artifacts: `mutation-report-<run_id>` + `mutmut-cache-<run_id>` (incremental).
+  - **[`docs/mutation_testing.md`](docs/mutation_testing.md)** — kompletny guide: rationale, lokalne uruchamianie, inspekcja survivor-ów, plany rozszerzeń (differential PR-aware mutation, parallel jobs).
+
+#### Changed
+- **`pyproject.toml`** — nowe `[project.optional-dependencies]`:
+  - **`watch`** = `["wup>=0.2.21"]` (instalacja: `pip install 'rebuild[watch]'`)
+  - **`api`** = `["fastapi>=0.115", "uvicorn[standard]>=0.30"]`
+  - **`full`** zaktualizowany — dodano FastAPI/uvicorn, pinnięty `wup>=0.2.21`
+  - **`dev`** dodano `mutmut>=2.5`
+
+#### Deferred to Sprint 5+
+- **`testql` integracja** — `testql 1.x` ma puste top-level eksporty; wymaga osobnej sesji eksploracji submodułów + jasnej decyzji jakich verb-ów potrzebujemy.
+- **`regres` integracja** — pakiet eksportuje moduły CLI (`doctor`, `defscan`, `refactor`, `regres`), brak czystego Python API; integracja wymaga adaptera shell-runner albo czekania na API stabilizację.
+
+#### Verification
+- `ruff check rebuild/ scripts/benchmark_scanner_cache.py --select E,W,F --ignore E501` → **All checks passed**
+- `pytest tests/test_watch_command.py` → 12 passed (z mockowanym wup; 12 = `_require_wup` × 2, `_build_default_wup_config` × 1, `_default_on_change` × 4, `watch_command` × 5)
+- `pytest`: nadal 631 passed + 12 nowych = 643 passed, 3 preexisting failures (te same)
+- `bash -n scripts/run_mutation_tests.sh` → syntax OK
+- `python -c "import yaml; yaml.safe_load(open('.github/workflows/mutation.yml'))"` → YAML OK
+- CLI registration: `rebuild watch --help` widoczne w `app.commands` (test: `from rebuild.interfaces.cli import app`)
+
 ---
+
+## [0.1.30] - 2026-05-07
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
+- Update docs/mutation_testing.md
+
+### Test
+- Update tests/test_watch_command.py
+
+### Other
+- Update rebuild/analysis/service_graph.py
+- Update rebuild/interfaces/cli.py
+- Update rebuild/interfaces/commands/watch_command.py
+- Update scripts/run_mutation_tests.sh
 
 ## [0.1.29] - 2026-05-07
 

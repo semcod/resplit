@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rebuild"
-version = "0.1.29"
+version = "0.1.30"
 description = "Historical deployment analysis — walk git history, deploy per day, test all endpoints, capture screenshots, restore working fragments"
 readme = "README.md"
 authors = [{ name = "Tom Sapletta", email = "tom@sapletta.com" }]
@@ -43,8 +43,11 @@ text = "Apache-2.0"
 screenshots = ["playwright>=1.44"]
 tui = ["textual>=0.60"]
 semantic = ["sentence-transformers>=2.7"]
-full = ["playwright>=1.44", "textual>=0.60", "sentence-transformers>=2.7", "wup", "regres", "testql"]
+watch = ["wup>=0.2.21"]
+api = ["fastapi>=0.115", "uvicorn[standard]>=0.30"]
+full = ["playwright>=1.44", "textual>=0.60", "sentence-transformers>=2.7", "wup>=0.2.21", "regres", "testql", "fastapi>=0.115", "uvicorn[standard]>=0.30"]
 dev = ["pytest>=8", "pytest-cov", "pytest-asyncio", "ruff", "mypy",
+    "mutmut>=2.5",
     "goal>=2.1.0",
     "costs>=0.1.20",
     "pfix>=0.1.60",
@@ -80,6 +83,21 @@ target-version = "py310"
 python_version = "3.10"
 strict = false
 ignore_missing_imports = true
+
+[tool.mutmut]
+# Sprint 4b — Mutation testing on the domain layer.
+#
+# Run locally:    mutmut run --paths-to-mutate rebuild/domain/
+# View results:   mutmut results
+# Show a mutant:  mutmut show <id>
+#
+# CI runs nightly via .github/workflows/mutation.yml; results posted to
+# docs/mutation_testing.md.
+paths_to_mutate = "rebuild/domain/"
+runner = "python -m pytest -x --tb=no -q"
+tests_dir = "tests/"
+# Skip noisy mutants in pure-data classes / event payloads.
+also_copy = ["tests/", "pyproject.toml"]
 
 [tool.pfix]
 # Self-healing Python configuration

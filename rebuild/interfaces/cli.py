@@ -403,6 +403,39 @@ def mvp(
     server.start()
 
 
+@app.command()
+def watch(
+    repo: Path = typer.Argument(Path("."), help="Ścieżka do repozytorium"),
+    output: Path = typer.Option(Path(".rebuild"), help="Katalog wyjściowy"),
+    health_url: str = typer.Option("http://localhost:8003/api/health", help="URL health check"),
+    base_url: str = typer.Option("http://localhost:8003", help="Bazowy URL usługi"),
+    deps_file: Optional[Path] = typer.Option(None, "--deps-file", help="Ścieżka pliku deps.json (domyślnie: <output>/wup_deps.json)"),
+    cpu_throttle: float = typer.Option(0.8, "--cpu-throttle", help="Pomiń test gdy CPU > X (0.0-1.0)"),
+    debounce: int = typer.Option(2, "--debounce", help="Debounce w sekundach"),
+    cooldown: int = typer.Option(60, "--cooldown", help="Minimalny czas między testami tej samej usługi"),
+) -> None:
+    """[Long-running] Obserwuj zmiany w repo i uruchamiaj rebuild walk (--dry-run) automatycznie.
+
+    Wymaga pakietu wup: pip install 'rebuild[watch]'
+    """
+    from .commands.watch_command import watch_command
+    try:
+        watch_command(
+            repo=repo,
+            output=output,
+            health_url=health_url,
+            base_url=base_url,
+            deps_file=deps_file,
+            cpu_throttle=cpu_throttle,
+            debounce_seconds=debounce,
+            cooldown_seconds=cooldown,
+            console=console,
+        )
+    except RuntimeError as exc:
+        console.print(f"[red]✗ {exc}[/red]")
+        raise typer.Exit(1)
+
+
 # ──────────────────────────────────────────────
 # analyze commands
 # ──────────────────────────────────────────────

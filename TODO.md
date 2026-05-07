@@ -65,14 +65,14 @@ Materiał marketingowy + dowód wydajności.
 - [x] **Coverage 75% → 77%** (cel 80% odroczony do Sprint 5+): `plugins/` 0→100%, `interfaces/api/app.py` 58→78%. **Bonus: naprawiony realny bug** w API — wszystkie 4 command endpointy (`/commands/walk|analyze|snapshot|prune`) zwracały 422 Unprocessable Entity z powodu `from __future__ import annotations` + brak `Body(...)`. Po fix endpointy działają.
 - [ ] **E2E test harness** (`tests/e2e/test_full_walk.py`): odroczone do Sprint 4 (wymaga env z docker).
 
-### Sprint 4 — Reuse Bibliotek + Watch Mode (tydzień 7–8)
+### Sprint 4 — Reuse Bibliotek + Watch Mode (tydzień 7–8) 🟦 CZĘŚCIOWO UKOŃCZONY (2026-05-07)
 
 Wreszcie używamy `[full]` extras (`wup`, `regres`, `testql`).
 
-- [ ] **`testql` integracja** (P17): Zastąp `dsl.py` (lub oba)
-- [ ] **`regres` integracja**: Zastąp Sprint 2 `regression_service.py` wywołaniami regres
-- [ ] **`wup` integracja → `rebuild watch`**: Long-running mode z notification hooks
-- [ ] **Mutation testing**: `mutmut` na `rebuild/domain/` w nightly CI
+- [x] **`wup` integracja → `rebuild watch`**: nowa komenda CLI używa `wup.WupWatcher` jako optional dep. Pełna konfiguracja przez `WupConfig`/`WatchConfig` (excludes `.git`, `.venv`, `node_modules`, `.rebuild`). Custom `on_change` handler wywołuje `rebuild walk --dry-run`. 12 testów (`tests/test_watch_command.py`) z mockowanym watcherem i fail-graceful gdy wup brak. Nowe extras: `[watch]` i `[api]`. Zob. [`watch_command.py`](rebuild/interfaces/commands/watch_command.py).
+- [x] **Mutation testing infrastructure**: `[tool.mutmut]` w pyproject.toml, [`scripts/run_mutation_tests.sh`](scripts/run_mutation_tests.sh) z threshold gate (default 75%), [`.github/workflows/mutation.yml`](.github/workflows/mutation.yml) nightly @ 03:00 UTC, [`docs/mutation_testing.md`](docs/mutation_testing.md) z guide. **Mutmut dodany do `dev` extras** — uruchomienie wymaga `pip install -e .[dev]`.
+- [ ] **`testql` integracja** (P17 — zastąpienie `dsl.py`): odroczone do **Sprint 5+**. testql 1.x ma puste top-level eksporty — wymaga osobnej sesji eksploracji submodułów.
+- [ ] **`regres` integracja** (zastąpienie Sprint 2 `regression_service`): odroczone do **Sprint 5+**. regres eksportuje moduły CLI (`doctor`, `defscan`), nie czyste API Pythonowe — wymaga adaptera albo wait-for-API-cleanup.
 
 ### Sprint 5+ — Ecosystem Extensions
 

@@ -31,6 +31,8 @@ class ServiceGraphBuilder:
         for f in self.services_dir.glob("**/*.py"):
             if f.name == "__init__.py":
                 continue
+            if any(p in f.parts for p in (".git", ".venv", "venv", "__pycache__", "node_modules", ".rebuild")):
+                continue
 
             # Use relative path as name (e.g. services.git_service)
             rel = f.relative_to(self.services_dir.parent)
@@ -59,7 +61,7 @@ class ServiceGraphBuilder:
             # Track imports
             if isinstance(subnode, ast.Import):
                 for alias in subnode.names:
-                    if self.base_package in alias.name:
+                    if self.base_package in alias.name and alias.name != node.name:
                         node.dependencies.add(alias.name)
             elif isinstance(subnode, ast.ImportFrom):
                 if subnode.module and (self.base_package in subnode.module or subnode.level > 0):
@@ -69,7 +71,11 @@ class ServiceGraphBuilder:
                         # Simple relative import resolver
                         parts = node.name.split(".")
                         module_name = ".".join(parts[: -subnode.level]) + "." + (subnode.module or "")
-                    node.dependencies.add(module_name.strip("."))
+                    resolved = module_name.strip(".")
+                    # Skip self-dependencies (e.g., when a module file coexists
+                    # with a same-named package and uses relative imports).
+                    if resolved and resolved != node.name:
+                        node.dependencies.add(resolved)
 
             # Track methods
             if isinstance(subnode, ast.FunctionDef):
