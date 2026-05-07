@@ -1,5 +1,7 @@
 # Quick Start
 
+> See also: [Installation](installation.md) · [Configuration](configuration.md) · [Walk Guide](../guide/walk.md) · [CLI Reference](../reference/cli.md)
+
 ## 1. Initialise your project
 
 ```bash

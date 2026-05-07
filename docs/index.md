@@ -1,6 +1,8 @@
 # rebuild
 
-**Historical deployment analysis** — walk git history day by day, deploy each commit, test all endpoints, capture screenshots, and restore working fragments.
+**Code Evolution Intelligence Engine** — walk git history day by day, deploy each commit, test all endpoints, capture screenshots, and **analyze code evolution** to find duplicates, rank quality, and generate refactor plans.
+
+> **v0.1.23** · 634 tests · 72% coverage · 3722 functions · 161 classes · CC̄ = 3.9
 
 ---
 
@@ -18,16 +20,18 @@ git history  →  deploy  →  test endpoints  →  capture screenshots  →  re
 
 ## Key Features
 
-| Feature | Description |
-|---|---|
-| **Walk** | Iterate git history, deploy per commit, test all endpoints |
-| **Analyze** | Detect code duplication, service graph cycles, semantic similarity |
-| **Refactor** | AI-powered refactoring plans + automated execution |
-| **Auto-PR** | Open GitHub/GitLab PRs with AI-generated descriptions |
-| **Vector Search** | SQLite-backed semantic code search |
-| **Plugins** | Extend with custom scanners and reporters via entry points |
-| **TUI** | Interactive terminal UI for browsing results |
-| **Export** | CSV + Markdown summaries after every walk |
+| Feature | Description | Docs |
+|---|---|---|
+| **Walk** | Iterate git history, deploy per commit, test all endpoints | [Guide](guide/walk.md) · [CLI](reference/cli.md#rebuild-walk) |
+| **Analyze** | Detect code duplication, service graph cycles, semantic similarity | [Guide](guide/analyze.md) |
+| **Refactor** | AI-powered refactoring plans + automated execution | [Guide](guide/refactor.md) |
+| **Auto-PR** | Open GitHub/GitLab PRs with AI-generated descriptions | [Guide](guide/auto-pr.md) |
+| **Vector Search** | SQLite-backed semantic code search | [Guide](guide/analyze.md#vector-search) |
+| **Plugins** | Extend with custom scanners and reporters via entry points | [Guide](guide/plugins.md) |
+| **TUI** | Interactive terminal UI for browsing results | [CLI](reference/cli.md) |
+| **Export** | CSV + Markdown summaries after every walk | [Config](reference/config.md) |
+| **Notifications** | Slack/Discord webhooks on deploy fail or health regression | [Config](reference/config.md) |
+| **Snapshots** | LRU-managed DB snapshots for instant state restore | [Architecture](architecture.md) |
 
 ---
 
@@ -66,3 +70,6 @@ rebuild serve --results-dir /path/to/my-service/.rebuild
 - [Quick Start →](getting-started/quickstart.md)
 - [Configuration reference →](reference/config.md)
 - [CLI reference →](reference/cli.md)
+- [Architecture →](architecture.md)
+- [Case Study: c2004 →](case_study_c2004.md)
+- [Changelog →](changelog.md)

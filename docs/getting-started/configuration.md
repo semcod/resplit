@@ -1,5 +1,7 @@
 # Configuration
 
+> See also: [Config Reference](../reference/config.md) · [Walk Guide](../guide/walk.md) · [CLI Reference](../reference/cli.md)
+
 `rebuild` is configured via `rebuild.yaml` in the repository root.
 
 ## Full example

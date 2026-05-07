@@ -1,5 +1,7 @@
 # rebuild.yaml Reference
 
+> See also: [Configuration Guide](../getting-started/configuration.md) · [CLI Reference](cli.md) · [Walk Guide](../guide/walk.md)
+
 Full field reference for `rebuild.yaml`.
 
 ## Schema

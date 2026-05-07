@@ -1,5 +1,5 @@
 flowchart TD
-%% generated in 0.03s
+%% generated in 0.01s
 
     %% Entry points (blue)
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
@@ -8,38 +8,28 @@ flowchart TD
         docs__guide__plugins__scan["scan"]
         docs__guide__plugins__report["report"]
         docs__guide__plugins__print["print"]
-        docs__README__generate_readme["generate_readme"]
         docs__getting_started__configuration__print["print"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__get["get"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__post["post"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__put["put"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__patch["patch"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__delete["delete"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__close["close"]
-        rebuild__infrastructure__event_bus__EventBus__subscribe["subscribe"]
-        rebuild__infrastructure__event_bus__EventBus__subscribe_async["subscribe_async"]
-        rebuild__infrastructure__event_bus__EventBus__subscribe_all["subscribe_all"]
-        rebuild__infrastructure__event_bus__EventBus__subscribe_all_async["subscribe_all_async"]
-        ...["+3582 more"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__health["health"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__get_manifest["get_manifest"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__list_pages["list_pages"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__serve_ui["serve_ui"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__serve_model["serve_model"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__list_models["list_models"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__index["index"]
+        restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__module_index["module_index"]
+        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__health["health"]
+        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__get_manifest["get_manifest"]
+        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__list_pages["list_pages"]
+        ...["+466 more"]
     end
 
     subgraph Exporters
         rebuild__analysis__graph_exporter__GraphExporter__export_html["export_html"]
         rebuild__analysis__graph_exporter__GraphExporter___prepare_d3_data["_prepare_d3_data"]
-        SUMD__export_dsl_logs["export_dsl_logs"]
-        SUMD___has_module_exports["_has_module_exports"]
-        SUMD__export_dsl_logs_payload["export_dsl_logs_payload"]
-        SUMD__export_report["export_report"]
-        SUMD__export_tables["export_tables"]
-        SUMD___normalize_export["_normalize_export"]
-        SUMD__test_dsl_logs_export_has_canonical_logs_route_and_dsl_alias["test_dsl_logs_export_has_canon"]
-        SUMD__test_export_dsl_emits_replayable_api_lines_and_comments_unknown_entries["test_export_dsl_emits_replayab"]
-        SUMD__find_all_exports_ts["find_all_exports_ts"]
-        SUMD__extract_exports["extract_exports"]
-        SUMD__test_multi_repo_analyzer_export_json["test_multi_repo_analyzer_expor"]
-        SUMD__test_walk_command_with_results_generates_exports["test_walk_command_with_results"]
-        SUMD__test_services_command_no_export["test_services_command_no_expor"]
-        ...["+10 more"]
+        rebuild__analysis__service_graph__MultiRepoAnalyzer__export_json["export_json"]
+        rebuild__application__services__reporting__reporter__ReporterService__export_csv["export_csv"]
+        rebuild__application__services__reporting__reporter__ReporterService__export_markdown["export_markdown"]
+        rebuild__application__services__reporting__reporter__ReporterService___results_to_export_data["_results_to_export_data"]
     end
 
-    class docs__guide__plugins__scan,docs__guide__plugins__report,docs__guide__plugins__print,docs__README__generate_readme,docs__getting_started__configuration__print,rebuild__infrastructure__http_adapter__HttpAdapter__get,rebuild__infrastructure__http_adapter__HttpAdapter__post,rebuild__infrastructure__http_adapter__HttpAdapter__put,rebuild__infrastructure__http_adapter__HttpAdapter__patch,rebuild__infrastructure__http_adapter__HttpAdapter__delete entry
+    class docs__guide__plugins__scan,docs__guide__plugins__report,docs__guide__plugins__print,docs__getting_started__configuration__print,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__health,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__get_manifest,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__list_pages,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__serve_ui,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__serve_model,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__list_models entry

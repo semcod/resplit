@@ -1,26 +1,32 @@
 # System Architecture Analysis
-<!-- generated in 0.01s -->
+<!-- generated in 0.00s -->
 
 ## Overview
 
 - **Project**: /home/tom/github/semcod/rebuild
 - **Primary Language**: python
-- **Languages**: python: 98, md: 32, yaml: 15, shell: 8, yml: 3
+- **Languages**: python: 92, md: 28, yaml: 9, shell: 8, yml: 3
 - **Analysis Mode**: static
-- **Total Functions**: 3722
+- **Total Functions**: 591
 - **Total Classes**: 161
-- **Modules**: 164
-- **Entry Points**: 3665
+- **Modules**: 147
+- **Entry Points**: 521
 
 ## Architecture by Module
 
-### SUMD
-- **Functions**: 61729
-- **File**: `SUMD.md`
-
 ### rebuild.interfaces.cli
-- **Functions**: 24
+- **Functions**: 29
 - **File**: `cli.py`
+
+### rebuild.application.services.parallel_test_engine
+- **Functions**: 25
+- **Classes**: 3
+- **File**: `parallel_test_engine.py`
+
+### rebuild.application.services.deploy_service
+- **Functions**: 24
+- **Classes**: 1
+- **File**: `deploy_service.py`
 
 ### rebuild.application.services.accelerator_deploy
 - **Functions**: 23
@@ -32,84 +38,80 @@
 - **Classes**: 2
 - **File**: `db_snapshot_manager.py`
 
-### rebuild.application.services.deploy_service
+### rebuild.analysis.duplication_engine
 - **Functions**: 20
-- **Classes**: 1
-- **File**: `deploy_service.py`
-
-### rebuild.application.services.parallel_test_engine
-- **Functions**: 19
 - **Classes**: 3
-- **File**: `parallel_test_engine.py`
+- **File**: `duplication_engine.py`
+
+### rebuild.application.accelerated_pipeline
+- **Functions**: 19
+- **Classes**: 1
+- **File**: `accelerated_pipeline.py`
+
+### rebuild.application.services.scanner_service
+- **Functions**: 19
+- **Classes**: 1
+- **File**: `scanner_service.py`
 
 ### rebuild.analysis.service_graph
 - **Functions**: 17
 - **Classes**: 6
 - **File**: `service_graph.py`
 
-### rebuild.application.services.scanner_service
-- **Functions**: 14
+### rebuild.application.services.reporting.reporter
+- **Functions**: 16
 - **Classes**: 1
-- **File**: `scanner_service.py`
-
-### rebuild.plugins.registry
-- **Functions**: 14
-- **Classes**: 1
-- **File**: `registry.py`
+- **File**: `reporter.py`
 
 ### rebuild.application.services.notification_service
 - **Functions**: 14
 - **Classes**: 4
 - **File**: `notification_service.py`
 
+### rebuild.plugins.registry
+- **Functions**: 14
+- **Classes**: 1
+- **File**: `registry.py`
+
 ### rebuild.domain.mvp_protocol
 - **Functions**: 14
 - **Classes**: 4
 - **File**: `mvp_protocol.py`
-
-### rebuild.analysis.duplication_engine
-- **Functions**: 14
-- **Classes**: 3
-- **File**: `duplication_engine.py`
 
 ### rebuild.domain.dsl
 - **Functions**: 13
 - **Classes**: 5
 - **File**: `dsl.py`
 
+### rebuild.infrastructure.config_loader
+- **Functions**: 13
+- **Classes**: 1
+- **File**: `config_loader.py`
+
 ### rebuild.infrastructure.event_bus
 - **Functions**: 12
 - **Classes**: 1
 - **File**: `event_bus.py`
 
-### rebuild.application.accelerated_pipeline
-- **Functions**: 11
+### rebuild.application.pipeline
+- **Functions**: 12
 - **Classes**: 1
-- **File**: `accelerated_pipeline.py`
+- **File**: `pipeline.py`
 
 ### rebuild.analysis.vector_search
 - **Functions**: 11
 - **Classes**: 2
 - **File**: `vector_search.py`
 
-### rebuild.application.services.reporting.reporter
-- **Functions**: 11
-- **Classes**: 1
-- **File**: `reporter.py`
-
 ### rebuild.domain.dsl_v2
 - **Functions**: 11
 - **Classes**: 11
 - **File**: `dsl_v2.py`
 
-### scripts.bump_version
-- **Functions**: 10
-- **File**: `bump_version.py`
-
-### rebuild.application.services.git_service
-- **Functions**: 10
-- **Classes**: 1
-- **File**: `git_service.py`
+### rebuild.application.services.smart_test_selector
+- **Functions**: 11
+- **Classes**: 3
+- **File**: `smart_test_selector.py`
 
 ## Key Entry Points
 
@@ -120,23 +122,6 @@ Main execution flows into the system:
 
 All dependencies are injected — ideal for testing.
 - **Calls**: FastAPI, app.add_middleware, app.post, app.post, app.post, app.post, app.post, app.post
-
-### rebuild.interfaces.commands.walk_command.walk_command
-- **Calls**: repo.resolve, output.resolve, DeployService, WalkConfig, config_path.exists, overrides.get, overrides.get, overrides.get
-
-### rebuild.application.accelerated_pipeline.AcceleratedPipeline._run_day_fast
-> Execute single day analysis with maximum speed.
-- **Calls**: time.perf_counter, self.log, DayResult, str, self._emit, self.deploy.switch_commit, self._emit, self.worktrees.get_active_path
-
-### rebuild.interfaces.cli.auto_pr
-> Utwórz Pull/Merge Request z AI-generated summary z wyników analizy.
-- **Calls**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option
-
-### rebuild.application.pipeline.Pipeline.run_day
-- **Calls**: self.log, time.perf_counter, DayResult, getattr, str, self.scanner.execute, self._emit, self.log
-
-### rebuild.interfaces.commands.analyze_command.multi_repo_command
-- **Calls**: MultiRepoAnalyzer, console.print, Table, repo_table.add_column, repo_table.add_column, report.repositories.items, console.print, console.print
 
 ### rebuild.application.services.history_service.HistoryService.load_history
 - **Calls**: sorted, results_dir.exists, results_dir.iterdir, self._load_commit, json.loads, isinstance, DayResult, all_results.append
@@ -149,74 +134,99 @@ All dependencies are injected — ideal for testing.
 > Run accelerated analysis over commit history.
 - **Calls**: self.git.days_with_commits, self._emit, self.log, self.log, self.log, self._prewarm_worktrees, self.worktrees.get_active_path, self.deploy.prepare_runtime
 
-### rebuild.infrastructure.config_loader.ConfigLoader.apply_to_config
-> Updates WalkConfig instance with data from YAML.
-- **Calls**: yaml_data.get, Path, int, isinstance, bool, config.test_fixtures.update, config.auth.update, isinstance
-
 ### rebuild.application.pipeline.Pipeline.run
 - **Calls**: self.git.days_with_commits, self._event_service.enable, self._emit, self.log, self._emit, self.reporter.save_timeline_index, self.log, self.log
-
-### rebuild.interfaces.commands.helpers.serve_reports
-- **Calls**: os.chdir, SUMD.get_event_service, event_service.enable, socketserver.TCPServer, console.print, console.print, console.print, None.start
 
 ### rebuild.interfaces.cli.dsl
 > Wykonaj DSL (Domain Specific Language) komendy rebuild.
 - **Calls**: app.command, typer.Option, typer.Option, typer.Option, DSLParser, DSLInterpreter, console.print, typer.Exit
 
-### rebuild.interfaces.commands.analyze_command.services_command
-- **Calls**: console.print, ServiceGraphBuilder, builder.build, builder.detect_cycles, ServiceSimilarityAnalyzer, analyzer.analyze_directory, path.resolve, GraphExporter
-
-### rebuild.interfaces.commands.walk_command.accelerator_command
-- **Calls**: repo.resolve, WalkConfig, console.print, console.print, console.print, console.print, console.print, console.print
-
-### rebuild.refactor.recommendation_engine.RecommendationEngine.generate_plan
-- **Calls**: graph.items, sorted, suggestions.append, suggestions.append, suggestions.append, len, suggestions.append, RefactorSuggestion
-
-### rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
-- **Calls**: output_dir.mkdir, sorted, self._health_trend_by_day, self._endpoint_count_trend_by_day, self._results_to_export_data, None.write_text, SUMD.generate_trend_chart, SUMD.generate_endpoint_diff
+### rebuild.infrastructure.config_schema.ProjectConfig._validate_deploy_and_output
+- **Calls**: model_validator, isinstance, isinstance, isinstance, ValueError, ValueError, OutputConfig.model_validate, isinstance
 
 ### rebuild.domain.mvp_protocol.MVPServer.start
 > Start the MVP server.
 - **Calls**: socketserver.TCPServer, Makefile.print, httpd.serve_forever, int, None.decode, self.headers.get, MVPMessage.from_json, server.handler.handle_message
 
-### rebuild.infrastructure.config_schema.ProjectConfig._validate_deploy_and_output
-- **Calls**: model_validator, isinstance, isinstance, isinstance, ValueError, ValueError, OutputConfig.model_validate, isinstance
-
-### rebuild.interfaces.cli.plugins
-> Wylistuj zainstalowane pluginy (scanners, reporters).
-- **Calls**: app.command, typer.Option, SUMD.load_plugins, Table, table.add_column, table.add_column, table.add_column, table.add_column
+### rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
+- **Calls**: output_dir.mkdir, sorted, self._health_trend_by_day, self._endpoint_count_trend_by_day, self._results_to_export_data, None.write_text, rebuild.application.services.reporting.chart_builder.generate_trend_chart, rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
 
 ### rebuild.analysis.duplication_engine.DuplicationEngine.scan
 - **Calls**: self.collect_fragments, exact_matches.items, fuzzy_matches.items, self._find_semantic_groups, groups.extend, sorted, None.append, id
 
-### rebuild.application.services.scanner_service.ScannerService._scan_via_fastapi_routes
-- **Calls**: set, repo.rglob, any, self._collect_router_prefixes, ast.walk, ast.parse, py_file.read_text, isinstance
+### rebuild.interfaces.cli.plugins
+> Wylistuj zainstalowane pluginy (scanners, reporters).
+- **Calls**: app.command, typer.Option, rebuild.plugins.registry.load_plugins, Table, table.add_column, table.add_column, table.add_column, table.add_column
 
 ### rebuild.interfaces.cli.accelerator
 > ⚡ Ultra-szybki tryb 10x - worktree + hot reload + parallel testing.
 - **Calls**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option
 
-### rebuild.analysis.duplication_engine.DuplicationEngine._find_semantic_groups
-- **Calls**: self._get_semantic_encoder, set, range, len, len, self._semantic_text, encoder.encode, len
-
-### rebuild.infrastructure.event_bus.EventBus.publish
-> Publish event — dispatch to all registered handlers.
-- **Calls**: self._sync_handlers.get, set, list, type, asyncio.get_running_loop, self._async_handlers.get, self._event_store.append, SUMD.handler
-
 ### scripts.bump_version.main
 - **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, scripts.bump_version.read_version, scripts.bump_version.bump, Makefile.print
 
-### rebuild.interfaces.commands.analyze_command.vector_query_command
-- **Calls**: index.resolve, VectorSearchIndex, vs.query, Table, table.add_column, table.add_column, table.add_column, table.add_column
-
-### rebuild.interfaces.commands.helpers.print_summary_table
-- **Calls**: Table, table.add_column, table.add_column, table.add_column, table.add_column, table.add_column, table.add_column, table.add_column
+### rebuild.infrastructure.event_bus.EventBus.publish
+> Publish event — dispatch to all registered handlers.
+- **Calls**: self._sync_handlers.get, set, list, type, asyncio.get_running_loop, self._async_handlers.get, self._event_store.append, handler
 
 ### rebuild.application.services.restore_service.RestoreService.extract_endpoint
 - **Calls**: target.mkdir, docker_dir.mkdir, self._find_backend_files, self._write_readme, self.console.print, src.exists, df.exists, backend_dir.mkdir
 
-### rebuild.interfaces.commands.refactor_command.plan_command
-- **Calls**: rebuild.interfaces.commands.refactor_command._generate_refactor_plan, console.print, enumerate, console.print, LLMService, llm.is_available, console.print, console.print
+### rebuild.domain.dsl_v2.NLPMapper.to_dsl
+> Convert natural language text to a DSL string.
+- **Calls**: None.lower, None.strip, pat.search, working.split, self._llm_fallback, text.strip, re.compile, re.compile
+
+### rebuild.analysis.service_similarity.ServiceSimilarityAnalyzer.analyze_directory
+- **Calls**: services_dir.glob, list, range, sorted, services_data.keys, len, range, ast.parse
+
+### rebuild.domain.dsl.DSLParser.parse
+> Parse a DSL string into a DSLCommand.
+- **Calls**: None.split, None.lower, DSLCommand, ValueError, Command, dsl_string.strip, command_str.replace, ValueError
+
+### rebuild.application.accelerated_pipeline.AcceleratedPipeline._run_day_fast
+> Execute single day analysis with maximum speed.
+- **Calls**: time.perf_counter, self.log, self._make_fast_day_result, str, self._switch_fast_day_commit, self._apply_fast_overrides, self._changed_modules_for_fast_day, self._populate_fast_endpoints
+
+### rebuild.application.pipeline.Pipeline.run_day
+- **Calls**: self.log, time.perf_counter, self._make_day_result, getattr, str, self._prepare_day_repo, self._deploy_day, self._save_if_deploy_failed
+
+### rebuild.domain.dsl_v2.DSLParser.parse_tokens
+> Return (command_name, raw_kwargs_dict).
+- **Calls**: None.lower, shlex.split, DSLParseError, DSLParseError, dsl_string.strip, DSLParseError, token.partition, _ALIAS_MAP.get
+
+### rebuild.analysis.duplication_engine.DuplicationEngine._extract_regex_fragments
+> Fallback structural extraction for JS/TS using regex.
+Identifies blocks between braces and normalizes them.
+- **Calls**: file_path.read_text, re.finditer, match.group, match.start, range, len, frag_content.splitlines, len
+
+### rebuild.application.accelerated_pipeline.AcceleratedPipeline._prewarm_worktrees
+> Pre-create worktrees for all commits to avoid delays during execution.
+- **Calls**: self.log, time.perf_counter, self.log, self.worktrees.get_or_create, min, ThreadPoolExecutor, as_completed, time.perf_counter
+
+### rebuild.application.services.reporting.reporter.ReporterService.export_csv
+> Write summary.csv with one row per day.
+- **Calls**: output_dir.mkdir, sorted, self._health_trend_by_day, self._endpoint_count_trend_by_day, io.StringIO, csv.writer, writer.writerow, dest.write_text
+
+### rebuild.interfaces.cli.restore
+> Przywróć działający endpoint jako izolowany projekt.
+- **Calls**: app.command, typer.Argument, typer.Argument, typer.Option, typer.Option, RestoreService, restore_svc.find_last_working_day, console.print
+
+### rebuild.analysis.service_graph.MultiRepoAnalyzer._repo_aliases
+- **Calls**: self.repos.items, pyproject.exists, repo.iterdir, pyproject.read_text, content.splitlines, line.strip, item.is_dir, None.exists
+
+### rebuild.analysis.service_graph.MultiRepoAnalyzer._analyze_shared_clones
+- **Calls**: DuplicationEngine, self.repos.items, by_hash.items, groups.sort, self._iter_fragment_files, groups.append, len, CrossRepoCloneGroup
+
+### rebuild.application.services.parallel_test_engine.ParallelTestEngine._test_single
+> Test a single endpoint.
+- **Calls**: time.perf_counter, EndpointResult, endpoint.method.upper, isinstance, time.perf_counter, EndpointResult, EndpointResult, client.get
+
+### rebuild.application.services.reporting.reporter.ReporterService._results_to_export_data
+- **Calls**: sorted, self._health_trend_by_day, self._endpoint_count_trend_by_day, str, trend_by_day.get, None.startswith, endpoint_trend_by_day.get, None.startswith
+
+### rebuild.interfaces.cli.auto_pr
+> Utwórz Pull/Merge Request z AI-generated summary z wyników analizy.
+- **Calls**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option
 
 ## Process Flows
 
@@ -227,52 +237,61 @@ Key execution flows identified:
 create_app [rebuild.interfaces.api.app]
 ```
 
-### Flow 2: walk_command
-```
-walk_command [rebuild.interfaces.commands.walk_command]
-```
-
-### Flow 3: _run_day_fast
-```
-_run_day_fast [rebuild.application.accelerated_pipeline.AcceleratedPipeline]
-```
-
-### Flow 4: auto_pr
-```
-auto_pr [rebuild.interfaces.cli]
-```
-
-### Flow 5: run_day
-```
-run_day [rebuild.application.pipeline.Pipeline]
-```
-
-### Flow 6: multi_repo_command
-```
-multi_repo_command [rebuild.interfaces.commands.analyze_command]
-```
-
-### Flow 7: load_history
+### Flow 2: load_history
 ```
 load_history [rebuild.application.services.history_service.HistoryService]
 ```
 
-### Flow 8: walk
+### Flow 3: walk
 ```
 walk [rebuild.interfaces.cli]
 ```
 
-### Flow 9: run
+### Flow 4: run
 ```
 run [rebuild.application.accelerated_pipeline.AcceleratedPipeline]
 ```
 
-### Flow 10: apply_to_config
+### Flow 5: dsl
 ```
-apply_to_config [rebuild.infrastructure.config_loader.ConfigLoader]
+dsl [rebuild.interfaces.cli]
+```
+
+### Flow 6: _validate_deploy_and_output
+```
+_validate_deploy_and_output [rebuild.infrastructure.config_schema.ProjectConfig]
+```
+
+### Flow 7: start
+```
+start [rebuild.domain.mvp_protocol.MVPServer]
+  └─ →> print
+```
+
+### Flow 8: save_timeline_index
+```
+save_timeline_index [rebuild.application.services.reporting.reporter.ReporterService]
+```
+
+### Flow 9: scan
+```
+scan [rebuild.analysis.duplication_engine.DuplicationEngine]
+```
+
+### Flow 10: plugins
+```
+plugins [rebuild.interfaces.cli]
+  └─ →> load_plugins
 ```
 
 ## Key Classes
+
+### rebuild.application.services.deploy_service.DeployService
+> Service for managing the lifecycle of the service being analyzed.
+Supports 'Replay Mode' (Invariant 
+- **Methods**: 24
+- **Key Methods**: rebuild.application.services.deploy_service.DeployService.__init__, rebuild.application.services.deploy_service.DeployService.detect_deploy_method, rebuild.application.services.deploy_service.DeployService.start, rebuild.application.services.deploy_service.DeployService.execute, rebuild.application.services.deploy_service.DeployService.wait_healthy, rebuild.application.services.deploy_service.DeployService.reload, rebuild.application.services.deploy_service.DeployService.stop, rebuild.application.services.deploy_service.DeployService._compose_file, rebuild.application.services.deploy_service.DeployService._compose_up, rebuild.application.services.deploy_service.DeployService._compose_down
+- **Inherits**: <ast.Subscript object at 0x7f3eb1697290>
 
 ### rebuild.application.services.accelerator_deploy.AcceleratorDeployService
 > 10x faster deployment using:
@@ -291,32 +310,39 @@ Instead of re-seeding DB for each test run:
 - **Key Methods**: rebuild.application.services.db_snapshot_manager.DBSnapshotManager.__init__, rebuild.application.services.db_snapshot_manager.DBSnapshotManager._ensure_dirs, rebuild.application.services.db_snapshot_manager.DBSnapshotManager._load_metadata, rebuild.application.services.db_snapshot_manager.DBSnapshotManager._save_metadata, rebuild.application.services.db_snapshot_manager.DBSnapshotManager.create, rebuild.application.services.db_snapshot_manager.DBSnapshotManager._auto_prune, rebuild.application.services.db_snapshot_manager.DBSnapshotManager.prune_old, rebuild.application.services.db_snapshot_manager.DBSnapshotManager.stats, rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_dump, rebuild.application.services.db_snapshot_manager.DBSnapshotManager._mysql_dump
 - **Inherits**: <ast.Subscript object at 0x71099f6bcfd0>
 
-### rebuild.application.services.deploy_service.DeployService
-> Service for managing the lifecycle of the service being analyzed.
-Supports 'Replay Mode' (Invariant 
+### rebuild.analysis.duplication_engine.DuplicationEngine
+> Engine for detecting structural and semantic duplication in codebases.
+Supports Python (AST) and JS/
 - **Methods**: 20
-- **Key Methods**: rebuild.application.services.deploy_service.DeployService.__init__, rebuild.application.services.deploy_service.DeployService.detect_deploy_method, rebuild.application.services.deploy_service.DeployService.start, rebuild.application.services.deploy_service.DeployService.execute, rebuild.application.services.deploy_service.DeployService.wait_healthy, rebuild.application.services.deploy_service.DeployService.reload, rebuild.application.services.deploy_service.DeployService.stop, rebuild.application.services.deploy_service.DeployService._compose_file, rebuild.application.services.deploy_service.DeployService._compose_up, rebuild.application.services.deploy_service.DeployService._compose_down
-- **Inherits**: <ast.Subscript object at 0x71099f823210>
-
-### rebuild.application.services.scanner_service.ScannerService
-> Service for discovering API endpoints in a repository.
-- **Methods**: 14
-- **Key Methods**: rebuild.application.services.scanner_service.ScannerService.__init__, rebuild.application.services.scanner_service.ScannerService.execute, rebuild.application.services.scanner_service.ScannerService._scan_via_deta, rebuild.application.services.scanner_service.ScannerService._scan_via_fastapi_routes, rebuild.application.services.scanner_service.ScannerService._collect_router_prefixes, rebuild.application.services.scanner_service.ScannerService._extract_route_path, rebuild.application.services.scanner_service.ScannerService._join_route_path, rebuild.application.services.scanner_service.ScannerService._ports_to_endpoints, rebuild.application.services.scanner_service.ScannerService._scan_via_openapi, rebuild.application.services.scanner_service.ScannerService._scan_via_openapi_file
-- **Inherits**: <ast.Subscript object at 0x7109a08bb910>
+- **Key Methods**: rebuild.analysis.duplication_engine.DuplicationEngine.__init__, rebuild.analysis.duplication_engine.DuplicationEngine.scan, rebuild.analysis.duplication_engine.DuplicationEngine.collect_fragments, rebuild.analysis.duplication_engine.DuplicationEngine._find_semantic_groups, rebuild.analysis.duplication_engine.DuplicationEngine._semantic_candidates, rebuild.analysis.duplication_engine.DuplicationEngine._encode_semantic_candidates, rebuild.analysis.duplication_engine.DuplicationEngine._semantic_duplicate_groups, rebuild.analysis.duplication_engine.DuplicationEngine._semantic_group_members, rebuild.analysis.duplication_engine.DuplicationEngine._build_semantic_group, rebuild.analysis.duplication_engine.DuplicationEngine._mark_semantic_group_seen
 
 ### rebuild.application.services.parallel_test_engine.ParallelTestEngine
 > High-performance parallel test execution.
 
 Features:
 - Health-first: /health, /metrics run first, ab
-- **Methods**: 14
-- **Key Methods**: rebuild.application.services.parallel_test_engine.ParallelTestEngine.__init__, rebuild.application.services.parallel_test_engine.ParallelTestEngine.open_session, rebuild.application.services.parallel_test_engine.ParallelTestEngine._open_client, rebuild.application.services.parallel_test_engine.ParallelTestEngine.close_session, rebuild.application.services.parallel_test_engine.ParallelTestEngine._close_client, rebuild.application.services.parallel_test_engine.ParallelTestEngine.set_day_dir, rebuild.application.services.parallel_test_engine.ParallelTestEngine._setup_default_dependencies, rebuild.application.services.parallel_test_engine.ParallelTestEngine.execute, rebuild.application.services.parallel_test_engine.ParallelTestEngine._is_health_endpoint, rebuild.application.services.parallel_test_engine.ParallelTestEngine._login_if_configured
+- **Methods**: 20
+- **Key Methods**: rebuild.application.services.parallel_test_engine.ParallelTestEngine.__init__, rebuild.application.services.parallel_test_engine.ParallelTestEngine.open_session, rebuild.application.services.parallel_test_engine.ParallelTestEngine._open_client, rebuild.application.services.parallel_test_engine.ParallelTestEngine.close_session, rebuild.application.services.parallel_test_engine.ParallelTestEngine._close_client, rebuild.application.services.parallel_test_engine.ParallelTestEngine.set_day_dir, rebuild.application.services.parallel_test_engine.ParallelTestEngine._setup_default_dependencies, rebuild.application.services.parallel_test_engine.ParallelTestEngine.execute, rebuild.application.services.parallel_test_engine.ParallelTestEngine._split_health_endpoints, rebuild.application.services.parallel_test_engine.ParallelTestEngine._run_health_phase
 
-### rebuild.analysis.duplication_engine.DuplicationEngine
-> Engine for detecting structural and semantic duplication in codebases.
-Supports Python (AST) and JS/
-- **Methods**: 14
-- **Key Methods**: rebuild.analysis.duplication_engine.DuplicationEngine.__init__, rebuild.analysis.duplication_engine.DuplicationEngine.scan, rebuild.analysis.duplication_engine.DuplicationEngine.collect_fragments, rebuild.analysis.duplication_engine.DuplicationEngine._find_semantic_groups, rebuild.analysis.duplication_engine.DuplicationEngine._get_semantic_encoder, rebuild.analysis.duplication_engine.DuplicationEngine._semantic_text, rebuild.analysis.duplication_engine.DuplicationEngine._semantic_group_hash, rebuild.analysis.duplication_engine.DuplicationEngine._average_group_similarity, rebuild.analysis.duplication_engine.DuplicationEngine._cosine_similarity, rebuild.analysis.duplication_engine.DuplicationEngine._extract_fragments
+### rebuild.application.accelerated_pipeline.AcceleratedPipeline
+> Ultra-fast pipeline using:
+- Git worktrees (instant branch switching)
+- Volume-mounted code (no cont
+- **Methods**: 19
+- **Key Methods**: rebuild.application.accelerated_pipeline.AcceleratedPipeline.__init__, rebuild.application.accelerated_pipeline.AcceleratedPipeline._save_state, rebuild.application.accelerated_pipeline.AcceleratedPipeline.run, rebuild.application.accelerated_pipeline.AcceleratedPipeline._prewarm_worktrees, rebuild.application.accelerated_pipeline.AcceleratedPipeline._create_baseline_snapshot, rebuild.application.accelerated_pipeline.AcceleratedPipeline._run_day_fast, rebuild.application.accelerated_pipeline.AcceleratedPipeline._make_fast_day_result, rebuild.application.accelerated_pipeline.AcceleratedPipeline._switch_fast_day_commit, rebuild.application.accelerated_pipeline.AcceleratedPipeline._apply_fast_overrides, rebuild.application.accelerated_pipeline.AcceleratedPipeline._changed_modules_for_fast_day
+- **Inherits**: BasePipeline
+
+### rebuild.application.services.scanner_service.ScannerService
+> Service for discovering API endpoints in a repository.
+- **Methods**: 19
+- **Key Methods**: rebuild.application.services.scanner_service.ScannerService.__init__, rebuild.application.services.scanner_service.ScannerService.execute, rebuild.application.services.scanner_service.ScannerService._scan_via_deta, rebuild.application.services.scanner_service.ScannerService._scan_via_fastapi_routes, rebuild.application.services.scanner_service.ScannerService._iter_source_python_files, rebuild.application.services.scanner_service.ScannerService._parse_python_ast, rebuild.application.services.scanner_service.ScannerService._fastapi_endpoints_from_tree, rebuild.application.services.scanner_service.ScannerService._fastapi_endpoints_from_function, rebuild.application.services.scanner_service.ScannerService._endpoint_from_fastapi_decorator, rebuild.application.services.scanner_service.ScannerService._collect_router_prefixes
+- **Inherits**: <ast.Subscript object at 0x7f3eb16271d0>
+
+### rebuild.application.services.reporting.reporter.ReporterService
+> Thin orchestrator: delegates to formatters, chart_builder, and saves files.
+- **Methods**: 16
+- **Key Methods**: rebuild.application.services.reporting.reporter.ReporterService.execute, rebuild.application.services.reporting.reporter.ReporterService.to_yaml, rebuild.application.services.reporting.reporter.ReporterService.to_toon, rebuild.application.services.reporting.reporter.ReporterService.save_day, rebuild.application.services.reporting.reporter.ReporterService._save_html_day, rebuild.application.services.reporting.reporter.ReporterService._endpoint_rows, rebuild.application.services.reporting.reporter.ReporterService._endpoint_row, rebuild.application.services.reporting.reporter.ReporterService._deploy_section, rebuild.application.services.reporting.reporter.ReporterService._deploy_log_html, rebuild.application.services.reporting.reporter.ReporterService._deploy_category_html
+- **Inherits**: <ast.Subscript object at 0x7f3eb145db50>
 
 ### rebuild.plugins.registry.PluginRegistry
 > Central registry for rebuild plugins.
@@ -328,10 +354,23 @@ Usage::
 - **Methods**: 13
 - **Key Methods**: rebuild.plugins.registry.PluginRegistry.__init__, rebuild.plugins.registry.PluginRegistry.discover, rebuild.plugins.registry.PluginRegistry.register_scanner, rebuild.plugins.registry.PluginRegistry.register_reporter, rebuild.plugins.registry.PluginRegistry.unregister_scanner, rebuild.plugins.registry.PluginRegistry.unregister_reporter, rebuild.plugins.registry.PluginRegistry.scanners, rebuild.plugins.registry.PluginRegistry.reporters, rebuild.plugins.registry.PluginRegistry.get_scanner, rebuild.plugins.registry.PluginRegistry.get_reporter
 
+### rebuild.infrastructure.config_loader.ConfigLoader
+> Loader for rebuild.yaml configuration files.
+Merges file configuration with CLI defaults.
+- **Methods**: 13
+- **Key Methods**: rebuild.infrastructure.config_loader.ConfigLoader.load, rebuild.infrastructure.config_loader.ConfigLoader.validate, rebuild.infrastructure.config_loader.ConfigLoader.apply_to_config, rebuild.infrastructure.config_loader.ConfigLoader._project_section, rebuild.infrastructure.config_loader.ConfigLoader._resolve_repo_path, rebuild.infrastructure.config_loader.ConfigLoader._apply_output, rebuild.infrastructure.config_loader.ConfigLoader._apply_basic_project_options, rebuild.infrastructure.config_loader.ConfigLoader._apply_deploy_options, rebuild.infrastructure.config_loader.ConfigLoader._apply_deploy_dict, rebuild.infrastructure.config_loader.ConfigLoader._apply_mapping_options
+
 ### rebuild.analysis.service_graph.MultiRepoAnalyzer
 > Analyze cross-repo dependencies and shared structural code clones.
 - **Methods**: 12
 - **Key Methods**: rebuild.analysis.service_graph.MultiRepoAnalyzer.__init__, rebuild.analysis.service_graph.MultiRepoAnalyzer.analyze, rebuild.analysis.service_graph.MultiRepoAnalyzer.export_json, rebuild.analysis.service_graph.MultiRepoAnalyzer._normalize_repo_keys, rebuild.analysis.service_graph.MultiRepoAnalyzer._repo_aliases, rebuild.analysis.service_graph.MultiRepoAnalyzer._analyze_dependencies, rebuild.analysis.service_graph.MultiRepoAnalyzer._import_roots, rebuild.analysis.service_graph.MultiRepoAnalyzer._analyze_shared_clones, rebuild.analysis.service_graph.MultiRepoAnalyzer._iter_python_files, rebuild.analysis.service_graph.MultiRepoAnalyzer._iter_fragment_files
+
+### rebuild.application.pipeline.Pipeline
+> Orchestrates the analysis process (Command).
+Supports Incremental Walking, Event Sourcing, and Repla
+- **Methods**: 12
+- **Key Methods**: rebuild.application.pipeline.Pipeline.__init__, rebuild.application.pipeline.Pipeline._check_for_manual_fix, rebuild.application.pipeline.Pipeline.run, rebuild.application.pipeline.Pipeline.run_day, rebuild.application.pipeline.Pipeline._make_day_result, rebuild.application.pipeline.Pipeline._prepare_day_repo, rebuild.application.pipeline.Pipeline._checkout_commit_for_day, rebuild.application.pipeline.Pipeline._apply_accelerator_patches, rebuild.application.pipeline.Pipeline._apply_configured_overrides, rebuild.application.pipeline.Pipeline._deploy_day
+- **Inherits**: BasePipeline
 
 ### rebuild.infrastructure.event_bus.EventBus
 > Publish/subscribe event bus.
@@ -341,24 +380,10 @@ Usage::
 - **Methods**: 11
 - **Key Methods**: rebuild.infrastructure.event_bus.EventBus.__init__, rebuild.infrastructure.event_bus.EventBus.subscribe, rebuild.infrastructure.event_bus.EventBus.subscribe_async, rebuild.infrastructure.event_bus.EventBus.subscribe_all, rebuild.infrastructure.event_bus.EventBus.subscribe_all_async, rebuild.infrastructure.event_bus.EventBus.unsubscribe, rebuild.infrastructure.event_bus.EventBus.create_ws_queue, rebuild.infrastructure.event_bus.EventBus.remove_ws_queue, rebuild.infrastructure.event_bus.EventBus.publish, rebuild.infrastructure.event_bus.EventBus.publish_many
 
-### rebuild.application.accelerated_pipeline.AcceleratedPipeline
-> Ultra-fast pipeline using:
-- Git worktrees (instant branch switching)
-- Volume-mounted code (no cont
-- **Methods**: 11
-- **Key Methods**: rebuild.application.accelerated_pipeline.AcceleratedPipeline.__init__, rebuild.application.accelerated_pipeline.AcceleratedPipeline._save_state, rebuild.application.accelerated_pipeline.AcceleratedPipeline.run, rebuild.application.accelerated_pipeline.AcceleratedPipeline._prewarm_worktrees, rebuild.application.accelerated_pipeline.AcceleratedPipeline._create_baseline_snapshot, rebuild.application.accelerated_pipeline.AcceleratedPipeline._run_day_fast, rebuild.application.accelerated_pipeline.AcceleratedPipeline._needs_rescan, rebuild.application.accelerated_pipeline.AcceleratedPipeline._needs_db_restore, rebuild.application.accelerated_pipeline.AcceleratedPipeline._diff_names_cached, rebuild.application.accelerated_pipeline.AcceleratedPipeline._restore_db_fast
-- **Inherits**: BasePipeline
-
 ### rebuild.analysis.vector_search.VectorSearchIndex
 > SQLite-backed vector index for semantic lookup of code fragments.
 - **Methods**: 11
 - **Key Methods**: rebuild.analysis.vector_search.VectorSearchIndex.__init__, rebuild.analysis.vector_search.VectorSearchIndex._ensure_schema, rebuild.analysis.vector_search.VectorSearchIndex.build_from_path, rebuild.analysis.vector_search.VectorSearchIndex.upsert_fragments, rebuild.analysis.vector_search.VectorSearchIndex.query, rebuild.analysis.vector_search.VectorSearchIndex.count, rebuild.analysis.vector_search.VectorSearchIndex._load_rows, rebuild.analysis.vector_search.VectorSearchIndex._get_model, rebuild.analysis.vector_search.VectorSearchIndex._fragment_id, rebuild.analysis.vector_search.VectorSearchIndex._to_text
-
-### rebuild.application.services.reporting.reporter.ReporterService
-> Thin orchestrator: delegates to formatters, chart_builder, and saves files.
-- **Methods**: 11
-- **Key Methods**: rebuild.application.services.reporting.reporter.ReporterService.execute, rebuild.application.services.reporting.reporter.ReporterService.to_yaml, rebuild.application.services.reporting.reporter.ReporterService.to_toon, rebuild.application.services.reporting.reporter.ReporterService.save_day, rebuild.application.services.reporting.reporter.ReporterService._save_html_day, rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index, rebuild.application.services.reporting.reporter.ReporterService.export_csv, rebuild.application.services.reporting.reporter.ReporterService.export_markdown, rebuild.application.services.reporting.reporter.ReporterService._health_trend_by_day, rebuild.application.services.reporting.reporter.ReporterService._endpoint_count_trend_by_day
-- **Inherits**: <ast.Subscript object at 0x71099eb9f8d0>
 
 ### rebuild.application.services.notification_service.NotificationService
 > Send webhook notifications on rebuild events.
@@ -369,6 +394,14 @@ Usage::
     svc.add_
 - **Methods**: 11
 - **Key Methods**: rebuild.application.services.notification_service.NotificationService.__init__, rebuild.application.services.notification_service.NotificationService.add_webhook, rebuild.application.services.notification_service.NotificationService.remove_webhook, rebuild.application.services.notification_service.NotificationService.clear, rebuild.application.services.notification_service.NotificationService.hooks, rebuild.application.services.notification_service.NotificationService.notify, rebuild.application.services.notification_service.NotificationService.notify_deploy_fail, rebuild.application.services.notification_service.NotificationService.notify_health_regression, rebuild.application.services.notification_service.NotificationService.notify_walk_complete, rebuild.application.services.notification_service.NotificationService._build_body
+
+### rebuild.application.services.smart_test_selector.SmartTestSelector
+> Selectively runs tests based on git diff analysis.
+
+Instead of testing all endpoints for every commi
+- **Methods**: 11
+- **Key Methods**: rebuild.application.services.smart_test_selector.SmartTestSelector.__init__, rebuild.application.services.smart_test_selector.SmartTestSelector.analyze_changes, rebuild.application.services.smart_test_selector.SmartTestSelector.select_tests, rebuild.application.services.smart_test_selector.SmartTestSelector._critical_only_selection, rebuild.application.services.smart_test_selector.SmartTestSelector._affected_endpoint_patterns, rebuild.application.services.smart_test_selector.SmartTestSelector._requires_full_selection, rebuild.application.services.smart_test_selector.SmartTestSelector._select_affected_endpoints, rebuild.application.services.smart_test_selector.SmartTestSelector._path_matches, rebuild.application.services.smart_test_selector.SmartTestSelector.add_mapping, rebuild.application.services.smart_test_selector.SmartTestSelector.execute
+- **Inherits**: <ast.Subscript object at 0x7f3eb17a3690>
 
 ### rebuild.application.services.git_service.GitService
 > Service for interacting with Git repositories and history.
@@ -385,41 +418,36 @@ Instead of 'git checkout' which modif
 - **Key Methods**: rebuild.application.services.worktree_manager.WorktreeManager.__init__, rebuild.application.services.worktree_manager.WorktreeManager._ensure_base_dir, rebuild.application.services.worktree_manager.WorktreeManager._worktree_path, rebuild.application.services.worktree_manager.WorktreeManager.get_or_create, rebuild.application.services.worktree_manager.WorktreeManager._list_worktrees, rebuild.application.services.worktree_manager.WorktreeManager._remove_worktree, rebuild.application.services.worktree_manager.WorktreeManager.cleanup_all, rebuild.application.services.worktree_manager.WorktreeManager.prepare_sequence, rebuild.application.services.worktree_manager.WorktreeManager.get_active_path, rebuild.application.services.worktree_manager.WorktreeManager.execute
 - **Inherits**: <ast.Subscript object at 0x71099f76f850>
 
-### rebuild.domain.dsl.DSLInterpreter
-> Interpreter for executing parsed DSL commands.
-- **Methods**: 10
-- **Key Methods**: rebuild.domain.dsl.DSLInterpreter.__init__, rebuild.domain.dsl.DSLInterpreter.execute, rebuild.domain.dsl.DSLInterpreter.execute_file, rebuild.domain.dsl.DSLInterpreter._handle_walk, rebuild.domain.dsl.DSLInterpreter._handle_analyze, rebuild.domain.dsl.DSLInterpreter._handle_evolution, rebuild.domain.dsl.DSLInterpreter._handle_auto_pr, rebuild.domain.dsl.DSLInterpreter._handle_accelerator, rebuild.domain.dsl.DSLInterpreter._handle_restore, rebuild.domain.dsl.DSLInterpreter._handle_serve
-
 ### rebuild.domain.mvp_protocol.MVPProtocolHandler
 > Handler for MVP protocol communication.
 - **Methods**: 10
 - **Key Methods**: rebuild.domain.mvp_protocol.MVPProtocolHandler.__init__, rebuild.domain.mvp_protocol.MVPProtocolHandler.handle_message, rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_command, rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_event, rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_walk, rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_analyze, rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_evolution, rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_auto_pr, rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_dsl, rebuild.domain.mvp_protocol.MVPProtocolHandler._handle_nlp
 
-### rebuild.infrastructure.event_store.EventStore
-> Append-only SQLite event store.
-
-Usage::
-
-    store = EventStore(Path(".rebuild/events.db"))
-    sto
-- **Methods**: 8
-- **Key Methods**: rebuild.infrastructure.event_store.EventStore.__init__, rebuild.infrastructure.event_store.EventStore._conn, rebuild.infrastructure.event_store.EventStore.append, rebuild.infrastructure.event_store.EventStore.append_many, rebuild.infrastructure.event_store.EventStore.load, rebuild.infrastructure.event_store.EventStore.load_raw, rebuild.infrastructure.event_store.EventStore.count, rebuild.infrastructure.event_store.EventStore.prune_before
-
-### rebuild.infrastructure.http_adapter.HttpAdapter
-> Adapter for HTTP requests.
-Centralizes timeout, retry logic, and client management.
-- **Methods**: 7
-- **Key Methods**: rebuild.infrastructure.http_adapter.HttpAdapter.__init__, rebuild.infrastructure.http_adapter.HttpAdapter.get, rebuild.infrastructure.http_adapter.HttpAdapter.post, rebuild.infrastructure.http_adapter.HttpAdapter.put, rebuild.infrastructure.http_adapter.HttpAdapter.patch, rebuild.infrastructure.http_adapter.HttpAdapter.delete, rebuild.infrastructure.http_adapter.HttpAdapter.close
-
-### rebuild.application.services.restore_service.RestoreService
-> Service for restoring a working endpoint from git history.
-- **Methods**: 7
-- **Key Methods**: rebuild.application.services.restore_service.RestoreService.__init__, rebuild.application.services.restore_service.RestoreService.execute, rebuild.application.services.restore_service.RestoreService.find_last_working_day, rebuild.application.services.restore_service.RestoreService.extract_endpoint, rebuild.application.services.restore_service.RestoreService._find_backend_files, rebuild.application.services.restore_service.RestoreService._is_page_endpoint, rebuild.application.services.restore_service.RestoreService._write_readme
-- **Inherits**: <ast.Subscript object at 0x71099f86ba10>
+### rebuild.domain.dsl.DSLInterpreter
+> Interpreter for executing parsed DSL commands.
+- **Methods**: 10
+- **Key Methods**: rebuild.domain.dsl.DSLInterpreter.__init__, rebuild.domain.dsl.DSLInterpreter.execute, rebuild.domain.dsl.DSLInterpreter.execute_file, rebuild.domain.dsl.DSLInterpreter._handle_walk, rebuild.domain.dsl.DSLInterpreter._handle_analyze, rebuild.domain.dsl.DSLInterpreter._handle_evolution, rebuild.domain.dsl.DSLInterpreter._handle_auto_pr, rebuild.domain.dsl.DSLInterpreter._handle_accelerator, rebuild.domain.dsl.DSLInterpreter._handle_restore, rebuild.domain.dsl.DSLInterpreter._handle_serve
 
 ## Data Transformation Functions
 
 Key functions that process and transform data:
+
+### rebuild.infrastructure.config_schema.ProjectConfig._validate_deploy_and_output
+- **Output to**: model_validator, isinstance, isinstance, isinstance, ValueError
+
+### rebuild.infrastructure.config_schema.ConfigSchemaValidator.validate
+- **Output to**: isinstance, RebuildConfig.model_validate, exc.errors, None.replace, errors.append
+
+### rebuild.infrastructure.config_schema.ConfigSchemaValidator.parse
+> Parse and return a RebuildConfig, raising ValidationError on failure.
+- **Output to**: RebuildConfig.model_validate
+
+### rebuild.infrastructure.config_schema.load_and_validate
+> Load a YAML file and validate against RebuildConfig schema.
+
+Returns:
+    (RebuildConfig, [])       
+- **Output to**: ConfigSchemaValidator.validate, path.exists, isinstance, ConfigSchemaValidator.parse, open
 
 ### rebuild.application.commands.analyze_commands.AnalyzeCommand._validate_type
 - **Output to**: field_validator, ValueError, sorted
@@ -430,53 +458,57 @@ Key functions that process and transform data:
 ### rebuild.application.commands.walk_commands.WalkCommand._validate_repo
 - **Output to**: field_validator, Path, p.exists, ValueError, None.exists
 
+### rebuild.application.services.summary_service.SummaryService.format_suggestions_for_pr
+> Format suggestions for PR body.
+- **Output to**: formatted.append, suggestion.severity.upper
+
+### rebuild.application.services.nlp_service.NLPService.parse
+> Parse natural language command into structured command.
+- **Output to**: None.strip, self._detect_intent, self._extract_parameters, NLPCommand, text.lower
+
+### rebuild.domain.dsl.DSLParser.parse
+> Parse a DSL string into a DSLCommand.
+- **Output to**: None.split, None.lower, DSLCommand, ValueError, Command
+
+### rebuild.domain.dsl.DSLParser.parse_file
+> Parse a DSL file with multiple commands.
+- **Output to**: dsl_file.read_text, None.split, line.strip, content.strip, commands.append
+
+### rebuild.domain.dsl_v2.DSLParser.parse_tokens
+> Return (command_name, raw_kwargs_dict).
+- **Output to**: None.lower, shlex.split, DSLParseError, DSLParseError, dsl_string.strip
+
+### rebuild.domain.dsl_v2.DSLParser.parse
+> Parse and validate DSL string. Returns the matching Pydantic schema.
+- **Output to**: self.parse_tokens, schema_cls, DSLParseError
+
+### rebuild.domain.dsl_v2.DSLShell._process
+> Process one line — parse, dispatch, print result.
+- **Output to**: self._nlp.to_dsl, self._parser.to_cqrs_command, Makefile.print, Makefile.print, self._command_bus.dispatch
+
+### rebuild.domain.dsl_v2.DSLShell.process_line
+> Process one line programmatically (for testing). Returns command or None.
+- **Output to**: self._nlp.to_dsl, self._parser.to_cqrs_command
+
 ### rebuild.infrastructure.config_loader.ConfigLoader.validate
 > Validates rebuild.yaml data and returns a list of human-readable error strings.
 An empty list means 
 - **Output to**: ConfigSchemaValidator.validate
 
+### rebuild.analysis.duplication_engine.DuplicationEngine._encode_semantic_candidates
+- **Output to**: self._semantic_text, encoder.encode
+
+### rebuild.analysis.duplication_engine.DuplicationEngine._get_semantic_encoder
+- **Output to**: SentenceTransformer
+
+### rebuild.application.services.scanner_service.ScannerService._parse_python_ast
+- **Output to**: ast.parse, py_file.read_text
+
 ### rebuild.application.services.scanner_service.ScannerService._parse_openapi
 - **Output to**: spec.get, paths.items, self._substitute_params, methods.items, method.upper
 
-### SUMD._parse_numeric
-
-### SUMD.parse_date
-
-### SUMD.parse_xml_protocol
-
-### SUMD._process_output_var
-
-### SUMD._process_param_var
-
-### SUMD._process_op_var
-
-### SUMD._process_output_keys
-
-### SUMD._process_param_conditions
-
-### SUMD._process_alarms
-
-### SUMD._process_steps
-
-### SUMD._process_tasks
-
-### SUMD._process_goal
-
-### SUMD._process_scenario_data
-
-### SUMD._parse_content
-
-### SUMD._parse_units_list
-
-### SUMD._process_scenarios
-
-### SUMD._process_out_entity
-
-### SUMD._process_op_entity
-
-### SUMD._process_prm_entity
-
-### SUMD._process_output_tasks
+### rebuild.interfaces.commands.walk_command._parse_date
+- **Output to**: date.fromisoformat
 
 ## Behavioral Patterns
 
@@ -505,27 +537,22 @@ An empty list means
 Functions exposed as public API (no underscore prefix):
 
 - `rebuild.interfaces.api.app.create_app` - 74 calls
-- `rebuild.interfaces.commands.walk_command.walk_command` - 53 calls
-- `rebuild.interfaces.cli.auto_pr` - 49 calls
-- `rebuild.application.pipeline.Pipeline.run_day` - 47 calls
 - `rebuild.interfaces.commands.analyze_command.multi_repo_command` - 44 calls
 - `rebuild.application.services.history_service.HistoryService.load_history` - 37 calls
 - `rebuild.interfaces.cli.walk` - 35 calls
 - `rebuild.application.accelerated_pipeline.AcceleratedPipeline.run` - 33 calls
-- `rebuild.infrastructure.config_loader.ConfigLoader.apply_to_config` - 32 calls
-- `rebuild.application.pipeline.Pipeline.run` - 28 calls
 - `rebuild.interfaces.commands.helpers.serve_reports` - 28 calls
+- `rebuild.application.pipeline.Pipeline.run` - 28 calls
 - `rebuild.interfaces.cli.dsl` - 26 calls
 - `rebuild.interfaces.commands.analyze_command.services_command` - 25 calls
 - `rebuild.interfaces.commands.walk_command.accelerator_command` - 24 calls
-- `rebuild.refactor.recommendation_engine.RecommendationEngine.generate_plan` - 24 calls
-- `rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index` - 23 calls
 - `rebuild.domain.mvp_protocol.MVPServer.start` - 23 calls
-- `rebuild.interfaces.cli.plugins` - 22 calls
+- `rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index` - 23 calls
 - `rebuild.analysis.duplication_engine.DuplicationEngine.scan` - 22 calls
+- `rebuild.interfaces.cli.plugins` - 22 calls
 - `rebuild.interfaces.cli.accelerator` - 21 calls
-- `rebuild.infrastructure.event_bus.EventBus.publish` - 20 calls
 - `scripts.bump_version.main` - 20 calls
+- `rebuild.infrastructure.event_bus.EventBus.publish` - 20 calls
 - `rebuild.interfaces.commands.analyze_command.vector_query_command` - 20 calls
 - `rebuild.interfaces.commands.helpers.print_summary_table` - 20 calls
 - `rebuild.application.services.restore_service.RestoreService.extract_endpoint` - 19 calls
@@ -533,17 +560,22 @@ Functions exposed as public API (no underscore prefix):
 - `rebuild.domain.dsl_v2.NLPMapper.to_dsl` - 19 calls
 - `rebuild.analysis.service_similarity.ServiceSimilarityAnalyzer.analyze_directory` - 18 calls
 - `rebuild.domain.dsl.DSLParser.parse` - 18 calls
+- `rebuild.application.pipeline.Pipeline.run_day` - 18 calls
+- `rebuild.interfaces.commands.analyze_command.truth_command` - 17 calls
+- `rebuild.domain.dsl_v2.DSLParser.parse_tokens` - 17 calls
 - `rebuild.application.services.reporting.reporter.ReporterService.export_csv` - 17 calls
 - `rebuild.interfaces.cli.restore` - 17 calls
-- `rebuild.interfaces.commands.analyze_command.truth_command` - 17 calls
-- `rebuild.application.services.parallel_test_engine.ParallelTestEngine.execute` - 17 calls
-- `rebuild.domain.dsl_v2.DSLParser.parse_tokens` - 17 calls
-- `rebuild.application.services.smart_test_selector.SmartTestSelector.select_tests` - 16 calls
+- `rebuild.interfaces.cli.auto_pr` - 16 calls
 - `scripts.bump_version.categorize_commits` - 15 calls
 - `rebuild.analysis.vector_search.VectorSearchIndex.upsert_fragments` - 15 calls
 - `rebuild.application.services.summary_service.SummaryService.generate_from_duplication` - 15 calls
 - `rebuild.application.services.summary_service.SummaryService.generate_from_service_graph` - 15 calls
 - `scripts.bump_version.build_new_section` - 14 calls
+- `scripts.bump_version.update_changelog` - 14 calls
+- `rebuild.application.services.screenshot_service.ScreenshotService.execute` - 14 calls
+- `rebuild.application.services.reporting.formatters.to_yaml` - 14 calls
+- `rebuild.interfaces.cli.init` - 14 calls
+- `rebuild.interfaces.cli.nlp` - 14 calls
 
 ## System Interactions
 
@@ -554,33 +586,33 @@ graph TD
     create_app --> FastAPI
     create_app --> add_middleware
     create_app --> post
-    walk_command --> resolve
-    walk_command --> DeployService
-    walk_command --> WalkConfig
-    walk_command --> exists
-    _run_day_fast --> perf_counter
-    _run_day_fast --> log
-    _run_day_fast --> DayResult
-    _run_day_fast --> str
-    _run_day_fast --> _emit
-    auto_pr --> command
-    auto_pr --> Argument
-    auto_pr --> Option
-    run_day --> log
-    run_day --> perf_counter
-    run_day --> DayResult
-    run_day --> getattr
-    run_day --> str
-    multi_repo_command --> MultiRepoAnalyzer
-    multi_repo_command --> print
-    multi_repo_command --> Table
-    multi_repo_command --> add_column
     load_history --> sorted
     load_history --> exists
     load_history --> iterdir
     load_history --> _load_commit
     load_history --> loads
     walk --> command
+    walk --> Argument
+    walk --> Option
+    run --> days_with_commits
+    run --> _emit
+    run --> log
+    run --> enable
+    dsl --> command
+    dsl --> Option
+    dsl --> DSLParser
+    _validate_deploy_and --> model_validator
+    _validate_deploy_and --> isinstance
+    _validate_deploy_and --> ValueError
+    start --> TCPServer
+    start --> print
+    start --> serve_forever
+    start --> int
+    start --> decode
+    save_timeline_index --> mkdir
+    save_timeline_index --> sorted
+    save_timeline_index --> _health_trend_by_day
+    save_timeline_index --> _endpoint_count_tren
 ```
 
 ## Reverse Engineering Guidelines

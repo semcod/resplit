@@ -1,6 +1,8 @@
 # Case Study: c2004 Intelligence Analysis
 
-This document demonstrates the results of running the **Code Evolution Intelligence Engine** on the `c2004` ecosystem.
+> See also: [c2004 Testing Log](c2004.md) · [Analyze Guide](guide/analyze.md) · [Walk Guide](guide/walk.md) · [README](../README.md)
+
+This document demonstrates the results of running the **Code Evolution Intelligence Engine** (v0.1.23) on the `c2004` ecosystem.
 
 ## 1. Architectural Tasks (Action Board)
 Based on the analysis, the following tasks have been automatically identified and prioritized:

@@ -1,5 +1,7 @@
 # Installation
 
+> See also: [Quick Start](quickstart.md) · [Configuration](configuration.md) · [CLI Reference](../reference/cli.md)
+
 ## Requirements
 
 - Python **3.11+**
@@ -43,5 +45,5 @@ pip install -e ".[dev]"
 
 ```bash
 rebuild version
-# rebuild v0.1.20
+# rebuild v0.1.23
 ```

@@ -66,7 +66,8 @@ nav:
     - rebuild.yaml: reference/config.md
     - Architecture: architecture.md
   - Case Studies:
-    - c2004: case_study_c2004.md
+    - c2004 Analysis: case_study_c2004.md
+    - c2004 Testing Log: c2004.md
   - Changelog: changelog.md
 
 extra:

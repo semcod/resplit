@@ -1,12 +1,12 @@
-# redup/duplication | 3125 groups | 13892f 1743881L | 2026-05-06
+# redup/duplication | 3125 groups | 13892f 1744285L | 2026-05-07
 
 SUMMARY:
   files_scanned: 13892
-  total_lines:   1743881
+  total_lines:   1744285
   dup_groups:    3125
   dup_fragments: 59027
   saved_lines:   1010241
-  scan_ms:       130177
+  scan_ms:       138645
 
 HOTSPOTS[7] (files with most duplication):
   .rebuild/c2004/repo_clone/.rebuild/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)
@@ -62111,15 +62111,15 @@ DUPLICATES[3125] (ranked by impact):
       .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
       .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
   [93a1c1ad1b73076e]   STRU  services  L=7 N=3 saved=14 sim=1.00
-      rebuild/interfaces/cli.py:431-437  (services)
-      rebuild/interfaces/cli.py:456-462  (plan)
-      rebuild/interfaces/cli.py:475-481  (execute)
+      rebuild/interfaces/cli.py:472-478  (services)
+      rebuild/interfaces/cli.py:497-503  (plan)
+      rebuild/interfaces/cli.py:516-522  (execute)
   [b8c71827db6c113b]   EXAC  hardware_proxy_info  L=5 N=3 saved=10 sim=1.00
       .rebuild/c2004/results/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
       .rebuild/c2004/results_new/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
       .rebuild_c2004_7d/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
   [8d970f6b56d0f822]   EXAC  _cosine_similarity  L=10 N=2 saved=10 sim=1.00
-      rebuild/analysis/duplication_engine.py:193-202  (_cosine_similarity)
+      rebuild/analysis/duplication_engine.py:231-240  (_cosine_similarity)
       rebuild/analysis/vector_search.py:206-215  (_cosine_similarity)
   [c5d8baa57f575044]   EXAC  GetCustomer  L=3 N=3 saved=6 sim=1.00
       .rebuild/c2004/repo_clone/.swop/generated/services/connect-data/server.py:44-46  (GetCustomer)
@@ -62166,10 +62166,10 @@ DUPLICATES[3125] (ranked by impact):
       rebuild/domain/events.py:13-18  (create)
   [96e4ae362800b6c9]   EXAC  action_cursor_up  L=4 N=2 saved=4 sim=1.00
       rebuild/interfaces/tui/screens/endpoint_screens.py:124-127  (action_cursor_up)
-      rebuild/interfaces/tui/screens/history_screen.py:146-149  (action_cursor_up)
+      rebuild/interfaces/tui/screens/history_screen.py:145-148  (action_cursor_up)
   [92fb86f76d3ad550]   EXAC  action_go_top  L=3 N=2 saved=3 sim=1.00
       rebuild/interfaces/tui/screens/endpoint_screens.py:129-131  (action_go_top)
-      rebuild/interfaces/tui/screens/history_screen.py:151-153  (action_go_top)
+      rebuild/interfaces/tui/screens/history_screen.py:150-152  (action_go_top)
 
 REFACTOR[3125] (ranked by priority):
   [1] ◐ extract_module     → utils/generate_llm_prompts.py

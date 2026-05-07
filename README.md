@@ -1,79 +1,114 @@
 # rebuild
 
+## Code Evolution Intelligence Engine
 
-## AI Cost Tracking
+![Version](https://img.shields.io/badge/version-0.1.24-blue) ![Python](https://img.shields.io/badge/python-3.11+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-634%20passing-brightgreen) ![Coverage](https://img.shields.io/badge/coverage-72%25-brightgreen)
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.23-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.05-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-11.8h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+**Historical deployment analysis & Code Intelligence** — walk git history day by day, deploy per commit, test all endpoints, capture screenshots, and **analyze code evolution** to find duplicates, rank quality, and generate refactor plans.
 
-- 🤖 **LLM usage:** $7.0500 (47 commits)
-- 👤 **Human dev:** ~$1184 (11.8h @ $100/h, 30min dedup)
-
-Generated on 2026-05-06 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
+> **SUMD stats** (v0.1.23): 3722 functions · 161 classes · 167 files · CC̄ = 3.9
 
 ---
 
-## Code Evolution Intelligence Engine
+### AI Cost Tracking
 
-![Version](https://img.shields.io/badge/version-0.1.23-blue) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-65%20passing-brightgreen)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.24-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.20-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-12.8h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-**Historical deployment analysis & Code Intelligence** — walk git history day by day, deploy per commit, test all endpoints, capture screenshots, and **analyze code evolution** to find duplicates, rank quality, and generate refactor plans.
+- 🤖 **LLM usage:** $7.2000 (48 commits)
+- 👤 **Human dev:** ~$1284 (12.8h @ $100/h, 30min dedup)
+
+Generated on 2026-05-07 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
 ## 📖 Documentation
-- **[Full Usage Guide](docs/usage.md)**: Step-by-step instructions.
-- **[Architecture](docs/architecture.md)**: Detailed layered design.
-- **[Changelog](CHANGELOG.md)**: Latest v0.1.10 features.
+
+| Document | Description |
+|----------|-------------|
+| **[Getting Started](docs/getting-started/installation.md)** | Installation, quickstart, configuration |
+| **[Walk Command](docs/guide/walk.md)** | Core walk workflow — deploy modes, output, rebuild.yaml |
+| **[Analyze](docs/guide/analyze.md)** | Duplicates, service graph, truth, vector search, multi-repo |
+| **[Refactor](docs/guide/refactor.md)** | AI-powered refactor plans + execution |
+| **[Auto-PR](docs/guide/auto-pr.md)** | Automated GitHub/GitLab PR creation |
+| **[Plugins](docs/guide/plugins.md)** | Custom scanners & reporters via entry points |
+| **[CLI Reference](docs/reference/cli.md)** | All commands and options |
+| **[Config Reference](docs/reference/config.md)** | Full `rebuild.yaml` field reference |
+| **[Architecture](docs/architecture.md)** | 5-layer design, services, data flow |
+| **[Case Study: c2004](docs/case_study_c2004.md)** | Real-world analysis of a large ecosystem |
+| **[c2004 Testing Log](docs/c2004.md)** | Detailed test log with commands & results |
+| **[Usage Guide](docs/usage.md)** | Step-by-step guide (all features) |
+| **[Changelog](CHANGELOG.md)** | Release history (current: v0.1.23) |
+| **[Roadmap](TODO.md)** | Completed phases 10–16, future plans |
 
 ---
 
-## 🚀 c2004 Case Study: Analyzing a Complex Ecosystem
-Applying `rebuild` to the massive **c2004** project (88 subdirectories, thousands of files).
+## 🚀 Quick Start
 
-### 1. Eliminating Cross-Component Duplication
-**Scenario**: Identifying structural clones between the main `backend` and auxiliary modules like `connect-test` or `frontend`.
 ```bash
-rebuild analyze duplicates /path/to/c2004
-```
-![Duplication Analysis Mockup](docs/img/c2004_duplication.png)
-*Result: Found 1,597 duplicate groups across Python and JS/TS files.*
+# Install
+pip install rebuild
 
-### 2. Architecture Visualization & Cycle Detection
-**Scenario**: Mapping dependencies between `connect-manager`, `workshop`, and `scenario` to find architectural bottlenecks.
-```bash
-rebuild analyze services /path/to/c2004/backend --export
-```
-![Architecture Graph Mockup](docs/img/c2004_graph.png)
-*Result: Generated interactive D3.js map highlighting circular dependencies in the service layer.*
+# Initialise config
+rebuild init /path/to/my-service
 
-### 3. AI-Powered Refactor Planning
-**Scenario**: Generating an automated refactor plan with an AI Executive Summary for the team.
-```bash
-rebuild refactor plan /path/to/c2004/backend --ai
-rebuild refactor pr /path/to/c2004/backend
-```
-*Result: 122 high-impact suggestions with automated Markdown PR descriptions.*
+# Walk last 14 days (dry-run, no deploy)
+rebuild walk /path/to/my-service --deploy none --days 14 --dry-run
 
-### 4. Health & Quality Timeline
-**Scenario**: Tracking how code complexity affects system stability over time.
-```bash
-rebuild dashboard --repo /path/to/c2004
+# Serve results
+rebuild serve --results-dir /path/to/my-service/.rebuild
 ```
-![Health Dashboard Mockup](docs/img/c2004_dashboard.png)
-*Result: Visualized correlation between technical debt and API pass rates.*
+
+See **[Installation](docs/getting-started/installation.md)** and **[Quick Start](docs/getting-started/quickstart.md)** for details.
 
 ---
 
 ## What it does
 
-1. **Intelligence Layer** — Detects structural & semantic duplicates (Python/JS/TS), builds service graphs, vector search embeddings, and ranks code quality across history.
-2. **Decision Engine** — Generates and executes refactoring plans with **AI support**.
-3. **Walk** — Iterates through git history day by day (Incremental, Replay, Accelerator modes).
-4. **Deploy** — Starts the service per commit (Isolated Docker, Replay with code sync, Accelerator with hot reload).
-5. **Scan & Test** — Automated endpoint discovery (OpenAPI, FastAPI routes, Traefik), TestQL execution, auth login, param substitution.
-6. **Visualization** — D3.js interactive graphs, health dashboards, SSE live event streaming, code evolution playback.
-7. **Automation** — Auto PR creation, DSL scripting, NLP natural language commands.
+| # | Layer | Description |
+|---|-------|-------------|
+| 1 | **[Intelligence](docs/guide/analyze.md)** | Structural & semantic duplicates (Python/JS/TS), service graphs, vector search, quality ranking |
+| 2 | **[Decision Engine](docs/guide/refactor.md)** | AI-powered refactoring plans + automated execution |
+| 3 | **[Walk](docs/guide/walk.md)** | Git history iteration (Incremental, Replay, Accelerator modes) |
+| 4 | **[Deploy](docs/reference/cli.md#rebuild-walk)** | Docker Compose / Replay / Accelerator hot-reload per commit |
+| 5 | **[Scan & Test](docs/usage.md#3-historical-analysis-the-walk)** | OpenAPI, FastAPI routes, Traefik discovery; auth, param substitution, body injection |
+| 6 | **[Visualization](docs/usage.md#6-visualization)** | D3.js graphs, health dashboards, SSE streaming, evolution playback |
+| 7 | **[Automation](docs/guide/auto-pr.md)** | Auto PR, [DSL scripting](docs/usage.md#8-dsl-scripting), [NLP commands](docs/usage.md#8-dsl-scripting), [Plugins](docs/guide/plugins.md), [Notifications](docs/reference/config.md) |
+
+---
+
+## 🚀 c2004 Case Study
+
+Applying `rebuild` to the massive **c2004** project (88 subdirectories, thousands of files).
+See full details: **[Case Study](docs/case_study_c2004.md)** · **[Testing Log](docs/c2004.md)**
+
+### 1. Duplication Detection
+```bash
+rebuild analyze duplicates /path/to/c2004
+```
+![Duplication Analysis](docs/img/c2004_duplication.png)
+*Result: Found 1,597 duplicate groups across Python and JS/TS files.*
+
+### 2. Architecture Graph
+```bash
+rebuild analyze services /path/to/c2004/backend --export
+```
+![Architecture Graph](docs/img/c2004_graph.png)
+*Result: Interactive D3.js map highlighting circular dependencies.*
+
+### 3. AI Refactor Planning
+```bash
+rebuild refactor plan /path/to/c2004/backend --ai
+rebuild refactor pr /path/to/c2004/backend
+```
+*Result: 122 high-impact suggestions with automated PR descriptions.*
+
+### 4. Health Dashboard
+```bash
+rebuild dashboard --repo /path/to/c2004
+```
+![Health Dashboard](docs/img/c2004_dashboard.png)
+*Result: Correlation between technical debt and API pass rates.*
 
 ---
 
@@ -83,6 +118,24 @@ Explore ready-to-run scenarios in [`examples/`](examples/):
 - **[01-dry-run-walk](examples/01-dry-run-walk/)**: Standard walk + intelligence.
 - **[02-docker-compose-project](examples/02-docker-compose-project/)**: Full pipeline with **Docker isolation**.
 - **[03-restore-endpoint](examples/03-restore-endpoint/)**: Discovering "truth" and extracting endpoints.
+
+---
+
+## Project Status
+
+All **Phases 10–16** completed. See **[TODO.md](TODO.md)** for full roadmap.
+
+| Milestone | Status |
+|-----------|--------|
+| c2004 Testing & Intelligence (Phase 10) | ✅ Done |
+| Semantic Embeddings & Vector Search (Phase 11) | ✅ Done |
+| Multi-Repo & Real-time (Phase 12) | ✅ Done |
+| UI/UX (Phase 13) | ✅ Done |
+| Production Readiness (Phase 14) | ✅ Done |
+| c2004 Integration (Phase 15) | ✅ Done |
+| Production Release (Phase 16) | ✅ Done — PyPI, CI/CD, Docker, MkDocs, Plugins, Notifications |
+
+**Current:** v0.1.23 · 634 tests · 72% coverage
 
 ---
 

@@ -1,6 +1,8 @@
 # rebuild Usage Guide
 
-This guide covers step-by-step usage of the Code Evolution Intelligence Engine.
+> See also: [CLI Reference](reference/cli.md) · [Config Reference](reference/config.md) · [Architecture](architecture.md) · [README](../README.md)
+
+This guide covers step-by-step usage of the Code Evolution Intelligence Engine (v0.1.23).
 
 ## 1. Installation
 ```bash

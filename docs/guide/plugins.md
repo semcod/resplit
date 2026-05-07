@@ -1,5 +1,7 @@
 # Plugins
 
+> See also: [Architecture](../architecture.md#plugin-system) · [CLI Reference](../reference/cli.md#rebuild-plugins)
+
 `rebuild` supports custom **scanners** and **reporters** via Python package entry points.
 
 ## Built-in plugin groups

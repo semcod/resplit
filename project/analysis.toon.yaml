@@ -1,116 +1,102 @@
-# code2llm | 165f 349916L | python:98,md:32,yaml:15,shell:8,yml:3,json:1,toml:1,dsl:1,frontend:1,txt:1 | 2026-05-06
-# generated in 0.24s
-# CC̄=0.5 | critical:13/3722 | dups:0 | cycles:0
+# code2llm | 148f 21223L | python:92,md:28,yaml:9,shell:8,yml:3,json:1,dsl:1,backend:1,toml:1 | 2026-05-07
+# generated in 0.04s
+# CC̄=3.4 | critical:0/591 | dups:0 | cycles:0
 
-HEALTH[13]:
-  🟡 CC    _run_day_fast CC=15 (limit:15)
-  🟡 CC    apply_to_config CC=44 (limit:15)
-  🟡 CC    run_day CC=16 (limit:15)
-  🟡 CC    _wait_healthy CC=15 (limit:15)
-  🟡 CC    _scan_via_fastapi_routes CC=16 (limit:15)
-  🟡 CC    _save_html_day CC=16 (limit:15)
-  🟡 CC    classify_error CC=17 (limit:15)
-  🟡 CC    auto_pr CC=15 (limit:15)
-  🟡 CC    walk_command CC=31 (limit:15)
-  🟡 CC    execute CC=18 (limit:15)
-  🟡 CC    generate_plan CC=16 (limit:15)
-  🟡 CC    select_tests CC=16 (limit:15)
-  🟡 CC    _find_semantic_groups CC=17 (limit:15)
+HEALTH[0]: ok
 
-REFACTOR[1]:
-  1. split 13 high-CC methods  (CC>15)
+REFACTOR[0]: none needed
 
-PIPELINES[437]:
-  [1] Src [__init__]: __init__
+PIPELINES[469]:
+  [1] Src [health]: health
       PURITY: 100% pure
-  [2] Src [get]: get
+  [2] Src [get_manifest]: get_manifest
       PURITY: 100% pure
-  [3] Src [post]: post
+  [3] Src [list_pages]: list_pages
       PURITY: 100% pure
-  [4] Src [put]: put
+  [4] Src [serve_ui]: serve_ui
       PURITY: 100% pure
-  [5] Src [patch]: patch
+  [5] Src [serve_model]: serve_model
       PURITY: 100% pure
 
 LAYERS:
   scripts/                        CC̄=5.7    ←in:0  →out:12  !! split
   │ bump_version               239L  0C   10m  CC=14     ←0
   │
-  rebuild/                        CC̄=4.0    ←in:0  →out:0
-  │ !! cli                        520L  0C   24m  CC=15     ←0
+  rebuild/                        CC̄=3.5    ←in:0  →out:0
+  │ !! cli                        561L  0C   29m  CC=9      ←0
   │ dsl_v2                     455L  11C   11m  CC=11     ←0
+  │ reporter                   452L  1C   16m  CC=14     ←0
   │ accelerator_deploy         451L  1C   23m  CC=9      ←0
-  │ !! reporter                   425L  1C   11m  CC=16     ←0
-  │ !! parallel_test_engine       411L  3C   19m  CC=18     ←0
-  │ !! accelerated_pipeline       397L  1C   11m  CC=15     ←0
-  │ evolution_viz              385L  0C    2m  CC=1      ←0
+  │ parallel_test_engine       450L  3C   25m  CC=13     ←0
+  │ accelerated_pipeline       432L  1C   19m  CC=10     ←0
+  │ deploy_service             399L  1C   24m  CC=10     ←0
+  │ evolution_viz              385L  0C    2m  CC=1      ←1
   │ db_snapshot_manager        370L  2C   22m  CC=9      ←0
-  │ dashboard                  365L  0C    4m  CC=5      ←0
-  │ !! deploy_service             362L  1C   20m  CC=15     ←0
+  │ dashboard                  365L  0C    4m  CC=5      ←2
+  │ scanner_service            347L  1C   19m  CC=13     ←0
+  │ duplication_engine         344L  3C   20m  CC=13     ←0
   │ service_graph              342L  6C   17m  CC=14     ←0
-  │ !! scanner_service            325L  1C   14m  CC=16     ←0
-  │ !! duplication_engine         305L  3C   14m  CC=17     ←0
+  │ walk_command               296L  0C   11m  CC=12     ←1
   │ mvp_protocol               281L  4C   14m  CC=4      ←0
   │ dsl                        256L  5C   13m  CC=10     ←0
-  │ analyze_command            252L  0C    6m  CC=14     ←0
+  │ analyze_command            252L  0C    6m  CC=14     ←1
   │ app                        241L  2C    1m  CC=5      ←0
-  │ !! walk_command               236L  0C    3m  CC=31     ←0
+  │ pipeline                   238L  1C   12m  CC=11     ←0
   │ notification_service       232L  4C   14m  CC=5      ←0
-  │ !! pipeline                   222L  1C    4m  CC=16     ←0
   │ config_schema              218L  6C    9m  CC=14     ←0
+  │ smart_test_selector        216L  3C   11m  CC=8      ←0
   │ vector_search              215L  2C   11m  CC=7      ←0
-  │ !! smart_test_selector        207L  3C    7m  CC=16     ←0
+  │ walk_screens               205L  0C    0m  CC=0.0    ←0
   │ nlp_service                196L  3C    6m  CC=6      ←0
-  │ pr_service                 181L  4C    6m  CC=4      ←0
+  │ pr_service                 181L  4C    6m  CC=4      ←1
   │ event_store                178L  1C    8m  CC=7      ←0
-  │ walk_screens               172L  0C    0m  CC=0.0    ←0
+  │ history_screen             174L  0C    0m  CC=0.0    ←0
   │ summary_service            168L  3C    5m  CC=8      ←0
-  │ history_screen             166L  0C    0m  CC=0.0    ←0
   │ domain_events              163L  17C    4m  CC=2      ←0
   │ event_bus                  161L  1C   12m  CC=14     ←1
-  │ helpers                    161L  0C    5m  CC=9      ←0
+  │ helpers                    161L  0C    5m  CC=9      ←2
+  │ config_loader              161L  1C   13m  CC=9      ←0
   │ restore_service            152L  1C    7m  CC=10     ←0
-  │ registry                   150L  1C   14m  CC=7      ←0
+  │ registry                   150L  1C   14m  CC=7      ←1
   │ restore_screen             150L  0C    0m  CC=0.0    ←0
+  │ endpoint_screens           149L  0C    0m  CC=0.0    ←0
   │ worktree_manager           146L  2C   10m  CC=6      ←0
   │ graph_exporter             144L  1C    3m  CC=5      ←0
   │ timeline                   139L  5C    7m  CC=4      ←0
-  │ endpoint_screens           139L  0C    0m  CC=0.0    ←0
-  │ !! config_loader              130L  1C    3m  CC=44     ←0
-  │ git_service                120L  1C   10m  CC=11     ←0
   │ git_truth_analyzer         120L  2C    5m  CC=9      ←0
-  │ event_service              114L  3C    9m  CC=5      ←0
+  │ git_service                120L  1C   10m  CC=11     ←0
+  │ event_service              114L  3C    9m  CC=5      ←2
   │ patcher_service            108L  1C    4m  CC=5      ←0
   │ day_result                 102L  2C    1m  CC=6      ←0
   │ base_pipeline              101L  1C    5m  CC=3      ←0
   │ history_service            100L  1C    3m  CC=12     ←0
-  │ refactor_command            98L  0C    4m  CC=11     ←0
+  │ recommendation_engine      100L  2C    6m  CC=6      ←0
+  │ refactor_command            98L  0C    4m  CC=11     ←1
   │ tui_data_service            95L  1C    5m  CC=8      ←0
-  │ !! formatters                  86L  0C    4m  CC=17     ←0
-  │ project_screen              86L  0C    0m  CC=0.0    ←0
+  │ formatters                  93L  0C    5m  CC=6      ←1
+  │ project_screen              91L  0C    0m  CC=0.0    ←0
   │ config_template.yaml        85L  0C    0m  CC=0.0    ←0
-  │ !! recommendation_engine       82L  2C    1m  CC=16     ←0
   │ base                        77L  3C    4m  CC=1      ←0
   │ llm_service                 75L  1C    4m  CC=3      ←0
   │ screenshot_service          73L  2C    2m  CC=13     ←0
   │ base                        72L  4C    4m  CC=2      ←0
   │ walk_queries                70L  8C    0m  CC=0.0    ←0
-  │ chart_builder               68L  0C    2m  CC=12     ←0
+  │ chart_builder               68L  0C    2m  CC=12     ←1
   │ base                        68L  4C    4m  CC=2      ←0
   │ service_similarity          59L  2C    2m  CC=8      ←0
+  │ app                         56L  0C    1m  CC=2      ←1
   │ models                      56L  2C    0m  CC=0.0    ←0
   │ walk_commands               54L  2C    2m  CC=3      ←0
   │ analyze_commands            51L  4C    1m  CC=2      ←0
   │ endpoint                    49L  3C    0m  CC=0.0    ←0
+  │ help_screen                 49L  0C    0m  CC=0.0    ←0
   │ refactor_executor           48L  1C    3m  CC=5      ←0
-  │ app                         46L  0C    1m  CC=2      ←0
-  │ help_screen                 44L  0C    0m  CC=0.0    ←0
   │ snapshot_commands           43L  4C    0m  CC=0.0    ←0
   │ __init__                    40L  0C    0m  CC=0.0    ←0
   │ http_adapter                39L  1C    7m  CC=4      ←0
   │ shell_adapter               37L  1C    3m  CC=3      ←0
-  │ override_service            30L  1C    1m  CC=5      ←0
   │ deploy_strategy             30L  1C    2m  CC=1      ←0
+  │ override_service            30L  1C    1m  CC=5      ←0
   │ compat                      25L  0C    0m  CC=0.0    ←0
   │ __init__                    18L  0C    0m  CC=0.0    ←0
   │ __init__                    16L  0C    0m  CC=0.0    ←0
@@ -126,27 +112,19 @@ LAYERS:
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ events                       0L  1C    2m  CC=1      ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ cli_new                      0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
   restored_c2004_health/          CC̄=2.3    ←in:0  →out:0
   │ !! docker-compose.yml         507L  0C    0m  CC=0.0    ←0
   │ main                        91L  0C    9m  CC=5      ←0
+  │ Dockerfile.backend          88L  0C    0m  CC=0.0    ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
-  │ Dockerfile.frontend         51L  0C    0m  CC=0.0    ←0
   │ README.md                   45L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMD.md                  187666L  0C  3205m  CC=0.0    ←10
-  │ !! SUMR.md                  72142L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
-  │ CHANGELOG.md               278L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md               301L  0C    0m  CC=0.0    ←0
   │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
   │ Makefile                   112L  0C    1m  CC=0.0    ←5
   │ pyproject.toml             111L  0C    0m  CC=0.0    ←0
@@ -160,10 +138,10 @@ LAYERS:
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
   │
   docs/                           CC̄=0.0    ←in:0  →out:0
+  │ !! README.md                 2898L  0C    0m  CC=0.0    ←0
   │ c2004.md                   228L  0C    0m  CC=0.0    ←0
   │ usage.md                   192L  0C    0m  CC=0.0    ←0
   │ cli.md                     147L  0C    0m  CC=0.0    ←0
-  │ README.md                  122L  0C    1m  CC=0.0    ←0
   │ architecture.md            118L  0C    0m  CC=0.0    ←0
   │ plugins.md                  86L  2C    3m  CC=0.0    ←0
   │ configuration.md            77L  0C    1m  CC=0.0    ←0
@@ -203,44 +181,23 @@ LAYERS:
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←1
   │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
   │
-  project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! duplication.toon.yaml    71632L  0C    0m  CC=0.0    ←0
-  │ README.md                  340L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         55L  0C    0m  CC=0.0    ←0
-  │ context.md                  52L  0C    0m  CC=0.0    ←0
-  │ prompt.txt                  48L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml          17L  0C    0m  CC=0.0    ←0
-  │ calls.toon.yaml             10L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           10L  0C    0m  CC=0.0    ←0
-  │ calls.yaml                   9L  0C    0m  CC=0.0    ←0
-  │
   ── zero ──
-     rebuild/application/__init__.py           0L
-     rebuild/domain/__init__.py                0L
      rebuild/domain/events.py                  0L
      rebuild/infrastructure/__init__.py        0L
-     rebuild/interfaces/__init__.py            0L
-     rebuild/interfaces/cli_new.py             0L
-     rebuild/interfaces/commands/__init__.py   0L
-     rebuild/interfaces/tui/screens/__init__.py  0L
 
 COUPLING:
-                                                                              SUMD                       rebuild.interfaces                                 Makefile                           rebuild.domain                                  scripts                      rebuild.application                   rebuild.infrastructure                          rebuild.plugins  testql-scenarios.generated-from-pytests
-                                     SUMD                                       ──                                      ←27                                                                                ←3                                                                                ←9                                       ←4                                       ←2                                           hub
-                       rebuild.interfaces                                       27                                       ──                                        1                                                                                                                                                                   1                                                                                    !! fan-out
-                                 Makefile                                                                                ←1                                       ──                                      ←11                                      ←12                                       ←1                                                                                                                             hub
-                           rebuild.domain                                        3                                                                                11                                       ──                                                                                                                                                                                                               !! fan-out
-                                  scripts                                                                                                                         12                                                                                ──                                                                                                                                                                      !! fan-out
-                      rebuild.application                                        9                                                                                 1                                                                                                                         ──                                                                                                                          1  !! fan-out
-                   rebuild.infrastructure                                        4                                       ←1                                                                                                                                                                                                           ──                                                                                  
-                          rebuild.plugins                                        2                                                                                                                                                                                                                                                                                             ──                                         
-  testql-scenarios.generated-from-pytests                                                                                                                                                                                                                                                    ←1                                                                                                                         ──
+                                                                          Makefile                                  scripts                           rebuild.domain                       rebuild.interfaces                      rebuild.application                   rebuild.infrastructure                          rebuild.plugins  testql-scenarios.generated-from-pytests
+                                 Makefile                                       ──                                      ←12                                      ←11                                       ←1                                       ←1                                                                                                                             hub
+                                  scripts                                       12                                       ──                                                                                                                                                                                                                                                        !! fan-out
+                           rebuild.domain                                       11                                                                                ──                                                                                                                                                                                                               !! fan-out
+                       rebuild.interfaces                                        1                                                                                                                         ──                                        2                                        1                                        1                                         
+                      rebuild.application                                        1                                                                                                                         ←2                                       ──                                                                                                                          1
+                   rebuild.infrastructure                                                                                                                                                                  ←1                                                                                ──                                                                                  
+                          rebuild.plugins                                                                                                                                                                  ←1                                                                                                                         ──                                         
+  testql-scenarios.generated-from-pytests                                                                                                                                                                                                           ←1                                                                                                                         ──
   CYCLES: none
-  HUB: SUMD/ (fan-in=45)
   HUB: Makefile/ (fan-in=25)
-  SMELL: rebuild.interfaces/ fan-out=29 → split needed
-  SMELL: rebuild.application/ fan-out=11 → split needed
-  SMELL: rebuild.domain/ fan-out=14 → split needed
+  SMELL: rebuild.domain/ fan-out=11 → split needed
   SMELL: scripts/ fan-out=12 → split needed
 
 EXTERNAL:

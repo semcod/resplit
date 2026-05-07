@@ -2,7 +2,9 @@
 
 The system is designed as a **Code Evolution Intelligence Engine**, structured in strict layers to ensure maintainability and testability.
 
-**Version:** 0.1.18 | **Tests:** 347 passing | **Coverage:** 60%
+**Version:** 0.1.23 | **Tests:** 634 passing | **Coverage:** 72% | **Functions:** 3722 | **Classes:** 161 | **CC̄:** 3.9
+
+> See also: [README](../README.md) · [Usage Guide](usage.md) · [CLI Reference](reference/cli.md) · [Config Reference](reference/config.md) · [Changelog](../CHANGELOG.md)
 
 ## Layers
 
@@ -116,3 +118,15 @@ Visualize the internal service dependency graph:
 ```bash
 rebuild analyze services
 ```
+
+See [Analyze guide](guide/analyze.md) for full documentation on analysis commands.
+
+## Notification Hooks
+
+Webhook notifications (Slack, Discord, generic) can be configured in `rebuild.yaml` under `notifications:`.
+Fires on deploy failures and health regressions. See [Config Reference](reference/config.md).
+
+## Plugin System
+
+Custom scanners and reporters can be registered via Python entry points (`rebuild.scanners`, `rebuild.reporters`).
+See [Plugin Guide](guide/plugins.md) for examples.

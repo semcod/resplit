@@ -1,5 +1,7 @@
 # Auto-PR
 
+> See also: [CLI Reference](../reference/cli.md) · [Refactor](refactor.md) · [Usage Guide](../usage.md#5-refactoring-commands)
+
 `rebuild auto-pr` opens a pull/merge request on GitHub or GitLab with an AI-generated description from the latest analysis results.
 
 ## Setup

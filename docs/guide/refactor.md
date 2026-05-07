@@ -1,5 +1,7 @@
 # Refactor
 
+> See also: [CLI Reference](../reference/cli.md#rebuild-refactor) · [Auto-PR](auto-pr.md) · [Analyze](analyze.md)
+
 ## Generate a plan
 
 ```bash

@@ -1,5 +1,7 @@
 # CLI Reference
 
+> See also: [Config Reference](config.md) · [Architecture](../architecture.md) · [Usage Guide](../usage.md)
+
 ## Global options
 
 ```
@@ -143,5 +145,29 @@ Print the installed version.
 
 ```bash
 rebuild version
-# rebuild v0.1.20
+# rebuild v0.1.23
 ```
+
+---
+
+## `rebuild tui`
+
+Launch the interactive terminal UI.
+
+```bash
+rebuild tui
+```
+
+Requires `pip install "rebuild[tui]"`.
+
+---
+
+## `rebuild accelerator`
+
+Ultra-fast walk using git worktrees and DB snapshots.
+
+```bash
+rebuild accelerator /path/to/repo --service backend --parallel 4 --smart
+```
+
+See [Usage Guide: Accelerator Mode](../usage.md#9-accelerator-mode-10x-faster).

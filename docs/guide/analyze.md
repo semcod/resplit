@@ -1,5 +1,7 @@
 # Analyze
 
+> See also: [CLI Reference](../reference/cli.md#rebuild-analyze) · [Architecture](../architecture.md#3-intelligence-layer-analysis) · [Case Study: c2004](../case_study_c2004.md)
+
 The `analyze` sub-commands inspect your codebase for structural and semantic issues.
 
 ## Duplicates

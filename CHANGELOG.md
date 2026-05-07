@@ -1,29 +1,53 @@
 # Changelog
 
+> See also: [README](README.md) · [Roadmap (TODO)](TODO.md) · [Architecture](docs/architecture.md) · [Usage Guide](docs/usage.md)
+
 ## [Unreleased]
 
-## [0.1.23] - 2026-05-06
+## [0.1.24] - 2026-05-07
 
 ### Docs
+- Update CHANGELOG.md
 - Update README.md
 - Update SUMD.md
-- Update SUMR.md
+- Update TODO.md
 - Update docs/README.md
-- Update project/README.md
-- Update project/context.md
+- Update docs/architecture.md
+- Update docs/c2004.md
+- Update docs/case_study_c2004.md
+- Update docs/getting-started/configuration.md
+- Update docs/getting-started/installation.md
+- ... and 12 more files
 
 ### Other
-- Update .gitignore
-- Update VERSION
-- Update app.doql.less
-- Update project.sh
-- Update project/analysis.toon.yaml
-- Update project/calls.mmd
-- Update project/calls.toon.yaml
-- Update project/calls.yaml
-- Update project/compact_flow.mmd
-- Update project/duplication.toon.yaml
-- ... and 26 more files
+- Update .code2llm_cache/CHANGELOG_1778076057551732162_10277.pkl
+- Update .code2llm_cache/README_1778073907205054095_118441.pkl
+- Update .code2llm_cache/README_1778076055686234576_4285.pkl
+- Update .code2llm_cache/__init___1778076055686826248_239.pkl
+- Update .code2llm_cache/accelerated_pipeline_1778074802983432886_17641.pkl
+- Update .code2llm_cache/app_1778075845753026155_1881.pkl
+- Update .code2llm_cache/cli_1778074856579013858_25963.pkl
+- Update .code2llm_cache/config_loader_1778074847536915897_6599.pkl
+- Update .code2llm_cache/deploy_service_1778074822346642874_17643.pkl
+- Update .code2llm_cache/duplication_engine_1778074797738375987_13246.pkl
+- ... and 28 more files
+
+## [0.1.23] - 2026-05-07
+
+### Changed
+- **Documentation overhaul**: Updated [README.md](README.md), [TODO.md](TODO.md), CHANGELOG.md with cross-links to all [docs/*](docs/) pages
+- **SUMD.md regenerated**: Full project analysis — 3722 functions, 161 classes, 167 files, CC̄ = 3.9
+- **Version sync**: All docs now reference v0.1.23 consistently
+
+### Docs
+- Updated [README.md](README.md) — documentation table, project status, SUMD stats, quick start
+- Updated [TODO.md](TODO.md) — all phases marked complete, Phase 17 roadmap added, cross-links
+- Updated [docs/architecture.md](docs/architecture.md) — v0.1.23, 634 tests, 72% coverage
+- Updated [docs/index.md](docs/index.md) — current stats, notification hooks
+- Updated [docs/getting-started/installation.md](docs/getting-started/installation.md) — version
+- Updated [docs/reference/cli.md](docs/reference/cli.md) — version, notification hooks
+- Updated [docs/c2004.md](docs/c2004.md) — completed items, version
+- Updated [SUMD.md](SUMD.md), [docs/README.md](docs/README.md), project/ files
 
 ## [0.1.22] - 2026-05-02
 
@@ -297,5 +321,20 @@
 
 ## [0.1.0] - 2026-04-15
 - Initial release as `rebuild` deployment tool.
-[0.1.20]: https://github.com/semcod/resplit/compare/v0.1.20...v0.1.20
-[0.1.22]: https://github.com/semcod/resplit/compare/v0.1.22...v0.1.22
+[Unreleased]: https://github.com/semcod/resplit/compare/v0.1.23...HEAD
+[0.1.23]: https://github.com/semcod/resplit/compare/v0.1.22...v0.1.23
+[0.1.22]: https://github.com/semcod/resplit/compare/v0.1.21...v0.1.22
+[0.1.21]: https://github.com/semcod/resplit/compare/v0.1.20...v0.1.21
+[0.1.20]: https://github.com/semcod/resplit/compare/v0.1.19...v0.1.20
+[0.1.19]: https://github.com/semcod/resplit/compare/v0.1.18...v0.1.19
+[0.1.18]: https://github.com/semcod/resplit/compare/v0.1.17...v0.1.18
+[0.1.17]: https://github.com/semcod/resplit/compare/v0.1.16...v0.1.17
+[0.1.16]: https://github.com/semcod/resplit/compare/v0.1.15...v0.1.16
+[0.1.15]: https://github.com/semcod/resplit/compare/v0.1.14...v0.1.15
+[0.1.14]: https://github.com/semcod/resplit/compare/v0.1.13...v0.1.14
+[0.1.13]: https://github.com/semcod/resplit/compare/v0.1.12...v0.1.13
+[0.1.12]: https://github.com/semcod/resplit/compare/v0.1.11...v0.1.12
+[0.1.11]: https://github.com/semcod/resplit/compare/v0.1.10...v0.1.11
+[0.1.10]: https://github.com/semcod/resplit/compare/v0.1.9...v0.1.10
+[0.1.9]: https://github.com/semcod/resplit/compare/v0.1.0...v0.1.9
+[0.1.0]: https://github.com/semcod/resplit/releases/tag/v0.1.0

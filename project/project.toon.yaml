@@ -1,54 +1,54 @@
-# rebuild | 3722 func | 77f | 349916L | python | 2026-05-06
+# rebuild | 591 func | 75f | 21223L | python | 2026-05-07
 # generated in 0.00s
 
 HEALTH:
-  CC̄=0.5  critical=41 (limit:10)  dup=4  cycles=0
+  CC̄=3.4  critical=28 (limit:10)  dup=4  cycles=0
 
 ALERTS[20]:
-  !!! cc_exceeded      ConfigLoader.apply_to_config = 44 (limit:15)
   !!! high_fan_out     create_app = 34 (limit:10)
-  !!! cc_exceeded      walk_command = 31 (limit:15)
-  !!! high_fan_out     walk_command = 25 (limit:10)
   !!! high_fan_out     HistoryService.load_history = 24 (limit:10)
-  !!! high_fan_out     AcceleratedPipeline._run_day_fast = 23 (limit:10)
   !!! high_fan_out     serve_reports = 21 (limit:10)
-  !!! high_fan_out     Pipeline.run_day = 20 (limit:10)
-  !!! high_fan_out     auto_pr = 20 (limit:10)
   !!! high_fan_out     multi_repo_command = 20 (limit:10)
+  !!  high_fan_out     AcceleratedPipeline.run = 19 (limit:10)
+  !!  high_fan_out     Pipeline.run = 19 (limit:10)
+  !!  high_fan_out     services_command = 18 (limit:10)
+  !!  high_fan_out     MVPServer.start = 18 (limit:10)
+  !!  high_fan_out     ReporterService.save_timeline_index = 17 (limit:10)
+  !!  high_fan_out     RestoreService.extract_endpoint = 15 (limit:10)
 
-MODULES[165] (top by size):
-  M[SUMD.md] 187666L C:0 F:3205 CC↑0 D:10 (md)
-  M[SUMR.md] 72142L C:0 F:0 CC↑0 D:0 (md)
-  M[project/duplication.toon.yaml] 71632L C:0 F:0 CC↑0 D:0 (yaml)
-  M[rebuild/interfaces/cli.py] 520L C:0 F:24 CC↑15 D:0 (python)
+MODULES[148] (top by size):
+  M[docs/README.md] 2898L C:0 F:0 CC↑0 D:0 (md)
+  M[rebuild/interfaces/cli.py] 561L C:0 F:29 CC↑9 D:0 (python)
   M[goal.yaml] 513L C:0 F:0 CC↑0 D:0 (yaml)
   M[restored_c2004_health/api-health/docker/docker-compose.yml] 507L C:0 F:0 CC↑0 D:0 (yml)
   M[rebuild/domain/dsl_v2.py] 455L C:11 F:11 CC↑11 D:0 (python)
+  M[rebuild/application/services/reporting/reporter.py] 452L C:1 F:16 CC↑14 D:0 (python)
   M[rebuild/application/services/accelerator_deploy.py] 451L C:1 F:23 CC↑9 D:0 (python)
-  M[rebuild/application/services/reporting/reporter.py] 425L C:1 F:11 CC↑16 D:0 (python)
-  M[rebuild/application/services/parallel_test_engine.py] 411L C:3 F:19 CC↑18 D:0 (python)
-  M[rebuild/application/accelerated_pipeline.py] 397L C:1 F:11 CC↑15 D:0 (python)
-  M[rebuild/interfaces/evolution_viz.py] 385L C:0 F:2 CC↑1 D:0 (python)
+  M[rebuild/application/services/parallel_test_engine.py] 450L C:3 F:25 CC↑13 D:0 (python)
+  M[rebuild/application/accelerated_pipeline.py] 432L C:1 F:19 CC↑10 D:0 (python)
+  M[rebuild/application/services/deploy_service.py] 399L C:1 F:24 CC↑10 D:0 (python)
+  M[rebuild/interfaces/evolution_viz.py] 385L C:0 F:2 CC↑1 D:1 (python)
   M[rebuild/application/services/db_snapshot_manager.py] 370L C:2 F:22 CC↑9 D:0 (python)
-  M[rebuild/interfaces/dashboard.py] 365L C:0 F:4 CC↑5 D:0 (python)
-  M[rebuild/application/services/deploy_service.py] 362L C:1 F:20 CC↑15 D:0 (python)
-  LANGS: python:99/md:32/yaml:15/shell:8/other:3/yml:3/dsl:1/json:1/txt:1/toml:1/frontend:1
+  M[rebuild/interfaces/dashboard.py] 365L C:0 F:4 CC↑5 D:2 (python)
+  M[rebuild/application/services/scanner_service.py] 347L C:1 F:19 CC↑13 D:0 (python)
+  M[rebuild/analysis/duplication_engine.py] 344L C:3 F:20 CC↑13 D:0 (python)
+  LANGS: python:93/md:28/yaml:9/shell:8/other:3/yml:3/dsl:1/json:1/toml:1/backend:1
 
 HOTSPOTS[10]:
   ★ create_app fan=34  // Create and return a FastAPI application.
 
 All dependencies are injected — ideal 
-  ★ walk_command fan=25  // Orchestrates 25 calls
   ★ HistoryService.load_history fan=24  // Orchestrates 24 calls
-  ★ AcceleratedPipeline._run_day_fast fan=23  // Execute single day analysis with maximum speed.
   ★ serve_reports fan=21  // Orchestrates 21 calls
+  ★ multi_repo_command fan=20  // Orchestrates 20 calls
+  ★ AcceleratedPipeline.run fan=19  // Run accelerated analysis over commit history.
 
-REFACTOR[15]:
-  [1] H/L Split ConfigLoader.apply_to_config (CC=44)
-  [2] H/L Split walk_command (CC=31)
-  [3] H/H Split god module rebuild/interfaces/cli.py (520L, 0 classes)
-  [4] H/H Split god module SUMD.md (187666L, 0 classes)
-  [5] H/H Split god module SUMR.md (72142L, 0 classes)
+REFACTOR[7]:
+  [1] H/H Split god module rebuild/interfaces/cli.py (561L, 0 classes)
+  [2] H/H Split god module docs/README.md (2898L, 0 classes)
+  [3] H/H Split god module goal.yaml (513L, 0 classes)
+  [4] H/H Split god module restored_c2004_health/api-health/docker/docker-compose.yml (507L, 0 classes)
+  [5] M/M Reduce create_app fan-out (currently 34)
 
 EVOLUTION:
-  2026-05-06 CC̄=0.5 crit=41 349916L // Automated analysis
+  2026-05-07 CC̄=3.4 crit=28 21223L // Automated analysis

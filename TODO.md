@@ -1,6 +1,12 @@
 # TODO: rebuild Roadmap
 
-## Phase 10: c2004 Testing & Improvements (AKTYWNY)
+> **Current version:** v0.1.23 · **Tests:** 634 · **Coverage:** 72%
+>
+> See also: [README](README.md) · [Changelog](CHANGELOG.md) · [Architecture](docs/architecture.md) · [Usage Guide](docs/usage.md)
+
+---
+
+## Phase 10: c2004 Testing & Improvements ✅
 
 ### ✅ Zrobione (sesja 2026-05-01)
 - [x] **Clone for walk**: Pipeline klonuje repo do `.rebuild/repo/` — oryginał nienaruszony
@@ -37,18 +43,18 @@
 - [x] Uruchomić `rebuild analyze truth` na wybrane moduły c2004.
 
 
-## Phase 11: Deep Semantic Analysis
-- [x] **Semantic Embeddings**: Integrate `sentence-transformers` for conceptual similarity detection in `duplication_engine`.
-- [x] **Vector Search**: Store code fragments in a vector database for rapid semantic lookup across large repos.
+## Phase 11: Deep Semantic Analysis ✅
+- [x] **Semantic Embeddings**: Integrate `sentence-transformers` for conceptual similarity detection in `duplication_engine`. → [Analyze docs](docs/guide/analyze.md#vector-search)
+- [x] **Vector Search**: Store code fragments in a vector database for rapid semantic lookup across large repos. → [CLI: vector-build/vector-query](docs/reference/cli.md#rebuild-analyze-vector-build-path)
 
-## Phase 12: Real-time & Cross-Repo
-- [x] **Multi-Repo Support**: Analyze dependencies and clones across multiple repositories.
-- [x] **Real-time Monitoring**: Show live analysis results and event logs in the dashboard.
-- [x] **Auto-PR Agent**: Automatically open PRs on GitHub/GitLab using generated AI summaries.
+## Phase 12: Real-time & Cross-Repo ✅
+- [x] **Multi-Repo Support**: Analyze dependencies and clones across multiple repositories. → [Analyze: multi-repo](docs/guide/analyze.md#multi-repo)
+- [x] **Real-time Monitoring**: Show live analysis results and event logs in the dashboard. → [Visualization](docs/usage.md#6-visualization)
+- [x] **Auto-PR Agent**: Automatically open PRs on GitHub/GitLab using generated AI summaries. → [Auto-PR docs](docs/guide/auto-pr.md)
 
-## Phase 13: UI/UX Refinement
-- [x] **D3.js Enhancements**: Add "Code Evolution" playback to the graph (watch dependencies change over time).
-- [x] **TUI Refactor**: Finalize extraction of domain logic from `interfaces/tui.py`.
+## Phase 13: UI/UX Refinement ✅
+- [x] **D3.js Enhancements**: Add "Code Evolution" playback to the graph (watch dependencies change over time). → [Architecture: evolution_viz](docs/architecture.md)
+- [x] **TUI Refactor**: Finalize extraction of domain logic from `interfaces/tui.py`. → [CLI: tui](docs/reference/cli.md)
 
 ---
 
@@ -56,14 +62,14 @@
 
 ### ✅ Zrobione
 - [x] **Test Coverage ≥60%**: 347 testów passing, 60% pokrycie (`pytest --cov`)
-- [x] **--health-timeout CLI**: Nowa opcja `--health-timeout` w `rebuild walk` dla dużych stacków (np. c2004 ARM64 ~300s)
-- [x] **Deploy Error Classification**: Auto-klasyfikacja błędów: `compose_build_fail`, `port_conflict`, `migration_fail`, `missing_env`
+- [x] **--health-timeout CLI**: Nowa opcja `--health-timeout` w `rebuild walk` → [CLI Reference](docs/reference/cli.md#rebuild-walk)
+- [x] **Deploy Error Classification**: Auto-klasyfikacja błędów → [Architecture: Deploy Error](docs/architecture.md#deploy-error-classification)
 - [x] **Documentation Update**: Zaktualizowane `docs/usage.md`, `docs/architecture.md`, `README.md`
-- [x] **Service Table in Docs**: Kompletna tabela usług w architekturze
+- [x] **Service Table in Docs**: Kompletna tabela usług → [Architecture: Key Services](docs/architecture.md#key-services)
 
 ---
 
-## Phase 15: c2004 Integration & Stability (AKTYWNY)
+## Phase 15: c2004 Integration & Stability ✅
 
 ### 🔴 Krytyczne
 - [x] **c2004 npm ci fix**: Napraw `identification-frontend` Dockerfile — `npm ci` failuje przez brak `package-lock.json` lub niekompatybilne zależności. Zablokowane: `--deploy docker-compose` nie może zakończyć buildu. (Fixed: changed to `if [ -f package-lock.json ]; then npm ci; else npm install; fi`)
@@ -83,22 +89,41 @@
 
 ---
 
-## Phase 16: Production Release
+## Phase 16: Production Release ✅
 
 ### 🔴 Krytyczne
-- [x] **PyPI Package**: Publikacja `rebuild` na PyPI z poprawnymi metadata i `python_requires` — build+twine PASSED v0.1.20
-- [x] **CI/CD Pipeline**: GitHub Actions — testy, linting (`ruff`), coverage gate ≥70%, publish on tag
-- [x] **Semantic Versioning**: Automatyczny bump z `CHANGELOG.md` przy każdym merge — `scripts/bump_version.py`
+- [x] **PyPI Package**: Publikacja `rebuild` na PyPI — build+twine PASSED v0.1.20 → [PyPI](https://pypi.org/project/rebuild/)
+- [x] **CI/CD Pipeline**: GitHub Actions — testy, linting, coverage gate ≥70% → [`.github/workflows/`](.github/workflows/)
+- [x] **Semantic Versioning**: Automatyczny bump — `scripts/bump_version.py`
 
 ### 🟠 Wysokie
-- [x] **Docker Image**: Oficjalny obraz `ghcr.io/semcod/rebuild:latest` z CLI i Playwright — Dockerfile + .github/workflows/docker.yml
-- [x] **Config Validation**: `pydantic`-based validation dla `rebuild.yaml` z czytelnym komunikatem błędu — `config_schema.py` + `ConfigSchemaValidator`
-- [x] **Plugin System**: Extensible scanners i reporters przez entry points — `rebuild/plugins/` + `rebuild plugins` CLI
-- [x] **Documentation Site**: MkDocs z Material theme — hosted na GitHub Pages — `mkdocs.yml` + `docs/` + `.github/workflows/docs.yml`
+- [x] **Docker Image**: `ghcr.io/semcod/rebuild:latest` — Dockerfile + `.github/workflows/docker.yml`
+- [x] **Config Validation**: Pydantic-based → [Config Reference](docs/reference/config.md) · [Configuration](docs/getting-started/configuration.md#validation)
+- [x] **Plugin System**: Entry points — `rebuild/plugins/` → [Plugin docs](docs/guide/plugins.md)
+- [x] **Documentation Site**: MkDocs Material → [GitHub Pages](https://semcod.github.io/resplit)
 
 ### 🟡 Średnie
-- [x] **TUI Full Features**: Nawigacja klawiaturą, live log view, endpoint browser (Enhanced with j/k navigation, g/G for top/bottom)
-- [x] **Export Formats**: CSV, Markdown summary raport
-- [x] **Notification Hooks**: Webhook (Slack/Discord) przy deploy fail lub health regresji — `notification_service.py` + `rebuild.yaml` integration
-- [x] **Snapshot Management**: LRU cache dla DB snapshotów — auto-prune starych — `max_snapshots`, `prune_old()`, `stats()`, `_auto_prune()`
-- [x] **Test Coverage ≥70%**: Kolejny milestone po aktualnym 60% — osiągnięto 71%
+- [x] **TUI Full Features**: j/k navigation, g/G, live log, endpoint browser
+- [x] **Export Formats**: CSV, Markdown summary
+- [x] **Notification Hooks**: Slack/Discord webhooks → [Config Reference](docs/reference/config.md)
+- [x] **Snapshot Management**: LRU cache, auto-prune
+- [x] **Test Coverage ≥70%**: osiągnięto 72% (634 testów)
+
+---
+
+## Phase 17: Next Steps (PLANNED)
+
+### 🔴 Krytyczne
+- [ ] **c2004 Full Walk (30 days)**: Uruchomić `rebuild walk` z `--deploy docker-compose --days 30` na c2004
+- [ ] **Performance Profiling**: Profilowanie walk na dużych repo (>500 commitów) — targetowane <5min/commit
+- [ ] **Test Coverage ≥80%**: Następny milestone — przetestować pozostałe edge cases w pipeline/services
+
+### 🟠 Wysokie
+- [ ] **TestQL Integration**: Natywna integracja z `testql` DSL dla zaawansowanych scenariuszy testowych
+- [ ] **Diff-aware Scanning**: Skanowanie tylko zmienionych endpointów (zamiast pełnego skanu)
+- [ ] **Report Templates**: Konfigurowalne szablony raportów HTML (Jinja2)
+
+### 🟡 Średnie
+- [ ] **Web Dashboard**: Standalone web UI (React/Next.js) z real-time SSE
+- [ ] **Grafana Integration**: Eksport metryk health% do Prometheus/Grafana
+- [ ] **VS Code Extension**: Wyświetlanie wyników rebuild w edytorze

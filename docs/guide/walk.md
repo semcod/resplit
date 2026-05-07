@@ -1,5 +1,7 @@
 # Walk Command
 
+> See also: [CLI Reference](../reference/cli.md#rebuild-walk) · [Configuration](../getting-started/configuration.md) · [Usage Guide](../usage.md#3-historical-analysis-the-walk)
+
 The `walk` command is the core of `rebuild`. It iterates your git history, deploys each commit (or tests against an already-running stack), discovers and exercises every API endpoint, and produces a rich HTML timeline.
 
 ## Basic usage
@@ -55,4 +57,4 @@ project:
   base_url: http://localhost:8000
 ```
 
-CLI flags always override `rebuild.yaml` values.
+CLI flags always override `rebuild.yaml` values. See [Configuration reference](../reference/config.md) for all fields.
