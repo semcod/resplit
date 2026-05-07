@@ -1,8 +1,5 @@
 from __future__ import annotations
-import ast
-import astor # Using astor for clean code generation if available, otherwise built-in
-from pathlib import Path
-from typing import List, Dict, Optional
+from typing import Optional
 from rich.console import Console
 
 from .recommendation_engine import RefactorSuggestion
@@ -18,17 +15,18 @@ class RefactorExecutor:
     def execute_suggestion(self, suggestion: RefactorSuggestion) -> bool:
         if suggestion.type == "MERGE_DUPLICATES":
             return self._merge_duplicates(suggestion)
-        
+
         self.console.print(f"[yellow]Suggest type {suggestion.type} not yet automatable.[/yellow]")
         return False
 
     def _merge_duplicates(self, suggestion: RefactorSuggestion) -> bool:
-        if not suggestion.files: return False
-        
+        if not suggestion.files:
+            return False
+
         # 1. Identify common code (simplified: take first fragment)
         # In a real system, we'd use the representative hash to find the shared AST
         self.console.print(f"[bold cyan]Merging duplicates in:[/bold cyan] {', '.join(f.name for f in suggestion.files)}")
-        
+
         # 2. Logic to extract to a shared file (e.g. shared_utils.py)
         # This is a high-risk operation, so we'll do a simplified "Extract to Top" or "Comment out"
         # For this demonstration, we'll append a "REFAC" comment to the files
@@ -39,10 +37,10 @@ class RefactorExecutor:
                 # 1. Parse AST
                 # 2. Remove duplicate function
                 # 3. Add import from shared_utils
-                new_content = f"# [REFACTORED] Duplicates identified. Manual extraction recommended.\n" + content
+                new_content = "# [REFACTORED] Duplicates identified. Manual extraction recommended.\n" + content
                 f.write_text(new_content)
             except Exception as e:
                 self.console.print(f"[red]Failed to refactor {f.name}: {e}[/red]")
                 return False
-                
+
         return True

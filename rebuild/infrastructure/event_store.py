@@ -10,7 +10,7 @@ import json
 import sqlite3
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterator, List, Optional, Type
+from typing import Iterator, List, Optional
 
 from ..domain.events.domain_events import DomainEvent
 

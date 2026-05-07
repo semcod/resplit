@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import re
 import shlex
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Type
 
 from pydantic import BaseModel, Field, ValidationError

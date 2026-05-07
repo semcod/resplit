@@ -281,11 +281,11 @@ class ScannerService(Service[Path, List[Endpoint]]):
         endpoints = []
         paths = spec.get("paths", {})
         fixtures = self.config.test_fixtures
-        
+
         for path_template, methods in paths.items():
             actual_path = self._substitute_params(path_template, fixtures)
             has_unresolved = "{" in actual_path
-            
+
             for method, details in methods.items():
                 if method.upper() in ("GET", "POST", "PUT", "DELETE", "PATCH"):
                     desc = details.get("summary", "")

@@ -376,29 +376,10 @@ function dlFmt(f){{const b=new Blob([JSON.stringify(DATA,null,2)],{{type:'applic
         return dest
 
     def _health_trend_by_day(self, results_asc: List[DayResult], regression_threshold: float = 20.0) -> dict:
-        trend_by_day = {}
-        previous = None
-
-        for r in results_asc:
-            day_key = str(r.day)
-            if previous is None:
-                trend_by_day[day_key] = "—"
-                previous = r.health_pct
-                continue
-
-            delta = round(r.health_pct - previous, 1)
-            if delta <= -regression_threshold:
-                trend_by_day[day_key] = f"⚠ {delta:.1f}pp"
-            elif delta > 0:
-                trend_by_day[day_key] = f"+{delta:.1f}pp"
-            elif delta < 0:
-                trend_by_day[day_key] = f"{delta:.1f}pp"
-            else:
-                trend_by_day[day_key] = "0.0pp"
-
-            previous = r.health_pct
-
-        return trend_by_day
+        # Delegated to the canonical implementation (Sprint 2 / 2026-05-07).
+        # See `rebuild.application.services.regression_service` for details.
+        from ..regression_service import compute_health_trend_dict
+        return compute_health_trend_dict(results_asc, regression_threshold)
 
     def _endpoint_count_trend_by_day(self, results_asc: List[DayResult], warning_threshold_pct: float = 10.0) -> dict:
         trend_by_day = {}

@@ -1,5 +1,12 @@
 """
-rebuild.dsl — Domain Specific Language for rebuild operations.
+rebuild.dsl — Domain Specific Language for rebuild operations (legacy v1).
+
+.. deprecated:: 0.1.26
+   This regex-based DSL is superseded by :mod:`rebuild.domain.dsl_v2`
+   (Pydantic-validated). For commands not yet covered by v2 (``evolution``,
+   ``auto_pr``, ``restore``, ``serve``) it remains the fallback. Sprint 4 of
+   the consolidation plan (ANALYSIS.md §P1.2) replaces both with the external
+   ``testql`` package.
 
 DSL Syntax Examples:
   walk repo:/path/to/repo days:7 deploy:docker-compose
@@ -8,10 +15,19 @@ DSL Syntax Examples:
   auto-pr analysis:/path/to/analysis.json platform:github dry-run:true
 """
 from __future__ import annotations
+import warnings
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional, Dict, List, Any
+from typing import Dict, List, Any
 from pathlib import Path
+
+warnings.warn(
+    "rebuild.domain.dsl is deprecated; use rebuild.domain.dsl_v2 for supported "
+    "commands (walk, analyze, snapshot, prune, history, plugins, help). "
+    "Sprint 4 will replace both with the testql package.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 
 class Command(Enum):

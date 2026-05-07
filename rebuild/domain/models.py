@@ -35,11 +35,11 @@ class WalkConfig:
     test_bodies: Dict[str, Dict] = field(default_factory=dict)
     login_url: Optional[str] = None  # URL to perform login and obtain token
     login_payload: Optional[Dict[str, str]] = None  # POST payload for login request
-    
+
     # Phase 12: Replay Engine
     replay: bool = False
     app_service: Optional[str] = None  # Docker service to restart (e.g. 'backend')
-    
+
     # Phase 13: 10x Accelerator Mode
     accelerator: bool = False  # Enable ultra-fast mode with worktrees + hot reload
     db_container: str = "db"  # Name of DB container for snapshots
@@ -48,7 +48,7 @@ class WalkConfig:
     smart_select: bool = True  # Use git diff to select only affected tests
     keep_alive: bool = True  # Keep infrastructure running after walk
     shutdown_after: bool = False  # Override keep_alive and shutdown
-    
+
     # Phase 10: Manual Override / Patching
     patch_dir: Optional[Path] = None  # Path to directory with fixes to apply to clone
 

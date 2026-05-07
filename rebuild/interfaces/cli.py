@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Optional, List
 
 import typer
-from click.core import ParameterSource
 from rich.console import Console
 
 from .. import __version__
@@ -79,24 +78,14 @@ def walk(
     health_timeout: int = typer.Option(60, "--health-timeout", help="Timeout health check w sekundach [default: 60]"),
 ) -> None:
     """Przejdź historię git dzień po dniu, deployuj i testuj endpointy."""
-    cli_overrides = {
-        "output": ctx.get_parameter_source("output") == ParameterSource.COMMANDLINE,
-        "days": ctx.get_parameter_source("days") == ParameterSource.COMMANDLINE,
-        "date_from": ctx.get_parameter_source("date_from") == ParameterSource.COMMANDLINE,
-        "date_to": ctx.get_parameter_source("date_to") == ParameterSource.COMMANDLINE,
-        "deploy": ctx.get_parameter_source("deploy") == ParameterSource.COMMANDLINE,
-        "replay": ctx.get_parameter_source("replay") == ParameterSource.COMMANDLINE,
-        "service": ctx.get_parameter_source("service") == ParameterSource.COMMANDLINE,
-        "health_url": ctx.get_parameter_source("health_url") == ParameterSource.COMMANDLINE,
-        "base_url": ctx.get_parameter_source("base_url") == ParameterSource.COMMANDLINE,
-        "screenshots": ctx.get_parameter_source("screenshots") == ParameterSource.COMMANDLINE,
-        "dry_run": ctx.get_parameter_source("dry_run") == ParameterSource.COMMANDLINE,
-        "accelerator": ctx.get_parameter_source("accelerator") == ParameterSource.COMMANDLINE,
-        "patch_dir": ctx.get_parameter_source("patch_dir") == ParameterSource.COMMANDLINE,
-        "health_timeout": ctx.get_parameter_source("health_timeout") == ParameterSource.COMMANDLINE,
-    }
-
+    from .commands.helpers import collect_cli_overrides
     from .commands.walk_command import walk_command
+
+    cli_overrides = collect_cli_overrides(ctx, [
+        "output", "days", "date_from", "date_to", "deploy", "replay", "service",
+        "health_url", "base_url", "screenshots", "dry_run", "accelerator",
+        "patch_dir", "health_timeout",
+    ])
     walk_command(repo, days, date_from, date_to, output, deploy, replay, service,
                  health_url, base_url, screenshots, dry_run, serve, port, accelerator, patch_dir, console,
                  health_timeout=health_timeout, cli_overrides=cli_overrides)

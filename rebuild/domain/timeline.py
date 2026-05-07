@@ -1,7 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import List, Dict, Set, Optional
+from typing import List, Dict, Optional
 from enum import Enum
 
 
@@ -104,7 +103,6 @@ class Timeline:
     def load(cls, input_path: str) -> "Timeline":
         """Load timeline from JSON file."""
         import json
-        from pathlib import Path
 
         with open(input_path) as f:
             data = json.load(f)

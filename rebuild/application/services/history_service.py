@@ -30,7 +30,7 @@ class HistoryService(Service[Path, List[DayResult]]):
                 day_date = date.fromisoformat(day_dir.name)
             except ValueError:
                 continue
-            
+
             commit = self._load_commit(day_dir, day_date)
             raw = json.loads(rf.read_text())
 
@@ -79,18 +79,18 @@ class HistoryService(Service[Path, List[DayResult]]):
                 is_dry_run=is_dry_run,
             )
             all_results.append(result)
-        
+
         return all_results
 
     def _load_commit(self, day_dir: Path, day_date: date) -> Optional[CommitInfo]:
         commit_file = day_dir / "commit.txt"
         if not commit_file.exists():
             return None
-        
+
         lines = commit_file.read_text().splitlines()
         if not lines:
             return None
-            
+
         return CommitInfo(
             sha=lines[0] if len(lines) > 0 else "",
             message=lines[1] if len(lines) > 1 else "",

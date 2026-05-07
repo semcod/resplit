@@ -24,7 +24,7 @@ class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
         """Finds the earliest commit for each day in the given range."""
         results = []
         cmd = ["log", "--format=%H|%as|%s|%an|%aI", "--all", "-n", str(config.days * 10)]
-        
+
         try:
             output = self._run_git(cmd)
         except Exception:
@@ -32,15 +32,18 @@ class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
 
         seen_days = set()
         for line in output.splitlines():
-            if not line: continue
+            if not line:
+                continue
             try:
                 sha, day_str, msg, author, iso_ts = line.split("|", 4)
                 day = date.fromisoformat(day_str)
                 ts = datetime.fromisoformat(iso_ts)
-                
-                if config.date_from and day < config.date_from: continue
-                if config.date_to and day > config.date_to: continue
-                
+
+                if config.date_from and day < config.date_from:
+                    continue
+                if config.date_to and day > config.date_to:
+                    continue
+
                 if day not in seen_days:
                     seen_days.add(day)
                     info = CommitInfo(
@@ -55,7 +58,7 @@ class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
                         break
             except Exception:
                 continue
-        
+
         return sorted(results, key=lambda x: x[0])
 
     def get_current_sha(self) -> str:
@@ -78,7 +81,7 @@ class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
             if result.returncode != 0:
                 raise RuntimeError(f"git clone failed: {result.stderr}")
         return GitService(clone_path, shell=self.shell)
-    
+
     def sync_current_state(self, target_path: Path):
         """
         Copies all files (including untracked ones like node_modules)

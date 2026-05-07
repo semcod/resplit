@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 import queue
 import threading
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from enum import Enum

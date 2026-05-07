@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 from .service_graph import ServiceNode
 
 class GraphExporter:
@@ -12,7 +12,7 @@ class GraphExporter:
 
     def export_html(self, output_path: Path):
         data = self._prepare_d3_data()
-        
+
         template = """
 <!DOCTYPE html>
 <html>
@@ -123,7 +123,7 @@ class GraphExporter:
     def _prepare_d3_data(self) -> Dict:
         nodes = []
         links = []
-        
+
         # Add primary nodes
         for name, node in self.nodes.items():
             nodes.append({
@@ -131,7 +131,7 @@ class GraphExporter:
                 "methods": node.methods,
                 "group": 1 if "service" in name else 2
             })
-            
+
             # Add links
             for dep in node.dependencies:
                 if dep in self.nodes:
@@ -140,5 +140,5 @@ class GraphExporter:
                         "target": dep,
                         "value": 1
                     })
-        
+
         return {"nodes": nodes, "links": links}

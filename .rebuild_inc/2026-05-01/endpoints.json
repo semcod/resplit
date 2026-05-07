@@ -1,8 +1,0 @@
-[
-  {
-    "method": "GET",
-    "path": "/api/health",
-    "url": "http://localhost:8003/api/health",
-    "service": ""
-  }
-]

@@ -41,7 +41,7 @@ class RestoreService(Service[Tuple[str, Path], Optional[date]]):
             data = json.loads(rf.read_text())
             # Handle both old (list) and new (dict) schemas
             results = data.get("results", []) if isinstance(data, dict) else data
-            
+
             for r in results:
                 if r.get("path") == endpoint_path and r.get("status") == "ok":
                     best = day_date
@@ -61,7 +61,7 @@ class RestoreService(Service[Tuple[str, Path], Optional[date]]):
             src = self.repo_path / fname
             if src.exists():
                 shutil.copy2(src, docker_dir / fname)
-        
+
         for sub in ("backend", "frontend"):
             df = self.repo_path / sub / "Dockerfile"
             if df.exists():
@@ -84,7 +84,7 @@ class RestoreService(Service[Tuple[str, Path], Optional[date]]):
             self.console.print("  Skopiowano frontend/")
 
         self._write_readme(target, endpoint_path, working_day, backend_files)
-        self.console.print(f"  Zapisano README.md")
+        self.console.print("  Zapisano README.md")
 
     def _find_backend_files(self, endpoint_path: str) -> List[Path]:
         literal = endpoint_path

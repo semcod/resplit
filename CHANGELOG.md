@@ -1,8 +1,161 @@
 # Changelog
 
-> See also: [README](README.md) · [Roadmap (TODO)](TODO.md) · [Architecture](docs/architecture.md) · [Usage Guide](docs/usage.md)
+> See also: [README](README.md) · [Roadmap (TODO)](TODO.md) · [Analysis (P1–P4)](ANALYSIS.md) · [Architecture](docs/architecture.md) · [Usage Guide](docs/usage.md)
+
+## Completed Roadmap — Phases 10–16
+
+Aggregated summary of completed work, moved here from `TODO.md` on 2026-05-07.
+Detailed per-version notes appear in entries below.
+
+### Phase 10 — c2004 Testing & Improvements ✅ (sesja 2026-05-01, v0.1.13–v0.1.18)
+- **Clone for walk**: Pipeline klonuje repo do `.rebuild/repo/` — oryginał nienaruszony
+- **git checkout --force**: Bezpieczne przełączanie commitów w klonie
+- **Replay mode fix**: `start()` w replay tylko sprawdza health, nie uruchamia nowego compose
+- **Replay reload**: `docker restart <name>` bezpośrednio po nazwie kontenera
+- **history_service**: Obsługa nowego formatu `results.json` (dict z kluczem `results`)
+- **index.html**: Eksport JSON/YAML/TOON + toolbar w nawigacji
+- **`rebuild serve`**: Komenda do serwowania raportów na HTTP
+- **Deploy Log Details**: Pełne docker logs w `DayResult` + raporty failed deployów
+- **Param Substitution**: OpenAPI/FastAPI scanner — `{param}` → wartości z `rebuild.yaml`
+- **Fixture Seed**: `test_fixtures:` w `rebuild.yaml`
+- **Auth Config**: `auth:` w `rebuild.yaml` dla custom headers (Bearer tokens)
+- **Replay + volume mount**: Code mount per commit zamiast obrazu
+- **`init` w klonie**: Nie modyfikuje oryginalnego repo
+- **Deploy Retry**: Retry z backoff dla niestabilnych deployów
+- **Health Check Verbose**: Szczegółowy log curl output przy fail
+- **Manual Override**: `patch/` directory w `.rebuild/` z auto-applied fixes
+- **Token Propagation**: Login raz, propagacja Bearer do wszystkich requestów
+- **Per-Endpoint Body**: `body:` dla POST/PUT/PATCH w konfiguracji
+- **Failure Grouping**: Raport HTML grupuje błędy (auth/template/missing)
+- **Trend Chart**: Health% w czasie (Chart.js / SVG inline)
+- **Endpoint Diff**: Endpointy znikłe/nowe między commitami
+- **Response Time Tracking**: `time_ms` dla wszystkich requestów
+- **Analyze c2004**: `duplicates` (1597 grup), `services`, `truth` na wybrane moduły
+
+### Phase 11 — Deep Semantic Analysis ✅
+- **Semantic Embeddings**: `sentence-transformers` w `duplication_engine` → [Analyze docs](docs/guide/analyze.md#vector-search)
+- **Vector Search**: SQLite-backed vector DB → [CLI: vector-build/vector-query](docs/reference/cli.md#rebuild-analyze-vector-build-path)
+
+### Phase 12 — Real-time & Cross-Repo ✅
+- **Multi-Repo Support**: Cross-repo dependency analysis → [Analyze: multi-repo](docs/guide/analyze.md#multi-repo)
+- **Real-time Monitoring**: Live SSE event log w dashboard → [Visualization](docs/usage.md#6-visualization)
+- **Auto-PR Agent**: Auto PRs na GitHub/GitLab → [Auto-PR docs](docs/guide/auto-pr.md)
+
+### Phase 13 — UI/UX Refinement ✅
+- **D3.js Code Evolution**: Playback graf zależności w czasie
+- **TUI Refactor**: Domain logic wyodrębniona z `interfaces/tui.py`
+
+### Phase 14 — Production Readiness ✅ (ukończone 2026-05-01)
+- **Test Coverage ≥60%**: 347 testów, 60% coverage
+- **`--health-timeout` CLI**: Dla dużych stacków → [CLI Reference](docs/reference/cli.md#rebuild-walk)
+- **Deploy Error Classification**: `compose_build_fail`, `port_conflict`, `migration_fail`, `missing_env` → [Architecture: Deploy Error](docs/architecture.md#deploy-error-classification)
+- **Documentation Update**: `docs/usage.md`, `docs/architecture.md`, `README.md`
+- **Service Table**: Kompletna tabela usług → [Architecture: Key Services](docs/architecture.md#key-services)
+
+### Phase 15 — c2004 Integration & Stability ✅
+- **c2004 npm ci fix**: `if [ -f package-lock.json ]; then npm ci; else npm install; fi`
+- **c2004 Walk z `--deploy none`**: 442 endpointy w 1-day test walk
+- **Config Validation**: Pydantic schema dla `rebuild.yaml` + czytelne błędy
+- **PipelineEvent Import Fix**: Przeniesione do `domain_events.py` jako legacy class
+- **Walk Result Regression Guard**: Auto-flag spadku health% >20%
+- **c2004 Dashboard**: 444 endpointów wyświetlane poprawnie
+- **`--output` respects rebuild.yaml**: `output.dir` z YAML nadpisuje domyślne `.rebuild`
+- **Deploy log truncation**: Limit 200 linii w `results.json` z info o obcięciu
+- **Health verbose summary**: Status + first 200 bytes body przy fail
+- **Endpoint count diff warning**: Ostrzeżenie przy zmianie >10% między dniami
+
+### Phase 16 — Production Release ✅
+- **PyPI Package**: `rebuild` na PyPI v0.1.20 → [PyPI](https://pypi.org/project/rebuild/)
+- **CI/CD Pipeline**: GitHub Actions — testy, ruff, coverage gate ≥70% → [`.github/workflows/`](.github/workflows/)
+- **Semantic Versioning**: Auto-bump z CHANGELOG → `scripts/bump_version.py`
+- **Docker Image**: `ghcr.io/semcod/rebuild:latest` → `Dockerfile` + `.github/workflows/docker.yml`
+- **Config Validation (pydantic)**: `RebuildConfig`, `ConfigSchemaValidator`, `load_and_validate()` → [Config Reference](docs/reference/config.md)
+- **Plugin System**: `BaseScanner`, `BaseReporter`, `PluginRegistry`, entry points `rebuild.scanners`/`rebuild.reporters`, `rebuild plugins` CLI → [Plugin docs](docs/guide/plugins.md)
+- **Documentation Site**: MkDocs Material → [GitHub Pages](https://semcod.github.io/resplit)
+- **TUI Full Features**: j/k navigation, g/G, live log, endpoint browser
+- **Export Formats**: CSV + Markdown summary
+- **Notification Hooks**: Slack/Discord webhooks na deploy fail / health regression → [Config Reference](docs/reference/config.md)
+- **Snapshot Management**: LRU cache, `max_snapshots`, `_auto_prune()`, `prune_old(keep=N)`, `stats()`
+- **Test Coverage ≥70%**: Osiągnięto 72% (634 testów)
+
+---
 
 ## [Unreleased]
+
+### Sprint 1 — Quality Gates + Infra Foundation (2026-05-07)
+
+Hardening pipeline'u CI bez zmian architektury. Patrz [ANALYSIS.md](ANALYSIS.md) Sprint 1.
+
+#### Added
+- **`.pre-commit-config.yaml`** — ruff (lint+format), mypy (non-blocking), built-in hygiene hooks (trailing-ws, eof, check-yaml/toml/large-files, debug-statements)
+- **`docker-compose.example.yml`** — przykład deployment z rebuild + dashboard + repo mount na `localhost:7821`
+- **`ANALYSIS.md`** — kompletna analiza P1–P4 + plan sprintów 1–5+ wzorowana na metodologii Semcod GitHub App
+
+#### Changed
+- **`.github/workflows/ci.yml`** — dodany krok `mypy` jako `continue-on-error` (non-blocking, gotowy do promowania w Sprincie 3)
+- **`.github/workflows/docker.yml`** — multi-arch build `linux/amd64,linux/arm64` + `setup-qemu-action@v3`. Krytyczne dla testowania na ARM (case c2004).
+- **`TODO.md`** — przeniesione Phasy 10–16 do [CHANGELOG: Completed Roadmap](#completed-roadmap--phases-1016); zostawione tylko Phase 17 + plan sprintów
+
+#### Fixed
+- **Ruff config bug** w [`.github/workflows/ci.yml`](.github/workflows/ci.yml): usunięte `--ignore W503` (W503 to flake8 pseudo-rule, nieistniejąca w ruff). CI fail-ował natychmiast przy lint step.
+- **354 błędów stylu w `rebuild/`**: 302 auto-fix (whitespace, redundant f-strings, etc.) + 52 unsafe-fix (W291, W293) + 7 ręcznych E701 (`if x: continue` → wieloliniowe) + 3 brakujące importy F821:
+  - `rebuild/application/services/override_service.py`: `Optional` z `typing`
+  - `rebuild/infrastructure/shell_adapter.py`: `Path` z `pathlib` (×2)
+
+### Sprint 2 — Konsolidacja Duplikatów (2026-05-07)
+
+Refactor niskiego ryzyka eliminujący duplikaty wskazane w [ANALYSIS.md](ANALYSIS.md) §P1.
+
+#### Added
+- **`rebuild/application/services/regression_service.py`** — single source of truth dla detekcji regresji health-pct.
+  - Public: `compute_health_trend(results, threshold) -> List[HealthTrendPoint]`
+  - Adapter dict (dla `reporter.py`): `compute_health_trend_dict(results, threshold) -> dict[day, label]`
+  - Adapter list (dla `helpers.py`): `compute_health_trend_labels(results, threshold) -> List[str]`
+  - Stała: `DEFAULT_REGRESSION_THRESHOLD_PP = 20.0`
+  - Frozen dataclass `HealthTrendPoint(day, health_pct, delta, label, is_regression)`
+- **`collect_cli_overrides(ctx, names)`** w `rebuild/interfaces/commands/helpers.py` — eliminuje 14× duplikat `ctx.get_parameter_source(name) == ParameterSource.COMMANDLINE` w typer commands.
+
+#### Changed
+- **`rebuild/application/services/reporting/reporter.py:_health_trend_by_day`** → cienki adapter delegujący do `regression_service.compute_health_trend_dict`. Public method signature i zachowanie zachowane (subclass-safe).
+- **`rebuild/interfaces/commands/helpers.py:compute_health_trend_labels`** → cienki adapter delegujący do `regression_service.compute_health_trend_labels`. Public function signature zachowana — wszystkie istniejące testy i importy działają bez zmian.
+- **`rebuild/interfaces/cli.py:walk()`** zredukowane z 44 LOC body do 13 LOC. Usunięty nieużywany import `from click.core import ParameterSource`.
+
+#### Deprecated
+- **`rebuild.domain.dsl`** (legacy v1): dodany `DeprecationWarning` przy imporcie modułu + `.. deprecated:: 0.1.26` w docstringu. Pełne usunięcie odroczone do Sprintu 4 — `dsl_v2` nie pokrywa wszystkich komend (`evolution`, `auto_pr`, `restore`, `serve`); pełnym zamiennikiem będzie `testql` (PyPI v0.6.18).
+- **`Endpoint.testql_passed`** field: explicit komentarz że to placeholder na Sprint 4 (currently never populated by walk/test pipelines).
+
+#### Verification
+- `ruff check rebuild/ --select E,W,F --ignore E501` → **All checks passed**
+- `pytest -k "trend or regression or health"` → 8 passed (pełna pokrywalność migracji)
+- `pytest`: 631 passed, 3 preexisting failures (`TestCLISubprocessE2E.*` — środowiskowy `No module named rebuild`, nie regresja)
+
+---
+
+## [0.1.26] - 2026-05-07
+
+### Docs
+- Update ANALYSIS.md
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Other
+- Update .gitignore
+- Update .pre-commit-config.yaml
+- Update .rebuild_c2004_test/2026-04-30/results.json
+- Update .rebuild_c2004_test/2026-04-30/results.toon
+- Update .rebuild_c2004_test/2026-04-30/results.yaml
+- Update .rebuild_c2004_test/history.json
+- Update .rebuild_c2004_test/history.jsonl
+- Update .rebuild_c2004_test/index.html
+- Update .rebuild_c2004_test/walk_state.json
+- Update .rebuild_ev/2026-05-01/commit.txt
+- ... and 71 more files
 
 ## [0.1.25] - 2026-05-07
 

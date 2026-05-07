@@ -96,8 +96,8 @@ class AcceleratedPipeline(BasePipeline):
         self._cached_endpoints: Optional[List] = None
         # Cache: (from_sha, to_sha) -> diff file list.  Avoids redundant git calls.
         self._diff_cache: Dict[tuple, Optional[List[str]]] = {}
-    
-    
+
+
     def _save_state(self):
         """Persist processed SHAs."""
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -107,8 +107,8 @@ class AcceleratedPipeline(BasePipeline):
             "mode": "accelerated"
         }
         self._state_file.write_text(json.dumps(data, indent=2))
-    
-    
+
+
     def run(self) -> List[DayResult]:
         """
         Run accelerated analysis over commit history.
@@ -117,16 +117,16 @@ class AcceleratedPipeline(BasePipeline):
         if not commits:
             self.log("[yellow]Brak commitów w podanym przedziale.[/yellow]")
             return []
-        
-        self._emit("PIPELINE_STARTED", 
-                   days=len(commits), 
+
+        self._emit("PIPELINE_STARTED",
+                   days=len(commits),
                    mode="accelerated",
                    repo=str(self.config.repo_path))
-        
+
         self.log(f"[bold cyan]⚡ ACCELERATOR MODE[/bold cyan] - {len(commits)} commits")
         self.log(f"  Worktrees: {self.worktree_dir}")
         self.log(f"  Snapshots: {self.snapshot_dir}")
-        
+
         # Pre-create worktrees for all commits (parallel prep)
         self._prewarm_worktrees([c.sha for _, c in commits])
 
@@ -134,15 +134,15 @@ class AcceleratedPipeline(BasePipeline):
         runtime_ready = self.deploy.prepare_runtime(self.config.repo_path, first_commit_path)
         if runtime_ready:
             self.log("[dim]Accelerator runtime prepared with active worktree mount[/dim]")
-        
+
         # Start infrastructure (once!)
         self.log("[dim]Starting persistent infrastructure...[/dim]")
         infrastructure_ok = self.deploy.start(self.config.repo_path)
-        
+
         if not infrastructure_ok:
             self.log("[red]✗ Infrastructure failed to start[/red]")
             return []
-        
+
         # Create baseline DB snapshot
         try:
             self._create_baseline_snapshot()
@@ -150,35 +150,35 @@ class AcceleratedPipeline(BasePipeline):
             self._emit("ERROR_OCCURRED", stage="baseline_snapshot", error=str(exc))
             self.log(f"[red]✗ Baseline snapshot failed:[/red] {exc}")
             return []
-        
+
         all_results: List[DayResult] = []
-        
+
         self.tester.open_session()
         try:
             for day, commit in commits:
                 if commit.sha in self._processed_shas and not self.config.replay:
                     self.log(f"--- [bold]{day}[/bold]  {commit.sha[:8]}  [dim](skipped)[/dim]")
                     continue
-                
+
                 result = self._run_day_fast(day, commit)
                 all_results.append(result)
                 self._processed_shas.add(commit.sha)
                 self._save_state()
-                
+
                 self._previous_commit = commit.sha
-                
+
         finally:
             self.tester.close_session()
             # In accelerator mode, keep infrastructure running by default
             if not getattr(self.config, 'shutdown_after', False):
                 self.log("[dim]Accelerator: keeping infrastructure running[/dim]")
                 self.deploy.stop(self.config.repo_path)
-        
+
         self._emit("PIPELINE_FINISHED", total_days=len(all_results))
         self.reporter.save_timeline_index(all_results, self.output_dir)
-        
+
         return all_results
-    
+
     # Maximum concurrent git-worktree-add calls.  More than ~4 risks ref-lock
     # contention in repositories with many packed refs.
     _PREWARM_WORKERS = 4
@@ -207,7 +207,7 @@ class AcceleratedPipeline(BasePipeline):
         elapsed = time.perf_counter() - start
         ok = len(shas) - len(errors)
         self.log(f"  [green]✓ Worktrees ready:[/green] {ok}/{len(shas)} in {elapsed:.1f}s")
-    
+
     def _create_baseline_snapshot(self):
         """Create initial DB snapshot for fast restore between commits."""
         self.log("[dim]Creating baseline DB snapshot...[/dim]")
@@ -215,15 +215,15 @@ class AcceleratedPipeline(BasePipeline):
         info = self.db_snapshots.create_baseline()
         self._baseline_snapshot = info.name
         self.log(f"  [green]✓ Snapshot: {info.name} ({info.size_bytes or 0} bytes)[/green]")
-    
+
     def _run_day_fast(self, day: date, commit: CommitInfo) -> DayResult:
         """Execute single day analysis with maximum speed."""
         day_dir = self.output_dir / str(day)
         t0 = time.perf_counter()
-        
+
         self.log(f"--- [bold]{day}[/bold]  {commit.sha[:8]}  {commit.message[:50]}")
         result = self._make_fast_day_result(day, commit, day_dir)
-        
+
         try:
             wt_path = self._switch_fast_day_commit(result, commit, t0)
             if wt_path is None:
@@ -238,16 +238,16 @@ class AcceleratedPipeline(BasePipeline):
             self._populate_fast_endpoints(result, wt_path, commit, changed_paths)
             endpoints_to_test = self._select_fast_endpoints(result, changed_modules)
             self._test_and_save_fast_day(result, day_dir, endpoints_to_test)
-            
+
             duration = time.perf_counter() - t0
             self.log(f"  [green]✓ Done in {duration:.1f}s[/green] "
                     f"({result.health_pct:.0f}% healthy)")
-            
+
         except Exception as exc:
             result.error = str(exc)
             self._emit("ERROR_OCCURRED", error=str(exc))
             self.log(f"  [red]Error: {exc}[/red]")
-        
+
         result.duration_seconds = time.perf_counter() - t0
         return result
 
@@ -363,7 +363,7 @@ class AcceleratedPipeline(BasePipeline):
             result.endpoint_results = self.screenshots.execute(result.endpoint_results)
 
         self.reporter.save_day(result)
-    
+
     def _needs_rescan(self, from_sha: Optional[str], to_sha: str, changed_paths: Optional[List[str]] = None) -> bool:
         """
         Return True when the endpoint list must be rebuilt by running the scanner.
@@ -425,7 +425,7 @@ class AcceleratedPipeline(BasePipeline):
 
         if not self.deploy.wait_healthy():
             raise RuntimeError("App health check failed after DB restore")
-    
+
     def cleanup(self):
         """Clean up worktrees and resources."""
         self.log("[dim]Cleaning up accelerator resources...[/dim]")

@@ -1,0 +1,48 @@
+# Pre-commit hooks for rebuild
+# Install: pip install pre-commit && pre-commit install
+# Manual run: pre-commit run --all-files
+#
+# See ANALYSIS.md Sprint 1 for rationale.
+
+repos:
+  # Built-in hooks — basic hygiene
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^(SUMD\.md|.*\.toon\.yaml|.code2llm_cache/|project/)
+      - id: end-of-file-fixer
+        exclude: ^(SUMD\.md|.*\.toon\.yaml|.code2llm_cache/|project/)
+      - id: check-yaml
+        exclude: ^(mkdocs\.yml|.*\.toon\.yaml)$  # mkdocs has !!python tags; toon is not strict YAML
+      - id: check-toml
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+        exclude: ^(SUMD\.md|.*\.pkl|.code2llm_cache/)
+      - id: check-merge-conflict
+      - id: debug-statements
+
+  # Ruff — fast Python linter + formatter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.5
+    hooks:
+      - id: ruff
+        args: ["--fix", "--select", "E,W,F", "--ignore", "E501"]
+        files: ^rebuild/
+      - id: ruff-format
+        files: ^rebuild/
+
+  # mypy — type checking (non-blocking initially)
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.0
+    hooks:
+      - id: mypy
+        files: ^rebuild/
+        args:
+          - "--ignore-missing-imports"
+          - "--no-strict-optional"
+          - "--show-error-codes"
+        additional_dependencies:
+          - "pydantic>=2"
+          - "types-PyYAML"
+          - "types-requests"

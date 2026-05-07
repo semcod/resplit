@@ -60,7 +60,7 @@ class DuplicationEngine:
         for h, frags in exact_matches.items():
             if len(frags) > 1:
                 groups.append(DuplicateGroup(frags, 1.0, h, "Exact structural match"))
-        
+
         seen_frags = {id(f) for g in groups for f in g.fragments}
         for h, frags in fuzzy_matches.items():
             if len(frags) > 1:
@@ -251,17 +251,17 @@ class DuplicationEngine:
             tree = ast.parse(content)
         except SyntaxError:
             return []
-            
+
         fragments = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 lineno = getattr(node, 'lineno', 0)
                 end_lineno = getattr(node, 'end_lineno', 0)
-                
+
                 if lineno and end_lineno and (end_lineno - lineno + 1) >= self.min_lines:
                     s_hash = self._compute_structural_hash_py(node)
                     f_sig = self._compute_fuzzy_signature_py(node)
-                    
+
                     lines = content.splitlines()[lineno-1:end_lineno]
                     fragments.append(CodeFragment(
                         file=file_path,
@@ -281,14 +281,14 @@ class DuplicationEngine:
         """
         content = file_path.read_text()
         fragments = []
-        
+
         # Simple heuristic: find functions/methods via braces
         # This is a fallback and not as accurate as AST
         matches = re.finditer(r'(?:function|const|let|async)?\s*([a-zA-Z0-9_]+)\s*\(.*?\)\s*\{', content)
         for match in matches:
             name = match.group(1)
             start_pos = match.start()
-            
+
             # Find matching closing brace
             brace_count = 0
             end_pos = -1
@@ -300,7 +300,7 @@ class DuplicationEngine:
                     if brace_count == 0:
                         end_pos = i + 1
                         break
-            
+
             if end_pos != -1:
                 frag_content = content[start_pos:end_pos]
                 lines = frag_content.splitlines()
@@ -309,7 +309,7 @@ class DuplicationEngine:
                     normalized = re.sub(r'[a-zA-Z0-9_]+', 'ID', frag_content)
                     normalized = re.sub(r'\s+', '', normalized)
                     s_hash = hashlib.md5(normalized.encode()).hexdigest()
-                    
+
                     start_line = content.count('\n', 0, start_pos) + 1
                     fragments.append(CodeFragment(
                         file=file_path,

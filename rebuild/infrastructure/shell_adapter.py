@@ -1,6 +1,7 @@
 from __future__ import annotations
 import subprocess
-from typing import List, Optional, Tuple
+from pathlib import Path
+from typing import List, Optional
 from rich.console import Console
 
 class ShellAdapter:
@@ -15,12 +16,12 @@ class ShellAdapter:
         try:
             if not capture:
                 return subprocess.run(cmd, cwd=cwd, check=False)
-            
+
             result = subprocess.run(
-                cmd, 
-                cwd=cwd, 
-                capture_output=True, 
-                text=True, 
+                cmd,
+                cwd=cwd,
+                capture_output=True,
+                text=True,
                 check=False
             )
             return result
@@ -30,8 +31,8 @@ class ShellAdapter:
 
     def popen(self, cmd: List[str], cwd: Optional[Path] = None) -> subprocess.Popen:
         return subprocess.Popen(
-            cmd, 
-            cwd=cwd, 
-            stdout=subprocess.DEVNULL, 
+            cmd,
+            cwd=cwd,
+            stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )

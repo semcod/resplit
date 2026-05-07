@@ -6,7 +6,6 @@ Generates HTML with D3.js force-directed graph showing dependency evolution over
 from __future__ import annotations
 import json
 from pathlib import Path
-from typing import Optional
 
 
 def generate_evolution_html(
@@ -52,28 +51,28 @@ def _render_html(snapshots: list, repo_path: str, title: str) -> str:
     --primary: #6366f1;
     --success: #10b981;
   }}
-  body {{ 
-    font-family: 'Outfit', sans-serif; 
-    margin: 0; 
-    background: var(--bg); 
+  body {{
+    font-family: 'Outfit', sans-serif;
+    margin: 0;
+    background: var(--bg);
     background-image: radial-gradient(circle at 0% 100%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
-    color: var(--text); 
+    color: var(--text);
     min-height: 100vh;
   }}
-  nav {{ 
+  nav {{
     background: rgba(15, 23, 42, 0.8);
     backdrop-filter: blur(12px);
-    padding: 16px 32px; 
-    display: flex; 
-    align-items: center; 
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
     border-bottom: 1px solid var(--border);
   }}
   .brand {{ font-weight: 800; font-size: 1.4rem; letter-spacing: -0.02em; }}
-  
+
   .content {{ padding: 32px; max-width: 1400px; margin: 0 auto; }}
   h1 {{ font-size: 2.2rem; font-weight: 800; margin: 0 0 8px 0; letter-spacing: -0.02em; }}
   .meta {{ color: var(--text-dim); font-size: 0.95rem; margin-bottom: 24px; }}
-  
+
   .viz-container {{
     background: var(--card-bg);
     border-radius: 32px;
@@ -81,7 +80,7 @@ def _render_html(snapshots: list, repo_path: str, title: str) -> str:
     padding: 24px;
     backdrop-filter: blur(12px);
   }}
-  
+
   .controls {{
     display: flex;
     gap: 16px;
@@ -91,7 +90,7 @@ def _render_html(snapshots: list, repo_path: str, title: str) -> str:
     background: rgba(0,0,0,0.3);
     border-radius: 16px;
   }}
-  
+
   .timeline-slider {{
     flex: 1;
     -webkit-appearance: none;
@@ -108,7 +107,7 @@ def _render_html(snapshots: list, repo_path: str, title: str) -> str:
     background: var(--primary);
     cursor: pointer;
   }}
-  
+
   .btn {{
     padding: 10px 20px;
     border: none;
@@ -122,20 +121,20 @@ def _render_html(snapshots: list, repo_path: str, title: str) -> str:
   .btn:hover {{ opacity: 0.9; }}
   .btn:disabled {{ opacity: 0.5; cursor: not-allowed; }}
   .btn-secondary {{ background: rgba(255,255,255,0.1); }}
-  
+
   .timeline-info {{
     min-width: 300px;
     text-align: center;
     font-weight: 600;
   }}
-  
+
   #graph {{
     width: 100%;
     height: 600px;
     border-radius: 16px;
     background: rgba(0,0,0,0.3);
   }}
-  
+
   .node {{
     cursor: pointer;
   }}
@@ -146,7 +145,7 @@ def _render_html(snapshots: list, repo_path: str, title: str) -> str:
   .link {{
     stroke-opacity: 0.6;
   }}
-  
+
   .stats {{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -171,7 +170,7 @@ def _render_html(snapshots: list, repo_path: str, title: str) -> str:
 <div class="content">
   <h1>{title}</h1>
   <div class="meta">{repo_path} &nbsp;·&nbsp; {len(snapshots)} snapshots</div>
-  
+
   <div class="viz-container">
     <div class="controls">
       <button class="btn btn-secondary" id="prevBtn">◀ Previous</button>
@@ -183,9 +182,9 @@ def _render_html(snapshots: list, repo_path: str, title: str) -> str:
         <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;" id="commit"></div>
       </div>
     </div>
-    
+
     <div id="graph"></div>
-    
+
     <div class="stats">
       <div class="stat-card">
         <div class="stat-value" id="nodeCount">0</div>
@@ -294,11 +293,11 @@ function renderSnapshot(index) {{
       .attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x)
       .attr("y2", d => d.target.y);
-    
+
     node
       .attr("cx", d => d.x)
       .attr("cy", d => d.y);
-    
+
     labels
       .attr("x", d => d.x)
       .attr("y", d => d.y);
@@ -307,7 +306,7 @@ function renderSnapshot(index) {{
   // Update stats
   document.getElementById("nodeCount").textContent = nodes.length;
   document.getElementById("edgeCount").textContent = links.length;
-  const avgComplexity = nodes.length > 0 
+  const avgComplexity = nodes.length > 0
     ? (nodes.reduce((sum, n) => sum + (n.complexity || 0), 0) / nodes.length).toFixed(1)
     : 0;
   document.getElementById("complexity").textContent = avgComplexity;
@@ -363,7 +362,7 @@ document.getElementById("nextBtn").addEventListener("click", () => {{
 document.getElementById("playBtn").addEventListener("click", () => {{
   isPlaying = !isPlaying;
   const btn = document.getElementById("playBtn");
-  
+
   if (isPlaying) {{
     btn.textContent = "⏸ Pause";
     playInterval = setInterval(() => {{

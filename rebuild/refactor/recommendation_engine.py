@@ -22,8 +22,8 @@ class RecommendationEngine:
     Recognizes architectural patterns (Adapter, Interface, etc.).
     """
     def generate_plan(
-        self, 
-        duplicates: List[DuplicateGroup], 
+        self,
+        duplicates: List[DuplicateGroup],
         similarities: List[ServiceSimilarity],
         graph: Dict[str, ServiceNode],
         cycles: List[List[str]]

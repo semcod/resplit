@@ -44,6 +44,9 @@ class EndpointResult:
     http_status: Optional[int] = None
     response_time_ms: Optional[float] = None
     screenshot_path: Optional[Path] = None
+    # Placeholder field for Sprint 4 testql integration (ANALYSIS.md §P1.5).
+    # Currently never populated by walk/test pipelines — always serialised as None.
+    # Will be populated once `testql` (PyPI v0.6.18) replaces the legacy DSL.
     testql_passed: Optional[bool] = None
     error: Optional[str] = None
     fail_reason: Optional[str] = None

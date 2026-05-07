@@ -188,7 +188,7 @@ class DeployService(Service[Path, bool]):
 
     def _run_with_retry(self, action, action_label: str) -> bool:
         attempts = max(1, int(getattr(self.config, "deploy_retry_attempts", 3)))
-        backoff = float(getattr(self.config, "deploy_retry_backoff_seconds", 5.0))  
+        backoff = float(getattr(self.config, "deploy_retry_backoff_seconds", 5.0))
         multiplier = float(getattr(self.config, "deploy_retry_backoff_multiplier", 3.0))
 
         for attempt in range(1, attempts + 1):

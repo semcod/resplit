@@ -1,7 +1,7 @@
 # code2llm call graph | /home/tom/github/semcod/rebuild
-# generated in 0.07s
+# generated in 0.09s
 # nodes: 96 | edges: 80 | modules: 26
-# CC̄=3.4
+# CC̄=3.5
 
 HUBS[20]:
   rebuild.interfaces.commands.analyze_command.multi_repo_command
@@ -12,10 +12,10 @@ HUBS[20]:
     CC=9  in:1  out:25  total:26
   Makefile.print
     CC=0  in:25  out:0  total:25
-  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
-    CC=14  in:0  out:23  total:23
   rebuild.domain.mvp_protocol.MVPServer.start
     CC=1  in:0  out:23  total:23
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
+    CC=14  in:0  out:23  total:23
   rebuild.interfaces.cli.plugins
     CC=7  in:0  out:22  total:22
   rebuild.interfaces.commands.helpers.print_summary_table
@@ -30,20 +30,20 @@ HUBS[20]:
     CC=3  in:1  out:17  total:18
   scripts.bump_version.categorize_commits
     CC=14  in:1  out:15  total:16
-  scripts.bump_version.build_new_section
-    CC=7  in:1  out:14  total:15
   scripts.bump_version.update_changelog
     CC=5  in:1  out:14  total:15
+  scripts.bump_version.build_new_section
+    CC=7  in:1  out:14  total:15
   rebuild.interfaces.commands.refactor_command._generate_refactor_plan
     CC=5  in:3  out:12  total:15
   rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
     CC=12  in:1  out:12  total:13
-  rebuild.application.services.pr_service.load_config_from_env
+  rebuild.interfaces.commands.refactor_command.pr_command
     CC=4  in:1  out:11  total:12
   rebuild.interfaces.cli.evolution
     CC=2  in:0  out:12  total:12
-  rebuild.interfaces.dashboard.generate_dashboard
-    CC=5  in:3  out:9  total:12
+  rebuild.interfaces.commands.walk_command.walk_command
+    CC=2  in:1  out:11  total:12
 
 MODULES:
   Makefile  [1 funcs]
@@ -193,18 +193,6 @@ EDGES:
   rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_generic_payload
   rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_slack_payload
   rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_discord_payload
-  rebuild.plugins.registry.PluginRegistry.discover → rebuild.plugins.registry._load_entry_points
-  rebuild.interfaces.dashboard.get_cc_for_day → rebuild.interfaces.dashboard._extract_avg_cc
-  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard._render_html
-  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard.get_cc_for_day
-  rebuild.interfaces.evolution_viz.generate_evolution_html → rebuild.interfaces.evolution_viz._render_html
-  rebuild.interfaces.commands.helpers.serve_reports → rebuild.application.services.event_service.get_event_service
-  rebuild.interfaces.commands.refactor_command.plan_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  rebuild.interfaces.commands.refactor_command.pr_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  rebuild.interfaces.commands.refactor_command.execute_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  rebuild.domain.mvp_protocol.MVPServer.start → Makefile.print
-  rebuild.domain.dsl_v2.DSLShell.run → Makefile.print
-  rebuild.domain.dsl_v2.DSLShell._process → Makefile.print
   rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
   rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
   rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
@@ -214,4 +202,16 @@ EDGES:
   rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → rebuild.application.services.reporting.chart_builder.generate_trend_chart
   rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
   rebuild.application.services.reporting.formatters.classify_error → rebuild.application.services.reporting.formatters._classify_error_text
+  rebuild.plugins.registry.PluginRegistry.discover → rebuild.plugins.registry._load_entry_points
+  rebuild.interfaces.dashboard.get_cc_for_day → rebuild.interfaces.dashboard._extract_avg_cc
+  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard._render_html
+  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard.get_cc_for_day
   rebuild.interfaces.cli.dashboard → rebuild.interfaces.dashboard.generate_dashboard
+  rebuild.interfaces.cli.serve → rebuild.interfaces.commands.helpers.print_report_links
+  rebuild.interfaces.cli.serve → rebuild.interfaces.commands.helpers.serve_reports
+  rebuild.interfaces.cli.tui → rebuild.interfaces.tui.app.launch_tui
+  rebuild.interfaces.cli._resolve_pr_config → rebuild.application.services.pr_service.load_config_from_env
+  rebuild.interfaces.cli.evolution → rebuild.interfaces.evolution_viz.generate_evolution_html
+  rebuild.interfaces.cli.duplicates → rebuild.interfaces.commands.analyze_command.duplicates_command
+  rebuild.interfaces.cli.vector_build → rebuild.interfaces.commands.analyze_command.vector_build_command
+  rebuild.interfaces.cli.vector_query → rebuild.interfaces.commands.analyze_command.vector_query_command

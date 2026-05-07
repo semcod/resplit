@@ -34,6 +34,6 @@ class HttpAdapter:
 
     def delete(self, url: str, headers: Optional[Dict[str, str]] = None) -> httpx.Response:
         return self.client.delete(url, headers=headers)
-        
+
     def close(self):
         self.client.close()

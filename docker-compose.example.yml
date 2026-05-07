@@ -1,0 +1,49 @@
+# rebuild — Docker Compose example
+#
+# Usage:
+#   1. Copy: cp docker-compose.example.yml docker-compose.yml
+#   2. Edit REPO_PATH (host path to your git repository)
+#   3. Run a walk:
+#        docker compose run --rm rebuild walk /workspace --deploy none --days 14
+#   4. View results in dashboard:
+#        docker compose up -d dashboard
+#        open http://localhost:7821
+#
+# See: docs/getting-started/installation.md
+#      docs/guide/walk.md
+
+services:
+  rebuild:
+    image: ghcr.io/semcod/rebuild:latest
+    # build: .                                  # uncomment to build locally
+    container_name: rebuild
+    volumes:
+      - ${REPO_PATH:-./repo}:/workspace:ro      # repo to analyze (read-only)
+      - ./.rebuild:/results                     # walk output (writable)
+      - /var/run/docker.sock:/var/run/docker.sock:ro   # required for --deploy docker-compose
+    environment:
+      - PYTHONUNBUFFERED=1
+      # - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}   # for AI refactor commands
+    working_dir: /workspace
+    # Default: print --help. Override with `docker compose run rebuild walk /workspace ...`
+    command: ["--help"]
+
+  dashboard:
+    image: ghcr.io/semcod/rebuild:latest
+    # build: .
+    container_name: rebuild-dashboard
+    depends_on:
+      - rebuild
+    ports:
+      - "${DASHBOARD_PORT:-7821}:7821"
+    volumes:
+      - ./.rebuild:/results:ro
+    command: ["serve", "--results-dir", "/results", "--port", "7821", "--host", "0.0.0.0"]
+    restart: unless-stopped
+
+# Notes:
+# - REPO_PATH defaults to ./repo. Override:
+#     REPO_PATH=/home/me/myproject docker compose run --rm rebuild walk /workspace ...
+# - Image is multi-arch (amd64 + arm64) — works on Apple Silicon and ARM servers.
+# - For --deploy docker-compose mode, the rebuild container needs access to the
+#   host docker daemon (mounted socket above). On rootless/Podman, adjust accordingly.

@@ -21,7 +21,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Dict, List, Any
+from typing import Dict, Any
 
 
 class MessageType(Enum):

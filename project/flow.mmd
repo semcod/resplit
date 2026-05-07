@@ -5,10 +5,6 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph Core
-        docs__guide__plugins__scan["scan"]
-        docs__guide__plugins__report["report"]
-        docs__guide__plugins__print["print"]
-        docs__getting_started__configuration__print["print"]
         restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__health["health"]
         restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__get_manifest["get_manifest"]
         restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__list_pages["list_pages"]
@@ -20,7 +16,11 @@ flowchart TD
         restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__health["health"]
         restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__get_manifest["get_manifest"]
         restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__list_pages["list_pages"]
-        ...["+466 more"]
+        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__serve_ui["serve_ui"]
+        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__serve_model["serve_model"]
+        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__list_models["list_models"]
+        restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__index["index"]
+        ...["+462 more"]
     end
 
     subgraph Exporters
@@ -32,4 +32,4 @@ flowchart TD
         rebuild__application__services__reporting__reporter__ReporterService___results_to_export_data["_results_to_export_data"]
     end
 
-    class docs__guide__plugins__scan,docs__guide__plugins__report,docs__guide__plugins__print,docs__getting_started__configuration__print,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__health,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__get_manifest,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__list_pages,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__serve_ui,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__serve_model,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__list_models entry
+    class restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__health,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__get_manifest,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__list_pages,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__serve_ui,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__serve_model,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__list_models,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__index,restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__module_index,restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__health,restored_c2004_health__api_health__backend__modules__connect_id_user_list__api__main__get_manifest entry

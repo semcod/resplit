@@ -2,7 +2,7 @@
 
 ## Code Evolution Intelligence Engine
 
-![Version](https://img.shields.io/badge/version-0.1.25-blue) ![Python](https://img.shields.io/badge/python-3.11+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-634%20passing-brightgreen) ![Coverage](https://img.shields.io/badge/coverage-72%25-brightgreen)
+![Version](https://img.shields.io/badge/version-0.1.26-blue) ![Python](https://img.shields.io/badge/python-3.11+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-634%20passing-brightgreen) ![Coverage](https://img.shields.io/badge/coverage-72%25-brightgreen)
 
 **Historical deployment analysis & Code Intelligence** — walk git history day by day, deploy per commit, test all endpoints, capture screenshots, and **analyze code evolution** to find duplicates, rank quality, and generate refactor plans.
 
@@ -12,10 +12,10 @@
 
 ### AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.25-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.35-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-13.8h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.26-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-13.8h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $7.3500 (49 commits)
+- 🤖 **LLM usage:** $7.5000 (50 commits)
 - 👤 **Human dev:** ~$1384 (13.8h @ $100/h, 30min dedup)
 
 Generated on 2026-05-07 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
@@ -40,6 +40,7 @@ Generated on 2026-05-07 using [openrouter/qwen/qwen3-coder-next](https://openrou
 | **[Usage Guide](docs/usage.md)** | Step-by-step guide (all features) |
 | **[Changelog](CHANGELOG.md)** | Release history (current: v0.1.23) |
 | **[Roadmap](TODO.md)** | Completed phases 10–16, future plans |
+| **[Analysis (P1–P4)](ANALYSIS.md)** | Refactoring hotspots, infra gaps, missing features, test debt + sprint plan |
 
 ---
 

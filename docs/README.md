@@ -1,7 +1,7 @@
 <!-- code2docs:start --># rebuild
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-591-green)
-> **591** functions | **161** classes | **156** files | CC̄ = 3.5
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-587-green)
+> **587** functions | **159** classes | **157** files | CC̄ = 3.5
 
 > Auto-generated project documentation from source code analysis.
 
@@ -83,9 +83,9 @@ rebuild/
 ├── Makefile
 ├── PLAN
 ├── pyqual
+├── ANALYSIS
 ├── pyproject
 ├── tree
-├── TODO
 ├── CHANGELOG
 ├── Dockerfile
 ├── project
@@ -223,14 +223,13 @@ rebuild/
             ├── domain_events
         ├── recommendation_engine
         ├── refactor_executor
+├── TODO
 ```
 
 ## API Overview
 
 ### Classes
 
-- **`SecurityScanner`** — —
-- **`SlackReporter`** — —
 - **`ShellAdapter`** — Adapter for shell command execution.
 - **`DeployConfig`** — —
 - **`OutputConfig`** — —
@@ -394,10 +393,6 @@ rebuild/
 ### Functions
 
 - `print()` — —
-- `scan()` — —
-- `report()` — —
-- `print()` — —
-- `print()` — —
 - `print()` — —
 - `send_mvp_command()` — —
 - `print()` — —
@@ -507,6 +502,7 @@ rebuild/
 
 ## Project Structure
 
+📄 `ANALYSIS`
 📄 `CHANGELOG`
 📄 `Dockerfile`
 📄 `Makefile` (2 functions)
@@ -518,12 +514,12 @@ rebuild/
 📄 `docs.c2004`
 📄 `docs.case_study_c2004`
 📄 `docs.changelog`
-📄 `docs.getting-started.configuration` (1 functions)
+📄 `docs.getting-started.configuration`
 📄 `docs.getting-started.installation`
 📄 `docs.getting-started.quickstart`
 📄 `docs.guide.analyze`
 📄 `docs.guide.auto-pr`
-📄 `docs.guide.plugins` (3 functions, 2 classes)
+📄 `docs.guide.plugins`
 📄 `docs.guide.refactor`
 📄 `docs.guide.walk`
 📄 `docs.index`

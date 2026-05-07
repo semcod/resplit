@@ -2,11 +2,10 @@ from __future__ import annotations
 import ast
 import json
 from dataclasses import dataclass
-from datetime import datetime, date
+from datetime import datetime
 from pathlib import Path
-from typing import List, Optional, Dict, Tuple
+from typing import List, Optional, Dict
 
-from ..domain.commit import CommitInfo
 from ..application.services.git_service import GitService
 
 @dataclass
@@ -33,7 +32,7 @@ class GitTruthAnalyzer:
     def analyze_function_history(self, file_path: Path, func_name: str) -> List[FunctionQuality]:
         qualities = []
         rel_path = file_path.relative_to(self.repo_path) if file_path.is_absolute() else file_path
-        
+
         cmd = ["log", "--format=%H|%aI", "--", str(rel_path)]
         try:
             output = self.git._run_git(cmd)
@@ -41,10 +40,11 @@ class GitTruthAnalyzer:
             return []
 
         for line in output.splitlines():
-            if not line: continue
+            if not line:
+                continue
             sha, iso = line.split("|")
             ts = datetime.fromisoformat(iso)
-            
+
             try:
                 content = self.git._run_git(["show", f"{sha}:{rel_path}"])
                 quality = self._analyze_content(content, func_name, sha, ts)
@@ -52,7 +52,7 @@ class GitTruthAnalyzer:
                     qualities.append(quality)
             except Exception:
                 continue
-                
+
         return sorted(qualities, key=lambda q: q.score, reverse=True)
 
     def _analyze_content(self, content: str, func_name: str, sha: str, ts: datetime) -> Optional[FunctionQuality]:
@@ -60,22 +60,22 @@ class GitTruthAnalyzer:
             tree = ast.parse(content)
         except SyntaxError:
             return None
-            
+
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == func_name:
                 complexity = self._compute_complexity(node)
                 size = node.end_lineno - node.lineno + 1 if hasattr(node, 'end_lineno') else 0
-                
+
                 # Link with historical test results if available for this commit
                 pass_rate = self._historical_results.get(sha, 1.0) # Default to 1.0 if unknown
-                
+
                 # Advanced weighted scoring
                 # Weights: PassRate (0.4), Complexity (0.3), Size (0.3)
                 complexity_inv = 1 / (complexity + 1)
                 size_inv = 1 / ((size / 10) + 1)
-                
+
                 score = (0.4 * pass_rate * 100) + (0.3 * complexity_inv * 100) + (0.3 * size_inv * 100)
-                
+
                 return FunctionQuality(
                     func_name=func_name,
                     commit_sha=sha,
@@ -111,8 +111,9 @@ class GitTruthAnalyzer:
                     sha = cf.read_text().splitlines()[0]
                     # Get results
                     data = json.loads(rf.read_text())
-                    if not data: continue
-                    
+                    if not data:
+                        continue
+
                     ok_count = sum(1 for r in data if r.get("status") == "ok")
                     history[sha] = ok_count / len(data)
                 except Exception:

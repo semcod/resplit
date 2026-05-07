@@ -1,6 +1,6 @@
-# code2llm | 148f 21223L | python:92,md:28,yaml:9,shell:8,yml:3,json:1,dsl:1,backend:1,toml:1 | 2026-05-07
+# code2llm | 149f 19545L | python:92,md:29,yaml:9,shell:8,yml:3,json:1,dsl:1,backend:1,toml:1 | 2026-05-07
 # generated in 0.04s
-# CC̄=3.4 | critical:0/591 | dups:0 | cycles:0
+# CC̄=3.5 | critical:0/587 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
@@ -53,9 +53,9 @@ LAYERS:
   │ history_screen             174L  0C    0m  CC=0.0    ←0
   │ summary_service            168L  3C    5m  CC=8      ←0
   │ domain_events              163L  17C    4m  CC=2      ←0
+  │ config_loader              161L  1C   13m  CC=9      ←0
   │ event_bus                  161L  1C   12m  CC=14     ←1
   │ helpers                    161L  0C    5m  CC=9      ←2
-  │ config_loader              161L  1C   13m  CC=9      ←0
   │ restore_service            152L  1C    7m  CC=10     ←0
   │ registry                   150L  1C   14m  CC=7      ←1
   │ restore_screen             150L  0C    0m  CC=0.0    ←0
@@ -124,37 +124,19 @@ LAYERS:
   │
   ./                              CC̄=0.0    ←in:0  →out:0
   │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
-  │ CHANGELOG.md               301L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md               351L  0C    0m  CC=0.0    ←0
+  │ ANALYSIS.md                318L  0C    0m  CC=0.0    ←0
   │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
+  │ README.md                  145L  0C    0m  CC=0.0    ←0
+  │ TODO.md                    129L  0C    0m  CC=0.0    ←0
   │ Makefile                   112L  0C    1m  CC=0.0    ←5
   │ pyproject.toml             111L  0C    0m  CC=0.0    ←0
-  │ TODO.md                    104L  0C    0m  CC=0.0    ←0
-  │ README.md                   91L  0C    0m  CC=0.0    ←0
-  │ mkdocs.yml                  80L  0C    0m  CC=0.0    ←0
+  │ mkdocs.yml                  81L  0C    0m  CC=0.0    ←0
   │ Dockerfile                  65L  0C    0m  CC=0.0    ←0
   │ project.sh                  31L  0C    0m  CC=0.0    ←0
   │ pyqual.yaml                 10L  0C    0m  CC=0.0    ←0
   │ infra-map.json               7L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
-  │
-  docs/                           CC̄=0.0    ←in:0  →out:0
-  │ !! README.md                 2898L  0C    0m  CC=0.0    ←0
-  │ c2004.md                   228L  0C    0m  CC=0.0    ←0
-  │ usage.md                   192L  0C    0m  CC=0.0    ←0
-  │ cli.md                     147L  0C    0m  CC=0.0    ←0
-  │ architecture.md            118L  0C    0m  CC=0.0    ←0
-  │ plugins.md                  86L  2C    3m  CC=0.0    ←0
-  │ configuration.md            77L  0C    1m  CC=0.0    ←0
-  │ config.md                   72L  0C    0m  CC=0.0    ←0
-  │ index.md                    68L  0C    0m  CC=0.0    ←0
-  │ quickstart.md               61L  0C    0m  CC=0.0    ←0
-  │ walk.md                     58L  0C    0m  CC=0.0    ←0
-  │ case_study_c2004.md         56L  0C    0m  CC=0.0    ←0
-  │ analyze.md                  48L  0C    0m  CC=0.0    ←0
-  │ installation.md             47L  0C    0m  CC=0.0    ←0
-  │ auto-pr.md                  46L  0C    0m  CC=0.0    ←0
-  │ refactor.md                 27L  0C    0m  CC=0.0    ←0
-  │ changelog.md                 5L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=0.0    ←in:0  →out:0
   │ README.md                  240L  0C    3m  CC=0.0    ←0
@@ -180,6 +162,25 @@ LAYERS:
   testql-scenarios/               CC̄=0.0    ←in:0  →out:0
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←1
   │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
+  │
+  docs/                           CC̄=0.0    ←in:0  →out:0
+  │ !! README.md                  700L  0C    0m  CC=0.0    ←0
+  │ c2004.md                   231L  0C    0m  CC=0.0    ←0
+  │ usage.md                   194L  0C    0m  CC=0.0    ←0
+  │ cli.md                     173L  0C    0m  CC=0.0    ←0
+  │ architecture.md            132L  0C    0m  CC=0.0    ←0
+  │ plugins.md                  88L  0C    0m  CC=0.0    ←0
+  │ configuration.md            79L  0C    0m  CC=0.0    ←0
+  │ index.md                    75L  0C    0m  CC=0.0    ←0
+  │ config.md                   74L  0C    0m  CC=0.0    ←0
+  │ quickstart.md               63L  0C    0m  CC=0.0    ←0
+  │ walk.md                     60L  0C    0m  CC=0.0    ←0
+  │ case_study_c2004.md         58L  0C    0m  CC=0.0    ←0
+  │ analyze.md                  50L  0C    0m  CC=0.0    ←0
+  │ installation.md             49L  0C    0m  CC=0.0    ←0
+  │ auto-pr.md                  48L  0C    0m  CC=0.0    ←0
+  │ refactor.md                 29L  0C    0m  CC=0.0    ←0
+  │ changelog.md                 5L  0C    0m  CC=0.0    ←0
   │
   ── zero ──
      rebuild/domain/events.py                  0L

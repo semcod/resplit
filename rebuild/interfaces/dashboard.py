@@ -146,33 +146,33 @@ def _render_html(
     --success: #10b981;
     --fail: #ef4444;
   }}
-  body {{ 
-    font-family: 'Outfit', sans-serif; 
-    margin: 0; 
-    background: var(--bg); 
+  body {{
+    font-family: 'Outfit', sans-serif;
+    margin: 0;
+    background: var(--bg);
     background-image: radial-gradient(circle at 0% 100%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
-    color: var(--text); 
+    color: var(--text);
     min-height: 100vh;
   }}
-  nav {{ 
+  nav {{
     background: rgba(15, 23, 42, 0.8);
     backdrop-filter: blur(12px);
-    padding: 16px 32px; 
-    display: flex; 
-    align-items: center; 
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
     border-bottom: 1px solid var(--border);
     position: sticky; top: 0; z-index: 100;
   }}
   .brand {{ font-weight: 800; font-size: 1.4rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }}
   .brand-dot {{ width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 12px var(--primary); }}
-  
+
   nav a {{ color: var(--text-dim); text-decoration: none; font-size: 0.9rem; margin-left: 24px; font-weight: 600; }}
   nav a:hover {{ color: var(--text); }}
-  
+
   .content {{ padding: 32px; max-width: 1200px; margin: 0 auto; }}
   h1 {{ font-size: 2.2rem; font-weight: 800; margin: 0 0 8px 0; letter-spacing: -0.02em; }}
   .meta {{ color: var(--text-dim); font-size: 0.95rem; margin-bottom: 32px; }}
-  
+
   .chart-container {{
     background: var(--card-bg);
     border-radius: 32px;
@@ -231,7 +231,7 @@ def _render_html(
 <div class="content">
   <h1>Performance Analytics</h1>
   <div class="meta">{total_days} days analyzed &nbsp;·&nbsp; Health score & Complexity trend</div>
-  
+
   <div class="chart-container">
     <canvas id="chart" height="100"></canvas>
     <div class="hint">💡 Pro-tip: Click on a data point to jump to that day's detailed report</div>
@@ -287,7 +287,7 @@ new Chart(ctx, {{
     }},
     plugins: {{
       legend: {{ position: 'top', align: 'end' }},
-      tooltip: {{ 
+      tooltip: {{
         backgroundColor: 'rgba(15, 23, 42, 0.9)',
         padding: 12,
         titleFont: {{ size: 14, weight: 'bold' }},

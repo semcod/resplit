@@ -6,7 +6,7 @@ from __future__ import annotations
 import time
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from dataclasses import dataclass, asdict
 from datetime import datetime
 
@@ -27,13 +27,13 @@ class SnapshotInfo:
 class DBSnapshotManager(Service[str, SnapshotInfo]):
     """
     Manages database snapshots for instant state restore.
-    
+
     Instead of re-seeding DB for each test run:
     1. Create base snapshot once (pg_dump, volume export, etc.)
     2. Restore snapshot instantly for each commit
     3. Massive speedup for test suites
     """
-    
+
     def __init__(
         self,
         snapshot_dir: Path,
@@ -58,12 +58,12 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
         self._metadata_file = snapshot_dir / "snapshots.json"
         self._snapshots: Dict[str, SnapshotInfo] = {}
         self._ensure_dirs()
-    
+
     def _ensure_dirs(self):
         """Create snapshot directory structure."""
         self.snapshot_dir.mkdir(parents=True, exist_ok=True)
         self._load_metadata()
-    
+
     def _load_metadata(self):
         """Load snapshot metadata from disk."""
         if self._metadata_file.exists():
@@ -73,12 +73,12 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
                     self._snapshots[name] = SnapshotInfo(**info)
             except Exception:
                 pass
-    
+
     def _save_metadata(self):
         """Persist snapshot metadata."""
         data = {name: asdict(info) for name, info in self._snapshots.items()}
         self._metadata_file.write_text(json.dumps(data, indent=2))
-    
+
     def create(self, name: str, commit_sha: Optional[str] = None) -> SnapshotInfo:
         """
         Create a new database snapshot.
@@ -161,7 +161,7 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
             "newest": max(dates) if dates else None,
             "max_snapshots": self.max_snapshots,
         }
-    
+
     def _postgres_dump(self, output_path: Path):
         """Create PostgreSQL dump using pg_dump in container."""
         cmd = [
@@ -172,14 +172,14 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
         result = self.shell.run(cmd)
         if result.returncode != 0:
             raise RuntimeError(f"pg_dump failed: {result.stderr}")
-        
+
         # Copy from container to host
         self.shell.run([
             "docker", "cp",
             f"{self.db_container}:/tmp/snapshot.sql",
             str(output_path)
         ])
-    
+
     def _mysql_dump(self, output_path: Path):
         """Create MySQL dump."""
         cmd = [
@@ -191,28 +191,28 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
             output_path.write_text(result.stdout)
         else:
             raise RuntimeError(f"mysqldump failed: {result.stderr}")
-    
+
     def _sqlite_dump(self, output_path: Path):
         """Create SQLite backup."""
         # For SQLite, we can just copy the file from volume
         volume_path = f"{self.db_container}:/app/data.db"
         self.shell.run(["docker", "cp", volume_path, str(output_path)])
-    
+
     def restore(self, name: str, quick: bool = False) -> bool:
         """
         Restore database from snapshot.
-        
+
         Args:
             name: Snapshot name
             quick: If True, use volume-level restore (faster but more destructive)
         """
         if name not in self._snapshots:
             raise ValueError(f"Snapshot '{name}' not found")
-        
+
         snapshot_path = self.snapshot_dir / f"{name}.sql"
         if not snapshot_path.exists():
             raise FileNotFoundError(f"Snapshot file missing: {snapshot_path}")
-        
+
         if quick and self.db_type == "postgres":
             restored = self._quick_restore_postgres(snapshot_path)
         elif self.db_type == "postgres":
@@ -254,7 +254,7 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
                 "mysqladmin", "ping", "-u", self.db_user, "--silent",
             ]
         return ["true"]
-    
+
     def _postgres_restore(self, snapshot_path: Path) -> bool:
         """Restore PostgreSQL from SQL dump."""
         # Copy dump to container
@@ -264,23 +264,23 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
         ])
         if cp_result.returncode != 0:
             return False
-        
+
         # Restore - terminate connections first, then restore
         cmds = [
             # Drop and recreate DB (fastest for test scenarios)
-            ["docker", "exec", self.db_container, "psql", "-U", self.db_user, "-d", "postgres", "-c", 
+            ["docker", "exec", self.db_container, "psql", "-U", self.db_user, "-d", "postgres", "-c",
              f"DROP DATABASE IF EXISTS {self.db_name}; CREATE DATABASE {self.db_name};"],
             # Restore data
             ["docker", "exec", self.db_container, "psql", "-U", self.db_user, "-d", self.db_name, "-f", "/tmp/restore.sql"]
         ]
-        
+
         for cmd in cmds:
             result = self.shell.run(cmd)
             if result.returncode != 0:
                 print(f"Restore warning: {result.stderr[:200]}")
-        
+
         return True
-    
+
     def _quick_restore_postgres(self, snapshot_path: Path) -> bool:
         """
         Ultra-fast restore using volume manipulation.
@@ -292,14 +292,14 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
             self.db_container
         ])
         volume_name = result.stdout.strip()
-        
+
         if not volume_name:
             # Fallback to regular restore
             return self._postgres_restore(snapshot_path)
-        
+
         # Stop container
         self.shell.run(["docker", "stop", self.db_container])
-        
+
         # Run postgres in temporary container to load data
         load_cmd = [
             "docker", "run", "--rm",
@@ -307,17 +307,17 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
             "-v", f"{snapshot_path}:/restore.sql",
             "postgres:15",
             "bash", "-c",
-            f"rm -rf /var/lib/postgresql/data/* && pg_ctl initdb -D /var/lib/postgresql/data && "
-            f"pg_ctl start -D /var/lib/postgresql/data && "
-            f"psql -U postgres -f /restore.sql"
+            "rm -rf /var/lib/postgresql/data/* && pg_ctl initdb -D /var/lib/postgresql/data && "
+            "pg_ctl start -D /var/lib/postgresql/data && "
+            "psql -U postgres -f /restore.sql"
         ]
         result = self.shell.run(load_cmd)
-        
+
         # Start original container
         self.shell.run(["docker", "start", self.db_container])
-        
+
         return result.returncode == 0
-    
+
     def _mysql_restore(self, snapshot_path: Path) -> bool:
         """Restore MySQL database."""
         cp_result = self.shell.run([
@@ -326,14 +326,14 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
         ])
         if cp_result.returncode != 0:
             return False
-        
+
         result = self.shell.run([
             "docker", "exec", self.db_container,
             "mysql", "-u", self.db_user, self.db_name,
             "-e", "source /tmp/restore.sql"
         ])
         return result.returncode == 0
-    
+
     def _sqlite_restore(self, snapshot_path: Path) -> bool:
         """Restore SQLite database."""
         result = self.shell.run([
@@ -341,28 +341,28 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
             f"{self.db_container}:/app/data.db"
         ])
         return result.returncode == 0
-    
+
     def create_baseline(self, commit_sha: Optional[str] = None) -> SnapshotInfo:
         """Create a baseline snapshot (e.g., after migrations, before seed)."""
         name = "baseline" if not commit_sha else f"baseline_{commit_sha[:8]}"
         return self.create(name, commit_sha)
-    
+
     def list_snapshots(self) -> Dict[str, SnapshotInfo]:
         """List all available snapshots."""
         return dict(self._snapshots)
-    
+
     def delete(self, name: str) -> bool:
         """Delete a snapshot."""
         snapshot_path = self.snapshot_dir / f"{name}.sql"
         if snapshot_path.exists():
             snapshot_path.unlink()
-        
+
         if name in self._snapshots:
             del self._snapshots[name]
             self._save_metadata()
-        
+
         return True
-    
+
     def execute(self, action: str) -> SnapshotInfo:
         """Service interface: create baseline snapshot."""
         if action == "baseline":

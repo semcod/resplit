@@ -1,6 +1,6 @@
 from __future__ import annotations
 import os
-from typing import Optional, List, Dict
+from typing import Optional
 import litellm
 from dotenv import load_dotenv
 from rich.console import Console
@@ -15,7 +15,7 @@ class LLMService:
         load_dotenv()
         self.model = os.getenv("LLM_MODEL", "openrouter/qwen/qwen3-coder-next")
         self.api_key = os.getenv("OPENROUTER_API_KEY")
-        
+
         if not self.api_key:
             self.console.print("[yellow]⚠ OPENROUTER_API_KEY nie został znaleziony w .env. Funkcje AI będą wyłączone.[/yellow]")
 
@@ -25,9 +25,9 @@ class LLMService:
     def summarize_refactor_plan(self, suggestions_data: str) -> str:
         if not self.is_available():
             return "AI Summary unavailable (no API key)."
-            
+
         prompt = f"""
-        Analyze the following refactoring suggestions for a codebase and provide a concise, 
+        Analyze the following refactoring suggestions for a codebase and provide a concise,
         high-level executive summary. Focus on the architectural impact and the "why".
 
         Suggestions:
@@ -35,7 +35,7 @@ class LLMService:
 
         Summary:
         """
-        
+
         try:
             response = litellm.completion(
                 model=self.model,
@@ -63,7 +63,7 @@ class LLMService:
 
         PR Description:
         """
-        
+
         try:
             response = litellm.completion(
                 model=self.model,

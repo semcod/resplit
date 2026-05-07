@@ -13,6 +13,6 @@ flowchart TD
     rebuild__interfaces -->|2| rebuild__application
     rebuild__application -->|1| testql_scenarios__generated_from_pytests
     rebuild__application -->|1| Makefile
-    rebuild__interfaces -->|1| rebuild__infrastructure
     rebuild__interfaces -->|1| rebuild__plugins
     rebuild__interfaces -->|1| Makefile
+    rebuild__interfaces -->|1| rebuild__infrastructure

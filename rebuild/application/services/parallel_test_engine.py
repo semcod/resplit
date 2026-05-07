@@ -27,33 +27,33 @@ class EndpointDependency:
 class EndpointDependencyGraph:
     """
     Builds and manages endpoint dependency graph.
-    
+
     Example:
         /health → no deps, run first
         /auth/login → no deps, can parallel
         /user/profile → depends on /auth/login
         /dashboard → depends on /user/profile
     """
-    
+
     def __init__(self):
         self._deps: Dict[str, Set[str]] = defaultdict(set)
         self._reverse_deps: Dict[str, Set[str]] = defaultdict(set)
         self._critical: Set[str] = set()
         self._groups: Dict[str, str] = {}
-    
+
     def add_dependency(self, endpoint: str, depends_on: List[str], is_critical: bool = False):
         """Register endpoint dependency."""
         for dep in depends_on:
             self._deps[endpoint].add(dep)
             self._reverse_deps[dep].add(endpoint)
-        
+
         if is_critical:
             self._critical.add(endpoint)
-    
+
     def add_group(self, endpoint_pattern: str, group_name: str):
         """Assign endpoint to a test group."""
         self._groups[endpoint_pattern] = group_name
-    
+
     def get_execution_order(self, endpoints: List[Endpoint]) -> List[List[Endpoint]]:
         """
         Group endpoints into execution phases.
@@ -63,7 +63,7 @@ class EndpointDependencyGraph:
         remaining = set(ep.path for ep in endpoints)
         phases: List[List[Endpoint]] = []
         completed: Set[str] = set()
-        
+
         while remaining:
             # Find endpoints with all dependencies satisfied
             ready = []
@@ -71,21 +71,21 @@ class EndpointDependencyGraph:
                 deps = self._deps.get(path, set())
                 if deps.issubset(completed):
                     ready.append(path)
-            
+
             if not ready:
                 # Circular dependency or missing dep - run remaining anyway
                 ready = list(remaining)
-            
+
             # Convert to Endpoint objects
             phase_endpoints = [endpoint_map[p] for p in ready if p in endpoint_map]
             if phase_endpoints:
                 phases.append(phase_endpoints)
-            
+
             completed.update(ready)
             remaining -= set(ready)
-        
+
         return phases
-    
+
     def should_skip_due_to_failure(self, endpoint: str, failed: Set[str]) -> Optional[str]:
         """Check if endpoint should be skipped due to dependency failure."""
         for dep in self._deps.get(endpoint, []):
@@ -97,14 +97,14 @@ class EndpointDependencyGraph:
 class ParallelTestEngine:
     """
     High-performance parallel test execution.
-    
+
     Features:
     - Health-first: /health, /metrics run first, abort if fail
     - Dependency-aware: respects endpoint dependencies
     - Parallel batches: concurrent HTTP requests
     - Connection pooling: reuse connections
     """
-    
+
     def __init__(
         self,
         config: WalkConfig,
@@ -124,7 +124,7 @@ class ParallelTestEngine:
         self._session_loop: Optional[asyncio.AbstractEventLoop] = None
         self._session_thread: Optional[threading.Thread] = None
         self._setup_default_dependencies()
-    
+
     def open_session(self) -> None:
         """
         Start a persistent event loop in a background thread and create a
@@ -183,23 +183,23 @@ class ParallelTestEngine:
     def set_day_dir(self, day_dir: Path):
         """Set the output directory for the current day (screenshots, logs)."""
         self.day_dir = day_dir
-    
+
     def _setup_default_dependencies(self):
         """Configure sensible default dependencies."""
         # Health endpoints run first and are critical
         self.dependency_graph.add_dependency("/health", [], is_critical=True)
         self.dependency_graph.add_dependency("/api/health", ["/health"], is_critical=True)
         self.dependency_graph.add_dependency("/metrics", ["/health"])
-        
+
         # Auth is typically critical
         self.dependency_graph.add_dependency("/api/auth/*", [], is_critical=True)
         self.dependency_graph.add_dependency("/api/user/*", ["/api/auth/login"])
-        
+
         # Group endpoints
         self.dependency_graph.add_group("/health", "health")
         self.dependency_graph.add_group("/metrics", "health")
         self.dependency_graph.add_group("/api/health", "health")
-    
+
     async def execute(self, endpoints: List[Endpoint], client: Optional[httpx.AsyncClient] = None) -> List[EndpointResult]:
         """
         Execute all endpoint tests with parallelization.
@@ -210,7 +210,7 @@ class ParallelTestEngine:
             return []
 
         health_eps, other_eps = self._split_health_endpoints(endpoints)
-        
+
         results: Dict[str, EndpointResult] = {}
         failed: Set[str] = set()
 
@@ -302,7 +302,7 @@ class ParallelTestEngine:
             results[result.endpoint.path] = result
             if result.status != EndpointStatus.OK:
                 failed.add(result.endpoint.path)
-    
+
     def _is_health_endpoint(self, ep: Endpoint) -> bool:
         """Check if endpoint is a health check."""
         path_lower = ep.path.lower()
@@ -326,7 +326,7 @@ class ParallelTestEngine:
                         self._auth_token = token
         except Exception:
             pass  # Login failed, continue without token
-    
+
     async def _run_batch(
         self,
         endpoints: List[Endpoint],
@@ -344,12 +344,12 @@ class ParallelTestEngine:
         headers = dict(self.config.auth) if getattr(self.config, "auth", None) else {}
         if self._auth_token:
             headers["Authorization"] = f"Bearer {self._auth_token}"
-        
+
         limits = httpx.Limits(
             max_connections=self.max_concurrent * 2,
             max_keepalive_connections=self.max_concurrent
         )
-        
+
         async with httpx.AsyncClient(
             base_url=self.config.base_url,
             timeout=self.timeout,
@@ -383,15 +383,15 @@ class ParallelTestEngine:
 
             tasks = [run_with_limit(ep) for ep in endpoints]
             return await asyncio.gather(*tasks)
-    
+
     async def _test_single(self, client: httpx.AsyncClient, endpoint: Endpoint) -> EndpointResult:
         """Test a single endpoint."""
         start = time.perf_counter()
-        
+
         try:
             method = endpoint.method.upper() if endpoint.method else "GET"
             body = endpoint.body if isinstance(endpoint.body, dict) else None
-            
+
             if method == "GET":
                 response = await client.get(endpoint.path)
             elif method == "POST":
@@ -404,9 +404,9 @@ class ParallelTestEngine:
                 response = await client.delete(endpoint.path)
             else:
                 response = await client.request(method, endpoint.path)
-            
+
             duration = time.perf_counter() - start
-            
+
             # Determine status
             if response.status_code < 400:
                 status = EndpointStatus.OK
@@ -414,7 +414,7 @@ class ParallelTestEngine:
                 status = EndpointStatus.FAIL  # Client error = fail
             else:
                 status = EndpointStatus.FAIL  # Server error = fail
-            
+
             return EndpointResult(
                 endpoint=endpoint,
                 status=status,
@@ -422,7 +422,7 @@ class ParallelTestEngine:
                 error=response.text[:500] if status != EndpointStatus.OK else None,
                 response_time_ms=duration * 1000
             )
-            
+
         except httpx.TimeoutException:
             return EndpointResult(
                 endpoint=endpoint,
@@ -437,7 +437,7 @@ class ParallelTestEngine:
                 error=str(e)[:200],
                 response_time_ms=(time.perf_counter() - start) * 1000
             )
-    
+
     def execute_sync(self, endpoints: List[Endpoint]) -> List[EndpointResult]:
         """Synchronous wrapper for execute."""
         if self._session_loop is not None:

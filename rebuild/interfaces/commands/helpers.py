@@ -1,12 +1,28 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional, List
+from typing import Any, Dict, Iterable, Optional, List
 
+from click.core import ParameterSource
 from rich.console import Console
 from rich.table import Table
 
 from ...domain.day_result import DayResult
+
+
+def collect_cli_overrides(ctx: Any, names: Iterable[str]) -> Dict[str, bool]:
+    """Build a ``{param_name: was_explicitly_passed_on_cli}`` mapping.
+
+    Used by typer commands to distinguish CLI-provided values (which should
+    override `rebuild.yaml`) from defaults (which should not).
+
+    Replaces ~14 lines of duplicated ``ctx.get_parameter_source(...) ==
+    ParameterSource.COMMANDLINE`` boilerplate per command.
+    """
+    return {
+        name: ctx.get_parameter_source(name) == ParameterSource.COMMANDLINE
+        for name in names
+    }
 
 
 def print_report_links(output: Path, port: Optional[int], console: Console) -> None:
@@ -18,28 +34,12 @@ def print_report_links(output: Path, port: Optional[int], console: Console) -> N
 
 
 def compute_health_trend_labels(results: List[DayResult], regression_threshold: float = 20.0) -> List[str]:
-    labels: List[str] = []
-    previous_health: Optional[float] = None
-
-    for r in sorted(results, key=lambda x: x.day):
-        if previous_health is None:
-            labels.append("—")
-            previous_health = r.health_pct
-            continue
-
-        delta = round(r.health_pct - previous_health, 1)
-        if delta <= -regression_threshold:
-            labels.append(f"⚠ {delta:.1f}pp")
-        elif delta > 0:
-            labels.append(f"+{delta:.1f}pp")
-        elif delta < 0:
-            labels.append(f"{delta:.1f}pp")
-        else:
-            labels.append("0.0pp")
-
-        previous_health = r.health_pct
-
-    return labels
+    # Delegated to the canonical implementation (Sprint 2 / 2026-05-07).
+    # See `rebuild.application.services.regression_service` for details.
+    from ...application.services.regression_service import (
+        compute_health_trend_labels as _compute,
+    )
+    return _compute(results, regression_threshold)
 
 
 def compute_endpoint_count_trend_labels(results: List[DayResult], warning_threshold_pct: float = 10.0) -> List[str]:

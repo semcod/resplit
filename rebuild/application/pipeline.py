@@ -71,7 +71,7 @@ class Pipeline(BasePipeline):
         self._event_service.enable()
         self._emit("PIPELINE_STARTED", days=len(commits), repo=str(self.config.repo_path), replay=self.config.replay)
         self.log(f"Znaleziono [bold]{len(commits)}[/bold] dni z commitami.\n")
-        
+
         # Clone repo into output_dir/repo/ so original is never modified
         if not self.config.dry_run:
             if self.config.accelerator:

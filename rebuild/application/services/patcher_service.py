@@ -16,13 +16,13 @@ class PatcherService(Service[Path, int]):
         for df in dockerfiles:
             if self._patch_dockerfile(df):
                 patched_count += 1
-        
+
         # 2. Patch docker-compose files
         compose_files = list(repo.glob("**/docker-compose*.yml")) + list(repo.glob("**/docker-compose*.yaml"))
         for cf in compose_files:
             if self._patch_compose(cf):
                 patched_count += 1
-        
+
         return patched_count
 
     def apply_manual_overrides(self, patch_dir: Path, repo: Path) -> int:
@@ -50,7 +50,7 @@ class PatcherService(Service[Path, int]):
         try:
             content = path.read_text()
             original = content
-            
+
             # 1. Comment out install and build commands
             # Matches: RUN npm ci, RUN npm install, RUN npm run build, RUN npx vite build, etc.
             skip_patterns = [
@@ -63,14 +63,14 @@ class PatcherService(Service[Path, int]):
                 (r"(\bnpx\s+vite\s+build\b)", "true && mkdir -p dist build out"),
                 (r"(\bvite\s+build\b)", "true && mkdir -p dist build out")
             ]
-            
+
             for pattern, replacement in skip_patterns:
                 # Replace command with 'true' to skip but keep shell syntax intact
                 content = re.sub(pattern, replacement, content, flags=re.IGNORECASE)
-            
+
             # 2. Ensure node_modules are NOT deleted/overwritten if possible
             # (Usually just commenting out the install is enough as we COPY . .)
-            
+
             if content != original:
                 path.write_text(content)
                 return True
@@ -81,11 +81,11 @@ class PatcherService(Service[Path, int]):
         try:
             content = path.read_text()
             original = content
-            
+
             # 1. Remove fixed names (networks, volumes, containers)
             content = re.sub(r'^\s+name:\s+.*$', '', content, flags=re.MULTILINE)
             content = re.sub(r'^\s+container_name:\s+.*$', '', content, flags=re.MULTILINE)
-            
+
             # 2. Remove common DB port bindings to avoid host collisions
             # Matches: postgres:, db:, redis:, etc followed by ports: - "5432:5432"
             db_services = ["postgres", "db", "redis", "mysql", "mariadb", "mongo", "mongodb"]

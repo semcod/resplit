@@ -33,20 +33,20 @@ class TestSelection:
 class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
     """
     Selectively runs tests based on git diff analysis.
-    
+
     Instead of testing all endpoints for every commit:
     1. Analyze which files changed
     2. Map file paths to affected endpoints
     3. Only test impacted endpoints + critical paths
-    
+
     This gives massive speedup for large APIs where only small
     parts change between commits.
     """
-    
+
     def __init__(self, repo_path: Path, shell: Optional[ShellAdapter] = None):
         self.repo_path = repo_path
         self.shell = shell or ShellAdapter()
-        
+
         # Path patterns that affect specific endpoints
         self._path_patterns: Dict[str, List[str]] = {
             # FastAPI/Flask/Django patterns
@@ -59,12 +59,12 @@ class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
             r"core/config": ["/api/*"],  # Config changes affect everything
             r"main\.py": ["/api/*"],  # Entry point changes affect everything
         }
-        
+
         # Always-test endpoints (critical paths)
         self._critical_endpoints: Set[str] = {
             "/health", "/api/health", "/metrics"
         }
-    
+
     def analyze_changes(self, commit_from: str, commit_to: str) -> List[ChangedModule]:
         """
         Get list of changed files between two commits.
@@ -73,21 +73,21 @@ class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
             ["git", "diff", "--name-status", f"{commit_from}..{commit_to}"],
             cwd=self.repo_path
         )
-        
+
         if result.returncode != 0:
             return []
-        
+
         changes = []
         for line in result.stdout.strip().split("\n"):
             if not line:
                 continue
-            
+
             parts = line.split("\t")
             if not parts:
                 continue
-            
+
             change_type = parts[0][0]  # First char: A, M, D, R
-            
+
             if change_type == "R" and len(parts) >= 3:
                 # Rename: R100	old	new
                 old_path = Path(parts[1])
@@ -96,9 +96,9 @@ class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
             elif len(parts) >= 2:
                 path = Path(parts[1])
                 changes.append(ChangedModule(path, change_type))
-        
+
         return changes
-    
+
     def select_tests(
         self,
         all_endpoints: List[Endpoint],
@@ -182,35 +182,35 @@ class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
                 skipped.append((ep, "No affected code paths"))
 
         return to_test, skipped
-    
+
     def _path_matches(self, endpoint_path: str, pattern: str) -> bool:
         """Check if endpoint matches a path pattern."""
         # Convert glob-style pattern to check
         pattern = pattern.rstrip("*")
         return endpoint_path.startswith(pattern)
-    
+
     def add_mapping(self, file_pattern: str, affected_endpoints: List[str]):
         """Add custom file-to-endpoint mapping."""
         self._path_patterns[file_pattern] = affected_endpoints
-    
+
     def execute(self, commit_range: Tuple[str, str]) -> TestSelection:
         """
         Service interface: analyze diff and select tests.
         """
         commit_from, commit_to = commit_range
         changes = self.analyze_changes(commit_from, commit_to)
-        
+
         # Get all endpoints from scanner (would be passed in real usage)
         # For service interface, we return just the change analysis
         # The actual endpoint selection happens with select_tests()
-        
+
         return TestSelection(
             endpoints_to_test=[],
             skipped_endpoints=[],
             changed_modules=changes,
             confidence="high"
         )
-    
+
     def get_changed_modules(self, commit_from: str, commit_to: str) -> List[ChangedModule]:
         """Public method to get changed modules."""
         return self.analyze_changes(commit_from, commit_to)

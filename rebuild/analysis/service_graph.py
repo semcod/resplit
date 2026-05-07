@@ -5,7 +5,7 @@ import json
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Dict, Set, Optional, Tuple
+from typing import List, Dict, Set, Tuple
 
 from .duplication_engine import DuplicationEngine
 
@@ -29,22 +29,23 @@ class ServiceGraphBuilder:
     def build(self) -> Dict[str, ServiceNode]:
         # 1. Discover all services
         for f in self.services_dir.glob("**/*.py"):
-            if f.name == "__init__.py": continue
-            
+            if f.name == "__init__.py":
+                continue
+
             # Use relative path as name (e.g. services.git_service)
             rel = f.relative_to(self.services_dir.parent)
             name = str(rel).replace(os.sep, ".").replace(".py", "")
-            
+
             node = ServiceNode(name=name, path=f)
             self._analyze_file(node)
             self.nodes[name] = node
-            
+
         # 2. Build cross-references (dependents)
         for name, node in self.nodes.items():
             for dep in node.dependencies:
                 if dep in self.nodes:
                     self.nodes[dep].dependents.add(name)
-                    
+
         return self.nodes
 
     def _analyze_file(self, node: ServiceNode):

@@ -6,7 +6,7 @@ from __future__ import annotations
 import uuid
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
-from typing import Dict, Generic, List, Optional, Type, TypeVar
+from typing import Dict, Generic, Optional, Type, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
 

@@ -12,7 +12,7 @@ Examples:
 from __future__ import annotations
 import re
 from dataclasses import dataclass
-from typing import Optional, Dict, List, Tuple
+from typing import Dict, List, Tuple
 from enum import Enum
 
 

@@ -4,10 +4,8 @@ Base pipeline: shared state, event emit, and common services.
 from __future__ import annotations
 
 import json
-from pathlib import Path
-from typing import List, Optional, Set
+from typing import List, Set
 
-from ..domain.day_result import DayResult
 from ..domain.events import PipelineEvent  # Legacy for backward compatibility
 from ..domain.models import WalkConfig
 

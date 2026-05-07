@@ -5,62 +5,13 @@ stats:
   total_edges: 80
   modules_count: 26
 nodes:
-  rebuild.interfaces.cli.pr:
-    name: pr
-    module: rebuild.interfaces.cli
-    line: 507
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 0
-  rebuild.application.services.pr_service.load_config_from_env:
-    name: load_config_from_env
-    module: rebuild.application.services.pr_service
-    line: 155
-    cyclomatic_complexity: 4
-    calls_out: 11
-    calls_in: 1
-  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index:
-    name: save_timeline_index
-    module: rebuild.application.services.reporting.reporter
-    line: 200
-    cyclomatic_complexity: 14
-    calls_out: 23
-    calls_in: 0
-  rebuild.application.services.notification_service.NotificationService._build_body:
-    name: _build_body
-    module: rebuild.application.services.notification_service
-    line: 209
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 0
-  rebuild.interfaces.cli.serve:
-    name: serve
-    module: rebuild.interfaces.cli
-    line: 183
-    cyclomatic_complexity: 2
-    calls_out: 9
-    calls_in: 0
-  scripts.bump_version.bump:
-    name: bump
+  scripts.bump_version.update_changelog:
+    name: update_changelog
     module: scripts.bump_version
-    line: 41
+    line: 171
     cyclomatic_complexity: 5
-    calls_out: 7
+    calls_out: 14
     calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  rebuild.interfaces.cli.evolution:
-    name: evolution
-    module: rebuild.interfaces.cli
-    line: 328
-    cyclomatic_complexity: 2
-    calls_out: 12
-    calls_in: 0
   rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore:
     name: _postgres_restore
     module: rebuild.application.services.db_snapshot_manager
@@ -68,19 +19,26 @@ nodes:
     cyclomatic_complexity: 4
     calls_out: 4
     calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 77
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.domain.dsl_v2.DSLShell._process:
-    name: _process
-    module: rebuild.domain.dsl_v2
-    line: 420
+  scripts.bump_version.update_init:
+    name: update_init
+    module: scripts.bump_version
+    line: 56
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  rebuild.interfaces.commands.walk_command._print_walk_header:
+    name: _print_walk_header
+    module: rebuild.interfaces.commands.walk_command
+    line: 165
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  rebuild.interfaces.cli.plugins:
+    name: plugins
+    module: rebuild.interfaces.cli
+    line: 526
     cyclomatic_complexity: 7
-    calls_out: 11
+    calls_out: 22
     calls_in: 0
   rebuild.interfaces.commands.refactor_command.execute_command:
     name: execute_command
@@ -89,11 +47,263 @@ nodes:
     cyclomatic_complexity: 6
     calls_out: 7
     calls_in: 1
-  rebuild.interfaces.commands.analyze_command.duplicates_command:
-    name: duplicates_command
+  rebuild.interfaces.cli.execute:
+    name: execute
+    module: rebuild.interfaces.cli
+    line: 516
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  rebuild.interfaces.commands.analyze_command.vector_query_command:
+    name: vector_query_command
     module: rebuild.interfaces.commands.analyze_command
-    line: 12
+    line: 71
+    cyclomatic_complexity: 9
+    calls_out: 20
+    calls_in: 1
+  rebuild.application.services.notification_service._build_discord_payload:
+    name: _build_discord_payload
+    module: rebuild.application.services.notification_service
+    line: 73
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  rebuild.interfaces.commands.analyze_command.truth_command:
+    name: truth_command
+    module: rebuild.interfaces.commands.analyze_command
+    line: 223
+    cyclomatic_complexity: 3
+    calls_out: 17
+    calls_in: 1
+  rebuild.application.services.notification_service._build_slack_payload:
+    name: _build_slack_payload
+    module: rebuild.application.services.notification_service
+    line: 54
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  rebuild.interfaces.tui.app.launch_tui:
+    name: launch_tui
+    module: rebuild.interfaces.tui.app
+    line: 51
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.domain.dsl_v2.DSLShell.run:
+    name: run
+    module: rebuild.domain.dsl_v2
+    line: 399
     cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 0
+  rebuild.interfaces.commands.refactor_command.pr_command:
+    name: pr_command
+    module: rebuild.interfaces.commands.refactor_command
+    line: 60
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 1
+  rebuild.application.services.notification_service.NotificationService._build_body:
+    name: _build_body
+    module: rebuild.application.services.notification_service
+    line: 209
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 0
+  rebuild.application.services.notification_service.NotificationService.notify:
+    name: notify
+    module: rebuild.application.services.notification_service
+    line: 148
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 0
+  scripts.bump_version.build_new_section:
+    name: build_new_section
+    module: scripts.bump_version
+    line: 146
+    cyclomatic_complexity: 7
+    calls_out: 14
+    calls_in: 1
+  rebuild.interfaces.cli.multi_repo:
+    name: multi_repo
+    module: rebuild.interfaces.cli
+    line: 461
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  scripts.bump_version.collect_unreleased_entries:
+    name: collect_unreleased_entries
+    module: scripts.bump_version
+    line: 82
+    cyclomatic_complexity: 7
+    calls_out: 6
+    calls_in: 1
+  rebuild.plugins.registry.load_plugins:
+    name: load_plugins
+    module: rebuild.plugins.registry
+    line: 139
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  rebuild.interfaces.cli.pr:
+    name: pr
+    module: rebuild.interfaces.cli
+    line: 507
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  rebuild.interfaces.commands.walk_command._parse_date:
+    name: _parse_date
+    module: rebuild.interfaces.commands.walk_command
+    line: 123
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 4
+  rebuild.interfaces.commands.helpers.print_report_links:
+    name: print_report_links
+    module: rebuild.interfaces.commands.helpers
+    line: 12
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 3
+  rebuild.interfaces.dashboard.get_cc_for_day:
+    name: get_cc_for_day
+    module: rebuild.interfaces.dashboard
+    line: 27
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  rebuild.application.services.notification_service._send_webhook:
+    name: _send_webhook
+    module: rebuild.application.services.notification_service
+    line: 99
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  rebuild.plugins.registry._load_entry_points:
+    name: _load_entry_points
+    module: rebuild.plugins.registry
+    line: 21
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 2
+  scripts.bump_version.main:
+    name: main
+    module: scripts.bump_version
+    line: 203
+    cyclomatic_complexity: 4
+    calls_out: 20
+    calls_in: 0
+  rebuild.domain.mvp_protocol.MVPServer.start:
+    name: start
+    module: rebuild.domain.mvp_protocol
+    line: 247
+    cyclomatic_complexity: 1
+    calls_out: 23
+    calls_in: 0
+  Makefile.print:
+    name: print
+    module: Makefile
+    line: 78
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 25
+  rebuild.interfaces.commands.walk_command._apply_cli_overrides:
+    name: _apply_cli_overrides
+    module: rebuild.interfaces.commands.walk_command
+    line: 143
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  rebuild.interfaces.cli.serve:
+    name: serve
+    module: rebuild.interfaces.cli
+    line: 183
+    cyclomatic_complexity: 2
+    calls_out: 9
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day:
+    name: _save_html_day
+    module: rebuild.application.services.reporting.reporter
+    line: 66
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  rebuild.interfaces.cli.dashboard:
+    name: dashboard
+    module: rebuild.interfaces.cli
+    line: 140
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 0
+  rebuild.interfaces.dashboard._extract_avg_cc:
+    name: _extract_avg_cc
+    module: rebuild.interfaces.dashboard
+    line: 45
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  scripts.bump_version.read_version:
+    name: read_version
+    module: scripts.bump_version
+    line: 33
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 2
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.cli.evolution:
+    name: evolution
+    module: rebuild.interfaces.cli
+    line: 328
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 0
+  rebuild.interfaces.commands.refactor_command.plan_command:
+    name: plan_command
+    module: rebuild.interfaces.commands.refactor_command
+    line: 32
+    cyclomatic_complexity: 11
+    calls_out: 19
+    calls_in: 1
+  rebuild.application.services.reporting.reporter.ReporterService.save_day:
+    name: save_day
+    module: rebuild.application.services.reporting.reporter
+    line: 54
+    cyclomatic_complexity: 2
+    calls_out: 9
+    calls_in: 0
+  rebuild.interfaces.commands.analyze_command.vector_build_command:
+    name: vector_build_command
+    module: rebuild.interfaces.commands.analyze_command
+    line: 47
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 1
+  rebuild.application.base_pipeline.BasePipeline.__init__:
+    name: __init__
+    module: rebuild.application.base_pipeline
+    line: 34
+    cyclomatic_complexity: 1
+    calls_out: 9
+    calls_in: 0
+  rebuild.interfaces.commands.walk_command._handle_walk_results:
+    name: _handle_walk_results
+    module: rebuild.interfaces.commands.walk_command
+    line: 174
+    cyclomatic_complexity: 4
     calls_out: 10
     calls_in: 1
   rebuild.interfaces.commands.helpers.serve_reports:
@@ -103,222 +313,26 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 28
     calls_in: 3
-  rebuild.interfaces.commands.analyze_command.vector_query_command:
-    name: vector_query_command
-    module: rebuild.interfaces.commands.analyze_command
-    line: 71
-    cyclomatic_complexity: 9
-    calls_out: 20
-    calls_in: 1
-  rebuild.application.services.reporting.formatters.classify_error:
-    name: classify_error
-    module: rebuild.application.services.reporting.formatters
-    line: 62
-    cyclomatic_complexity: 5
-    calls_out: 2
-    calls_in: 1
-  rebuild.domain.mvp_protocol.MVPServer.start:
-    name: start
-    module: rebuild.domain.mvp_protocol
-    line: 247
-    cyclomatic_complexity: 1
-    calls_out: 23
-    calls_in: 0
-  rebuild.interfaces.tui.app.launch_tui:
-    name: launch_tui
-    module: rebuild.interfaces.tui.app
-    line: 51
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 1
-  rebuild.interfaces.commands.walk_command._load_yaml_config:
-    name: _load_yaml_config
-    module: rebuild.interfaces.commands.walk_command
-    line: 127
-    cyclomatic_complexity: 5
-    calls_out: 8
-    calls_in: 1
-  rebuild.plugins.registry._load_entry_points:
-    name: _load_entry_points
-    module: rebuild.plugins.registry
-    line: 21
-    cyclomatic_complexity: 4
-    calls_out: 5
-    calls_in: 2
-  scripts.bump_version.build_new_section:
-    name: build_new_section
-    module: scripts.bump_version
-    line: 146
-    cyclomatic_complexity: 7
-    calls_out: 14
-    calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  rebuild.application.services.reporting.reporter.ReporterService.to_yaml:
-    name: to_yaml
-    module: rebuild.application.services.reporting.reporter
-    line: 48
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 3
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 85
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  scripts.bump_version.update_changelog:
-    name: update_changelog
-    module: scripts.bump_version
-    line: 171
-    cyclomatic_complexity: 5
-    calls_out: 14
-    calls_in: 1
-  scripts.bump_version.get_git_log_since_last_tag:
-    name: get_git_log_since_last_tag
-    module: scripts.bump_version
-    line: 99
-    cyclomatic_complexity: 7
-    calls_out: 7
-    calls_in: 1
-  testql-scenarios.generated-from-pytests.testql.toon.all:
-    name: all
-    module: testql-scenarios.generated-from-pytests.testql.toon
-    line: 28
-    cyclomatic_complexity: 0
-    calls_out: 0
-    calls_in: 1
-  rebuild.interfaces.commands.walk_command._apply_cli_overrides:
-    name: _apply_cli_overrides
-    module: rebuild.interfaces.commands.walk_command
-    line: 143
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 1
-  rebuild.plugins.registry.load_plugins:
-    name: load_plugins
-    module: rebuild.plugins.registry
-    line: 139
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 1
-  rebuild.interfaces.cli.vector_query:
-    name: vector_query
+  rebuild.interfaces.cli.duplicates:
+    name: duplicates
     module: rebuild.interfaces.cli
-    line: 448
+    line: 422
     cyclomatic_complexity: 1
-    calls_out: 8
-    calls_in: 0
-  rebuild.interfaces.commands.analyze_command.truth_command:
-    name: truth_command
-    module: rebuild.interfaces.commands.analyze_command
-    line: 223
-    cyclomatic_complexity: 3
-    calls_out: 17
-    calls_in: 1
-  rebuild.interfaces.cli.execute:
-    name: execute
-    module: rebuild.interfaces.cli
-    line: 516
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  rebuild.interfaces.commands.walk_command._fire_notifications:
-    name: _fire_notifications
-    module: rebuild.interfaces.commands.walk_command
-    line: 200
-    cyclomatic_complexity: 12
     calls_out: 9
-    calls_in: 1
-  scripts.bump_version.update_init:
-    name: update_init
-    module: scripts.bump_version
-    line: 56
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 1
-  rebuild.application.services.reporting.chart_builder.generate_endpoint_diff:
-    name: generate_endpoint_diff
-    module: rebuild.application.services.reporting.chart_builder
-    line: 45
-    cyclomatic_complexity: 12
-    calls_out: 12
-    calls_in: 1
-  scripts.bump_version.main:
-    name: main
-    module: scripts.bump_version
-    line: 203
-    cyclomatic_complexity: 4
-    calls_out: 20
     calls_in: 0
-  rebuild.interfaces.dashboard.generate_dashboard:
-    name: generate_dashboard
-    module: rebuild.interfaces.dashboard
-    line: 60
-    cyclomatic_complexity: 5
-    calls_out: 9
-    calls_in: 3
-  rebuild.interfaces.cli.services:
-    name: services
-    module: rebuild.interfaces.cli
-    line: 472
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  rebuild.interfaces.commands.walk_command._parse_date:
-    name: _parse_date
+  rebuild.interfaces.commands.walk_command.walk_command:
+    name: walk_command
     module: rebuild.interfaces.commands.walk_command
-    line: 123
+    line: 17
     cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 4
-  rebuild.application.services.reporting.formatters._classify_error_text:
-    name: _classify_error_text
-    module: rebuild.application.services.reporting.formatters
-    line: 81
-    cyclomatic_complexity: 4
-    calls_out: 2
-    calls_in: 1
-  rebuild.interfaces.cli.vector_build:
-    name: vector_build
-    module: rebuild.interfaces.cli
-    line: 436
-    cyclomatic_complexity: 1
-    calls_out: 8
-    calls_in: 0
-  rebuild.application.services.reporting.chart_builder.generate_trend_chart:
-    name: generate_trend_chart
-    module: rebuild.application.services.reporting.chart_builder
-    line: 8
-    cyclomatic_complexity: 8
     calls_out: 11
     calls_in: 1
-  rebuild.interfaces.cli._resolve_pr_config:
-    name: _resolve_pr_config
-    module: rebuild.interfaces.cli
-    line: 248
-    cyclomatic_complexity: 6
-    calls_out: 8
-    calls_in: 1
-  rebuild.application.services.reporting.reporter.ReporterService.save_day:
-    name: save_day
-    module: rebuild.application.services.reporting.reporter
-    line: 54
-    cyclomatic_complexity: 2
-    calls_out: 9
-    calls_in: 0
-  scripts.bump_version.update_pyproject:
-    name: update_pyproject
-    module: scripts.bump_version
-    line: 68
-    cyclomatic_complexity: 3
-    calls_out: 6
+  rebuild.interfaces.evolution_viz._render_html:
+    name: _render_html
+    module: rebuild.interfaces.evolution_viz
+    line: 31
+    cyclomatic_complexity: 1
+    calls_out: 4
     calls_in: 1
   rebuild.application.services.notification_service._build_generic_payload:
     name: _build_generic_payload
@@ -327,76 +341,13 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 0
     calls_in: 1
-  rebuild.interfaces.cli.truth:
-    name: truth
-    module: rebuild.interfaces.cli
-    line: 482
-    cyclomatic_complexity: 1
-    calls_out: 6
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 77
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.interfaces.commands.walk_command._handle_walk_results:
-    name: _handle_walk_results
-    module: rebuild.interfaces.commands.walk_command
-    line: 174
-    cyclomatic_complexity: 4
-    calls_out: 10
-    calls_in: 1
-  rebuild.interfaces.commands.walk_command._resolve_deploy_method:
-    name: _resolve_deploy_method
-    module: rebuild.interfaces.commands.walk_command
-    line: 78
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 1
-  rebuild.interfaces.commands.refactor_command._generate_refactor_plan:
-    name: _generate_refactor_plan
-    module: rebuild.interfaces.commands.refactor_command
-    line: 11
-    cyclomatic_complexity: 5
-    calls_out: 12
-    calls_in: 3
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 60
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  rebuild.interfaces.commands.helpers.print_report_links:
-    name: print_report_links
-    module: rebuild.interfaces.commands.helpers
-    line: 12
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 3
-  rebuild.interfaces.cli.multi_repo:
-    name: multi_repo
-    module: rebuild.interfaces.cli
-    line: 461
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+  rebuild.application.services.reporting.formatters._classify_error_text:
+    name: _classify_error_text
+    module: rebuild.application.services.reporting.formatters
     line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.plugins.registry.PluginRegistry.discover:
-    name: discover
-    module: rebuild.plugins.registry
-    line: 65
-    cyclomatic_complexity: 7
-    calls_out: 10
-    calls_in: 0
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 1
   scripts.bump_version.categorize_commits:
     name: categorize_commits
     module: scripts.bump_version
@@ -404,194 +355,47 @@ nodes:
     cyclomatic_complexity: 14
     calls_out: 15
     calls_in: 1
-  rebuild.application.services.reporting.reporter.ReporterService.to_toon:
-    name: to_toon
-    module: rebuild.application.services.reporting.reporter
-    line: 51
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 85
     cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 3
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html:
+    calls_out: 3
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html:
     name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
     line: 56
     cyclomatic_complexity: 2
     calls_out: 1
     calls_in: 2
-  rebuild.application.services.notification_service._build_slack_payload:
-    name: _build_slack_payload
-    module: rebuild.application.services.notification_service
-    line: 54
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 1
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day:
-    name: _save_html_day
-    module: rebuild.application.services.reporting.reporter
-    line: 66
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 0
-  rebuild.interfaces.dashboard._extract_avg_cc:
-    name: _extract_avg_cc
-    module: rebuild.interfaces.dashboard
-    line: 45
-    cyclomatic_complexity: 5
-    calls_out: 6
-    calls_in: 1
-  rebuild.application.services.notification_service.NotificationService.notify:
-    name: notify
-    module: rebuild.application.services.notification_service
-    line: 148
-    cyclomatic_complexity: 5
-    calls_out: 6
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.interfaces.commands.analyze_command.multi_repo_command:
-    name: multi_repo_command
-    module: rebuild.interfaces.commands.analyze_command
-    line: 117
-    cyclomatic_complexity: 14
-    calls_out: 44
-    calls_in: 1
-  rebuild.interfaces.commands.walk_command.walk_command:
-    name: walk_command
-    module: rebuild.interfaces.commands.walk_command
-    line: 17
-    cyclomatic_complexity: 2
-    calls_out: 11
-    calls_in: 1
-  rebuild.interfaces.cli.tui:
-    name: tui
+  rebuild.interfaces.cli.vector_query:
+    name: vector_query
     module: rebuild.interfaces.cli
-    line: 197
+    line: 448
     cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 0
-  rebuild.interfaces.cli.dashboard:
-    name: dashboard
-    module: rebuild.interfaces.cli
-    line: 140
-    cyclomatic_complexity: 2
-    calls_out: 10
-    calls_in: 0
-  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row:
-    name: _endpoint_row
-    module: rebuild.application.services.reporting.reporter
-    line: 146
-    cyclomatic_complexity: 7
-    calls_out: 4
-    calls_in: 0
-  rebuild.interfaces.dashboard.get_cc_for_day:
-    name: get_cc_for_day
-    module: rebuild.interfaces.dashboard
-    line: 27
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.interfaces.cli.duplicates:
-    name: duplicates
-    module: rebuild.interfaces.cli
-    line: 422
-    cyclomatic_complexity: 1
-    calls_out: 9
-    calls_in: 0
-  rebuild.interfaces.commands.analyze_command.services_command:
-    name: services_command
-    module: rebuild.interfaces.commands.analyze_command
-    line: 185
-    cyclomatic_complexity: 9
-    calls_out: 25
-    calls_in: 1
-  rebuild.interfaces.cli.plan:
-    name: plan
-    module: rebuild.interfaces.cli
-    line: 497
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  rebuild.interfaces.commands.analyze_command.vector_build_command:
-    name: vector_build_command
-    module: rebuild.interfaces.commands.analyze_command
-    line: 47
-    cyclomatic_complexity: 2
     calls_out: 8
-    calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 77
-    cyclomatic_complexity: 1
-    calls_out: 3
     calls_in: 0
-  rebuild.interfaces.evolution_viz._render_html:
-    name: _render_html
-    module: rebuild.interfaces.evolution_viz
-    line: 31
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 1
-  rebuild.interfaces.cli.plugins:
-    name: plugins
-    module: rebuild.interfaces.cli
-    line: 526
-    cyclomatic_complexity: 7
-    calls_out: 22
-    calls_in: 0
-  scripts.bump_version.read_version:
-    name: read_version
+  scripts.bump_version.get_git_log_since_last_tag:
+    name: get_git_log_since_last_tag
     module: scripts.bump_version
-    line: 33
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
+    line: 99
+    cyclomatic_complexity: 7
+    calls_out: 7
+    calls_in: 1
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index:
+    name: save_timeline_index
+    module: rebuild.application.services.reporting.reporter
+    line: 200
+    cyclomatic_complexity: 14
+    calls_out: 23
     calls_in: 0
-  rebuild.application.services.reporting.formatters.status_badge:
-    name: status_badge
-    module: rebuild.application.services.reporting.formatters
-    line: 45
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  rebuild.interfaces.commands.walk_command._ensure_git_repo:
-    name: _ensure_git_repo
-    module: rebuild.interfaces.commands.walk_command
-    line: 72
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 1
-  rebuild.application.services.event_service.get_event_service:
-    name: get_event_service
-    module: rebuild.application.services.event_service
-    line: 112
-    cyclomatic_complexity: 1
+  testql-scenarios.generated-from-pytests.testql.toon.all:
+    name: all
+    module: testql-scenarios.generated-from-pytests.testql.toon
+    line: 28
+    cyclomatic_complexity: 0
     calls_out: 0
-    calls_in: 2
-  scripts.bump_version.collect_unreleased_entries:
-    name: collect_unreleased_entries
-    module: scripts.bump_version
-    line: 82
-    cyclomatic_complexity: 7
-    calls_out: 6
     calls_in: 1
   rebuild.interfaces.dashboard._render_html:
     name: _render_html
@@ -600,41 +404,216 @@ nodes:
     cyclomatic_complexity: 4
     calls_out: 4
     calls_in: 1
-  rebuild.application.base_pipeline.BasePipeline.__init__:
-    name: __init__
-    module: rebuild.application.base_pipeline
-    line: 34
-    cyclomatic_complexity: 1
-    calls_out: 9
-    calls_in: 0
-  rebuild.interfaces.commands.walk_command._build_walk_config:
-    name: _build_walk_config
+  rebuild.interfaces.commands.walk_command._fire_notifications:
+    name: _fire_notifications
     module: rebuild.interfaces.commands.walk_command
-    line: 87
+    line: 200
+    cyclomatic_complexity: 12
+    calls_out: 9
+    calls_in: 1
+  rebuild.application.services.reporting.formatters.classify_error:
+    name: classify_error
+    module: rebuild.application.services.reporting.formatters
+    line: 62
+    cyclomatic_complexity: 5
+    calls_out: 2
+    calls_in: 1
+  rebuild.interfaces.commands.walk_command._resolve_deploy_method:
+    name: _resolve_deploy_method
+    module: rebuild.interfaces.commands.walk_command
+    line: 78
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  rebuild.application.services.reporting.chart_builder.generate_trend_chart:
+    name: generate_trend_chart
+    module: rebuild.application.services.reporting.chart_builder
+    line: 8
+    cyclomatic_complexity: 8
+    calls_out: 11
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 81
     cyclomatic_complexity: 1
     calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.cli.plan:
+    name: plan
+    module: rebuild.interfaces.cli
+    line: 497
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  rebuild.interfaces.commands.walk_command._ensure_git_repo:
+    name: _ensure_git_repo
+    module: rebuild.interfaces.commands.walk_command
+    line: 72
+    cyclomatic_complexity: 2
+    calls_out: 3
     calls_in: 1
-  rebuild.domain.dsl_v2.DSLShell.run:
-    name: run
-    module: rebuild.domain.dsl_v2
-    line: 399
+  rebuild.plugins.registry.PluginRegistry.discover:
+    name: discover
+    module: rebuild.plugins.registry
+    line: 65
     cyclomatic_complexity: 7
     calls_out: 10
     calls_in: 0
-  rebuild.interfaces.commands.walk_command._print_walk_header:
-    name: _print_walk_header
-    module: rebuild.interfaces.commands.walk_command
-    line: 165
-    cyclomatic_complexity: 2
-    calls_out: 5
+  rebuild.interfaces.commands.analyze_command.multi_repo_command:
+    name: multi_repo_command
+    module: rebuild.interfaces.commands.analyze_command
+    line: 117
+    cyclomatic_complexity: 14
+    calls_out: 44
     calls_in: 1
-  rebuild.application.services.notification_service._build_discord_payload:
-    name: _build_discord_payload
-    module: rebuild.application.services.notification_service
-    line: 73
-    cyclomatic_complexity: 2
+  rebuild.application.services.event_service.get_event_service:
+    name: get_event_service
+    module: rebuild.application.services.event_service
+    line: 112
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 2
+  rebuild.application.services.reporting.formatters.status_badge:
+    name: status_badge
+    module: rebuild.application.services.reporting.formatters
+    line: 45
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  rebuild.interfaces.cli.truth:
+    name: truth
+    module: rebuild.interfaces.cli
+    line: 482
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  rebuild.application.services.reporting.chart_builder.generate_endpoint_diff:
+    name: generate_endpoint_diff
+    module: rebuild.application.services.reporting.chart_builder
+    line: 45
+    cyclomatic_complexity: 12
+    calls_out: 12
+    calls_in: 1
+  rebuild.interfaces.cli.tui:
+    name: tui
+    module: rebuild.interfaces.cli
+    line: 197
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row:
+    name: _endpoint_row
+    module: rebuild.application.services.reporting.reporter
+    line: 146
+    cyclomatic_complexity: 7
+    calls_out: 4
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 77
+    cyclomatic_complexity: 1
     calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.commands.refactor_command._generate_refactor_plan:
+    name: _generate_refactor_plan
+    module: rebuild.interfaces.commands.refactor_command
+    line: 11
+    cyclomatic_complexity: 5
+    calls_out: 12
+    calls_in: 3
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.commands.analyze_command.services_command:
+    name: services_command
+    module: rebuild.interfaces.commands.analyze_command
+    line: 185
+    cyclomatic_complexity: 9
+    calls_out: 25
     calls_in: 1
+  rebuild.interfaces.cli.services:
+    name: services
+    module: rebuild.interfaces.cli
+    line: 472
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService.to_yaml:
+    name: to_yaml
+    module: rebuild.application.services.reporting.reporter
+    line: 48
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 60
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  scripts.bump_version.update_pyproject:
+    name: update_pyproject
+    module: scripts.bump_version
+    line: 68
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  scripts.bump_version.bump:
+    name: bump
+    module: scripts.bump_version
+    line: 41
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 1
+  rebuild.application.services.pr_service.load_config_from_env:
+    name: load_config_from_env
+    module: rebuild.application.services.pr_service
+    line: 155
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  rebuild.application.services.reporting.reporter.ReporterService.to_toon:
+    name: to_toon
+    module: rebuild.application.services.reporting.reporter
+    line: 51
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  rebuild.interfaces.dashboard.generate_dashboard:
+    name: generate_dashboard
+    module: rebuild.interfaces.dashboard
+    line: 60
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 3
   rebuild.interfaces.evolution_viz.generate_evolution_html:
     name: generate_evolution_html
     module: rebuild.interfaces.evolution_viz
@@ -642,27 +621,48 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 7
     calls_in: 1
-  rebuild.interfaces.commands.refactor_command.pr_command:
-    name: pr_command
-    module: rebuild.interfaces.commands.refactor_command
-    line: 60
-    cyclomatic_complexity: 4
+  rebuild.interfaces.cli.vector_build:
+    name: vector_build
+    module: rebuild.interfaces.cli
+    line: 436
+    cyclomatic_complexity: 1
+    calls_out: 8
+    calls_in: 0
+  rebuild.interfaces.commands.walk_command._load_yaml_config:
+    name: _load_yaml_config
+    module: rebuild.interfaces.commands.walk_command
+    line: 127
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 1
+  rebuild.domain.dsl_v2.DSLShell._process:
+    name: _process
+    module: rebuild.domain.dsl_v2
+    line: 420
+    cyclomatic_complexity: 7
     calls_out: 11
+    calls_in: 0
+  rebuild.interfaces.commands.analyze_command.duplicates_command:
+    name: duplicates_command
+    module: rebuild.interfaces.commands.analyze_command
+    line: 12
+    cyclomatic_complexity: 7
+    calls_out: 10
     calls_in: 1
-  rebuild.application.services.notification_service._send_webhook:
-    name: _send_webhook
-    module: rebuild.application.services.notification_service
-    line: 99
-    cyclomatic_complexity: 3
-    calls_out: 6
+  rebuild.interfaces.commands.walk_command._build_walk_config:
+    name: _build_walk_config
+    module: rebuild.interfaces.commands.walk_command
+    line: 87
+    cyclomatic_complexity: 1
+    calls_out: 3
     calls_in: 1
-  rebuild.interfaces.commands.refactor_command.plan_command:
-    name: plan_command
-    module: rebuild.interfaces.commands.refactor_command
-    line: 32
-    cyclomatic_complexity: 11
-    calls_out: 19
-    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
   rebuild.interfaces.commands.helpers.print_summary_table:
     name: print_summary_table
     module: rebuild.interfaces.commands.helpers
@@ -670,13 +670,13 @@ nodes:
     cyclomatic_complexity: 9
     calls_out: 20
     calls_in: 2
-  Makefile.print:
-    name: print
-    module: Makefile
-    line: 78
-    cyclomatic_complexity: 0
-    calls_out: 0
-    calls_in: 25
+  rebuild.interfaces.cli._resolve_pr_config:
+    name: _resolve_pr_config
+    module: rebuild.interfaces.cli
+    line: 248
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 1
 edges:
 - caller: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
   callee: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
@@ -762,42 +762,6 @@ edges:
 - caller: rebuild.application.services.notification_service.NotificationService._build_body
   callee: rebuild.application.services.notification_service._build_discord_payload
   call_type: resolved
-- caller: rebuild.plugins.registry.PluginRegistry.discover
-  callee: rebuild.plugins.registry._load_entry_points
-  call_type: resolved
-- caller: rebuild.interfaces.dashboard.get_cc_for_day
-  callee: rebuild.interfaces.dashboard._extract_avg_cc
-  call_type: resolved
-- caller: rebuild.interfaces.dashboard.generate_dashboard
-  callee: rebuild.interfaces.dashboard._render_html
-  call_type: resolved
-- caller: rebuild.interfaces.dashboard.generate_dashboard
-  callee: rebuild.interfaces.dashboard.get_cc_for_day
-  call_type: resolved
-- caller: rebuild.interfaces.evolution_viz.generate_evolution_html
-  callee: rebuild.interfaces.evolution_viz._render_html
-  call_type: resolved
-- caller: rebuild.interfaces.commands.helpers.serve_reports
-  callee: rebuild.application.services.event_service.get_event_service
-  call_type: resolved
-- caller: rebuild.interfaces.commands.refactor_command.plan_command
-  callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  call_type: resolved
-- caller: rebuild.interfaces.commands.refactor_command.pr_command
-  callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  call_type: resolved
-- caller: rebuild.interfaces.commands.refactor_command.execute_command
-  callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  call_type: resolved
-- caller: rebuild.domain.mvp_protocol.MVPServer.start
-  callee: Makefile.print
-  call_type: resolved
-- caller: rebuild.domain.dsl_v2.DSLShell.run
-  callee: Makefile.print
-  call_type: resolved
-- caller: rebuild.domain.dsl_v2.DSLShell._process
-  callee: Makefile.print
-  call_type: resolved
 - caller: rebuild.application.services.reporting.reporter.ReporterService.save_day
   callee: rebuild.application.services.reporting.reporter.ReporterService.to_yaml
   call_type: resolved
@@ -824,6 +788,18 @@ edges:
   call_type: resolved
 - caller: rebuild.application.services.reporting.formatters.classify_error
   callee: rebuild.application.services.reporting.formatters._classify_error_text
+  call_type: resolved
+- caller: rebuild.plugins.registry.PluginRegistry.discover
+  callee: rebuild.plugins.registry._load_entry_points
+  call_type: resolved
+- caller: rebuild.interfaces.dashboard.get_cc_for_day
+  callee: rebuild.interfaces.dashboard._extract_avg_cc
+  call_type: resolved
+- caller: rebuild.interfaces.dashboard.generate_dashboard
+  callee: rebuild.interfaces.dashboard._render_html
+  call_type: resolved
+- caller: rebuild.interfaces.dashboard.generate_dashboard
+  callee: rebuild.interfaces.dashboard.get_cc_for_day
   call_type: resolved
 - caller: rebuild.interfaces.cli.dashboard
   callee: rebuild.interfaces.dashboard.generate_dashboard
@@ -873,6 +849,12 @@ edges:
 - caller: rebuild.interfaces.cli.plugins
   callee: rebuild.plugins.registry.load_plugins
   call_type: resolved
+- caller: rebuild.interfaces.evolution_viz.generate_evolution_html
+  callee: rebuild.interfaces.evolution_viz._render_html
+  call_type: resolved
+- caller: rebuild.interfaces.commands.helpers.serve_reports
+  callee: rebuild.application.services.event_service.get_event_service
+  call_type: resolved
 - caller: rebuild.interfaces.commands.walk_command.walk_command
   callee: rebuild.interfaces.commands.walk_command._ensure_git_repo
   call_type: resolved
@@ -915,7 +897,25 @@ edges:
 - caller: rebuild.interfaces.commands.walk_command._handle_walk_results
   callee: rebuild.interfaces.commands.helpers.serve_reports
   call_type: resolved
+- caller: rebuild.interfaces.commands.refactor_command.plan_command
+  callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  call_type: resolved
+- caller: rebuild.interfaces.commands.refactor_command.pr_command
+  callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  call_type: resolved
+- caller: rebuild.interfaces.commands.refactor_command.execute_command
+  callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  call_type: resolved
 - caller: rebuild.interfaces.tui.app.launch_tui
+  callee: Makefile.print
+  call_type: resolved
+- caller: rebuild.domain.mvp_protocol.MVPServer.start
+  callee: Makefile.print
+  call_type: resolved
+- caller: rebuild.domain.dsl_v2.DSLShell.run
+  callee: Makefile.print
+  call_type: resolved
+- caller: rebuild.domain.dsl_v2.DSLShell._process
   callee: Makefile.print
   call_type: resolved
 modules:
@@ -1042,10 +1042,6 @@ modules:
   testql-scenarios.generated-from-pytests.testql.toon:
   - testql-scenarios.generated-from-pytests.testql.toon.all
 entry_points:
-- docs.getting-started.configuration.print
-- docs.guide.plugins.print
-- docs.guide.plugins.report
-- docs.guide.plugins.scan
 - examples.08-nlp-commands.README.print
 - examples.09-mvp-protocol.README.print
 - examples.09-mvp-protocol.README.sendMVPCommand
