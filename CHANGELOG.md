@@ -129,7 +129,50 @@ Refactor niskiego ryzyka eliminujący duplikaty wskazane w [ANALYSIS.md](ANALYSI
 - `pytest -k "trend or regression or health"` → 8 passed (pełna pokrywalność migracji)
 - `pytest`: 631 passed, 3 preexisting failures (`TestCLISubprocessE2E.*` — środowiskowy `No module named rebuild`, nie regresja)
 
+### Sprint 3 — Showcase + Performance (2026-05-07)
+
+Materiał case-study + dowód wydajności. Patrz [ANALYSIS.md](ANALYSIS.md) Sprint 3.
+
+#### Added
+- **`scripts/benchmark_scanner_cache.py`** — kompletny benchmark diff-aware cache: synthetic FastAPI fixture, parametry `--commits/--files/--churn/--seed`, output text albo JSON (`-q`). Mierzy speedup, hit rate, i `cache_stats`.
+- **`docs/benchmarks.md`** — zmierzone wyniki: **5.5–6.6× speedup** przy realistycznych parametrach (200-500 plików, 5% churn, hit rate 91.8%). Tabela rozdzielczo-zależna od churn (5-50%).
+- **`scripts/run_c2004_full.sh`** — kanoniczny reproducer dla c2004 case-study: pre-flight checks (rebuild/git/docker), auto-clone, walk z docker-compose, dashboard, summary stats. `SKIP_DEPLOY=1` dla dry-run mode.
+- **`examples/05-ci-integrations/`** — gotowe recipes:
+  - `github-actions.yml` — PR diff scan + auto-comment, nightly full walk z artifactami, secrets dla webhooks
+  - `gitlab-ci.yml` — MR scan + scheduled nightly z dind
+  - `circleci.yml` — workflows `pr` (lekki) i `nightly` (machine + docker)
+  - `README.md` z customisation guide
+- **`tests/test_plugins.py`** — 25 testów pokrywających `rebuild/plugins/` (registry, BaseScanner, BaseReporter, ScanResult, entry-point discovery z mockowanym `importlib.metadata`).
+- **`tests/test_api_app.py`** — 15 testów dla command + query endpointów (`/commands/{walk,analyze,snapshot,prune,dsl,nlp}`, `/queries/{history,day,snapshots,plugins}`).
+
+#### Changed
+- **`rebuild/application/services/scanner_service.py`** — content-hash cache:
+  - Nowa metoda `_endpoints_for_python_file(py_file) -> List[Endpoint]` cache'uje wynik AST parse + decorator scan po SHA-1 zawartości pliku.
+  - Public API: property `cache_stats: {"hits", "misses", "size"}`, metoda `reset_cache()`.
+  - Cache jest **on by default**, process-local, automatycznie współdzielony przez wszystkie scany w tym samym walku (`BasePipeline` tworzy jeden `ScannerService`).
+  - Cykliczne typowanie: dodany `Dict` + `hashlib` import.
+  - Hit rate na poziomie 91.8% przy 5% churn (typowy commit).
+- **`rebuild/interfaces/api/app.py`** — naprawiony realny bug: usunięte `from __future__ import annotations` (powodowało, że FastAPI traktował pydantic Command modele jako query params, zwracając 422 dla każdego POST `/commands/*`). Wszystkie 4 endpointy (`/commands/walk|analyze|snapshot|prune`) teraz akceptują JSON body. Dodany `Body(...)` + `model_rebuild()` dla forward-ref resolution.
+
+#### Fixed
+- **API command endpoints zwracały 422** — szczegóły wyżej w Changed. Bug był present od Phase 16 (pierwsze CQRS API), nigdy niepokryty testem POST.
+
+#### Verification
+- `ruff check rebuild/ scripts/benchmark_scanner_cache.py --select E,W,F --ignore E501` → **All checks passed**
+- `pytest tests/test_plugins.py` → 25 passed
+- `pytest tests/test_api_app.py tests/test_cqrs_arch.py` → 97 passed (15 nowych + 82 cqrs_arch)
+- `pytest tests/test_scanner_service.py` → 19 passed (11 starych + 8 nowych dla cache)
+- **Coverage**: 75% → 77% (`plugins/` 0→100%, `api/app.py` 58→78%)
+- `bash -n scripts/run_c2004_full.sh` → syntax OK
+- Benchmark realny: `python scripts/benchmark_scanner_cache.py --commits 30 --files 200 --churn 0.05` → **5.5× speedup, 91.8% hit rate**
+
 ---
+
+## [0.1.29] - 2026-05-07
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
 
 ## [0.1.28] - 2026-05-07
 
