@@ -1,0 +1,128 @@
+# rebuild — GitHub Actions integration
+#
+# Usage: copy to .github/workflows/rebuild.yml in your project.
+# CUSTOMISE the marked sections for your stack.
+
+name: rebuild
+
+on:
+  pull_request:
+    branches: [main]
+  schedule:
+    # Nightly at 02:00 UTC. Adjust to your timezone preference.
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # PR diff scan — fast (no deploy), ~30s for typical FastAPI repos
+  # ---------------------------------------------------------------------------
+  pr-scan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write   # for posting the comment
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50    # rebuild needs git history for diff
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install rebuild
+        run: pip install rebuild
+
+      - name: Scan PR (dry-run, 1 day)
+        run: |
+          rebuild walk . \
+            --dry-run \
+            --days 1 \
+            --deploy none \
+            --output .rebuild_pr
+          # Pretty-print summary
+          rebuild report --results-dir .rebuild_pr
+
+      - name: Upload PR artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rebuild-pr-${{ github.event.pull_request.number }}
+          path: .rebuild_pr/
+          retention-days: 7
+
+      - name: Comment on PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = '.rebuild_pr/history.json';
+            if (!fs.existsSync(path)) return;
+            const history = JSON.parse(fs.readFileSync(path));
+            const last = history[history.length - 1] || {};
+            const body = `### rebuild PR scan\n\n` +
+              `- **Endpoints discovered**: ${last.endpoint_count ?? 'n/a'}\n` +
+              `- **Health %**: ${last.health_pct ?? 'n/a'}%\n` +
+              `- **OK / Total**: ${last.ok_count ?? '?'} / ${last.total ?? '?'}\n\n` +
+              `Full report: [download artifact](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body,
+            });
+
+  # ---------------------------------------------------------------------------
+  # Nightly walk — full deploy + history (30 days)
+  # ---------------------------------------------------------------------------
+  nightly-walk:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # full history for 30-day walk
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install rebuild
+        run: pip install rebuild
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run 30-day walk
+        env:
+          # CUSTOMISE: notification hooks
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          rebuild walk . \
+            --days 30 \
+            --deploy docker-compose \
+            --health-url http://localhost:8000/health \
+            --base-url http://localhost:8000 \
+            --health-timeout 120 \
+            --output .rebuild_nightly
+
+      - name: Generate dashboard
+        if: always()
+        run: rebuild dashboard --results-dir .rebuild_nightly
+
+      - name: Upload nightly artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rebuild-nightly-${{ github.run_id }}
+          path: .rebuild_nightly/
+          retention-days: 30

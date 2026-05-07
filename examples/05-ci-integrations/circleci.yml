@@ -1,0 +1,100 @@
+# rebuild — CircleCI integration
+#
+# Usage: copy to .circleci/config.yml in your project.
+# CUSTOMISE the marked sections for your stack.
+
+version: 2.1
+
+# ---------------------------------------------------------------------------
+# Reusable command: install rebuild
+# ---------------------------------------------------------------------------
+commands:
+  install-rebuild:
+    parameters:
+      python-version:
+        type: string
+        default: "3.11"
+    steps:
+      - run:
+          name: Install rebuild
+          command: |
+            pip install --no-cache-dir rebuild
+            rebuild --version
+
+jobs:
+  # -------------------------------------------------------------------------
+  # PR diff scan — fast (no deploy)
+  # -------------------------------------------------------------------------
+  pr-scan:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - install-rebuild
+      - run:
+          name: Scan PR (dry-run, 1 day)
+          command: |
+            rebuild walk . \
+              --dry-run \
+              --days 1 \
+              --deploy none \
+              --output .rebuild_pr
+            rebuild report --results-dir .rebuild_pr
+      - store_artifacts:
+          path: .rebuild_pr
+          destination: rebuild-pr
+
+  # -------------------------------------------------------------------------
+  # Nightly full walk — deploy + 30 days
+  # -------------------------------------------------------------------------
+  nightly-walk:
+    machine:
+      image: ubuntu-2204:current
+    steps:
+      - checkout
+      - run:
+          name: Install Python 3.11 + rebuild
+          command: |
+            pyenv install -s 3.11.10
+            pyenv global 3.11.10
+            pip install --no-cache-dir rebuild
+      - run:
+          name: 30-day walk with docker-compose
+          # CUSTOMISE: HEALTH_URL, BASE_URL, timeout
+          command: |
+            rebuild walk . \
+              --days 30 \
+              --deploy docker-compose \
+              --health-url http://localhost:8000/health \
+              --base-url http://localhost:8000 \
+              --health-timeout 120 \
+              --output .rebuild_nightly
+      - run:
+          name: Generate dashboard
+          when: always
+          command: rebuild dashboard --results-dir .rebuild_nightly
+      - store_artifacts:
+          path: .rebuild_nightly
+          destination: rebuild-nightly
+
+# ---------------------------------------------------------------------------
+# Workflows
+# ---------------------------------------------------------------------------
+workflows:
+  pr:
+    jobs:
+      - pr-scan:
+          filters:
+            branches:
+              ignore: main
+
+  nightly:
+    triggers:
+      - schedule:
+          # 02:00 UTC daily. CUSTOMISE: adjust cron.
+          cron: "0 2 * * *"
+          filters:
+            branches:
+              only: main
+    jobs:
+      - nightly-walk

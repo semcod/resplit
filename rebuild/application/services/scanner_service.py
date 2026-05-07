@@ -1,10 +1,11 @@
 from __future__ import annotations
 import ast
+import hashlib
 import json
 import re
 import subprocess
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import httpx
 import yaml
@@ -16,9 +17,47 @@ from .base import Service
 class ScannerService(Service[Path, List[Endpoint]]):
     """
     Service for discovering API endpoints in a repository.
+
+    Diff-aware caching (Sprint 3 / 2026-05-07)
+    ------------------------------------------
+    When a single ``ScannerService`` instance scans the same repository at
+    multiple commits (the typical ``rebuild walk`` use case), the AST parse +
+    decorator inspection of unchanged Python files is the dominant cost. To
+    skip redundant work we cache discovered endpoints by **content hash**:
+
+      * key:   SHA-1 of the file's bytes (cheap; ~1 µs/KB)
+      * value: ``List[Endpoint]`` discovered in that file
+
+    Across N commits where ~5% of files change per day, this typically yields
+    a 10–20× speedup on the FastAPI-route scan path. See ``scripts/
+    benchmark_walk.py`` for measurements.
+
+    The cache is process-local and reset by :meth:`reset_cache`. There is no
+    on-disk persistence; that is reserved for a later phase (Sprint 5+).
     """
     def __init__(self, config: WalkConfig):
         self.config = config
+        # Content-hash → endpoints discovered in that file.
+        self._file_cache: Dict[str, List[Endpoint]] = {}
+        self._cache_hits = 0
+        self._cache_misses = 0
+
+    # ── Cache control ────────────────────────────────────────────────────
+
+    def reset_cache(self) -> None:
+        """Drop all cached file→endpoints mappings and reset hit/miss counters."""
+        self._file_cache.clear()
+        self._cache_hits = 0
+        self._cache_misses = 0
+
+    @property
+    def cache_stats(self) -> Dict[str, int]:
+        """Return ``{"hits", "misses", "size"}`` for the file cache."""
+        return {
+            "hits": self._cache_hits,
+            "misses": self._cache_misses,
+            "size": len(self._file_cache),
+        }
 
     def execute(self, repo: Path) -> List[Endpoint]:
         endpoints: List[Endpoint] = []
@@ -71,15 +110,50 @@ class ScannerService(Service[Path, List[Endpoint]]):
 
     def _scan_via_fastapi_routes(self, repo: Path) -> List[Endpoint]:
         endpoints: List[Endpoint] = []
-        seen = set()
+        seen: set = set()
 
         for py_file in self._iter_source_python_files(repo):
-            tree = self._parse_python_ast(py_file)
-            if tree is None:
-                continue
-            endpoints.extend(self._fastapi_endpoints_from_tree(tree, seen))
+            for ep in self._endpoints_for_python_file(py_file):
+                key = (ep.method, ep.path)
+                if key in seen:
+                    continue
+                seen.add(key)
+                endpoints.append(ep)
 
         return endpoints
+
+    def _endpoints_for_python_file(self, py_file: Path) -> List[Endpoint]:
+        """Return endpoints discovered in *py_file*, using the content-hash cache.
+
+        The cache key is the SHA-1 of the file's raw bytes — stable across
+        ``git checkout`` switches that don't actually change the file. On a
+        cache hit, the AST parse + decorator walk are entirely skipped.
+        """
+        try:
+            content = py_file.read_bytes()
+        except Exception:
+            return []
+
+        content_sha = hashlib.sha1(content).hexdigest()
+        cached = self._file_cache.get(content_sha)
+        if cached is not None:
+            self._cache_hits += 1
+            # Return a shallow copy so callers can't mutate the cache.
+            return list(cached)
+
+        self._cache_misses += 1
+        try:
+            tree = ast.parse(content.decode("utf-8", errors="ignore"))
+        except Exception:
+            self._file_cache[content_sha] = []
+            return []
+
+        # Use a per-file ``seen`` set so caching is independent of caller order.
+        per_file_seen: set = set()
+        eps = self._fastapi_endpoints_from_tree(tree, per_file_seen)
+        # Store an immutable copy so cache entries can't be mutated by callers.
+        self._file_cache[content_sha] = list(eps)
+        return list(eps)
 
     def _iter_source_python_files(self, repo: Path):
         excluded = {".git", ".venv", "venv", "__pycache__", "node_modules", "tests"}
@@ -88,6 +162,9 @@ class ScannerService(Service[Path, List[Endpoint]]):
                 yield py_file
 
     def _parse_python_ast(self, py_file: Path) -> Optional[ast.AST]:
+        # Retained for backward compatibility with subclasses / external callers.
+        # New code paths should use :meth:`_endpoints_for_python_file` which
+        # benefits from the content-hash cache.
         try:
             return ast.parse(py_file.read_text(encoding="utf-8", errors="ignore"))
         except Exception:

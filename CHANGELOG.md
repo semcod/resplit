@@ -131,6 +131,21 @@ Refactor niskiego ryzyka eliminujący duplikaty wskazane w [ANALYSIS.md](ANALYSI
 
 ---
 
+## [0.1.27] - 2026-05-07
+
+### Docs
+- Update README.md
+- Update examples/05-ci-integrations/README.md
+
+### Test
+- Update tests/test_scanner_service.py
+
+### Other
+- Update examples/05-ci-integrations/circleci.yml
+- Update examples/05-ci-integrations/github-actions.yml
+- Update examples/05-ci-integrations/gitlab-ci.yml
+- Update rebuild/application/services/scanner_service.py
+
 ## [0.1.26] - 2026-05-07
 
 ### Docs
