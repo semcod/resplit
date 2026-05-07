@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+## [0.1.25] - 2026-05-07
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+
+### Other
+- Update app.doql.less
+- Update project/map.toon.yaml
+
 ## [0.1.24] - 2026-05-07
 
 ### Docs

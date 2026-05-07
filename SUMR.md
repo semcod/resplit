@@ -17,7 +17,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorizati
 ## Metadata
 
 - **name**: `rebuild`
-- **version**: `0.1.22`
+- **version**: `0.1.24`
 - **python_requires**: `>=3.11`
 - **license**: {'text': 'Apache-2.0'}
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -37,7 +37,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: rebuild;
-  version: 0.1.22;
+  version: 0.1.24;
 }
 
 dependencies {
@@ -390,30 +390,34 @@ pfix>=0.1.60
 
 ## Call Graph
 
-*94 nodes · 68 edges · 24 modules · CC̄=0.5*
+*96 nodes · 80 edges · 26 modules · CC̄=3.4*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `serve_reports` *(in rebuild.interfaces.commands.helpers)* | 2 | 0 | 28 | **28** |
+| `multi_repo_command` *(in rebuild.interfaces.commands.analyze_command)* | 14 ⚠ | 1 | 44 | **45** |
+| `serve_reports` *(in rebuild.interfaces.commands.helpers)* | 2 | 3 | 28 | **31** |
+| `services_command` *(in rebuild.interfaces.commands.analyze_command)* | 9 | 1 | 25 | **26** |
 | `print` *(in Makefile)* | 0 | 25 | 0 | **25** |
 | `save_timeline_index` *(in rebuild.application.services.reporting.reporter.ReporterService)* | 14 ⚠ | 0 | 23 | **23** |
 | `start` *(in rebuild.domain.mvp_protocol.MVPServer)* | 1 | 0 | 23 | **23** |
 | `plugins` *(in rebuild.interfaces.cli)* | 7 | 0 | 22 | **22** |
-| `main` *(in scripts.bump_version)* | 4 | 0 | 20 | **20** |
-| `publish` *(in rebuild.infrastructure.event_bus.EventBus)* | 14 ⚠ | 0 | 20 | **20** |
-| `plan_command` *(in rebuild.interfaces.commands.refactor_command)* | 11 ⚠ | 0 | 19 | **19** |
+| `print_summary_table` *(in rebuild.interfaces.commands.helpers)* | 9 | 2 | 20 | **22** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/rebuild
-# generated in 0.14s
-# nodes: 94 | edges: 68 | modules: 24
-# CC̄=0.5
+# generated in 0.07s
+# nodes: 96 | edges: 80 | modules: 26
+# CC̄=3.4
 
 HUBS[20]:
+  rebuild.interfaces.commands.analyze_command.multi_repo_command
+    CC=14  in:1  out:44  total:45
   rebuild.interfaces.commands.helpers.serve_reports
-    CC=2  in:0  out:28  total:28
+    CC=2  in:3  out:28  total:31
+  rebuild.interfaces.commands.analyze_command.services_command
+    CC=9  in:1  out:25  total:26
   Makefile.print
     CC=0  in:25  out:0  total:25
   rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
@@ -422,78 +426,72 @@ HUBS[20]:
     CC=1  in:0  out:23  total:23
   rebuild.interfaces.cli.plugins
     CC=7  in:0  out:22  total:22
+  rebuild.interfaces.commands.helpers.print_summary_table
+    CC=9  in:2  out:20  total:22
+  rebuild.interfaces.commands.analyze_command.vector_query_command
+    CC=9  in:1  out:20  total:21
   scripts.bump_version.main
     CC=4  in:0  out:20  total:20
-  rebuild.infrastructure.event_bus.EventBus.publish
-    CC=14  in:0  out:20  total:20
   rebuild.interfaces.commands.refactor_command.plan_command
-    CC=11  in:0  out:19  total:19
+    CC=11  in:1  out:19  total:20
+  rebuild.interfaces.commands.analyze_command.truth_command
+    CC=3  in:1  out:17  total:18
   scripts.bump_version.categorize_commits
     CC=14  in:1  out:15  total:16
   scripts.bump_version.build_new_section
     CC=7  in:1  out:14  total:15
-  rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-    CC=5  in:3  out:12  total:15
   scripts.bump_version.update_changelog
     CC=5  in:1  out:14  total:15
+  rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+    CC=5  in:3  out:12  total:15
+  rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
+    CC=12  in:1  out:12  total:13
+  rebuild.application.services.pr_service.load_config_from_env
+    CC=4  in:1  out:11  total:12
   rebuild.interfaces.cli.evolution
     CC=2  in:0  out:12  total:12
-  rebuild.interfaces.commands.refactor_command.pr_command
-    CC=4  in:0  out:11  total:11
-  rebuild.domain.dsl_v2.DSLShell._process
-    CC=7  in:0  out:11  total:11
-  rebuild.application.services.pr_service.load_config_from_env
-    CC=4  in:0  out:11  total:11
-  rebuild.interfaces.cli.dashboard
-    CC=2  in:0  out:10  total:10
-  rebuild.domain.dsl_v2.DSLShell.run
-    CC=7  in:0  out:10  total:10
-  rebuild.plugins.registry.PluginRegistry.discover
-    CC=7  in:0  out:10  total:10
-  rebuild.interfaces.cli.serve
-    CC=2  in:0  out:9  total:9
+  rebuild.interfaces.dashboard.generate_dashboard
+    CC=5  in:3  out:9  total:12
 
 MODULES:
   Makefile  [1 funcs]
     print  CC=0  out:0
-  SUMD  [26 funcs]
-    _build_discord_payload  CC=0  out:0
-    _build_generic_payload  CC=0  out:0
-    _build_slack_payload  CC=0  out:0
-    _load_entry_points  CC=0  out:0
-    _send_webhook  CC=0  out:0
-    classify_error  CC=0  out:0
-    duplicates_command  CC=0  out:0
-    execute_command  CC=0  out:0
-    generate_dashboard  CC=0  out:0
-    generate_endpoint_diff  CC=0  out:0
   rebuild.application.base_pipeline  [1 funcs]
     __init__  CC=1  out:9
   rebuild.application.services.db_snapshot_manager  [1 funcs]
     _postgres_restore  CC=4  out:4
-  rebuild.application.services.notification_service  [2 funcs]
+  rebuild.application.services.event_service  [1 funcs]
+    get_event_service  CC=1  out:0
+  rebuild.application.services.notification_service  [6 funcs]
     _build_body  CC=3  out:3
     notify  CC=5  out:6
+    _build_discord_payload  CC=2  out:3
+    _build_generic_payload  CC=1  out:0
+    _build_slack_payload  CC=2  out:4
+    _send_webhook  CC=3  out:6
   rebuild.application.services.pr_service  [1 funcs]
     load_config_from_env  CC=4  out:11
-  rebuild.application.services.reporting.reporter  [5 funcs]
-    _save_html_day  CC=16  out:8
+  rebuild.application.services.reporting.chart_builder  [2 funcs]
+    generate_endpoint_diff  CC=12  out:12
+    generate_trend_chart  CC=8  out:11
+  rebuild.application.services.reporting.formatters  [3 funcs]
+    _classify_error_text  CC=4  out:2
+    classify_error  CC=5  out:2
+    status_badge  CC=1  out:1
+  rebuild.application.services.reporting.reporter  [6 funcs]
+    _endpoint_row  CC=7  out:4
+    _save_html_day  CC=2  out:6
     save_day  CC=2  out:9
     save_timeline_index  CC=14  out:23
     to_toon  CC=1  out:1
     to_yaml  CC=1  out:1
-  rebuild.domain.dsl  [1 funcs]
-    execute  CC=2  out:3
   rebuild.domain.dsl_v2  [2 funcs]
     _process  CC=7  out:11
     run  CC=7  out:10
-  rebuild.domain.mvp_protocol  [3 funcs]
-    _handle_command  CC=3  out:6
-    handle_message  CC=4  out:5
+  rebuild.domain.mvp_protocol  [1 funcs]
     start  CC=1  out:23
-  rebuild.infrastructure.event_bus  [1 funcs]
-    publish  CC=14  out:20
-  rebuild.interfaces.cli  [14 funcs]
+  rebuild.interfaces.cli  [15 funcs]
+    _resolve_pr_config  CC=6  out:8
     dashboard  CC=2  out:10
     duplicates  CC=1  out:9
     evolution  CC=2  out:12
@@ -503,14 +501,33 @@ MODULES:
     plugins  CC=7  out:22
     pr  CC=1  out:4
     serve  CC=2  out:9
-    services  CC=1  out:5
-  rebuild.interfaces.commands.helpers  [1 funcs]
+  rebuild.interfaces.commands.analyze_command  [6 funcs]
+    duplicates_command  CC=7  out:10
+    multi_repo_command  CC=14  out:44
+    services_command  CC=9  out:25
+    truth_command  CC=3  out:17
+    vector_build_command  CC=2  out:8
+    vector_query_command  CC=9  out:20
+  rebuild.interfaces.commands.helpers  [3 funcs]
+    print_report_links  CC=2  out:6
+    print_summary_table  CC=9  out:20
     serve_reports  CC=2  out:28
   rebuild.interfaces.commands.refactor_command  [4 funcs]
     _generate_refactor_plan  CC=5  out:12
     execute_command  CC=6  out:7
     plan_command  CC=11  out:19
     pr_command  CC=4  out:11
+  rebuild.interfaces.commands.walk_command  [10 funcs]
+    _apply_cli_overrides  CC=3  out:5
+    _build_walk_config  CC=1  out:3
+    _ensure_git_repo  CC=2  out:3
+    _fire_notifications  CC=12  out:9
+    _handle_walk_results  CC=4  out:10
+    _load_yaml_config  CC=5  out:8
+    _parse_date  CC=2  out:1
+    _print_walk_header  CC=2  out:5
+    _resolve_deploy_method  CC=3  out:4
+    walk_command  CC=2  out:11
   rebuild.interfaces.dashboard  [4 funcs]
     _extract_avg_cc  CC=5  out:6
     _render_html  CC=4  out:4
@@ -521,8 +538,10 @@ MODULES:
     generate_evolution_html  CC=1  out:7
   rebuild.interfaces.tui.app  [1 funcs]
     launch_tui  CC=2  out:4
-  rebuild.plugins.registry  [1 funcs]
+  rebuild.plugins.registry  [3 funcs]
     discover  CC=7  out:10
+    _load_entry_points  CC=4  out:5
+    load_plugins  CC=2  out:2
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
     index  CC=1  out:3
@@ -554,7 +573,12 @@ MODULES:
     all  CC=0  out:0
 
 EDGES:
-  rebuild.infrastructure.event_bus.EventBus.publish → SUMD.handler
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   scripts.bump_version.update_init → Makefile.print
@@ -570,40 +594,35 @@ EDGES:
   scripts.bump_version.main → Makefile.print
   scripts.bump_version.main → scripts.bump_version.update_init
   scripts.bump_version.main → scripts.bump_version.update_pyproject
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
-  rebuild.application.base_pipeline.BasePipeline.__init__ → SUMD.get_event_service
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
-  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
-  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → SUMD.classify_error
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → SUMD.status_badge
-  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → SUMD.generate_trend_chart
-  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → SUMD.generate_endpoint_diff
-  rebuild.plugins.registry.PluginRegistry.discover → SUMD._load_entry_points
+  rebuild.application.base_pipeline.BasePipeline.__init__ → rebuild.application.services.event_service.get_event_service
+  rebuild.application.services.pr_service.load_config_from_env → testql-scenarios.generated-from-pytests.testql.toon.all
+  rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore → Makefile.print
+  rebuild.application.services.notification_service.NotificationService.notify → rebuild.application.services.notification_service._send_webhook
+  rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_generic_payload
+  rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_slack_payload
+  rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_discord_payload
+  rebuild.plugins.registry.PluginRegistry.discover → rebuild.plugins.registry._load_entry_points
   rebuild.interfaces.dashboard.get_cc_for_day → rebuild.interfaces.dashboard._extract_avg_cc
   rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard._render_html
   rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard.get_cc_for_day
   rebuild.interfaces.evolution_viz.generate_evolution_html → rebuild.interfaces.evolution_viz._render_html
-  rebuild.interfaces.cli.dashboard → SUMD.generate_dashboard
-  rebuild.interfaces.cli.serve → SUMD.print_report_links
-  rebuild.interfaces.cli.serve → SUMD.serve_reports
-  rebuild.interfaces.cli.tui → SUMD.launch_tui
-  rebuild.interfaces.cli.evolution → SUMD.generate_evolution_html
-  rebuild.interfaces.cli.duplicates → SUMD.duplicates_command
-  rebuild.interfaces.cli.vector_build → SUMD.vector_build_command
-  rebuild.interfaces.cli.vector_query → SUMD.vector_query_command
-  rebuild.interfaces.cli.multi_repo → SUMD.multi_repo_command
-  rebuild.interfaces.cli.services → SUMD.services_command
-  rebuild.interfaces.cli.truth → SUMD.truth_command
-  rebuild.interfaces.cli.plan → SUMD.plan_command
-  rebuild.interfaces.cli.pr → SUMD.pr_command
-  rebuild.interfaces.cli.execute → SUMD.execute_command
+  rebuild.interfaces.commands.helpers.serve_reports → rebuild.application.services.event_service.get_event_service
+  rebuild.interfaces.commands.refactor_command.plan_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  rebuild.interfaces.commands.refactor_command.pr_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  rebuild.interfaces.commands.refactor_command.execute_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  rebuild.domain.mvp_protocol.MVPServer.start → Makefile.print
+  rebuild.domain.dsl_v2.DSLShell.run → Makefile.print
+  rebuild.domain.dsl_v2.DSLShell._process → Makefile.print
+  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row → rebuild.application.services.reporting.formatters.classify_error
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row → rebuild.application.services.reporting.formatters.status_badge
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → rebuild.application.services.reporting.chart_builder.generate_trend_chart
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
+  rebuild.application.services.reporting.formatters.classify_error → rebuild.application.services.reporting.formatters._classify_error_text
+  rebuild.interfaces.cli.dashboard → rebuild.interfaces.dashboard.generate_dashboard
 ```
 
 ## Test Contracts
@@ -626,13 +645,17 @@ EDGES:
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/rebuild
-# generated in 0.14s
-# nodes: 94 | edges: 68 | modules: 24
-# CC̄=0.5
+# generated in 0.07s
+# nodes: 96 | edges: 80 | modules: 26
+# CC̄=3.4
 
 HUBS[20]:
+  rebuild.interfaces.commands.analyze_command.multi_repo_command
+    CC=14  in:1  out:44  total:45
   rebuild.interfaces.commands.helpers.serve_reports
-    CC=2  in:0  out:28  total:28
+    CC=2  in:3  out:28  total:31
+  rebuild.interfaces.commands.analyze_command.services_command
+    CC=9  in:1  out:25  total:26
   Makefile.print
     CC=0  in:25  out:0  total:25
   rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
@@ -641,78 +664,72 @@ HUBS[20]:
     CC=1  in:0  out:23  total:23
   rebuild.interfaces.cli.plugins
     CC=7  in:0  out:22  total:22
+  rebuild.interfaces.commands.helpers.print_summary_table
+    CC=9  in:2  out:20  total:22
+  rebuild.interfaces.commands.analyze_command.vector_query_command
+    CC=9  in:1  out:20  total:21
   scripts.bump_version.main
     CC=4  in:0  out:20  total:20
-  rebuild.infrastructure.event_bus.EventBus.publish
-    CC=14  in:0  out:20  total:20
   rebuild.interfaces.commands.refactor_command.plan_command
-    CC=11  in:0  out:19  total:19
+    CC=11  in:1  out:19  total:20
+  rebuild.interfaces.commands.analyze_command.truth_command
+    CC=3  in:1  out:17  total:18
   scripts.bump_version.categorize_commits
     CC=14  in:1  out:15  total:16
   scripts.bump_version.build_new_section
     CC=7  in:1  out:14  total:15
-  rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-    CC=5  in:3  out:12  total:15
   scripts.bump_version.update_changelog
     CC=5  in:1  out:14  total:15
+  rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+    CC=5  in:3  out:12  total:15
+  rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
+    CC=12  in:1  out:12  total:13
+  rebuild.application.services.pr_service.load_config_from_env
+    CC=4  in:1  out:11  total:12
   rebuild.interfaces.cli.evolution
     CC=2  in:0  out:12  total:12
-  rebuild.interfaces.commands.refactor_command.pr_command
-    CC=4  in:0  out:11  total:11
-  rebuild.domain.dsl_v2.DSLShell._process
-    CC=7  in:0  out:11  total:11
-  rebuild.application.services.pr_service.load_config_from_env
-    CC=4  in:0  out:11  total:11
-  rebuild.interfaces.cli.dashboard
-    CC=2  in:0  out:10  total:10
-  rebuild.domain.dsl_v2.DSLShell.run
-    CC=7  in:0  out:10  total:10
-  rebuild.plugins.registry.PluginRegistry.discover
-    CC=7  in:0  out:10  total:10
-  rebuild.interfaces.cli.serve
-    CC=2  in:0  out:9  total:9
+  rebuild.interfaces.dashboard.generate_dashboard
+    CC=5  in:3  out:9  total:12
 
 MODULES:
   Makefile  [1 funcs]
     print  CC=0  out:0
-  SUMD  [26 funcs]
-    _build_discord_payload  CC=0  out:0
-    _build_generic_payload  CC=0  out:0
-    _build_slack_payload  CC=0  out:0
-    _load_entry_points  CC=0  out:0
-    _send_webhook  CC=0  out:0
-    classify_error  CC=0  out:0
-    duplicates_command  CC=0  out:0
-    execute_command  CC=0  out:0
-    generate_dashboard  CC=0  out:0
-    generate_endpoint_diff  CC=0  out:0
   rebuild.application.base_pipeline  [1 funcs]
     __init__  CC=1  out:9
   rebuild.application.services.db_snapshot_manager  [1 funcs]
     _postgres_restore  CC=4  out:4
-  rebuild.application.services.notification_service  [2 funcs]
+  rebuild.application.services.event_service  [1 funcs]
+    get_event_service  CC=1  out:0
+  rebuild.application.services.notification_service  [6 funcs]
     _build_body  CC=3  out:3
     notify  CC=5  out:6
+    _build_discord_payload  CC=2  out:3
+    _build_generic_payload  CC=1  out:0
+    _build_slack_payload  CC=2  out:4
+    _send_webhook  CC=3  out:6
   rebuild.application.services.pr_service  [1 funcs]
     load_config_from_env  CC=4  out:11
-  rebuild.application.services.reporting.reporter  [5 funcs]
-    _save_html_day  CC=16  out:8
+  rebuild.application.services.reporting.chart_builder  [2 funcs]
+    generate_endpoint_diff  CC=12  out:12
+    generate_trend_chart  CC=8  out:11
+  rebuild.application.services.reporting.formatters  [3 funcs]
+    _classify_error_text  CC=4  out:2
+    classify_error  CC=5  out:2
+    status_badge  CC=1  out:1
+  rebuild.application.services.reporting.reporter  [6 funcs]
+    _endpoint_row  CC=7  out:4
+    _save_html_day  CC=2  out:6
     save_day  CC=2  out:9
     save_timeline_index  CC=14  out:23
     to_toon  CC=1  out:1
     to_yaml  CC=1  out:1
-  rebuild.domain.dsl  [1 funcs]
-    execute  CC=2  out:3
   rebuild.domain.dsl_v2  [2 funcs]
     _process  CC=7  out:11
     run  CC=7  out:10
-  rebuild.domain.mvp_protocol  [3 funcs]
-    _handle_command  CC=3  out:6
-    handle_message  CC=4  out:5
+  rebuild.domain.mvp_protocol  [1 funcs]
     start  CC=1  out:23
-  rebuild.infrastructure.event_bus  [1 funcs]
-    publish  CC=14  out:20
-  rebuild.interfaces.cli  [14 funcs]
+  rebuild.interfaces.cli  [15 funcs]
+    _resolve_pr_config  CC=6  out:8
     dashboard  CC=2  out:10
     duplicates  CC=1  out:9
     evolution  CC=2  out:12
@@ -722,14 +739,33 @@ MODULES:
     plugins  CC=7  out:22
     pr  CC=1  out:4
     serve  CC=2  out:9
-    services  CC=1  out:5
-  rebuild.interfaces.commands.helpers  [1 funcs]
+  rebuild.interfaces.commands.analyze_command  [6 funcs]
+    duplicates_command  CC=7  out:10
+    multi_repo_command  CC=14  out:44
+    services_command  CC=9  out:25
+    truth_command  CC=3  out:17
+    vector_build_command  CC=2  out:8
+    vector_query_command  CC=9  out:20
+  rebuild.interfaces.commands.helpers  [3 funcs]
+    print_report_links  CC=2  out:6
+    print_summary_table  CC=9  out:20
     serve_reports  CC=2  out:28
   rebuild.interfaces.commands.refactor_command  [4 funcs]
     _generate_refactor_plan  CC=5  out:12
     execute_command  CC=6  out:7
     plan_command  CC=11  out:19
     pr_command  CC=4  out:11
+  rebuild.interfaces.commands.walk_command  [10 funcs]
+    _apply_cli_overrides  CC=3  out:5
+    _build_walk_config  CC=1  out:3
+    _ensure_git_repo  CC=2  out:3
+    _fire_notifications  CC=12  out:9
+    _handle_walk_results  CC=4  out:10
+    _load_yaml_config  CC=5  out:8
+    _parse_date  CC=2  out:1
+    _print_walk_header  CC=2  out:5
+    _resolve_deploy_method  CC=3  out:4
+    walk_command  CC=2  out:11
   rebuild.interfaces.dashboard  [4 funcs]
     _extract_avg_cc  CC=5  out:6
     _render_html  CC=4  out:4
@@ -740,8 +776,10 @@ MODULES:
     generate_evolution_html  CC=1  out:7
   rebuild.interfaces.tui.app  [1 funcs]
     launch_tui  CC=2  out:4
-  rebuild.plugins.registry  [1 funcs]
+  rebuild.plugins.registry  [3 funcs]
     discover  CC=7  out:10
+    _load_entry_points  CC=4  out:5
+    load_plugins  CC=2  out:2
   restored_c2004_health.api-health.backend.modules.connect-config-network.api.main  [3 funcs]
     _index_html  CC=2  out:1
     index  CC=1  out:3
@@ -773,7 +811,12 @@ MODULES:
     all  CC=0  out:0
 
 EDGES:
-  rebuild.infrastructure.event_bus.EventBus.publish → SUMD.handler
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   scripts.bump_version.update_init → Makefile.print
@@ -789,158 +832,139 @@ EDGES:
   scripts.bump_version.main → Makefile.print
   scripts.bump_version.main → scripts.bump_version.update_init
   scripts.bump_version.main → scripts.bump_version.update_pyproject
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html
-  rebuild.application.base_pipeline.BasePipeline.__init__ → SUMD.get_event_service
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
-  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
-  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → SUMD.classify_error
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → SUMD.status_badge
-  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → SUMD.generate_trend_chart
-  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → SUMD.generate_endpoint_diff
-  rebuild.plugins.registry.PluginRegistry.discover → SUMD._load_entry_points
+  rebuild.application.base_pipeline.BasePipeline.__init__ → rebuild.application.services.event_service.get_event_service
+  rebuild.application.services.pr_service.load_config_from_env → testql-scenarios.generated-from-pytests.testql.toon.all
+  rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore → Makefile.print
+  rebuild.application.services.notification_service.NotificationService.notify → rebuild.application.services.notification_service._send_webhook
+  rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_generic_payload
+  rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_slack_payload
+  rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_discord_payload
+  rebuild.plugins.registry.PluginRegistry.discover → rebuild.plugins.registry._load_entry_points
   rebuild.interfaces.dashboard.get_cc_for_day → rebuild.interfaces.dashboard._extract_avg_cc
   rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard._render_html
   rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard.get_cc_for_day
   rebuild.interfaces.evolution_viz.generate_evolution_html → rebuild.interfaces.evolution_viz._render_html
-  rebuild.interfaces.cli.dashboard → SUMD.generate_dashboard
-  rebuild.interfaces.cli.serve → SUMD.print_report_links
-  rebuild.interfaces.cli.serve → SUMD.serve_reports
-  rebuild.interfaces.cli.tui → SUMD.launch_tui
-  rebuild.interfaces.cli.evolution → SUMD.generate_evolution_html
-  rebuild.interfaces.cli.duplicates → SUMD.duplicates_command
-  rebuild.interfaces.cli.vector_build → SUMD.vector_build_command
-  rebuild.interfaces.cli.vector_query → SUMD.vector_query_command
-  rebuild.interfaces.cli.multi_repo → SUMD.multi_repo_command
-  rebuild.interfaces.cli.services → SUMD.services_command
-  rebuild.interfaces.cli.truth → SUMD.truth_command
-  rebuild.interfaces.cli.plan → SUMD.plan_command
-  rebuild.interfaces.cli.pr → SUMD.pr_command
-  rebuild.interfaces.cli.execute → SUMD.execute_command
+  rebuild.interfaces.commands.helpers.serve_reports → rebuild.application.services.event_service.get_event_service
+  rebuild.interfaces.commands.refactor_command.plan_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  rebuild.interfaces.commands.refactor_command.pr_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  rebuild.interfaces.commands.refactor_command.execute_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
+  rebuild.domain.mvp_protocol.MVPServer.start → Makefile.print
+  rebuild.domain.dsl_v2.DSLShell.run → Makefile.print
+  rebuild.domain.dsl_v2.DSLShell._process → Makefile.print
+  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row → rebuild.application.services.reporting.formatters.classify_error
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row → rebuild.application.services.reporting.formatters.status_badge
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → rebuild.application.services.reporting.chart_builder.generate_trend_chart
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
+  rebuild.application.services.reporting.formatters.classify_error → rebuild.application.services.reporting.formatters._classify_error_text
+  rebuild.interfaces.cli.dashboard → rebuild.interfaces.dashboard.generate_dashboard
 ```
 
 ### Code Analysis (`project/analysis.toon.yaml`)
 
 ```toon markpact:analysis path=project/analysis.toon.yaml
-# code2llm | 165f 349916L | python:98,md:32,yaml:15,shell:8,yml:3,json:1,toml:1,dsl:1,frontend:1,txt:1 | 2026-05-06
-# generated in 0.24s
-# CC̄=0.5 | critical:13/3722 | dups:0 | cycles:0
+# code2llm | 148f 21223L | python:92,md:28,yaml:9,shell:8,yml:3,json:1,dsl:1,backend:1,toml:1 | 2026-05-07
+# generated in 0.04s
+# CC̄=3.4 | critical:0/591 | dups:0 | cycles:0
 
-HEALTH[13]:
-  🟡 CC    _run_day_fast CC=15 (limit:15)
-  🟡 CC    apply_to_config CC=44 (limit:15)
-  🟡 CC    run_day CC=16 (limit:15)
-  🟡 CC    _wait_healthy CC=15 (limit:15)
-  🟡 CC    _scan_via_fastapi_routes CC=16 (limit:15)
-  🟡 CC    _save_html_day CC=16 (limit:15)
-  🟡 CC    classify_error CC=17 (limit:15)
-  🟡 CC    auto_pr CC=15 (limit:15)
-  🟡 CC    walk_command CC=31 (limit:15)
-  🟡 CC    execute CC=18 (limit:15)
-  🟡 CC    generate_plan CC=16 (limit:15)
-  🟡 CC    select_tests CC=16 (limit:15)
-  🟡 CC    _find_semantic_groups CC=17 (limit:15)
+HEALTH[0]: ok
 
-REFACTOR[1]:
-  1. split 13 high-CC methods  (CC>15)
+REFACTOR[0]: none needed
 
-PIPELINES[437]:
-  [1] Src [__init__]: __init__
+PIPELINES[469]:
+  [1] Src [health]: health
       PURITY: 100% pure
-  [2] Src [get]: get
+  [2] Src [get_manifest]: get_manifest
       PURITY: 100% pure
-  [3] Src [post]: post
+  [3] Src [list_pages]: list_pages
       PURITY: 100% pure
-  [4] Src [put]: put
+  [4] Src [serve_ui]: serve_ui
       PURITY: 100% pure
-  [5] Src [patch]: patch
+  [5] Src [serve_model]: serve_model
       PURITY: 100% pure
 
 LAYERS:
   scripts/                        CC̄=5.7    ←in:0  →out:12  !! split
   │ bump_version               239L  0C   10m  CC=14     ←0
   │
-  rebuild/                        CC̄=4.0    ←in:0  →out:0
-  │ !! cli                        520L  0C   24m  CC=15     ←0
+  rebuild/                        CC̄=3.5    ←in:0  →out:0
+  │ !! cli                        561L  0C   29m  CC=9      ←0
   │ dsl_v2                     455L  11C   11m  CC=11     ←0
+  │ reporter                   452L  1C   16m  CC=14     ←0
   │ accelerator_deploy         451L  1C   23m  CC=9      ←0
-  │ !! reporter                   425L  1C   11m  CC=16     ←0
-  │ !! parallel_test_engine       411L  3C   19m  CC=18     ←0
-  │ !! accelerated_pipeline       397L  1C   11m  CC=15     ←0
-  │ evolution_viz              385L  0C    2m  CC=1      ←0
+  │ parallel_test_engine       450L  3C   25m  CC=13     ←0
+  │ accelerated_pipeline       432L  1C   19m  CC=10     ←0
+  │ deploy_service             399L  1C   24m  CC=10     ←0
+  │ evolution_viz              385L  0C    2m  CC=1      ←1
   │ db_snapshot_manager        370L  2C   22m  CC=9      ←0
-  │ dashboard                  365L  0C    4m  CC=5      ←0
-  │ !! deploy_service             362L  1C   20m  CC=15     ←0
+  │ dashboard                  365L  0C    4m  CC=5      ←2
+  │ scanner_service            347L  1C   19m  CC=13     ←0
+  │ duplication_engine         344L  3C   20m  CC=13     ←0
   │ service_graph              342L  6C   17m  CC=14     ←0
-  │ !! scanner_service            325L  1C   14m  CC=16     ←0
-  │ !! duplication_engine         305L  3C   14m  CC=17     ←0
+  │ walk_command               296L  0C   11m  CC=12     ←1
   │ mvp_protocol               281L  4C   14m  CC=4      ←0
   │ dsl                        256L  5C   13m  CC=10     ←0
-  │ analyze_command            252L  0C    6m  CC=14     ←0
+  │ analyze_command            252L  0C    6m  CC=14     ←1
   │ app                        241L  2C    1m  CC=5      ←0
-  │ !! walk_command               236L  0C    3m  CC=31     ←0
+  │ pipeline                   238L  1C   12m  CC=11     ←0
   │ notification_service       232L  4C   14m  CC=5      ←0
-  │ !! pipeline                   222L  1C    4m  CC=16     ←0
   │ config_schema              218L  6C    9m  CC=14     ←0
+  │ smart_test_selector        216L  3C   11m  CC=8      ←0
   │ vector_search              215L  2C   11m  CC=7      ←0
-  │ !! smart_test_selector        207L  3C    7m  CC=16     ←0
+  │ walk_screens               205L  0C    0m  CC=0.0    ←0
   │ nlp_service                196L  3C    6m  CC=6      ←0
-  │ pr_service                 181L  4C    6m  CC=4      ←0
+  │ pr_service                 181L  4C    6m  CC=4      ←1
   │ event_store                178L  1C    8m  CC=7      ←0
-  │ walk_screens               172L  0C    0m  CC=0.0    ←0
+  │ history_screen             174L  0C    0m  CC=0.0    ←0
   │ summary_service            168L  3C    5m  CC=8      ←0
-  │ history_screen             166L  0C    0m  CC=0.0    ←0
   │ domain_events              163L  17C    4m  CC=2      ←0
   │ event_bus                  161L  1C   12m  CC=14     ←1
-  │ helpers                    161L  0C    5m  CC=9      ←0
+  │ helpers                    161L  0C    5m  CC=9      ←2
+  │ config_loader              161L  1C   13m  CC=9      ←0
   │ restore_service            152L  1C    7m  CC=10     ←0
-  │ registry                   150L  1C   14m  CC=7      ←0
+  │ registry                   150L  1C   14m  CC=7      ←1
   │ restore_screen             150L  0C    0m  CC=0.0    ←0
+  │ endpoint_screens           149L  0C    0m  CC=0.0    ←0
   │ worktree_manager           146L  2C   10m  CC=6      ←0
   │ graph_exporter             144L  1C    3m  CC=5      ←0
   │ timeline                   139L  5C    7m  CC=4      ←0
-  │ endpoint_screens           139L  0C    0m  CC=0.0    ←0
-  │ !! config_loader              130L  1C    3m  CC=44     ←0
-  │ git_service                120L  1C   10m  CC=11     ←0
   │ git_truth_analyzer         120L  2C    5m  CC=9      ←0
-  │ event_service              114L  3C    9m  CC=5      ←0
+  │ git_service                120L  1C   10m  CC=11     ←0
+  │ event_service              114L  3C    9m  CC=5      ←2
   │ patcher_service            108L  1C    4m  CC=5      ←0
   │ day_result                 102L  2C    1m  CC=6      ←0
   │ base_pipeline              101L  1C    5m  CC=3      ←0
   │ history_service            100L  1C    3m  CC=12     ←0
-  │ refactor_command            98L  0C    4m  CC=11     ←0
+  │ recommendation_engine      100L  2C    6m  CC=6      ←0
+  │ refactor_command            98L  0C    4m  CC=11     ←1
   │ tui_data_service            95L  1C    5m  CC=8      ←0
-  │ !! formatters                  86L  0C    4m  CC=17     ←0
-  │ project_screen              86L  0C    0m  CC=0.0    ←0
+  │ formatters                  93L  0C    5m  CC=6      ←1
+  │ project_screen              91L  0C    0m  CC=0.0    ←0
   │ config_template.yaml        85L  0C    0m  CC=0.0    ←0
-  │ !! recommendation_engine       82L  2C    1m  CC=16     ←0
   │ base                        77L  3C    4m  CC=1      ←0
   │ llm_service                 75L  1C    4m  CC=3      ←0
   │ screenshot_service          73L  2C    2m  CC=13     ←0
   │ base                        72L  4C    4m  CC=2      ←0
   │ walk_queries                70L  8C    0m  CC=0.0    ←0
-  │ chart_builder               68L  0C    2m  CC=12     ←0
+  │ chart_builder               68L  0C    2m  CC=12     ←1
   │ base                        68L  4C    4m  CC=2      ←0
   │ service_similarity          59L  2C    2m  CC=8      ←0
+  │ app                         56L  0C    1m  CC=2      ←1
   │ models                      56L  2C    0m  CC=0.0    ←0
   │ walk_commands               54L  2C    2m  CC=3      ←0
   │ analyze_commands            51L  4C    1m  CC=2      ←0
   │ endpoint                    49L  3C    0m  CC=0.0    ←0
+  │ help_screen                 49L  0C    0m  CC=0.0    ←0
   │ refactor_executor           48L  1C    3m  CC=5      ←0
-  │ app                         46L  0C    1m  CC=2      ←0
-  │ help_screen                 44L  0C    0m  CC=0.0    ←0
   │ snapshot_commands           43L  4C    0m  CC=0.0    ←0
   │ __init__                    40L  0C    0m  CC=0.0    ←0
   │ http_adapter                39L  1C    7m  CC=4      ←0
   │ shell_adapter               37L  1C    3m  CC=3      ←0
-  │ override_service            30L  1C    1m  CC=5      ←0
   │ deploy_strategy             30L  1C    2m  CC=1      ←0
+  │ override_service            30L  1C    1m  CC=5      ←0
   │ compat                      25L  0C    0m  CC=0.0    ←0
   │ __init__                    18L  0C    0m  CC=0.0    ←0
   │ __init__                    16L  0C    0m  CC=0.0    ←0
@@ -956,27 +980,19 @@ LAYERS:
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ events                       0L  1C    2m  CC=1      ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ cli_new                      0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
-  │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
   restored_c2004_health/          CC̄=2.3    ←in:0  →out:0
   │ !! docker-compose.yml         507L  0C    0m  CC=0.0    ←0
   │ main                        91L  0C    9m  CC=5      ←0
+  │ Dockerfile.backend          88L  0C    0m  CC=0.0    ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
   │ main                        86L  0C    9m  CC=5      ←0
-  │ Dockerfile.frontend         51L  0C    0m  CC=0.0    ←0
   │ README.md                   45L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! SUMD.md                  187666L  0C  3205m  CC=0.0    ←10
-  │ !! SUMR.md                  72142L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  513L  0C    0m  CC=0.0    ←0
-  │ CHANGELOG.md               278L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md               301L  0C    0m  CC=0.0    ←0
   │ PLAN.md                    198L  0C    0m  CC=0.0    ←0
   │ Makefile                   112L  0C    1m  CC=0.0    ←5
   │ pyproject.toml             111L  0C    0m  CC=0.0    ←0
@@ -990,10 +1006,10 @@ LAYERS:
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
   │
   docs/                           CC̄=0.0    ←in:0  →out:0
+  │ !! README.md                 2898L  0C    0m  CC=0.0    ←0
   │ c2004.md                   228L  0C    0m  CC=0.0    ←0
   │ usage.md                   192L  0C    0m  CC=0.0    ←0
   │ cli.md                     147L  0C    0m  CC=0.0    ←0
-  │ README.md                  122L  0C    1m  CC=0.0    ←0
   │ architecture.md            118L  0C    0m  CC=0.0    ←0
   │ plugins.md                  86L  2C    3m  CC=0.0    ←0
   │ configuration.md            77L  0C    1m  CC=0.0    ←0
@@ -1033,44 +1049,23 @@ LAYERS:
   │ generated-from-pytests.testql.toon.yaml    40L  0C    1m  CC=0.0    ←1
   │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
   │
-  project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! duplication.toon.yaml    71632L  0C    0m  CC=0.0    ←0
-  │ README.md                  340L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         55L  0C    0m  CC=0.0    ←0
-  │ context.md                  52L  0C    0m  CC=0.0    ←0
-  │ prompt.txt                  48L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml          17L  0C    0m  CC=0.0    ←0
-  │ calls.toon.yaml             10L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           10L  0C    0m  CC=0.0    ←0
-  │ calls.yaml                   9L  0C    0m  CC=0.0    ←0
-  │
   ── zero ──
-     rebuild/application/__init__.py           0L
-     rebuild/domain/__init__.py                0L
      rebuild/domain/events.py                  0L
      rebuild/infrastructure/__init__.py        0L
-     rebuild/interfaces/__init__.py            0L
-     rebuild/interfaces/cli_new.py             0L
-     rebuild/interfaces/commands/__init__.py   0L
-     rebuild/interfaces/tui/screens/__init__.py  0L
 
 COUPLING:
-                                                                              SUMD                       rebuild.interfaces                                 Makefile                           rebuild.domain                                  scripts                      rebuild.application                   rebuild.infrastructure                          rebuild.plugins  testql-scenarios.generated-from-pytests
-                                     SUMD                                       ──                                      ←27                                                                                ←3                                                                                ←9                                       ←4                                       ←2                                           hub
-                       rebuild.interfaces                                       27                                       ──                                        1                                                                                                                                                                   1                                                                                    !! fan-out
-                                 Makefile                                                                                ←1                                       ──                                      ←11                                      ←12                                       ←1                                                                                                                             hub
-                           rebuild.domain                                        3                                                                                11                                       ──                                                                                                                                                                                                               !! fan-out
-                                  scripts                                                                                                                         12                                                                                ──                                                                                                                                                                      !! fan-out
-                      rebuild.application                                        9                                                                                 1                                                                                                                         ──                                                                                                                          1  !! fan-out
-                   rebuild.infrastructure                                        4                                       ←1                                                                                                                                                                                                           ──                                                                                  
-                          rebuild.plugins                                        2                                                                                                                                                                                                                                                                                             ──                                         
-  testql-scenarios.generated-from-pytests                                                                                                                                                                                                                                                    ←1                                                                                                                         ──
+                                                                          Makefile                                  scripts                           rebuild.domain                       rebuild.interfaces                      rebuild.application                   rebuild.infrastructure                          rebuild.plugins  testql-scenarios.generated-from-pytests
+                                 Makefile                                       ──                                      ←12                                      ←11                                       ←1                                       ←1                                                                                                                             hub
+                                  scripts                                       12                                       ──                                                                                                                                                                                                                                                        !! fan-out
+                           rebuild.domain                                       11                                                                                ──                                                                                                                                                                                                               !! fan-out
+                       rebuild.interfaces                                        1                                                                                                                         ──                                        2                                        1                                        1                                         
+                      rebuild.application                                        1                                                                                                                         ←2                                       ──                                                                                                                          1
+                   rebuild.infrastructure                                                                                                                                                                  ←1                                                                                ──                                                                                  
+                          rebuild.plugins                                                                                                                                                                  ←1                                                                                                                         ──                                         
+  testql-scenarios.generated-from-pytests                                                                                                                                                                                                           ←1                                                                                                                         ──
   CYCLES: none
-  HUB: SUMD/ (fan-in=45)
   HUB: Makefile/ (fan-in=25)
-  SMELL: rebuild.interfaces/ fan-out=29 → split needed
-  SMELL: rebuild.application/ fan-out=11 → split needed
-  SMELL: rebuild.domain/ fan-out=14 → split needed
+  SMELL: rebuild.domain/ fan-out=11 → split needed
   SMELL: scripts/ fan-out=12 → split needed
 
 EXTERNAL:
@@ -1081,15 +1076,15 @@ EXTERNAL:
 ### Duplication (`project/duplication.toon.yaml`)
 
 ```toon markpact:analysis path=project/duplication.toon.yaml
-# redup/duplication | 3125 groups | 13892f 1743881L | 2026-05-06
+# redup/duplication | 3125 groups | 13892f 1744285L | 2026-05-07
 
 SUMMARY:
   files_scanned: 13892
-  total_lines:   1743881
+  total_lines:   1744285
   dup_groups:    3125
   dup_fragments: 59027
   saved_lines:   1010241
-  scan_ms:       130177
+  scan_ms:       138645
 
 HOTSPOTS[7] (files with most duplication):
   .rebuild/c2004/repo_clone/.rebuild/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.0%)
@@ -63194,15 +63189,15 @@ DUPLICATES[3125] (ranked by impact):
       .rebuild/c2004/results/repo/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
       .rebuild/c2004/results_new/repo/.swop/generated/services/connect-scenario/server.py:22-30  (CreateTestScenario)
   [93a1c1ad1b73076e]   STRU  services  L=7 N=3 saved=14 sim=1.00
-      rebuild/interfaces/cli.py:431-437  (services)
-      rebuild/interfaces/cli.py:456-462  (plan)
-      rebuild/interfaces/cli.py:475-481  (execute)
+      rebuild/interfaces/cli.py:472-478  (services)
+      rebuild/interfaces/cli.py:497-503  (plan)
+      rebuild/interfaces/cli.py:516-522  (execute)
   [b8c71827db6c113b]   EXAC  hardware_proxy_info  L=5 N=3 saved=10 sim=1.00
       .rebuild/c2004/results/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
       .rebuild/c2004/results_new/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
       .rebuild_c2004_7d/repo/connect-scenario/backend/connect_scenario_backend/api/routes.py:413-417  (hardware_proxy_info)
   [8d970f6b56d0f822]   EXAC  _cosine_similarity  L=10 N=2 saved=10 sim=1.00
-      rebuild/analysis/duplication_engine.py:193-202  (_cosine_similarity)
+      rebuild/analysis/duplication_engine.py:231-240  (_cosine_similarity)
       rebuild/analysis/vector_search.py:206-215  (_cosine_similarity)
   [c5d8baa57f575044]   EXAC  GetCustomer  L=3 N=3 saved=6 sim=1.00
       .rebuild/c2004/repo_clone/.swop/generated/services/connect-data/server.py:44-46  (GetCustomer)
@@ -63249,10 +63244,10 @@ DUPLICATES[3125] (ranked by impact):
       rebuild/domain/events.py:13-18  (create)
   [96e4ae362800b6c9]   EXAC  action_cursor_up  L=4 N=2 saved=4 sim=1.00
       rebuild/interfaces/tui/screens/endpoint_screens.py:124-127  (action_cursor_up)
-      rebuild/interfaces/tui/screens/history_screen.py:146-149  (action_cursor_up)
+      rebuild/interfaces/tui/screens/history_screen.py:145-148  (action_cursor_up)
   [92fb86f76d3ad550]   EXAC  action_go_top  L=3 N=2 saved=3 sim=1.00
       rebuild/interfaces/tui/screens/endpoint_screens.py:129-131  (action_go_top)
-      rebuild/interfaces/tui/screens/history_screen.py:151-153  (action_go_top)
+      rebuild/interfaces/tui/screens/history_screen.py:150-152  (action_go_top)
 
 REFACTOR[3125] (ranked by priority):
   [1] ◐ extract_module     → utils/generate_llm_prompts.py
@@ -72718,59 +72713,28 @@ METRICS-TARGET:
 ### Evolution / Churn (`project/evolution.toon.yaml`)
 
 ```toon markpact:analysis path=project/evolution.toon.yaml
-# code2llm/evolution | 3708 func | 74f | 2026-05-06
-# generated in 0.01s
+# code2llm/evolution | 577 func | 72f | 2026-05-07
+# generated in 0.00s
 
-NEXT[10] (ranked by impact):
-  [1] !! SPLIT-FUNC      walk_command  CC=31  fan=25
-      WHY: CC=31 exceeds 15
-      EFFORT: ~1h  IMPACT: 775
+NEXT[2] (ranked by impact):
+  [1] !! SPLIT           rebuild/interfaces/cli.py
+      WHY: 561L, 0 classes, max CC=9
+      EFFORT: ~4h  IMPACT: 5049
 
-  [2] !! SPLIT-FUNC      ConfigLoader.apply_to_config  CC=44  fan=12
-      WHY: CC=44 exceeds 15
-      EFFORT: ~1h  IMPACT: 528
-
-  [3] !  SPLIT-FUNC      AcceleratedPipeline._run_day_fast  CC=15  fan=23
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 345
-
-  [4] !  SPLIT-FUNC      Pipeline.run_day  CC=16  fan=20
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 320
-
-  [5] !  SPLIT-FUNC      auto_pr  CC=15  fan=20
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 300
-
-  [6] !  SPLIT-FUNC      ScannerService._scan_via_fastapi_routes  CC=16  fan=17
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 272
-
-  [7] !  SPLIT-FUNC      DuplicationEngine._find_semantic_groups  CC=17  fan=15
-      WHY: CC=17 exceeds 15
-      EFFORT: ~1h  IMPACT: 255
-
-  [8] !  SPLIT-FUNC      ParallelTestEngine.execute  CC=18  fan=11
-      WHY: CC=18 exceeds 15
-      EFFORT: ~1h  IMPACT: 198
-
-  [9] !  SPLIT-FUNC      RecommendationEngine.generate_plan  CC=16  fan=12
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 192
-
-  [10] !  SPLIT-FUNC      SmartTestSelector.select_tests  CC=16  fan=11
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 176
+  [2] !! SPLIT           docs/README.md
+      WHY: 2898L, 0 classes, max CC=0
+      EFFORT: ~4h  IMPACT: 0
 
 
-RISKS[1]:
-  ⚠ Splitting SUMD.md may break 3205 import paths
+RISKS[2]:
+  ⚠ Splitting docs/README.md may break 0 import paths
+  ⚠ Splitting rebuild/interfaces/cli.py may break 29 import paths
 
 METRICS-TARGET:
-  CC̄:          0.5 → ≤0.3
-  max-CC:      44 → ≤20
-  god-modules: 1 → 0
-  high-CC(≥15): 13 → ≤6
+  CC̄:          3.4 → ≤2.4
+  max-CC:      14 → ≤7
+  god-modules: 2 → 0
+  high-CC(≥15): 0 → ≤0
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -72798,7 +72762,7 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  (first run — no previous data)
+  prev CC̄=0.5 → now CC̄=3.4
 ```
 
 ## Intent
