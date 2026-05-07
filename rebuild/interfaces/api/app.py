@@ -19,7 +19,9 @@ Endpoints:
 
   WS   /ws/events              — WebSocket real-time event push
 """
-from __future__ import annotations
+# NOTE: Do NOT use ``from __future__ import annotations`` here — it would
+# stringify the pydantic Command/Query types in handler signatures and
+# FastAPI's ``Body(...)`` TypeAdapter cannot resolve them at runtime.
 
 import asyncio
 import json
@@ -68,6 +70,12 @@ def create_app(
     from ...infrastructure.event_bus import EventBus, get_event_bus
     from ...domain.dsl_v2 import DSLParser, NLPMapper
 
+    # Resolve pydantic forward references (the command modules use
+    # ``from __future__ import annotations``) so FastAPI's ``Body(...)``
+    # TypeAdapter can build a validator for each command class.
+    for _model in (WalkCommand, AnalyzeCommand, CreateSnapshotCommand, PruneSnapshotsCommand):
+        _model.model_rebuild()
+
     _command_bus: CommandBus = command_bus or CommandBus()
     _query_bus: QueryBus = query_bus or QueryBus()
     _event_bus: EventBus = event_bus or get_event_bus()
@@ -87,29 +95,35 @@ def create_app(
         allow_headers=["*"],
     )
 
+    from fastapi import Body as _Body
+
     # ─── Commands ─────────────────────────────────────────────────────────────
+    #
+    # NOTE: ``= _Body(...)`` is required so FastAPI parses the pydantic model
+    # from the request body. Without it, FastAPI treats the parameter as a
+    # query field (because the ``Command`` base model has
+    # ``arbitrary_types_allowed=True``) and rejects every POST with
+    # ``422 Field required: query.cmd``.
 
     @app.post("/commands/walk", tags=["commands"])
-    async def cmd_walk(cmd: WalkCommand) -> Dict[str, Any]:
+    async def cmd_walk(cmd: WalkCommand = _Body(...)) -> Dict[str, Any]:
         result = _command_bus.dispatch(cmd)
         return result.model_dump()
 
     @app.post("/commands/analyze", tags=["commands"])
-    async def cmd_analyze(cmd: AnalyzeCommand) -> Dict[str, Any]:
+    async def cmd_analyze(cmd: AnalyzeCommand = _Body(...)) -> Dict[str, Any]:
         result = _command_bus.dispatch(cmd)
         return result.model_dump()
 
     @app.post("/commands/snapshot", tags=["commands"])
-    async def cmd_snapshot(cmd: CreateSnapshotCommand) -> Dict[str, Any]:
+    async def cmd_snapshot(cmd: CreateSnapshotCommand = _Body(...)) -> Dict[str, Any]:
         result = _command_bus.dispatch(cmd)
         return result.model_dump()
 
     @app.post("/commands/prune", tags=["commands"])
-    async def cmd_prune(cmd: PruneSnapshotsCommand) -> Dict[str, Any]:
+    async def cmd_prune(cmd: PruneSnapshotsCommand = _Body(...)) -> Dict[str, Any]:
         result = _command_bus.dispatch(cmd)
         return result.model_dump()
-
-    from fastapi import Body as _Body
 
     @app.post("/commands/dsl", tags=["commands"])
     async def cmd_dsl(req: DSLRequest = _Body(...)) -> Dict[str, Any]:

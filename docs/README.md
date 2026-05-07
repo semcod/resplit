@@ -1,7 +1,7 @@
 <!-- code2docs:start --># rebuild
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-587-green)
-> **587** functions | **159** classes | **157** files | CC̄ = 3.5
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-599-green)
+> **599** functions | **160** classes | **165** files | CC̄ = 3.5
 
 > Auto-generated project documentation from source code analysis.
 
@@ -82,10 +82,13 @@ rebuild/
 ├── infra-map
 ├── Makefile
 ├── PLAN
+    ├── example
+    ├── pre-commit-config
 ├── pyqual
 ├── ANALYSIS
 ├── pyproject
 ├── tree
+├── TODO
 ├── CHANGELOG
 ├── Dockerfile
 ├── project
@@ -121,6 +124,10 @@ rebuild/
         ├── rebuild
         ├── docker-compose
         ├── README
+        ├── circleci
+        ├── github-actions
+        ├── gitlab-ci
+        ├── README
         ├── run
         ├── rebuild
         ├── README
@@ -133,6 +140,7 @@ rebuild/
                         ├── main
             ├── docker-compose
             ├── Dockerfile
+    ├── benchmark_scanner_cache
     ├── bump_version
             ├── toon
             ├── toon
@@ -170,6 +178,7 @@ rebuild/
             ├── git_service
             ├── patcher_service
             ├── deploy_strategy
+            ├── regression_service
             ├── deploy_service
             ├── reporter_service
             ├── llm_service
@@ -223,7 +232,6 @@ rebuild/
             ├── domain_events
         ├── recommendation_engine
         ├── refactor_executor
-├── TODO
 ```
 
 ## API Overview
@@ -292,6 +300,7 @@ rebuild/
 - **`GitService`** — Service for interacting with Git repositories and history.
 - **`PatcherService`** — Service for patching files in the repo clone.
 - **`DeployStrategy`** — Protocol for deployment strategies.
+- **`HealthTrendPoint`** — A single chronological point in a health-pct trend.
 - **`DeployService`** — Service for managing the lifecycle of the service being analyzed.
 - **`LLMService`** — Service for interacting with LLMs via LiteLLM.
 - **`ScreenshotConfig`** — —
@@ -429,6 +438,10 @@ rebuild/
 - `list_models()` — —
 - `index()` — —
 - `module_index()` — —
+- `setup_repo(repo, n_files)` — Create *n_files* FastAPI module files inside *repo*.
+- `churn(files, pct)` — Mutate ``ceil(pct * len(files))`` files in-place. Returns count touched.
+- `run_walk(repo, files, n_commits, churn_pct)` — Run *n_commits* sequential scans, mutating *churn_pct* of files between them.
+- `main()` — —
 - `read_version()` — —
 - `bump(version, part)` — —
 - `update_init(new_version, dry_run)` — —
@@ -444,6 +457,9 @@ rebuild/
 - `get_event_bus()` — —
 - `set_event_bus(bus)` — —
 - `load_config_from_env()` — Load PR configuration from environment variables.
+- `compute_health_trend(results, regression_threshold)` — Compute the per-day health trend with regression flags.
+- `compute_health_trend_dict(results_asc, regression_threshold)` — Adapter — return the trend as a ``{day_str: label}`` mapping.
+- `compute_health_trend_labels(results, regression_threshold)` — Adapter — return labels in chronological order as a flat list.
 - `get_event_service()` — Get the global event service singleton.
 - `generate_trend_chart(results)` — —
 - `generate_endpoint_diff(results)` — —
@@ -486,6 +502,7 @@ rebuild/
 - `multi_repo_command(repos, min_lines, export, console)` — —
 - `services_command(path, export, console)` — —
 - `truth_command(file, function, repo, console)` — —
+- `collect_cli_overrides(ctx, names)` — Build a ``{param_name: was_explicitly_passed_on_cli}`` mapping.
 - `print_report_links(output, port, console)` — —
 - `compute_health_trend_labels(results, regression_threshold)` — —
 - `compute_endpoint_count_trend_labels(results, warning_threshold_pct)` — —
@@ -502,6 +519,7 @@ rebuild/
 
 ## Project Structure
 
+📄 `.pre-commit-config`
 📄 `ANALYSIS`
 📄 `CHANGELOG`
 📄 `Dockerfile`
@@ -509,6 +527,7 @@ rebuild/
 📄 `PLAN`
 📄 `README`
 📄 `TODO`
+📄 `docker-compose.example`
 📄 `docs.README`
 📄 `docs.architecture`
 📄 `docs.c2004`
@@ -537,6 +556,10 @@ rebuild/
 📄 `examples.03-restore-endpoint.mock_results`
 📄 `examples.03-restore-endpoint.rebuild`
 📄 `examples.03-restore-endpoint.run`
+📄 `examples.05-ci-integrations.README`
+📄 `examples.05-ci-integrations.circleci`
+📄 `examples.05-ci-integrations.github-actions`
+📄 `examples.05-ci-integrations.gitlab-ci`
 📄 `examples.07-dsl-script.README`
 📄 `examples.07-dsl-script.pipeline`
 📄 `examples.08-nlp-commands.README` (4 functions)
@@ -585,13 +608,14 @@ rebuild/
 📄 `rebuild.application.services.parallel_test_engine` (25 functions, 3 classes)
 📄 `rebuild.application.services.patcher_service` (4 functions, 1 classes)
 📄 `rebuild.application.services.pr_service` (6 functions, 4 classes)
+📄 `rebuild.application.services.regression_service` (3 functions, 1 classes)
 📄 `rebuild.application.services.reporter_service`
 📦 `rebuild.application.services.reporting`
 📄 `rebuild.application.services.reporting.chart_builder` (2 functions)
 📄 `rebuild.application.services.reporting.formatters` (5 functions)
 📄 `rebuild.application.services.reporting.reporter` (16 functions, 1 classes)
 📄 `rebuild.application.services.restore_service` (7 functions, 1 classes)
-📄 `rebuild.application.services.scanner_service` (19 functions, 1 classes)
+📄 `rebuild.application.services.scanner_service` (21 functions, 1 classes)
 📄 `rebuild.application.services.screenshot_service` (2 functions, 2 classes)
 📄 `rebuild.application.services.smart_test_selector` (11 functions, 3 classes)
 📄 `rebuild.application.services.summary_service` (5 functions, 3 classes)
@@ -620,7 +644,7 @@ rebuild/
 📄 `rebuild.interfaces.api.app` (1 functions, 2 classes)
 📄 `rebuild.interfaces.cli` (29 functions)
 📄 `rebuild.interfaces.commands.analyze_command` (6 functions)
-📄 `rebuild.interfaces.commands.helpers` (5 functions)
+📄 `rebuild.interfaces.commands.helpers` (6 functions)
 📄 `rebuild.interfaces.commands.refactor_command` (4 functions)
 📄 `rebuild.interfaces.commands.walk_command` (11 functions)
 📄 `rebuild.interfaces.dashboard` (4 functions)
@@ -646,6 +670,7 @@ rebuild/
 📄 `restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main` (9 functions)
 📄 `restored_c2004_health.api-health.docker.Dockerfile`
 📄 `restored_c2004_health.api-health.docker.docker-compose`
+📄 `scripts.benchmark_scanner_cache` (6 functions)
 📄 `scripts.bump_version` (10 functions)
 📄 `testql-scenarios.generated-cli-tests.testql.toon`
 📄 `testql-scenarios.generated-from-pytests.testql.toon` (2 functions)

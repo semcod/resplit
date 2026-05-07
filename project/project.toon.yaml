@@ -1,8 +1,8 @@
-# rebuild | 587 func | 73f | 19545L | python | 2026-05-07
+# rebuild | 599 func | 75f | 20468L | python | 2026-05-07
 # generated in 0.00s
 
 HEALTH:
-  CC̄=3.5  critical=28 (limit:10)  dup=4  cycles=0
+  CC̄=3.4  critical=28 (limit:10)  dup=4  cycles=0
 
 ALERTS[20]:
   !!! high_fan_out     create_app = 34 (limit:10)
@@ -13,26 +13,26 @@ ALERTS[20]:
   !!  high_fan_out     Pipeline.run = 19 (limit:10)
   !!  high_fan_out     services_command = 18 (limit:10)
   !!  high_fan_out     MVPServer.start = 18 (limit:10)
+  !!  high_fan_out     main = 17 (limit:10)
   !!  high_fan_out     ReporterService.save_timeline_index = 17 (limit:10)
-  !!  high_fan_out     RestoreService.extract_endpoint = 15 (limit:10)
 
-MODULES[149] (top by size):
-  M[docs/README.md] 700L C:0 F:0 CC↑0 D:0 (md)
-  M[rebuild/interfaces/cli.py] 561L C:0 F:29 CC↑9 D:0 (python)
+MODULES[157] (top by size):
+  M[docs/README.md] 696L C:0 F:0 CC↑0 D:0 (md)
+  M[rebuild/interfaces/cli.py] 550L C:0 F:29 CC↑9 D:0 (python)
+  M[CHANGELOG.md] 519L C:0 F:0 CC↑0 D:0 (md)
   M[goal.yaml] 513L C:0 F:0 CC↑0 D:0 (yaml)
   M[restored_c2004_health/api-health/docker/docker-compose.yml] 507L C:0 F:0 CC↑0 D:0 (yml)
-  M[rebuild/domain/dsl_v2.py] 455L C:11 F:11 CC↑11 D:0 (python)
-  M[rebuild/application/services/reporting/reporter.py] 452L C:1 F:16 CC↑14 D:0 (python)
+  M[rebuild/domain/dsl_v2.py] 454L C:11 F:11 CC↑11 D:0 (python)
   M[rebuild/application/services/accelerator_deploy.py] 451L C:1 F:23 CC↑9 D:0 (python)
   M[rebuild/application/services/parallel_test_engine.py] 450L C:3 F:25 CC↑13 D:0 (python)
+  M[rebuild/application/services/reporting/reporter.py] 433L C:1 F:16 CC↑14 D:0 (python)
   M[rebuild/application/accelerated_pipeline.py] 432L C:1 F:19 CC↑10 D:0 (python)
+  M[rebuild/application/services/scanner_service.py] 424L C:1 F:21 CC↑13 D:0 (python)
   M[rebuild/application/services/deploy_service.py] 399L C:1 F:24 CC↑10 D:0 (python)
-  M[rebuild/interfaces/evolution_viz.py] 385L C:0 F:2 CC↑1 D:1 (python)
+  M[rebuild/interfaces/evolution_viz.py] 384L C:0 F:2 CC↑1 D:1 (python)
   M[rebuild/application/services/db_snapshot_manager.py] 370L C:2 F:22 CC↑9 D:0 (python)
   M[rebuild/interfaces/dashboard.py] 365L C:0 F:4 CC↑5 D:2 (python)
-  M[CHANGELOG.md] 351L C:0 F:0 CC↑0 D:0 (md)
-  M[rebuild/application/services/scanner_service.py] 347L C:1 F:19 CC↑13 D:0 (python)
-  LANGS: python:93/md:29/yaml:9/shell:8/other:3/yml:3/dsl:1/json:1/toml:1/backend:1
+  LANGS: python:95/md:30/yaml:10/shell:8/yml:7/other:3/dsl:1/json:1/toml:1/backend:1
 
 HOTSPOTS[10]:
   ★ create_app fan=34  // Create and return a FastAPI application.
@@ -43,12 +43,12 @@ All dependencies are injected — ideal
   ★ multi_repo_command fan=20  // Orchestrates 20 calls
   ★ AcceleratedPipeline.run fan=19  // Run accelerated analysis over commit history.
 
-REFACTOR[7]:
-  [1] H/H Split god module rebuild/interfaces/cli.py (561L, 0 classes)
-  [2] H/H Split god module docs/README.md (700L, 0 classes)
-  [3] H/H Split god module goal.yaml (513L, 0 classes)
-  [4] H/H Split god module restored_c2004_health/api-health/docker/docker-compose.yml (507L, 0 classes)
-  [5] M/M Reduce create_app fan-out (currently 34)
+REFACTOR[8]:
+  [1] H/H Split god module rebuild/interfaces/cli.py (550L, 0 classes)
+  [2] H/H Split god module CHANGELOG.md (519L, 0 classes)
+  [3] H/H Split god module docs/README.md (696L, 0 classes)
+  [4] H/H Split god module goal.yaml (513L, 0 classes)
+  [5] H/H Split god module restored_c2004_health/api-health/docker/docker-compose.yml (507L, 0 classes)
 
 EVOLUTION:
-  2026-05-07 CC̄=3.5 crit=28 19545L // Automated analysis
+  2026-05-07 CC̄=3.4 crit=28 20468L // Automated analysis

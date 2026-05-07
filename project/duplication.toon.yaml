@@ -1,12 +1,12 @@
-# redup/duplication | 3125 groups | 4433f 555347L | 2026-05-07
+# redup/duplication | 3125 groups | 4435f 555724L | 2026-05-07
 
 SUMMARY:
-  files_scanned: 4433
-  total_lines:   555347
+  files_scanned: 4435
+  total_lines:   555724
   dup_groups:    3125
   dup_fragments: 18560
   saved_lines:   275813
-  scan_ms:       94454
+  scan_ms:       83108
 
 HOTSPOTS[7] (files with most duplication):
   .rebuild/c2004/repo_clone/.rebuild/repo/connect-scenario/cql-backend/cql_backend/parser.py  dup=691L  groups=33  frags=38  (0.1%)
@@ -20303,9 +20303,9 @@ DUPLICATES[3125] (ranked by impact):
       .rebuild/c2004/results_new/repo/shared/types/base.py:286-289  (from_result)
       c2004/repo/shared/types/base.py:286-289  (from_result)
   [93a1c1ad1b73076e]   STRU  services  L=7 N=3 saved=14 sim=1.00
-      rebuild/interfaces/cli.py:472-478  (services)
-      rebuild/interfaces/cli.py:497-503  (plan)
-      rebuild/interfaces/cli.py:516-522  (execute)
+      rebuild/interfaces/cli.py:461-467  (services)
+      rebuild/interfaces/cli.py:486-492  (plan)
+      rebuild/interfaces/cli.py:505-511  (execute)
   [a7a5d9e431cd0dd3]   EXAC  __init__  L=3 N=5 saved=12 sim=1.00
       .rebuild/c2004/repo_clone/.rebuild/repo/_archive/backend/app/services/menu_migration.py:24-26  (__init__)
       .rebuild/c2004/repo_clone/_archive/backend/app/services/menu_migration.py:24-26  (__init__)

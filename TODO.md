@@ -52,17 +52,18 @@ Refactor niskiego ryzyka, eliminuje long-tail dług techniczny.
 - [x] **Refactor `cli.py:walk()`** (44 LOC → 13 LOC body): nowy helper `collect_cli_overrides(ctx, names)` w [`helpers.py`](rebuild/interfaces/commands/helpers.py) eliminuje 14× duplikat `ctx.get_parameter_source(...)`. Usunięty nieużywany `from click.core import ParameterSource`.
 - [x] **Deprecation `dsl.py`**: dodany `DeprecationWarning` przy imporcie + `.. deprecated:: 0.1.26` w docstringu. **Pełne usunięcie odroczone do Sprintu 4** — `dsl_v2.py` nie pokrywa wszystkich komend (brak `evolution`, `auto_pr`, `restore`, `serve`); pełny zamiennik to `testql` (PyPI) w Sprincie 4.
 - [x] **Decyzja `Endpoint.testql_passed`**: zachowane jako placeholder na Sprint 4 z explicit komentarzem (NIGDY nie populowane przez walk/test pipelines, serializowane jako None).
-- [ ] **Diff-aware scanning** (P17 #5): odroczone do **Sprintu 3** (większy refactor wymagający benchmarków przed/po).
+- [x] **Diff-aware scanning** (P17 #5): zrealizowane w Sprincie 3 (zob. niżej).
 
-### Sprint 3 — Showcase + Performance (tydzień 5–6)
+### Sprint 3 — Showcase + Performance (tydzień 5–6) ✅ UKOŃCZONY (2026-05-07)
 
 Materiał marketingowy + dowód wydajności.
 
-- [ ] **c2004 Full 30-day Walk** (P17 #1): `scripts/run_c2004_full.sh` + raport
-- [ ] **`scripts/benchmark_walk.py`** + `docs/benchmarks.md` (per-repo-size table)
-- [ ] **CI integration recipes**: `examples/05-ci-integrations/{github,gitlab,circleci}.yml`
-- [ ] **Coverage ≥80%** (P17 #3): testy dla pipeline.py + accelerated_pipeline.py + interfaces/api/app.py + dashboard.py
-- [ ] **E2E test harness**: `tests/e2e/test_full_walk.py` z fixturem tmp_compose_project
+- [x] **c2004 Full 30-day Walk** ([`scripts/run_c2004_full.sh`](scripts/run_c2004_full.sh)): pre-flight checks (rebuild/git/docker), auto-clone c2004, walk + dashboard, summary stats. `SKIP_DEPLOY=1` dla dry-run.
+- [x] **`scripts/benchmark_scanner_cache.py`** + [`docs/benchmarks.md`](docs/benchmarks.md): kontent-hash cache eliminuje powtórne parsowanie AST między commitami. Pomierzony **5.5–6.6× speedup** przy realistycznych parametrach (200-500 plików, 5% churn, hit rate 91.8%).
+- [x] **Diff-aware scanning**: `ScannerService._endpoints_for_python_file()` z cache by content SHA-1. Public API: `cache_stats`, `reset_cache()`. Cache jest automatycznie używany przez `BasePipeline` (jeden ScannerService per walk).
+- [x] **CI integration recipes**: [`examples/05-ci-integrations/`](examples/05-ci-integrations/) — `github-actions.yml` (PR scan + nightly walk + auto-comment), `gitlab-ci.yml` (MR scan + scheduled), `circleci.yml` (workflows pr+nightly), README z guide.
+- [x] **Coverage 75% → 77%** (cel 80% odroczony do Sprint 5+): `plugins/` 0→100%, `interfaces/api/app.py` 58→78%. **Bonus: naprawiony realny bug** w API — wszystkie 4 command endpointy (`/commands/walk|analyze|snapshot|prune`) zwracały 422 Unprocessable Entity z powodu `from __future__ import annotations` + brak `Body(...)`. Po fix endpointy działają.
+- [ ] **E2E test harness** (`tests/e2e/test_full_walk.py`): odroczone do Sprint 4 (wymaga env z docker).
 
 ### Sprint 4 — Reuse Bibliotek + Watch Mode (tydzień 7–8)
 
