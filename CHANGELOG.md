@@ -203,6 +203,53 @@ Pierwsza realna integracja `[full]` extras. Patrz [ANALYSIS.md](ANALYSIS.md) Spr
 - `python -c "import yaml; yaml.safe_load(open('.github/workflows/mutation.yml'))"` → YAML OK
 - CLI registration: `rebuild watch --help` widoczne w `app.commands` (test: `from rebuild.interfaces.cli import app`)
 
+### Sprint 5c — Coverage ≥80% + Dead-Code Removal (2026-05-08)
+
+Realizacja TODO Phase 17 → "Test Coverage ≥80%". Patrz [TODO.md](TODO.md).
+
+#### Added
+- **`tests/test_coverage_sprint5c.py`** (76 testów) — pokrycie wcześniej
+  martwych ścieżek w:
+  - `domain/context.py` (0 → 100%) — dataclass `EndpointContext`.
+  - `domain/mvp_protocol.py` (68% → ~98%) — wszystkie gałęzie routingu
+    `MVPProtocolHandler` (unknown type, str→enum coercion, brakujące parametry,
+    wyjątki w handlerach DSL/NLP, smoke `MVPServer.__init__`).
+  - `application/services/tui_data_service.py` (25% → ~95%) — `load_day_results`
+    (skip non-dirs, invalid dates, corrupt JSON), `endpoint_diff` (added/removed/
+    status_changed), `health_bar` (3 progi), `calc_health`, `get_git_repo_toplevel`
+    (3 ścieżki).
+  - `application/services/test_service.py` (60% → ~98%) — pełny matrix
+    `_classify_http_status`, dispatch HTTP verbów (GET/POST/PUT/PATCH/DELETE/OPTIONS),
+    klasyfikacja błędów sieciowych, login z bearer-token i fallback.
+  - `analysis/service_similarity.py` (49% → 100%) — analyzer + Jaccard-overlap +
+    sortowanie wyników.
+  - `interfaces/dashboard.py` (74% → 100%) — `_extract_avg_cc`, `get_cc_for_day`
+    (4 ścieżki: missing toon, non-zero exit, invalid JSON, success), `generate_dashboard`
+    z/bez repo.
+  - `refactor/refactor_executor.py` (48% → 100%) — wszystkie gałęzie `execute_suggestion`
+    + `_merge_duplicates` (empty files, real rewrite, OSError).
+  - `interfaces/commands/helpers.py:serve_reports` (48% → 92%) — driving inner
+    `SSEHandler.do_GET` przez stub-server, KeyboardInterrupt graceful shutdown.
+  - `interfaces/commands/walk_command.py:_fire_notifications` + `_resolve_deploy_method`
+    (62% → ~78%) — 3 ścieżki dla każdego helpera.
+
+#### Removed
+- **`rebuild/domain/events.py`** — martwy moduł (14 LOC) shadow'owany przez
+  pakiet `rebuild/domain/events/` od Phase 14. `PipelineEvent` żyje
+  w `events/domain_events.py` (re-eksport z `__init__.py`). Usunięcie eliminuje
+  fałszywy 0% coverage entry i potencjalny pułapkę dla kontrybutorów.
+
+#### Verification
+- `pytest tests/test_coverage_sprint5c.py` → **76 passed**
+- `pytest`: **905 passed** (poprzednio 829 → +76), 3 preexisting `TestCLISubprocessE2E`
+  failures (środowiskowy `No module named rebuild`).
+- **Coverage: 79% → 80%** (TOTAL 6925 stmts, 1393 missed; było 6939/1611 przed
+  Sprintem 5c). Konkretne moduły osiągnęły 100%: `refactor_executor.py`,
+  `service_similarity.py`, `dashboard.py`, `endpoint_trend_service.py`,
+  `metrics.py`.
+- `ruff check tests/test_coverage_sprint5c.py rebuild/ --select E,W,F --ignore E501`
+  → **All checks passed**.
+
 ### Sprint 5b — Reporter Refactor + Endpoint-Trend Konsolidacja (2026-05-08)
 
 Decompozycja 434-LOC `reporter.py` na fokus-moduły + finalna eliminacja
@@ -323,6 +370,19 @@ na dużym repo (c2004 ≈ 88 podkatalogów). Fix po stronie upstream (silnik), b
   brak `SyntaxWarning`, brak fałszywego cyklu, czysty eksport `architecture.html`.
 
 ---
+
+## [0.1.33] - 2026-05-08
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
+
+### Test
+- Update tests/test_coverage_sprint5c.py
+
+### Other
+- Update rebuild/domain/events.py
 
 ## [0.1.32] - 2026-05-08
 

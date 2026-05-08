@@ -1,6 +1,6 @@
 # TODO: rebuild Roadmap
 
-> **Current version:** v0.1.30 · **Tests:** 829 · **Coverage:** 77%
+> **Current version:** v0.1.30 · **Tests:** 905 · **Coverage:** 80%
 >
 > See also: [README](README.md) · [Changelog](CHANGELOG.md) · [Docs Hub](docs/index.md) · [Analysis (P1–P4)](ANALYSIS.md) · [Architecture](docs/architecture.md) · [Usage Guide](docs/usage.md)
 >
@@ -13,6 +13,7 @@
 > - **Sprint 4c** (Analyze Services Bug Fixes) → [`[Unreleased] § Sprint 4c`](CHANGELOG.md#sprint-4c--analyze-services-bug-fixes-2026-05-07)
 > - **Sprint 5a** (Prometheus /metrics) → [`[Unreleased] § Sprint 5a`](CHANGELOG.md#sprint-5a--prometheus-metrics-endpoint-2026-05-08)
 > - **Sprint 5b** (Reporter Refactor + Endpoint-Trend Konsolidacja) → [`[Unreleased] § Sprint 5b`](CHANGELOG.md#sprint-5b--reporter-refactor--endpoint-trend-konsolidacja-2026-05-08)
+> - **Sprint 5c** (Coverage ≥80% + Dead-Code Removal) → [`[Unreleased] § Sprint 5c`](CHANGELOG.md#sprint-5c--coverage-80--dead-code-removal-2026-05-08)
 
 ---
 
@@ -23,7 +24,7 @@ Pre-existing roadmap items, kept for continuity. See [ANALYSIS.md](ANALYSIS.md) 
 ### 🔴 Krytyczne
 - [ ] **c2004 Full Walk (30 days)**: Uruchomić `rebuild walk` z `--deploy docker-compose --days 30` na c2004. Skrypt gotowy: [`scripts/run_c2004_full.sh`](scripts/run_c2004_full.sh).
 - [ ] **Performance Profiling**: Profilowanie walk na dużych repo (>500 commitów) — targetowane <5min/commit. Diff-aware cache (Sprint 3) daje już 5.5-6.6× speedup w fazie scan; teraz potrzebny pełny end-to-end profiling.
-- [ ] **Test Coverage ≥80%**: Następny milestone (obecnie 77%) — przetestować pozostałe edge cases w `pipeline/services`, refactor `reporter.py`.
+- [x] **Test Coverage ≥80%** (Sprint 5c): osiągnięte 80% (905 testów). Patrz [CHANGELOG: Sprint 5c](CHANGELOG.md#sprint-5c--coverage-80--dead-code-removal-2026-05-08).
 
 ### 🟠 Wysokie
 - [ ] **TestQL Integration**: Natywna integracja z `testql` DSL — zastąpienie `dsl.py` + `dsl_v2.py`. Wymaga eksploracji submodułów (1.x ma puste top-level eksporty).
