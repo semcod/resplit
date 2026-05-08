@@ -43,6 +43,7 @@ def create_app(
     query_bus=None,
     event_store=None,
     event_bus=None,
+    metrics_registry=None,
 ):
     """
     Create and return a FastAPI application.
@@ -245,6 +246,14 @@ def create_app(
             pass
         finally:
             _event_bus.remove_ws_queue(queue)
+
+    # ─── Prometheus Metrics ───────────────────────────────────────────────────
+
+    try:
+        from .metrics import setup_metrics
+        setup_metrics(app, registry=metrics_registry)
+    except ImportError:
+        pass  # prometheus-client not installed — /metrics disabled
 
     # ─── Health ───────────────────────────────────────────────────────────────
 

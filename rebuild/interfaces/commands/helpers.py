@@ -43,29 +43,12 @@ def compute_health_trend_labels(results: List[DayResult], regression_threshold: 
 
 
 def compute_endpoint_count_trend_labels(results: List[DayResult], warning_threshold_pct: float = 10.0) -> List[str]:
-    labels: List[str] = []
-    previous_total: Optional[int] = None
-
-    for r in sorted(results, key=lambda x: x.day):
-        current_total = len(r.endpoints)
-        if previous_total is None or previous_total == 0:
-            labels.append("—")
-            previous_total = current_total
-            continue
-
-        delta = current_total - previous_total
-        if delta == 0:
-            labels.append("0")
-            previous_total = current_total
-            continue
-
-        pct = abs(delta) / previous_total * 100.0
-        sign = "+" if delta > 0 else ""
-        base = f"{sign}{delta} ({sign}{pct:.1f}%)"
-        labels.append(f"⚠ {base}" if pct > warning_threshold_pct else base)
-        previous_total = current_total
-
-    return labels
+    # Delegated to the canonical implementation (Sprint 5b / 2026-05-08).
+    # See `rebuild.application.services.endpoint_trend_service` for details.
+    from ...application.services.endpoint_trend_service import (
+        compute_endpoint_count_trend_labels as _compute,
+    )
+    return _compute(results, warning_threshold_pct)
 
 
 def print_summary_table(results: List[DayResult], console: Console) -> None:

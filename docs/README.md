@@ -1,7 +1,7 @@
 <!-- code2docs:start --># rebuild
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-599-green)
-> **599** functions | **160** classes | **165** files | CC̄ = 3.5
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.11-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-620-green)
+> **620** functions | **161** classes | **176** files | CC̄ = 3.4
 
 > Auto-generated project documentation from source code analysis.
 
@@ -31,6 +31,8 @@ pip install -e .
 pip install rebuild[screenshots]    # screenshots features
 pip install rebuild[tui]    # tui features
 pip install rebuild[semantic]    # semantic features
+pip install rebuild[watch]    # file watcher (watchdog)
+pip install rebuild[api]    # api features
 pip install rebuild[full]    # full features
 pip install rebuild[dev]    # development tools
 ```
@@ -98,6 +100,8 @@ rebuild/
     ├── usage
     ├── c2004
     ├── index
+    ├── mutation_testing
+    ├── benchmarks
     ├── architecture
     ├── README
         ├── plugins
@@ -142,6 +146,8 @@ rebuild/
             ├── Dockerfile
     ├── benchmark_scanner_cache
     ├── bump_version
+    ├── run_c2004_full
+    ├── run_mutation_tests
             ├── toon
             ├── toon
     ├── __main__
@@ -168,6 +174,7 @@ rebuild/
         ├── commands/
             ├── walk_commands
             ├── restore_service
+            ├── endpoint_trend_service
             ├── smart_test_selector
             ├── tui_data_service
             ├── summary_service
@@ -191,10 +198,14 @@ rebuild/
             ├── event_service
             ├── override_service
             ├── notification_service
+                ├── timeline_html
+                ├── summary_export
                 ├── reporter
             ├── reporting/
                 ├── chart_builder
                 ├── formatters
+                ├── _html_assets
+                ├── day_html
             ├── base
             ├── walk_queries
         ├── queries/
@@ -208,6 +219,7 @@ rebuild/
             ├── helpers
             ├── walk_command
             ├── refactor_command
+            ├── watch_command
             ├── app
         ├── tui/
             ├── compat
@@ -219,6 +231,7 @@ rebuild/
                 ├── endpoint_screens
             ├── app
         ├── api/
+            ├── metrics
         ├── events/
         ├── commit
         ├── context
@@ -283,6 +296,7 @@ rebuild/
 - **`WalkCommand`** — Trigger a historical walk of a git repository.
 - **`WalkCommandResult`** — Result of a WalkCommand.
 - **`RestoreService`** — Service for restoring a working endpoint from git history.
+- **`EndpointTrendPoint`** — A single chronological point in an endpoint-count trend.
 - **`ChangedModule`** — Information about a changed module/file.
 - **`TestSelection`** — Result of test selection process.
 - **`SmartTestSelector`** — Selectively runs tests based on git diff analysis.
@@ -324,7 +338,7 @@ rebuild/
 - **`NotificationPayload`** — —
 - **`WebhookConfig`** — —
 - **`NotificationService`** — Send webhook notifications on rebuild events.
-- **`ReporterService`** — Thin orchestrator: delegates to formatters, chart_builder, and saves files.
+- **`ReporterService`** — Thin facade orchestrating the per-day / timeline / summary writers.
 - **`Query`** — Base class for all CQRS queries (read side).
 - **`QueryResult`** — Base class for all query results.
 - **`QueryHandler`** — Handle a single Query type and return a QueryResult.
@@ -452,21 +466,35 @@ rebuild/
 - `build_new_section(new_version, commits, unreleased)` — —
 - `update_changelog(new_version, dry_run)` — —
 - `main()` — —
+- `print()` — —
 - `all()` — —
 - `load_and_validate(path)` — Load a YAML file and validate against RebuildConfig schema.
 - `get_event_bus()` — —
 - `set_event_bus(bus)` — —
+- `compute_endpoint_count_trend(results, warning_threshold_pct)` — Compute the per-day endpoint-count trend with warning flags.
+- `compute_endpoint_count_trend_dict(results_asc, warning_threshold_pct)` — Adapter — return the trend as a ``{day_str: label}`` mapping.
+- `compute_endpoint_count_trend_labels(results, warning_threshold_pct)` — Adapter — return labels in chronological order as a flat list.
 - `load_config_from_env()` — Load PR configuration from environment variables.
 - `compute_health_trend(results, regression_threshold)` — Compute the per-day health trend with regression flags.
 - `compute_health_trend_dict(results_asc, regression_threshold)` — Adapter — return the trend as a ``{day_str: label}`` mapping.
 - `compute_health_trend_labels(results, regression_threshold)` — Adapter — return labels in chronological order as a flat list.
 - `get_event_service()` — Get the global event service singleton.
+- `build_export_data(results)` — Build the JSON-serialisable list used by ``history.json`` and timeline JS.
+- `render_timeline_html(results, output_dir)` — Render the full ``index.html`` document for the cross-day timeline.
+- `write_csv(results, output_dir)` — Write ``summary.csv`` with one row per day. Returns the destination path.
+- `write_markdown(results, output_dir)` — Write ``summary.md`` with a Markdown table of walk results.
 - `generate_trend_chart(results)` — —
 - `generate_endpoint_diff(results)` — —
 - `to_yaml(data, indent)` — —
 - `to_toon(result)` — —
 - `status_badge(status)` — —
 - `classify_error(result)` — —
+- `render_endpoint_row(endpoint_result)` — Render a single ``<tr>`` for the per-day endpoint table.
+- `render_endpoint_rows(result)` — Render concatenated ``<tr>`` rows for ``result.endpoint_results``.
+- `render_deploy_log(result)` — —
+- `render_deploy_category(result)` — —
+- `render_deploy_section(result)` — Render the deploy status block (or empty string for dry-run).
+- `render_day_html(result, data)` — Render the full per-day ``report.html`` document.
 - `load_plugins()` — Return the default registry, discovering plugins on first call.
 - `reset_registry()` — Reset the default registry (useful in tests).
 - `get_cc_for_day(repo, day)` — Wywołuje `toon <repo> --format json` i zwraca średnie CC dla danego dnia.
@@ -485,6 +513,7 @@ rebuild/
 - `dsl(script, command, execute)` — Wykonaj DSL (Domain Specific Language) komendy rebuild.
 - `nlp(text, to_dsl, to_cli)` — Parsuj komendę w języku naturalnym i konwertuj na DSL/CLI.
 - `mvp(host, port)` — Uruchom MVP protocol server.
+- `watch(repo, output, health_url, base_url)` — [Long-running] Obserwuj zmiany w repo i uruchamiaj rebuild walk (--dry-run) automatycznie.
 - `duplicates(path, min_lines, semantic, semantic_model)` — [Query] Znajdź strukturalne i semantyczne duplikaty kodu.
 - `vector_build(path, index, min_lines, model)` — [Query] Zbuduj lokalny indeks wektorowy fragmentów kodu.
 - `vector_query(query, index, top_k, min_score)` — [Query] Wyszukaj semantycznie podobne fragmenty w indeksie wektorowym.
@@ -513,8 +542,10 @@ rebuild/
 - `plan_command(path, ai, console)` — —
 - `pr_command(path, console)` — —
 - `execute_command(path, force, console)` — —
+- `watch_command(repo, output, health_url, base_url)` — Run ``rebuild watch`` on *repo*.
 - `launch_tui()` — Uruchamia TUI. Sprawdza dostępność Textual.
 - `create_app(command_bus, query_bus, event_store, event_bus)` — Create and return a FastAPI application.
+- `setup_metrics(app, registry)` — Register Prometheus metrics middleware and /metrics endpoint on *app*.
 
 
 ## Project Structure
@@ -530,6 +561,7 @@ rebuild/
 📄 `docker-compose.example`
 📄 `docs.README`
 📄 `docs.architecture`
+📄 `docs.benchmarks`
 📄 `docs.c2004`
 📄 `docs.case_study_c2004`
 📄 `docs.changelog`
@@ -542,6 +574,7 @@ rebuild/
 📄 `docs.guide.refactor`
 📄 `docs.guide.walk`
 📄 `docs.index`
+📄 `docs.mutation_testing`
 📄 `docs.reference.cli`
 📄 `docs.reference.config`
 📄 `docs.usage`
@@ -598,6 +631,7 @@ rebuild/
 📄 `rebuild.application.services.db_snapshot_manager` (22 functions, 2 classes)
 📄 `rebuild.application.services.deploy_service` (24 functions, 1 classes)
 📄 `rebuild.application.services.deploy_strategy` (2 functions, 1 classes)
+📄 `rebuild.application.services.endpoint_trend_service` (3 functions, 1 classes)
 📄 `rebuild.application.services.event_service` (9 functions, 3 classes)
 📄 `rebuild.application.services.git_service` (10 functions, 1 classes)
 📄 `rebuild.application.services.history_service` (3 functions, 1 classes)
@@ -611,9 +645,13 @@ rebuild/
 📄 `rebuild.application.services.regression_service` (3 functions, 1 classes)
 📄 `rebuild.application.services.reporter_service`
 📦 `rebuild.application.services.reporting`
+📄 `rebuild.application.services.reporting._html_assets`
 📄 `rebuild.application.services.reporting.chart_builder` (2 functions)
+📄 `rebuild.application.services.reporting.day_html` (6 functions)
 📄 `rebuild.application.services.reporting.formatters` (5 functions)
-📄 `rebuild.application.services.reporting.reporter` (16 functions, 1 classes)
+📄 `rebuild.application.services.reporting.reporter` (14 functions, 1 classes)
+📄 `rebuild.application.services.reporting.summary_export` (2 functions)
+📄 `rebuild.application.services.reporting.timeline_html` (4 functions)
 📄 `rebuild.application.services.restore_service` (7 functions, 1 classes)
 📄 `rebuild.application.services.scanner_service` (21 functions, 1 classes)
 📄 `rebuild.application.services.screenshot_service` (2 functions, 2 classes)
@@ -642,11 +680,13 @@ rebuild/
 📄 `rebuild.infrastructure.shell_adapter` (3 functions, 1 classes)
 📦 `rebuild.interfaces.api`
 📄 `rebuild.interfaces.api.app` (1 functions, 2 classes)
-📄 `rebuild.interfaces.cli` (29 functions)
+📄 `rebuild.interfaces.api.metrics` (2 functions)
+📄 `rebuild.interfaces.cli` (30 functions)
 📄 `rebuild.interfaces.commands.analyze_command` (6 functions)
 📄 `rebuild.interfaces.commands.helpers` (6 functions)
 📄 `rebuild.interfaces.commands.refactor_command` (4 functions)
 📄 `rebuild.interfaces.commands.walk_command` (11 functions)
+📄 `rebuild.interfaces.commands.watch_command` (4 functions)
 📄 `rebuild.interfaces.dashboard` (4 functions)
 📄 `rebuild.interfaces.evolution_viz` (2 functions)
 📦 `rebuild.interfaces.tui`
@@ -672,6 +712,8 @@ rebuild/
 📄 `restored_c2004_health.api-health.docker.docker-compose`
 📄 `scripts.benchmark_scanner_cache` (6 functions)
 📄 `scripts.bump_version` (10 functions)
+📄 `scripts.run_c2004_full` (2 functions)
+📄 `scripts.run_mutation_tests`
 📄 `testql-scenarios.generated-cli-tests.testql.toon`
 📄 `testql-scenarios.generated-from-pytests.testql.toon` (2 functions)
 📄 `tree`

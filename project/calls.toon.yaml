@@ -1,6 +1,6 @@
 # code2llm call graph | /home/tom/github/semcod/rebuild
-# generated in 0.07s
-# nodes: 106 | edges: 87 | modules: 28
+# generated in 0.10s
+# nodes: 134 | edges: 118 | modules: 34
 # CC̄=3.4
 
 HUBS[20]:
@@ -14,36 +14,36 @@ HUBS[20]:
     CC=2  in:3  out:28  total:31
   rebuild.interfaces.commands.analyze_command.services_command
     CC=9  in:1  out:25  total:26
-  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
-    CC=14  in:0  out:23  total:23
   rebuild.domain.mvp_protocol.MVPServer.start
     CC=1  in:0  out:23  total:23
-  rebuild.interfaces.commands.helpers.print_summary_table
-    CC=9  in:2  out:20  total:22
+  rebuild.interfaces.commands.watch_command.watch_command
+    CC=6  in:1  out:22  total:23
   rebuild.interfaces.cli.plugins
     CC=7  in:0  out:22  total:22
+  rebuild.interfaces.commands.helpers.print_summary_table
+    CC=9  in:2  out:20  total:22
   rebuild.interfaces.commands.analyze_command.vector_query_command
     CC=9  in:1  out:20  total:21
-  scripts.bump_version.main
-    CC=4  in:0  out:20  total:20
+  rebuild.interfaces.api.metrics.setup_metrics
+    CC=2  in:1  out:20  total:21
   rebuild.interfaces.commands.refactor_command.plan_command
     CC=11  in:1  out:19  total:20
+  scripts.bump_version.main
+    CC=4  in:0  out:20  total:20
   rebuild.interfaces.commands.analyze_command.truth_command
     CC=3  in:1  out:17  total:18
+  rebuild.application.services.reporting.summary_export.write_csv
+    CC=5  in:1  out:17  total:18
+  rebuild.application.services.reporting.timeline_html.build_export_data
+    CC=5  in:3  out:15  total:18
+  rebuild.application.services.reporting.formatters.to_yaml
+    CC=6  in:3  out:14  total:17
   scripts.bump_version.categorize_commits
     CC=14  in:1  out:15  total:16
   rebuild.interfaces.commands.refactor_command._generate_refactor_plan
     CC=5  in:3  out:12  total:15
-  scripts.bump_version.build_new_section
-    CC=7  in:1  out:14  total:15
   scripts.bump_version.update_changelog
     CC=5  in:1  out:14  total:15
-  rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
-    CC=12  in:1  out:12  total:13
-  rebuild.interfaces.dashboard.generate_dashboard
-    CC=5  in:3  out:9  total:12
-  rebuild.application.services.reporting.chart_builder.generate_trend_chart
-    CC=8  in:1  out:11  total:12
 
 MODULES:
   Makefile  [1 funcs]
@@ -52,6 +52,10 @@ MODULES:
     __init__  CC=1  out:9
   rebuild.application.services.db_snapshot_manager  [1 funcs]
     _postgres_restore  CC=4  out:4
+  rebuild.application.services.endpoint_trend_service  [3 funcs]
+    compute_endpoint_count_trend  CC=7  out:10
+    compute_endpoint_count_trend_dict  CC=2  out:1
+    compute_endpoint_count_trend_labels  CC=2  out:1
   rebuild.application.services.event_service  [1 funcs]
     get_event_service  CC=1  out:0
   rebuild.application.services.notification_service  [6 funcs]
@@ -70,23 +74,46 @@ MODULES:
   rebuild.application.services.reporting.chart_builder  [2 funcs]
     generate_endpoint_diff  CC=12  out:12
     generate_trend_chart  CC=8  out:11
-  rebuild.application.services.reporting.formatters  [3 funcs]
+  rebuild.application.services.reporting.day_html  [6 funcs]
+    render_day_html  CC=2  out:5
+    render_deploy_category  CC=2  out:0
+    render_deploy_log  CC=3  out:0
+    render_deploy_section  CC=5  out:2
+    render_endpoint_row  CC=7  out:4
+    render_endpoint_rows  CC=2  out:2
+  rebuild.application.services.reporting.formatters  [5 funcs]
     _classify_error_text  CC=4  out:2
     classify_error  CC=5  out:2
     status_badge  CC=1  out:1
-  rebuild.application.services.reporting.reporter  [7 funcs]
-    _endpoint_row  CC=7  out:4
+    to_toon  CC=6  out:3
+    to_yaml  CC=6  out:14
+  rebuild.application.services.reporting.reporter  [13 funcs]
+    _deploy_section  CC=1  out:1
+    _endpoint_count_trend_by_day  CC=1  out:1
+    _endpoint_row  CC=1  out:1
+    _endpoint_rows  CC=1  out:1
     _health_trend_by_day  CC=1  out:1
-    _save_html_day  CC=2  out:6
-    save_day  CC=2  out:9
-    save_timeline_index  CC=14  out:23
-    to_toon  CC=1  out:1
-    to_yaml  CC=1  out:1
+    _results_to_export_data  CC=1  out:1
+    _save_html_day  CC=1  out:2
+    export_csv  CC=1  out:1
+    export_markdown  CC=1  out:1
+    save_day  CC=2  out:10
+  rebuild.application.services.reporting.summary_export  [2 funcs]
+    write_csv  CC=5  out:17
+    write_markdown  CC=6  out:13
+  rebuild.application.services.reporting.timeline_html  [4 funcs]
+    _render_day_row  CC=12  out:10
+    _trend_dicts  CC=1  out:2
+    build_export_data  CC=5  out:15
+    render_timeline_html  CC=3  out:10
   rebuild.domain.dsl_v2  [2 funcs]
     _process  CC=7  out:11
     run  CC=7  out:10
   rebuild.domain.mvp_protocol  [1 funcs]
     start  CC=1  out:23
+  rebuild.interfaces.api.metrics  [2 funcs]
+    _require_prometheus  CC=2  out:1
+    setup_metrics  CC=2  out:20
   rebuild.interfaces.cli  [15 funcs]
     _resolve_pr_config  CC=6  out:8
     dashboard  CC=2  out:10
@@ -125,6 +152,10 @@ MODULES:
     _print_walk_header  CC=2  out:5
     _resolve_deploy_method  CC=3  out:4
     walk_command  CC=2  out:11
+  rebuild.interfaces.commands.watch_command  [3 funcs]
+    _build_default_wup_config  CC=1  out:7
+    _require_wup  CC=2  out:1
+    watch_command  CC=6  out:22
   rebuild.interfaces.dashboard  [4 funcs]
     _extract_avg_cc  CC=5  out:6
     _render_html  CC=4  out:4
@@ -185,6 +216,10 @@ EDGES:
   restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
   restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index → restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
+  scripts.benchmark_scanner_cache.setup_repo → scripts.benchmark_scanner_cache._gen_module
+  scripts.benchmark_scanner_cache.churn → scripts.benchmark_scanner_cache._random_suffix
+  scripts.benchmark_scanner_cache.run_walk → scripts.benchmark_scanner_cache.churn
+  scripts.benchmark_scanner_cache.main → scripts.benchmark_scanner_cache.setup_repo
   scripts.bump_version.update_init → Makefile.print
   scripts.bump_version.update_pyproject → Makefile.print
   scripts.bump_version.build_new_section → scripts.bump_version.categorize_commits
@@ -198,32 +233,28 @@ EDGES:
   scripts.bump_version.main → Makefile.print
   scripts.bump_version.main → scripts.bump_version.update_init
   scripts.bump_version.main → scripts.bump_version.update_pyproject
+  rebuild.application.base_pipeline.BasePipeline.__init__ → rebuild.application.services.event_service.get_event_service
+  rebuild.application.services.pr_service.load_config_from_env → testql-scenarios.generated-from-pytests.testql.toon.all
+  rebuild.application.services.regression_service.compute_health_trend_dict → rebuild.application.services.regression_service.compute_health_trend
+  rebuild.application.services.regression_service.compute_health_trend_labels → rebuild.application.services.regression_service.compute_health_trend
+  rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore → Makefile.print
   rebuild.application.services.notification_service.NotificationService.notify → rebuild.application.services.notification_service._send_webhook
   rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_generic_payload
   rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_slack_payload
   rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_discord_payload
   rebuild.application.services.reporting.formatters.classify_error → rebuild.application.services.reporting.formatters._classify_error_text
   rebuild.plugins.registry.PluginRegistry.discover → rebuild.plugins.registry._load_entry_points
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._ensure_git_repo
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._resolve_deploy_method
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._build_walk_config
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._load_yaml_config
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._apply_cli_overrides
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._print_walk_header
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._handle_walk_results
-  rebuild.interfaces.commands.walk_command._build_walk_config → rebuild.interfaces.commands.walk_command._parse_date
-  rebuild.interfaces.commands.walk_command._apply_cli_overrides → rebuild.interfaces.commands.walk_command._parse_date
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.dashboard.generate_dashboard
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.commands.helpers.print_report_links
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.commands.helpers.print_summary_table
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.commands.walk_command._fire_notifications
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.commands.helpers.serve_reports
-  rebuild.interfaces.commands.refactor_command.plan_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  rebuild.interfaces.commands.refactor_command.pr_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  rebuild.interfaces.commands.refactor_command.execute_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  rebuild.interfaces.tui.app.launch_tui → Makefile.print
-  scripts.benchmark_scanner_cache.setup_repo → scripts.benchmark_scanner_cache._gen_module
-  scripts.benchmark_scanner_cache.churn → scripts.benchmark_scanner_cache._random_suffix
-  scripts.benchmark_scanner_cache.run_walk → scripts.benchmark_scanner_cache.churn
-  scripts.benchmark_scanner_cache.main → scripts.benchmark_scanner_cache.setup_repo
-  rebuild.application.base_pipeline.BasePipeline.__init__ → rebuild.application.services.event_service.get_event_service
+  rebuild.interfaces.dashboard.get_cc_for_day → rebuild.interfaces.dashboard._extract_avg_cc
+  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard._render_html
+  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard.get_cc_for_day
+  rebuild.interfaces.cli.dashboard → rebuild.interfaces.dashboard.generate_dashboard
+  rebuild.interfaces.cli.serve → rebuild.interfaces.commands.helpers.print_report_links
+  rebuild.interfaces.cli.serve → rebuild.interfaces.commands.helpers.serve_reports
+  rebuild.interfaces.cli.tui → rebuild.interfaces.tui.app.launch_tui
+  rebuild.interfaces.cli._resolve_pr_config → rebuild.application.services.pr_service.load_config_from_env
+  rebuild.interfaces.cli.evolution → rebuild.interfaces.evolution_viz.generate_evolution_html
+  rebuild.interfaces.cli.duplicates → rebuild.interfaces.commands.analyze_command.duplicates_command
+  rebuild.interfaces.cli.vector_build → rebuild.interfaces.commands.analyze_command.vector_build_command
+  rebuild.interfaces.cli.vector_query → rebuild.interfaces.commands.analyze_command.vector_query_command
+  rebuild.interfaces.cli.multi_repo → rebuild.interfaces.commands.analyze_command.multi_repo_command
+  rebuild.interfaces.cli.services → rebuild.interfaces.commands.analyze_command.services_command

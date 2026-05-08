@@ -23,16 +23,11 @@ flowchart TD
         rebuild__analysis__vector_search__VectorSearchIndex___fragment_id["_fragment_id"]
         rebuild__analysis__vector_search__VectorSearchIndex___to_text["_to_text"]
         rebuild__analysis__vector_search__VectorSearchIndex___cosine_similarity["_cosine_similarity"]
-        rebuild__analysis__graph_exporter__GraphExporter____init__["__init__"]
-        rebuild__analysis__graph_exporter__GraphExporter__export_html["export_html"]
-        rebuild__analysis__graph_exporter__GraphExporter___prepare_d3_data["_prepare_d3_data"]
         rebuild__analysis__git_truth_analyzer__GitTruthAnalyzer____init__["__init__"]
         rebuild__analysis__git_truth_analyzer__GitTruthAnalyzer__analyze_function_history["analyze_function_history"]
         rebuild__analysis__git_truth_analyzer__GitTruthAnalyzer___analyze_content["_analyze_content"]
         rebuild__analysis__git_truth_analyzer__GitTruthAnalyzer___compute_complexity["_compute_complexity"]
         rebuild__analysis__git_truth_analyzer__GitTruthAnalyzer___load_historical_results("_load_historical_results CC=9")
-        rebuild__analysis__service_similarity__ServiceSimilarityAnalyzer__analyze_directory("analyze_directory CC=8")
-        rebuild__analysis__service_similarity__ServiceSimilarityAnalyzer___extract_methods["_extract_methods"]
         rebuild__analysis__duplication_engine__DuplicationEngine____init__["__init__"]
         rebuild__analysis__duplication_engine__DuplicationEngine__scan("scan CC=13")
         rebuild__analysis__duplication_engine__DuplicationEngine__collect_fragments["collect_fragments"]
@@ -53,9 +48,14 @@ flowchart TD
         rebuild__analysis__duplication_engine__DuplicationEngine___extract_regex_fragments("_extract_regex_fragments CC=8")
         rebuild__analysis__duplication_engine__DuplicationEngine___compute_structural_hash_py["_compute_structural_hash_py"]
         rebuild__analysis__duplication_engine__DuplicationEngine___compute_fuzzy_signature_py["_compute_fuzzy_signature_py"]
+        rebuild__analysis__service_similarity__ServiceSimilarityAnalyzer__analyze_directory("analyze_directory CC=8")
+        rebuild__analysis__service_similarity__ServiceSimilarityAnalyzer___extract_methods["_extract_methods"]
+        rebuild__analysis__graph_exporter__GraphExporter____init__["__init__"]
+        rebuild__analysis__graph_exporter__GraphExporter__export_html["export_html"]
+        rebuild__analysis__graph_exporter__GraphExporter___prepare_d3_data["_prepare_d3_data"]
         rebuild__analysis__service_graph__ServiceGraphBuilder____init__["__init__"]
-        rebuild__analysis__service_graph__ServiceGraphBuilder__build["build"]
-        rebuild__analysis__service_graph__ServiceGraphBuilder___analyze_file("_analyze_file CC=14")
+        rebuild__analysis__service_graph__ServiceGraphBuilder__build("build CC=8")
+        rebuild__analysis__service_graph__ServiceGraphBuilder___analyze_file{{_analyze_file CC=17}}
         rebuild__analysis__service_graph__ServiceGraphBuilder__detect_cycles["detect_cycles"]
         rebuild__analysis__service_graph__MultiRepoReport__to_dict["to_dict"]
         rebuild__analysis__service_graph__MultiRepoAnalyzer____init__["__init__"]
@@ -72,49 +72,6 @@ flowchart TD
         rebuild__analysis__service_graph__MultiRepoAnalyzer___belongs_to_other_repo["_belongs_to_other_repo"]
     end
     subgraph rebuild__application
-        rebuild__application__commands__base__CommandHandler__handle["handle"]
-        rebuild__application__commands__base__CommandBus____init__["__init__"]
-        rebuild__application__commands__base__CommandBus__register["register"]
-        rebuild__application__commands__base__CommandBus__dispatch["dispatch"]
-        rebuild__application__commands__walk_commands__WalkCommand___validate_deploy["_validate_deploy"]
-        rebuild__application__commands__walk_commands__WalkCommand___validate_repo["_validate_repo"]
-        rebuild__application__services__tui_data_service__TUIDataService__load_day_results("load_day_results CC=8")
-        rebuild__application__services__tui_data_service__TUIDataService__endpoint_diff("endpoint_diff CC=8")
-        rebuild__application__services__tui_data_service__TUIDataService__health_bar["health_bar"]
-        rebuild__application__services__tui_data_service__TUIDataService__calc_health["calc_health"]
-        rebuild__application__services__tui_data_service__TUIDataService__get_git_repo_toplevel["get_git_repo_toplevel"]
-        rebuild__application__services__summary_service__SummaryService____init__["__init__"]
-        rebuild__application__services__summary_service__SummaryService__generate_from_duplication("generate_from_duplication CC=8")
-        rebuild__application__services__summary_service__SummaryService___generate_summary_text["_generate_summary_text"]
-        rebuild__application__services__summary_service__SummaryService__format_suggestions_for_pr["format_suggestions_for_pr"]
-        rebuild__application__services__summary_service__SummaryService__generate_from_service_graph["generate_from_service_graph"]
-        rebuild__application__services__base__Service__execute["execute"]
-        rebuild__application__services__deploy_strategy__DeployStrategy__start["start"]
-        rebuild__application__services__deploy_strategy__DeployStrategy__stop["stop"]
-        rebuild__application__services__notification_service___build_slack_payload["_build_slack_payload"]
-        rebuild__application__services__notification_service___build_discord_payload["_build_discord_payload"]
-        rebuild__application__services__notification_service___build_generic_payload["_build_generic_payload"]
-        rebuild__application__services__notification_service___send_webhook["_send_webhook"]
-        rebuild__application__services__notification_service__NotificationService____init__["__init__"]
-        rebuild__application__services__notification_service__NotificationService__add_webhook["add_webhook"]
-        rebuild__application__services__notification_service__NotificationService__remove_webhook["remove_webhook"]
-        rebuild__application__services__notification_service__NotificationService__clear["clear"]
-        rebuild__application__services__notification_service__NotificationService__notify["notify"]
-        rebuild__application__services__notification_service__NotificationService__notify_deploy_fail["notify_deploy_fail"]
-        rebuild__application__services__notification_service__NotificationService__notify_health_regression["notify_health_regression"]
-        rebuild__application__services__notification_service__NotificationService__notify_walk_complete["notify_walk_complete"]
-        rebuild__application__services__notification_service__NotificationService___build_body["_build_body"]
-        rebuild__application__services__notification_service__NotificationService__from_config["from_config"]
-        rebuild__application__services__reporting__chart_builder__generate_trend_chart("generate_trend_chart CC=8")
-        rebuild__application__services__reporting__chart_builder__generate_endpoint_diff("generate_endpoint_diff CC=12")
-        rebuild__application__services__reporting__formatters__to_yaml["to_yaml"]
-        rebuild__application__services__reporting__formatters__to_toon["to_toon"]
-        rebuild__application__services__reporting__formatters__status_badge["status_badge"]
-        rebuild__application__services__reporting__formatters__classify_error["classify_error"]
-        rebuild__application__services__reporting__formatters___classify_error_text["_classify_error_text"]
-        rebuild__application__services__history_service__HistoryService__execute["execute"]
-        rebuild__application__services__history_service__HistoryService__load_history("load_history CC=12")
-        rebuild__application__services__history_service__HistoryService___load_commit["_load_commit"]
         rebuild__application__accelerated_pipeline__AcceleratedPipeline____init__["__init__"]
         rebuild__application__accelerated_pipeline__AcceleratedPipeline___save_state["_save_state"]
         rebuild__application__accelerated_pipeline__AcceleratedPipeline__run("run CC=10")
@@ -132,24 +89,53 @@ flowchart TD
         rebuild__application__accelerated_pipeline__AcceleratedPipeline___needs_rescan("_needs_rescan CC=8")
         rebuild__application__accelerated_pipeline__AcceleratedPipeline___needs_db_restore["_needs_db_restore"]
         rebuild__application__accelerated_pipeline__AcceleratedPipeline___diff_names_cached["_diff_names_cached"]
+        rebuild__application__accelerated_pipeline__AcceleratedPipeline___restore_db_fast["_restore_db_fast"]
+        rebuild__application__accelerated_pipeline__AcceleratedPipeline__cleanup["cleanup"]
+        rebuild__application__base_pipeline__BasePipeline____init__["__init__"]
+        rebuild__application__base_pipeline__BasePipeline___load_state["_load_state"]
+        rebuild__application__base_pipeline__BasePipeline___save_state["_save_state"]
+        rebuild__application__base_pipeline__BasePipeline___emit["_emit"]
+        rebuild__application__base_pipeline__BasePipeline__log["log"]
+        rebuild__application__pipeline__Pipeline____init__["__init__"]
+        rebuild__application__pipeline__Pipeline___check_for_manual_fix("_check_for_manual_fix CC=11")
+        rebuild__application__pipeline__Pipeline__run("run CC=10")
+        rebuild__application__pipeline__Pipeline__run_day["run_day"]
+        rebuild__application__pipeline__Pipeline___make_day_result["_make_day_result"]
+        rebuild__application__pipeline__Pipeline___prepare_day_repo["_prepare_day_repo"]
+        rebuild__application__pipeline__Pipeline___checkout_commit_for_day["_checkout_commit_for_day"]
+        rebuild__application__pipeline__Pipeline___apply_accelerator_patches["_apply_accelerator_patches"]
+        rebuild__application__pipeline__Pipeline___apply_configured_overrides["_apply_configured_overrides"]
+        rebuild__application__pipeline__Pipeline___deploy_day["_deploy_day"]
+        rebuild__application__pipeline__Pipeline___save_if_deploy_failed["_save_if_deploy_failed"]
+        rebuild__application__pipeline__Pipeline___scan_test_and_capture["_scan_test_and_capture"]
+        rebuild__application__commands__analyze_commands__AnalyzeCommand___validate_type["_validate_type"]
+        rebuild__application__commands__base__CommandHandler__handle["handle"]
+        rebuild__application__commands__base__CommandBus____init__["__init__"]
+        rebuild__application__commands__base__CommandBus__register["register"]
+        rebuild__application__commands__base__CommandBus__dispatch["dispatch"]
+        rebuild__application__commands__walk_commands__WalkCommand___validate_deploy["_validate_deploy"]
+        rebuild__application__commands__walk_commands__WalkCommand___validate_repo["_validate_repo"]
+        rebuild__application__services__restore_service__RestoreService____init__["__init__"]
+        rebuild__application__services__restore_service__RestoreService__execute["execute"]
+        rebuild__application__services__restore_service__RestoreService__find_last_working_day("find_last_working_day CC=10")
+        rebuild__application__services__restore_service__RestoreService__extract_endpoint("extract_endpoint CC=9")
+        rebuild__application__services__restore_service__RestoreService___find_backend_files["_find_backend_files"]
+        rebuild__application__services__restore_service__RestoreService___is_page_endpoint["_is_page_endpoint"]
+        rebuild__application__services__restore_service__RestoreService___write_readme["_write_readme"]
+        rebuild__application__services__smart_test_selector__SmartTestSelector____init__["__init__"]
+        rebuild__application__services__smart_test_selector__SmartTestSelector__analyze_changes("analyze_changes CC=8")
+        rebuild__application__services__smart_test_selector__SmartTestSelector__select_tests["select_tests"]
+        rebuild__application__services__smart_test_selector__SmartTestSelector___critical_only_selection["_critical_only_selection"]
+        rebuild__application__services__smart_test_selector__SmartTestSelector___affected_endpoint_patterns["_affected_endpoint_patterns"]
+        rebuild__application__services__smart_test_selector__SmartTestSelector___requires_full_selection["_requires_full_selection"]
+        rebuild__application__services__smart_test_selector__SmartTestSelector___select_affected_endpoints["_select_affected_endpoints"]
+        rebuild__application__services__smart_test_selector__SmartTestSelector___path_matches["_path_matches"]
+        rebuild__application__services__smart_test_selector__SmartTestSelector__add_mapping["add_mapping"]
+        rebuild__application__services__smart_test_selector__SmartTestSelector__execute["execute"]
     end
     subgraph rebuild__domain
         rebuild__domain__events__PipelineEvent__create["create"]
         rebuild__domain__events__PipelineEvent__to_json["to_json"]
-        rebuild__domain__day_result__DayResult__to_dict["to_dict"]
-        rebuild__domain__dsl__DSLParser____init__["__init__"]
-        rebuild__domain__dsl__DSLParser__parse("parse CC=10")
-        rebuild__domain__dsl__DSLParser__parse_file["parse_file"]
-        rebuild__domain__dsl__DSLInterpreter____init__["__init__"]
-        rebuild__domain__dsl__DSLInterpreter__execute["execute"]
-        rebuild__domain__dsl__DSLInterpreter__execute_file["execute_file"]
-        rebuild__domain__dsl__DSLInterpreter___handle_walk["_handle_walk"]
-        rebuild__domain__dsl__DSLInterpreter___handle_analyze["_handle_analyze"]
-        rebuild__domain__dsl__DSLInterpreter___handle_evolution["_handle_evolution"]
-        rebuild__domain__dsl__DSLInterpreter___handle_auto_pr["_handle_auto_pr"]
-        rebuild__domain__dsl__DSLInterpreter___handle_accelerator["_handle_accelerator"]
-        rebuild__domain__dsl__DSLInterpreter___handle_restore["_handle_restore"]
-        rebuild__domain__dsl__DSLInterpreter___handle_serve["_handle_serve"]
         rebuild__domain__timeline__GraphSnapshot__to_dict["to_dict"]
         rebuild__domain__timeline__Timeline__add_snapshot["add_snapshot"]
         rebuild__domain__timeline__Timeline__get_snapshot_at_index["get_snapshot_at_index"]
@@ -171,10 +157,19 @@ flowchart TD
         rebuild__domain__mvp_protocol__MVPProtocolHandler___handle_nlp["_handle_nlp"]
         rebuild__domain__mvp_protocol__MVPServer____init__["__init__"]
         rebuild__domain__mvp_protocol__MVPServer__start["start"]
-        rebuild__domain__events__domain_events__PipelineEvent__create["create"]
-        rebuild__domain__events__domain_events__PipelineEvent__to_json["to_json"]
-        rebuild__domain__events__domain_events__DomainEvent__model_post_init["model_post_init"]
-        rebuild__domain__events__domain_events__DomainEvent__to_dict["to_dict"]
+        rebuild__domain__dsl__DSLParser____init__["__init__"]
+        rebuild__domain__dsl__DSLParser__parse("parse CC=10")
+        rebuild__domain__dsl__DSLParser__parse_file["parse_file"]
+        rebuild__domain__dsl__DSLInterpreter____init__["__init__"]
+        rebuild__domain__dsl__DSLInterpreter__execute["execute"]
+        rebuild__domain__dsl__DSLInterpreter__execute_file["execute_file"]
+        rebuild__domain__dsl__DSLInterpreter___handle_walk["_handle_walk"]
+        rebuild__domain__dsl__DSLInterpreter___handle_analyze["_handle_analyze"]
+        rebuild__domain__dsl__DSLInterpreter___handle_evolution["_handle_evolution"]
+        rebuild__domain__dsl__DSLInterpreter___handle_auto_pr["_handle_auto_pr"]
+        rebuild__domain__dsl__DSLInterpreter___handle_accelerator["_handle_accelerator"]
+        rebuild__domain__dsl__DSLInterpreter___handle_restore["_handle_restore"]
+        rebuild__domain__dsl__DSLInterpreter___handle_serve["_handle_serve"]
         rebuild__domain__dsl_v2__DSLParser__parse_tokens("parse_tokens CC=11")
         rebuild__domain__dsl_v2__DSLParser__parse["parse"]
         rebuild__domain__dsl_v2__DSLParser__to_cqrs_command["to_cqrs_command"]
@@ -186,8 +181,25 @@ flowchart TD
         rebuild__domain__dsl_v2__DSLShell__run["run"]
         rebuild__domain__dsl_v2__DSLShell___process["_process"]
         rebuild__domain__dsl_v2__DSLShell__process_line["process_line"]
+        rebuild__domain__day_result__DayResult__to_dict["to_dict"]
+        rebuild__domain__events__domain_events__PipelineEvent__create["create"]
+        rebuild__domain__events__domain_events__PipelineEvent__to_json["to_json"]
+        rebuild__domain__events__domain_events__DomainEvent__model_post_init["model_post_init"]
+        rebuild__domain__events__domain_events__DomainEvent__to_dict["to_dict"]
     end
     subgraph rebuild__infrastructure
+        rebuild__infrastructure__shell_adapter__ShellAdapter____init__["__init__"]
+        rebuild__infrastructure__shell_adapter__ShellAdapter__run["run"]
+        rebuild__infrastructure__shell_adapter__ShellAdapter__popen["popen"]
+        rebuild__infrastructure__config_schema__DeployConfig___valid_method["_valid_method"]
+        rebuild__infrastructure__config_schema__OutputConfig___non_empty["_non_empty"]
+        rebuild__infrastructure__config_schema__ProjectConfig___strict_bool["_strict_bool"]
+        rebuild__infrastructure__config_schema__ProjectConfig___validate_deploy_and_output("_validate_deploy_and_output CC=14")
+        rebuild__infrastructure__config_schema__RebuildConfig___must_be_mapping["_must_be_mapping"]
+        rebuild__infrastructure__config_schema__RebuildConfig___allow_flat["_allow_flat"]
+        rebuild__infrastructure__config_schema__ConfigSchemaValidator__validate["validate"]
+        rebuild__infrastructure__config_schema__ConfigSchemaValidator__parse["parse"]
+        rebuild__infrastructure__config_schema__load_and_validate["load_and_validate"]
         rebuild__infrastructure__config_loader__ConfigLoader__load["load"]
         rebuild__infrastructure__config_loader__ConfigLoader__validate["validate"]
         rebuild__infrastructure__config_loader__ConfigLoader__apply_to_config["apply_to_config"]
@@ -201,6 +213,13 @@ flowchart TD
         rebuild__infrastructure__config_loader__ConfigLoader___apply_login_options["_apply_login_options"]
         rebuild__infrastructure__config_loader__ConfigLoader___apply_replay_options["_apply_replay_options"]
         rebuild__infrastructure__config_loader__ConfigLoader___apply_notifications["_apply_notifications"]
+        rebuild__infrastructure__http_adapter__HttpAdapter____init__["__init__"]
+        rebuild__infrastructure__http_adapter__HttpAdapter__get["get"]
+        rebuild__infrastructure__http_adapter__HttpAdapter__post["post"]
+        rebuild__infrastructure__http_adapter__HttpAdapter__put["put"]
+        rebuild__infrastructure__http_adapter__HttpAdapter__patch["patch"]
+        rebuild__infrastructure__http_adapter__HttpAdapter__delete["delete"]
+        rebuild__infrastructure__http_adapter__HttpAdapter__close["close"]
         rebuild__infrastructure__event_bus__EventBus____init__["__init__"]
         rebuild__infrastructure__event_bus__EventBus__subscribe["subscribe"]
         rebuild__infrastructure__event_bus__EventBus__subscribe_async["subscribe_async"]
@@ -213,13 +232,6 @@ flowchart TD
         rebuild__infrastructure__event_bus__EventBus__publish_many["publish_many"]
         rebuild__infrastructure__event_bus__get_event_bus["get_event_bus"]
         rebuild__infrastructure__event_bus__set_event_bus["set_event_bus"]
-        rebuild__infrastructure__http_adapter__HttpAdapter____init__["__init__"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__get["get"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__post["post"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__put["put"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__patch["patch"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__delete["delete"]
-        rebuild__infrastructure__http_adapter__HttpAdapter__close["close"]
         rebuild__infrastructure__event_store__EventStore____init__["__init__"]
         rebuild__infrastructure__event_store__EventStore___conn["_conn"]
         rebuild__infrastructure__event_store__EventStore__append["append"]
@@ -228,20 +240,44 @@ flowchart TD
         rebuild__infrastructure__event_store__EventStore__load_raw["load_raw"]
         rebuild__infrastructure__event_store__EventStore__count["count"]
         rebuild__infrastructure__event_store__EventStore__prune_before["prune_before"]
-        rebuild__infrastructure__shell_adapter__ShellAdapter____init__["__init__"]
-        rebuild__infrastructure__shell_adapter__ShellAdapter__run["run"]
-        rebuild__infrastructure__shell_adapter__ShellAdapter__popen["popen"]
-        rebuild__infrastructure__config_schema__DeployConfig___valid_method["_valid_method"]
-        rebuild__infrastructure__config_schema__OutputConfig___non_empty["_non_empty"]
-        rebuild__infrastructure__config_schema__ProjectConfig___strict_bool["_strict_bool"]
-        rebuild__infrastructure__config_schema__ProjectConfig___validate_deploy_and_output("_validate_deploy_and_output CC=14")
-        rebuild__infrastructure__config_schema__RebuildConfig___must_be_mapping["_must_be_mapping"]
-        rebuild__infrastructure__config_schema__RebuildConfig___allow_flat["_allow_flat"]
-        rebuild__infrastructure__config_schema__ConfigSchemaValidator__validate["validate"]
-        rebuild__infrastructure__config_schema__ConfigSchemaValidator__parse["parse"]
-        rebuild__infrastructure__config_schema__load_and_validate["load_and_validate"]
     end
     subgraph rebuild__interfaces
+        rebuild__interfaces__dashboard__get_cc_for_day["get_cc_for_day"]
+        rebuild__interfaces__dashboard___extract_avg_cc["_extract_avg_cc"]
+        rebuild__interfaces__dashboard__generate_dashboard["generate_dashboard"]
+        rebuild__interfaces__dashboard___render_html["_render_html"]
+        rebuild__interfaces__cli__init["init"]
+        rebuild__interfaces__cli__walk["walk"]
+        rebuild__interfaces__cli__restore["restore"]
+        rebuild__interfaces__cli__report["report"]
+        rebuild__interfaces__cli__dashboard["dashboard"]
+        rebuild__interfaces__cli__accelerator["accelerator"]
+        rebuild__interfaces__cli__serve["serve"]
+        rebuild__interfaces__cli__tui["tui"]
+        rebuild__interfaces__cli__version["version"]
+        rebuild__interfaces__cli__auto_pr["auto_pr"]
+        rebuild__interfaces__cli___load_analysis_data["_load_analysis_data"]
+        rebuild__interfaces__cli___resolve_pr_config["_resolve_pr_config"]
+        rebuild__interfaces__cli___generate_auto_pr_summary["_generate_auto_pr_summary"]
+        rebuild__interfaces__cli___print_auto_pr_summary["_print_auto_pr_summary"]
+        rebuild__interfaces__cli___create_auto_pr["_create_auto_pr"]
+        rebuild__interfaces__cli__evolution["evolution"]
+        rebuild__interfaces__cli__dsl("dsl CC=9")
+        rebuild__interfaces__cli__nlp["nlp"]
+        rebuild__interfaces__cli__mvp["mvp"]
+        rebuild__interfaces__cli__watch["watch"]
+        rebuild__interfaces__cli__duplicates["duplicates"]
+        rebuild__interfaces__cli__vector_build["vector_build"]
+        rebuild__interfaces__cli__vector_query["vector_query"]
+        rebuild__interfaces__cli__multi_repo["multi_repo"]
+        rebuild__interfaces__cli__services["services"]
+        rebuild__interfaces__cli__truth["truth"]
+        rebuild__interfaces__cli__plan["plan"]
+        rebuild__interfaces__cli__pr["pr"]
+        rebuild__interfaces__cli__execute["execute"]
+        rebuild__interfaces__cli__plugins["plugins"]
+        rebuild__interfaces__evolution_viz__generate_evolution_html["generate_evolution_html"]
+        rebuild__interfaces__evolution_viz___render_html["_render_html"]
         rebuild__interfaces__commands__analyze_command__duplicates_command["duplicates_command"]
         rebuild__interfaces__commands__analyze_command__vector_build_command["vector_build_command"]
         rebuild__interfaces__commands__analyze_command__vector_query_command("vector_query_command CC=9")
@@ -263,47 +299,15 @@ flowchart TD
         rebuild__interfaces__commands__refactor_command__plan_command("plan_command CC=11")
         rebuild__interfaces__commands__refactor_command__pr_command["pr_command"]
         rebuild__interfaces__commands__refactor_command__execute_command["execute_command"]
-        rebuild__interfaces__tui__app__launch_tui["launch_tui"]
-        rebuild__interfaces__api__app__create_app["create_app"]
-        rebuild__interfaces__dashboard__get_cc_for_day["get_cc_for_day"]
-        rebuild__interfaces__dashboard___extract_avg_cc["_extract_avg_cc"]
-        rebuild__interfaces__dashboard__generate_dashboard["generate_dashboard"]
-        rebuild__interfaces__dashboard___render_html["_render_html"]
-        rebuild__interfaces__evolution_viz__generate_evolution_html["generate_evolution_html"]
-        rebuild__interfaces__evolution_viz___render_html["_render_html"]
-        rebuild__interfaces__cli__init["init"]
-        rebuild__interfaces__cli__walk["walk"]
-        rebuild__interfaces__cli__restore["restore"]
-        rebuild__interfaces__cli__report["report"]
-        rebuild__interfaces__cli__dashboard["dashboard"]
-        rebuild__interfaces__cli__accelerator["accelerator"]
-        rebuild__interfaces__cli__serve["serve"]
-        rebuild__interfaces__cli__tui["tui"]
-        rebuild__interfaces__cli__version["version"]
-        rebuild__interfaces__cli__auto_pr["auto_pr"]
-        rebuild__interfaces__cli___load_analysis_data["_load_analysis_data"]
-        rebuild__interfaces__cli___resolve_pr_config["_resolve_pr_config"]
-        rebuild__interfaces__cli___generate_auto_pr_summary["_generate_auto_pr_summary"]
-        rebuild__interfaces__cli___print_auto_pr_summary["_print_auto_pr_summary"]
-        rebuild__interfaces__cli___create_auto_pr["_create_auto_pr"]
-        rebuild__interfaces__cli__evolution["evolution"]
-        rebuild__interfaces__cli__dsl("dsl CC=9")
-        rebuild__interfaces__cli__nlp["nlp"]
-        rebuild__interfaces__cli__mvp["mvp"]
-        rebuild__interfaces__cli__duplicates["duplicates"]
-        rebuild__interfaces__cli__vector_build["vector_build"]
-        rebuild__interfaces__cli__vector_query["vector_query"]
-        rebuild__interfaces__cli__multi_repo["multi_repo"]
-        rebuild__interfaces__cli__services["services"]
-        rebuild__interfaces__cli__truth["truth"]
-        rebuild__interfaces__cli__plan["plan"]
-        rebuild__interfaces__cli__pr["pr"]
-        rebuild__interfaces__cli__execute["execute"]
-        rebuild__interfaces__cli__plugins["plugins"]
-        rebuild__interfaces__commands__helpers__collect_cli_overrides["collect_cli_overrides"]
-        rebuild__interfaces__commands__helpers__print_report_links["print_report_links"]
+        rebuild__interfaces__commands__watch_command___require_wup["_require_wup"]
+        rebuild__interfaces__commands__watch_command___build_default_wup_config["_build_default_wup_config"]
+        rebuild__interfaces__commands__watch_command___default_on_change["_default_on_change"]
     end
     subgraph rebuild__plugins
+        rebuild__plugins__base__BaseScanner__scan["scan"]
+        rebuild__plugins__base__BaseScanner__configure["configure"]
+        rebuild__plugins__base__BaseReporter__report["report"]
+        rebuild__plugins__base__BaseReporter__configure["configure"]
         rebuild__plugins__registry___load_entry_points["_load_entry_points"]
         rebuild__plugins__registry__PluginRegistry____init__["__init__"]
         rebuild__plugins__registry__PluginRegistry__discover["discover"]
@@ -318,21 +322,17 @@ flowchart TD
         rebuild__plugins__registry__PluginRegistry____repr__["__repr__"]
         rebuild__plugins__registry__load_plugins["load_plugins"]
         rebuild__plugins__registry__reset_registry["reset_registry"]
-        rebuild__plugins__base__BaseScanner__scan["scan"]
-        rebuild__plugins__base__BaseScanner__configure["configure"]
-        rebuild__plugins__base__BaseReporter__report["report"]
-        rebuild__plugins__base__BaseReporter__configure["configure"]
     end
     subgraph rebuild__refactor
-        rebuild__refactor__refactor_executor__RefactorExecutor____init__["__init__"]
-        rebuild__refactor__refactor_executor__RefactorExecutor__execute_suggestion["execute_suggestion"]
-        rebuild__refactor__refactor_executor__RefactorExecutor___merge_duplicates["_merge_duplicates"]
         rebuild__refactor__recommendation_engine__RecommendationEngine__generate_plan["generate_plan"]
         rebuild__refactor__recommendation_engine__RecommendationEngine___duplicate_suggestions["_duplicate_suggestions"]
         rebuild__refactor__recommendation_engine__RecommendationEngine___similarity_suggestions["_similarity_suggestions"]
         rebuild__refactor__recommendation_engine__RecommendationEngine___adapter_suggestions["_adapter_suggestions"]
         rebuild__refactor__recommendation_engine__RecommendationEngine___infra_dependencies["_infra_dependencies"]
         rebuild__refactor__recommendation_engine__RecommendationEngine___cycle_suggestions["_cycle_suggestions"]
+        rebuild__refactor__refactor_executor__RefactorExecutor____init__["__init__"]
+        rebuild__refactor__refactor_executor__RefactorExecutor__execute_suggestion["execute_suggestion"]
+        rebuild__refactor__refactor_executor__RefactorExecutor___merge_duplicates["_merge_duplicates"]
     end
     subgraph restored_c2004_health__api_health
         restored_c2004_health__api_health__backend__modules__connect_config_network__api__main__health["health"]
@@ -392,6 +392,9 @@ flowchart TD
         scripts__bump_version__update_changelog["update_changelog"]
         scripts__bump_version__main["main"]
     end
+    subgraph scripts__run_c2004_full
+        scripts__run_c2004_full__print["print"]
+    end
     subgraph testql_scenarios__generated_from_pytests
         testql_scenarios__generated_from_pytests__testql__toon__all["all"]
     end
@@ -403,6 +406,11 @@ flowchart TD
     restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_manager_library__api__main___index_html
     restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__index --> restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main___index_html
     restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main__module_index --> restored_c2004_health__api_health__backend__modules__connect_reports_month__api__main___index_html
+    scripts__benchmark_scanner_cache__setup_repo --> scripts__benchmark_scanner_cache___gen_module
+    scripts__benchmark_scanner_cache__churn --> scripts__benchmark_scanner_cache___random_suffix
+    scripts__benchmark_scanner_cache__run_walk --> scripts__benchmark_scanner_cache__churn
+    scripts__benchmark_scanner_cache__main --> scripts__benchmark_scanner_cache__setup_repo
+    scripts__benchmark_scanner_cache__main --> scripts__benchmark_scanner_cache__run_walk
     scripts__bump_version__update_init --> Makefile__print
     scripts__bump_version__update_pyproject --> Makefile__print
     scripts__bump_version__build_new_section --> scripts__bump_version__categorize_commits
@@ -417,12 +425,43 @@ flowchart TD
     scripts__bump_version__main --> scripts__bump_version__update_init
     scripts__bump_version__main --> scripts__bump_version__update_pyproject
     scripts__bump_version__main --> scripts__bump_version__update_changelog
+    rebuild__application__base_pipeline__BasePipeline____init__ --> rebuild__application__services__event_service__get_event_service
+    rebuild__application__services__pr_service__load_config_from_env --> testql_scenarios__generated_from_pytests__testql__toon__all
+    rebuild__application__services__regression_service__compute_health_trend_dict --> rebuild__application__services__regression_service__compute_health_trend
+    rebuild__application__services__regression_service__compute_health_trend_labels --> rebuild__application__services__regression_service__compute_health_trend
+    rebuild__application__services__db_snapshot_manager__DBSnapshotManager___postgres_restore --> Makefile__print
     rebuild__application__services__notification_service__NotificationService__notify --> rebuild__application__services__notification_service___send_webhook
     rebuild__application__services__notification_service__NotificationService___build_body --> rebuild__application__services__notification_service___build_generic_payload
     rebuild__application__services__notification_service__NotificationService___build_body --> rebuild__application__services__notification_service___build_slack_payload
     rebuild__application__services__notification_service__NotificationService___build_body --> rebuild__application__services__notification_service___build_discord_payload
     rebuild__application__services__reporting__formatters__classify_error --> rebuild__application__services__reporting__formatters___classify_error_text
     rebuild__plugins__registry__PluginRegistry__discover --> rebuild__plugins__registry___load_entry_points
+    rebuild__interfaces__dashboard__get_cc_for_day --> rebuild__interfaces__dashboard___extract_avg_cc
+    rebuild__interfaces__dashboard__generate_dashboard --> rebuild__interfaces__dashboard___render_html
+    rebuild__interfaces__dashboard__generate_dashboard --> rebuild__interfaces__dashboard__get_cc_for_day
+    rebuild__interfaces__cli__dashboard --> rebuild__interfaces__dashboard__generate_dashboard
+    rebuild__interfaces__cli__serve --> rebuild__interfaces__commands__helpers__print_report_links
+    rebuild__interfaces__cli__serve --> rebuild__interfaces__commands__helpers__serve_reports
+    rebuild__interfaces__cli__tui --> rebuild__interfaces__tui__app__launch_tui
+    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___load_analysis_data
+    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___resolve_pr_config
+    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___generate_auto_pr_summary
+    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___print_auto_pr_summary
+    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___create_auto_pr
+    rebuild__interfaces__cli___resolve_pr_config --> rebuild__application__services__pr_service__load_config_from_env
+    rebuild__interfaces__cli__evolution --> rebuild__interfaces__evolution_viz__generate_evolution_html
+    rebuild__interfaces__cli__watch --> rebuild__interfaces__commands__watch_command__watch_command
+    rebuild__interfaces__cli__duplicates --> rebuild__interfaces__commands__analyze_command__duplicates_command
+    rebuild__interfaces__cli__vector_build --> rebuild__interfaces__commands__analyze_command__vector_build_command
+    rebuild__interfaces__cli__vector_query --> rebuild__interfaces__commands__analyze_command__vector_query_command
+    rebuild__interfaces__cli__multi_repo --> rebuild__interfaces__commands__analyze_command__multi_repo_command
+    rebuild__interfaces__cli__services --> rebuild__interfaces__commands__analyze_command__services_command
+    rebuild__interfaces__cli__truth --> rebuild__interfaces__commands__analyze_command__truth_command
+    rebuild__interfaces__cli__plan --> rebuild__interfaces__commands__refactor_command__plan_command
+    rebuild__interfaces__cli__pr --> rebuild__interfaces__commands__refactor_command__pr_command
+    rebuild__interfaces__cli__execute --> rebuild__interfaces__commands__refactor_command__execute_command
+    rebuild__interfaces__cli__plugins --> rebuild__plugins__registry__load_plugins
+    rebuild__interfaces__evolution_viz__generate_evolution_html --> rebuild__interfaces__evolution_viz___render_html
     rebuild__interfaces__commands__walk_command__walk_command --> rebuild__interfaces__commands__walk_command___ensure_git_repo
     rebuild__interfaces__commands__walk_command__walk_command --> rebuild__interfaces__commands__walk_command___resolve_deploy_method
     rebuild__interfaces__commands__walk_command__walk_command --> rebuild__interfaces__commands__walk_command___build_walk_config
@@ -440,58 +479,56 @@ flowchart TD
     rebuild__interfaces__commands__refactor_command__plan_command --> rebuild__interfaces__commands__refactor_command___generate_refactor_plan
     rebuild__interfaces__commands__refactor_command__pr_command --> rebuild__interfaces__commands__refactor_command___generate_refactor_plan
     rebuild__interfaces__commands__refactor_command__execute_command --> rebuild__interfaces__commands__refactor_command___generate_refactor_plan
+    rebuild__interfaces__commands__watch_command__watch_command --> rebuild__interfaces__commands__watch_command___require_wup
+    rebuild__interfaces__commands__watch_command__watch_command --> rebuild__interfaces__commands__watch_command___build_default_wup_config
+    rebuild__interfaces__commands__watch_command__watch_command --> rebuild__interfaces__commands__watch_command___default_on_change
     rebuild__interfaces__tui__app__launch_tui --> Makefile__print
-    scripts__benchmark_scanner_cache__setup_repo --> scripts__benchmark_scanner_cache___gen_module
-    scripts__benchmark_scanner_cache__churn --> scripts__benchmark_scanner_cache___random_suffix
-    scripts__benchmark_scanner_cache__run_walk --> scripts__benchmark_scanner_cache__churn
-    scripts__benchmark_scanner_cache__main --> scripts__benchmark_scanner_cache__setup_repo
-    scripts__benchmark_scanner_cache__main --> scripts__benchmark_scanner_cache__run_walk
-    rebuild__application__base_pipeline__BasePipeline____init__ --> rebuild__application__services__event_service__get_event_service
-    rebuild__interfaces__dashboard__get_cc_for_day --> rebuild__interfaces__dashboard___extract_avg_cc
-    rebuild__interfaces__dashboard__generate_dashboard --> rebuild__interfaces__dashboard___render_html
-    rebuild__interfaces__dashboard__generate_dashboard --> rebuild__interfaces__dashboard__get_cc_for_day
+    rebuild__domain__mvp_protocol__MVPServer__start --> Makefile__print
+    rebuild__domain__dsl_v2__DSLShell__run --> Makefile__print
+    rebuild__domain__dsl_v2__DSLShell___process --> Makefile__print
+    rebuild__application__services__endpoint_trend_service__compute_endpoint_count_trend_dict --> rebuild__application__services__endpoint_trend_service__compute_endpoint_count_trend
+    rebuild__application__services__endpoint_trend_service__compute_endpoint_count_trend_labels --> rebuild__application__services__endpoint_trend_service__compute_endpoint_count_trend
+    rebuild__application__services__reporting__timeline_html___trend_dicts --> rebuild__application__services__regression_service__compute_health_trend_dict
+    rebuild__application__services__reporting__timeline_html___trend_dicts --> rebuild__application__services__endpoint_trend_service__compute_endpoint_count_trend_dict
+    rebuild__application__services__reporting__timeline_html__build_export_data --> rebuild__application__services__reporting__timeline_html___trend_dicts
+    rebuild__application__services__reporting__timeline_html__render_timeline_html --> rebuild__application__services__reporting__timeline_html___trend_dicts
+    rebuild__application__services__reporting__timeline_html__render_timeline_html --> rebuild__application__services__reporting__chart_builder__generate_trend_chart
+    rebuild__application__services__reporting__timeline_html__render_timeline_html --> rebuild__application__services__reporting__chart_builder__generate_endpoint_diff
+    rebuild__application__services__reporting__timeline_html__render_timeline_html --> rebuild__application__services__reporting__timeline_html__build_export_data
+    rebuild__application__services__reporting__timeline_html__render_timeline_html --> rebuild__application__services__reporting__timeline_html___render_day_row
+    rebuild__application__services__reporting__summary_export__write_csv --> rebuild__application__services__regression_service__compute_health_trend_dict
+    rebuild__application__services__reporting__summary_export__write_csv --> rebuild__application__services__endpoint_trend_service__compute_endpoint_count_trend_dict
+    rebuild__application__services__reporting__summary_export__write_markdown --> rebuild__application__services__regression_service__compute_health_trend_dict
+    rebuild__application__services__reporting__summary_export__write_markdown --> rebuild__application__services__endpoint_trend_service__compute_endpoint_count_trend_dict
     rebuild__application__services__reporting__reporter__ReporterService__save_day --> rebuild__application__services__reporting__reporter__ReporterService__to_yaml
     rebuild__application__services__reporting__reporter__ReporterService__save_day --> rebuild__application__services__reporting__reporter__ReporterService__to_toon
-    rebuild__application__services__reporting__reporter__ReporterService___save_html_day --> rebuild__application__services__reporting__reporter__ReporterService__to_yaml
-    rebuild__application__services__reporting__reporter__ReporterService___save_html_day --> rebuild__application__services__reporting__reporter__ReporterService__to_toon
-    rebuild__application__services__reporting__reporter__ReporterService___endpoint_row --> rebuild__application__services__reporting__formatters__classify_error
-    rebuild__application__services__reporting__reporter__ReporterService___endpoint_row --> rebuild__application__services__reporting__formatters__status_badge
-    rebuild__application__services__reporting__reporter__ReporterService__save_timeline_index --> rebuild__application__services__reporting__chart_builder__generate_trend_chart
-    rebuild__application__services__reporting__reporter__ReporterService__save_timeline_index --> rebuild__application__services__reporting__chart_builder__generate_endpoint_diff
+    rebuild__application__services__reporting__reporter__ReporterService__save_day --> rebuild__application__services__reporting__day_html__render_day_html
+    rebuild__application__services__reporting__reporter__ReporterService__save_timeline_index --> rebuild__application__services__reporting__timeline_html__build_export_data
+    rebuild__application__services__reporting__reporter__ReporterService__save_timeline_index --> rebuild__application__services__reporting__timeline_html__render_timeline_html
+    rebuild__application__services__reporting__reporter__ReporterService__export_csv --> rebuild__application__services__reporting__summary_export__write_csv
+    rebuild__application__services__reporting__reporter__ReporterService__export_markdown --> rebuild__application__services__reporting__summary_export__write_markdown
+    rebuild__application__services__reporting__reporter__ReporterService___save_html_day --> rebuild__application__services__reporting__day_html__render_day_html
+    rebuild__application__services__reporting__reporter__ReporterService___endpoint_rows --> rebuild__application__services__reporting__day_html__render_endpoint_rows
+    rebuild__application__services__reporting__reporter__ReporterService___endpoint_row --> rebuild__application__services__reporting__day_html__render_endpoint_row
+    rebuild__application__services__reporting__reporter__ReporterService___deploy_section --> rebuild__application__services__reporting__day_html__render_deploy_section
     rebuild__application__services__reporting__reporter__ReporterService___health_trend_by_day --> rebuild__application__services__regression_service__compute_health_trend_dict
-    rebuild__interfaces__evolution_viz__generate_evolution_html --> rebuild__interfaces__evolution_viz___render_html
-    rebuild__interfaces__cli__dashboard --> rebuild__interfaces__dashboard__generate_dashboard
-    rebuild__interfaces__cli__serve --> rebuild__interfaces__commands__helpers__print_report_links
-    rebuild__interfaces__cli__serve --> rebuild__interfaces__commands__helpers__serve_reports
-    rebuild__interfaces__cli__tui --> rebuild__interfaces__tui__app__launch_tui
-    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___load_analysis_data
-    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___resolve_pr_config
-    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___generate_auto_pr_summary
-    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___print_auto_pr_summary
-    rebuild__interfaces__cli__auto_pr --> rebuild__interfaces__cli___create_auto_pr
-    rebuild__interfaces__cli___resolve_pr_config --> rebuild__application__services__pr_service__load_config_from_env
-    rebuild__interfaces__cli__evolution --> rebuild__interfaces__evolution_viz__generate_evolution_html
-    rebuild__interfaces__cli__duplicates --> rebuild__interfaces__commands__analyze_command__duplicates_command
-    rebuild__interfaces__cli__vector_build --> rebuild__interfaces__commands__analyze_command__vector_build_command
-    rebuild__interfaces__cli__vector_query --> rebuild__interfaces__commands__analyze_command__vector_query_command
-    rebuild__interfaces__cli__multi_repo --> rebuild__interfaces__commands__analyze_command__multi_repo_command
-    rebuild__interfaces__cli__services --> rebuild__interfaces__commands__analyze_command__services_command
-    rebuild__interfaces__cli__truth --> rebuild__interfaces__commands__analyze_command__truth_command
-    rebuild__interfaces__cli__plan --> rebuild__interfaces__commands__refactor_command__plan_command
-    rebuild__interfaces__cli__pr --> rebuild__interfaces__commands__refactor_command__pr_command
-    rebuild__interfaces__cli__execute --> rebuild__interfaces__commands__refactor_command__execute_command
-    rebuild__interfaces__cli__plugins --> rebuild__plugins__registry__load_plugins
-    rebuild__application__services__regression_service__compute_health_trend_dict --> rebuild__application__services__regression_service__compute_health_trend
-    rebuild__application__services__regression_service__compute_health_trend_labels --> rebuild__application__services__regression_service__compute_health_trend
-    rebuild__application__services__db_snapshot_manager__DBSnapshotManager___postgres_restore --> Makefile__print
-    rebuild__application__services__pr_service__load_config_from_env --> testql_scenarios__generated_from_pytests__testql__toon__all
-    rebuild__domain__mvp_protocol__MVPServer__start --> Makefile__print
+    rebuild__application__services__reporting__reporter__ReporterService___endpoint_count_trend_by_day --> rebuild__application__services__endpoint_trend_service__compute_endpoint_count_trend_dict
+    rebuild__application__services__reporting__reporter__ReporterService___results_to_export_data --> rebuild__application__services__reporting__timeline_html__build_export_data
+    rebuild__application__services__reporting__day_html__render_endpoint_row --> rebuild__application__services__reporting__formatters__classify_error
+    rebuild__application__services__reporting__day_html__render_endpoint_row --> rebuild__application__services__reporting__formatters__status_badge
+    rebuild__application__services__reporting__day_html__render_endpoint_rows --> rebuild__application__services__reporting__day_html__render_endpoint_row
+    rebuild__application__services__reporting__day_html__render_deploy_section --> rebuild__application__services__reporting__day_html__render_deploy_log
+    rebuild__application__services__reporting__day_html__render_deploy_section --> rebuild__application__services__reporting__day_html__render_deploy_category
+    rebuild__application__services__reporting__day_html__render_day_html --> rebuild__application__services__reporting__formatters__to_yaml
+    rebuild__application__services__reporting__day_html__render_day_html --> rebuild__application__services__reporting__formatters__to_toon
+    rebuild__application__services__reporting__day_html__render_day_html --> rebuild__application__services__reporting__day_html__render_endpoint_rows
+    rebuild__application__services__reporting__day_html__render_day_html --> rebuild__application__services__reporting__day_html__render_deploy_section
     rebuild__interfaces__commands__helpers__print_summary_table --> rebuild__interfaces__commands__helpers__compute_health_trend_labels
     rebuild__interfaces__commands__helpers__print_summary_table --> rebuild__interfaces__commands__helpers__compute_endpoint_count_trend_labels
     rebuild__interfaces__commands__helpers__serve_reports --> rebuild__application__services__event_service__get_event_service
-    rebuild__domain__dsl_v2__DSLShell__run --> Makefile__print
-    rebuild__domain__dsl_v2__DSLShell___process --> Makefile__print
+    rebuild__interfaces__api__metrics__setup_metrics --> rebuild__interfaces__api__metrics___require_prometheus
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class scripts__bump_version__categorize_commits,rebuild__infrastructure__config_loader__ConfigLoader___apply_mapping_options,rebuild__infrastructure__event_bus__EventBus__publish,rebuild__application__services__tui_data_service__TUIDataService__load_day_results,rebuild__application__services__tui_data_service__TUIDataService__endpoint_diff,rebuild__application__services__summary_service__SummaryService__generate_from_duplication,rebuild__application__services__reporting__chart_builder__generate_trend_chart,rebuild__application__services__reporting__chart_builder__generate_endpoint_diff,rebuild__interfaces__commands__analyze_command__vector_query_command,rebuild__interfaces__commands__analyze_command__multi_repo_command,rebuild__interfaces__commands__analyze_command__services_command,rebuild__interfaces__commands__walk_command___fire_notifications,rebuild__interfaces__commands__walk_command__accelerator_command,rebuild__interfaces__commands__refactor_command__plan_command,rebuild__application__services__history_service__HistoryService__load_history,rebuild__application__accelerated_pipeline__AcceleratedPipeline__run,rebuild__application__accelerated_pipeline__AcceleratedPipeline___needs_rescan,rebuild__application__services__accelerator_deploy__AcceleratorDeployService__switch_commit,rebuild__application__services__git_service__GitService__days_with_commits,rebuild__application__pipeline__Pipeline___check_for_manual_fix,rebuild__application__pipeline__Pipeline__run,rebuild__application__services__deploy_service__DeployService___classify_deploy_error,rebuild__application__services__deploy_service__DeployService___sync_code_to_runtime,rebuild__application__services__deploy_service__DeployService___resolve_container_name,rebuild__application__services__scanner_service__ScannerService__execute,rebuild__application__services__scanner_service__ScannerService___endpoint_from_fastapi_decorator,rebuild__application__services__scanner_service__ScannerService___collect_router_prefixes,rebuild__application__services__scanner_service__ScannerService___extract_route_path,rebuild__application__services__scanner_service__ScannerService___scan_via_compose_labels,rebuild__application__services__restore_service__RestoreService__find_last_working_day medCC
+    class rebuild__analysis__service_graph__ServiceGraphBuilder___analyze_file highCC
+    class scripts__bump_version__categorize_commits,rebuild__infrastructure__config_schema__ProjectConfig___validate_deploy_and_output,rebuild__infrastructure__config_loader__ConfigLoader___apply_mapping_options,rebuild__infrastructure__event_bus__EventBus__publish,rebuild__analysis__git_truth_analyzer__GitTruthAnalyzer___load_historical_results,rebuild__analysis__duplication_engine__DuplicationEngine__scan,rebuild__analysis__duplication_engine__DuplicationEngine___extract_regex_fragments,rebuild__analysis__service_similarity__ServiceSimilarityAnalyzer__analyze_directory,rebuild__analysis__service_graph__ServiceGraphBuilder__build,rebuild__analysis__service_graph__MultiRepoAnalyzer___repo_aliases,rebuild__analysis__service_graph__MultiRepoAnalyzer___analyze_dependencies,rebuild__analysis__service_graph__MultiRepoAnalyzer___import_roots,rebuild__analysis__service_graph__MultiRepoAnalyzer___iter_code_files,rebuild__application__accelerated_pipeline__AcceleratedPipeline__run,rebuild__application__accelerated_pipeline__AcceleratedPipeline___needs_rescan,rebuild__application__pipeline__Pipeline___check_for_manual_fix,rebuild__application__pipeline__Pipeline__run,rebuild__application__services__restore_service__RestoreService__find_last_working_day,rebuild__application__services__restore_service__RestoreService__extract_endpoint,rebuild__application__services__smart_test_selector__SmartTestSelector__analyze_changes,rebuild__application__services__tui_data_service__TUIDataService__load_day_results,rebuild__application__services__tui_data_service__TUIDataService__endpoint_diff,rebuild__application__services__summary_service__SummaryService__generate_from_duplication,rebuild__application__services__accelerator_deploy__AcceleratorDeployService__switch_commit,rebuild__application__services__history_service__HistoryService__load_history,rebuild__application__services__git_service__GitService__days_with_commits,rebuild__application__services__deploy_service__DeployService___classify_deploy_error,rebuild__application__services__deploy_service__DeployService___sync_code_to_runtime,rebuild__application__services__deploy_service__DeployService___resolve_container_name,rebuild__application__services__screenshot_service__ScreenshotService__execute medCC

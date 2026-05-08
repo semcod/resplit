@@ -22,7 +22,7 @@ Historical deployment analysis — walk git history, deploy per day, test all en
 ## Metadata
 
 - **name**: `rebuild`
-- **version**: `0.1.27`
+- **version**: `0.1.30`
 - **python_requires**: `>=3.11`
 - **license**: {'text': 'Apache-2.0'}
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -42,12 +42,12 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: rebuild;
-  version: 0.1.27;
+  version: 0.1.30;
 }
 
 dependencies {
   runtime: "typer>=0.12, rich>=13, gitpython>=3.1, httpx>=0.27, pyyaml>=6, pydantic>=2, deta>=0.1, astor>=0.8, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
-  dev: "pytest>=8, pytest-cov, pytest-asyncio, ruff, mypy, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
+  dev: "pytest>=8, pytest-cov, pytest-asyncio, ruff, mypy, mutmut>=2.5, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
 }
 
 entity[name="MenuItem"] {
@@ -445,7 +445,7 @@ pipeline:
 ```yaml
 project:
   name: rebuild
-  version: 0.1.27
+  version: 0.1.30
   env: local
 ```
 
@@ -475,6 +475,7 @@ pytest-cov
 pytest-asyncio
 ruff
 mypy
+mutmut>=2.5
 goal>=2.1.0
 costs>=0.1.20
 pfix>=0.1.60
@@ -538,13 +539,13 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# rebuild | 19173f 2524504L | python:7321,typescript:7145,shell:3860,javascript:713,css:97,less:25,rust:12 | 2026-05-07
-# stats: 21159 func | 10501 cls | 19173 mod | CC̄=4.3 | critical:1784 | cycles:0
+# rebuild | 19179f 2525651L | python:7325,typescript:7145,shell:3862,javascript:713,css:97,less:25,rust:12 | 2026-05-08
+# stats: 21180 func | 10506 cls | 19179 mod | CC̄=4.3 | critical:1785 | cycles:0
 # alerts[5]: CC parse_dsl=54; fan-out parse_dsl=46
 # hotspots[5]: parse_dsl fan=46; parse_dsl fan=46; parse_dsl fan=46; parse_dsl fan=46; parse_dsl fan=46
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[19173]:
+M[19179]:
   .rebuild/c2004/patches/frontend/src/components/dsl/singleton.ts,42
   .rebuild/c2004/repo_clone/.rebuild/repo/.regres/barcode-config-doctor-patch-01-92efe1d9.sh,140
   .rebuild/c2004/repo_clone/.rebuild/repo/.regres/barcode-config-doctor-patch-02-77959ed6.sh,140
@@ -19540,7 +19541,7 @@ M[19173]:
   rebuild/analysis/duplication_engine.py,345
   rebuild/analysis/git_truth_analyzer.py,122
   rebuild/analysis/graph_exporter.py,145
-  rebuild/analysis/service_graph.py,344
+  rebuild/analysis/service_graph.py,350
   rebuild/analysis/service_similarity.py,59
   rebuild/analysis/vector_search.py,216
   rebuild/application/__init__.py,1
@@ -19606,14 +19607,16 @@ M[19173]:
   rebuild/infrastructure/shell_adapter.py,39
   rebuild/interfaces/__init__.py,1
   rebuild/interfaces/api/__init__.py,5
-  rebuild/interfaces/api/app.py,242
-  rebuild/interfaces/cli.py,551
+  rebuild/interfaces/api/app.py,265
+  rebuild/interfaces/api/metrics.py,120
+  rebuild/interfaces/cli.py,584
   rebuild/interfaces/cli_new.py,1
   rebuild/interfaces/commands/__init__.py,1
   rebuild/interfaces/commands/analyze_command.py,253
   rebuild/interfaces/commands/helpers.py,162
   rebuild/interfaces/commands/refactor_command.py,99
   rebuild/interfaces/commands/walk_command.py,297
+  rebuild/interfaces/commands/watch_command.py,217
   rebuild/interfaces/dashboard.py,366
   rebuild/interfaces/evolution_viz.py,385
   rebuild/interfaces/tui/__init__.py,4
@@ -19641,6 +19644,8 @@ M[19173]:
   restored_c2004_health/api-health/backend/tests/e2e/module-smoke-test-template.spec.ts,147
   scripts/benchmark_scanner_cache.py,174
   scripts/bump_version.py,240
+  scripts/run_c2004_full.sh,143
+  scripts/run_mutation_tests.sh,130
   site/assets/javascripts/bundle.79ae519e.min.js,17
   site/assets/javascripts/lunr/min/lunr.ar.min.js,1
   site/assets/javascripts/lunr/min/lunr.da.min.js,18
@@ -19702,6 +19707,7 @@ M[19173]:
   tests/test_git_service.py,96
   tests/test_history_service.py,114
   tests/test_interfaces_smoke.py,149
+  tests/test_metrics.py,191
   tests/test_models.py,98
   tests/test_notification_service.py,308
   tests/test_pipeline.py,158
@@ -19716,6 +19722,7 @@ M[19173]:
   tests/test_snapshot_lru.py,218
   tests/test_test_service.py,56
   tests/test_walk_command_config_precedence.py,103
+  tests/test_watch_command.py,284
   tests/test_worktree_db.py,226
   tree.sh,2
 D:
@@ -63405,9 +63412,13 @@ D:
     e: create_app,DSLRequest,NLPRequest
     DSLRequest:
     NLPRequest:
-    create_app(command_bus;query_bus;event_store;event_bus)
+    create_app(command_bus;query_bus;event_store;event_bus;metrics_registry)
+  rebuild/interfaces/api/metrics.py:
+    e: _require_prometheus,setup_metrics
+    _require_prometheus()
+    setup_metrics(app;registry)
   rebuild/interfaces/cli.py:
-    e: init,walk,restore,report,dashboard,accelerator,serve,tui,version,auto_pr,_load_analysis_data,_resolve_pr_config,_generate_auto_pr_summary,_print_auto_pr_summary,_create_auto_pr,evolution,dsl,nlp,mvp,duplicates,vector_build,vector_query,multi_repo,services,truth,plan,pr,execute,plugins
+    e: init,walk,restore,report,dashboard,accelerator,serve,tui,version,auto_pr,_load_analysis_data,_resolve_pr_config,_generate_auto_pr_summary,_print_auto_pr_summary,_create_auto_pr,evolution,dsl,nlp,mvp,watch,duplicates,vector_build,vector_query,multi_repo,services,truth,plan,pr,execute,plugins
     init(path;force)
     walk(ctx;repo;days;date_from;date_to;output;deploy;replay;service;health_url;base_url;screenshots;dry_run;serve;port;accelerator;patch_dir;health_timeout)
     restore(endpoint;repo;output;results_dir)
@@ -63427,6 +63438,7 @@ D:
     dsl(script;command;execute)
     nlp(text;to_dsl;to_cli)
     mvp(host;port)
+    watch(repo;output;health_url;base_url;deps_file;cpu_throttle;debounce;cooldown)
     duplicates(path;min_lines;semantic;semantic_model;semantic_threshold;semantic_max_fragments)
     vector_build(path;index;min_lines;model)
     vector_query(query;index;top_k;min_score;model)
@@ -63474,6 +63486,12 @@ D:
     _handle_walk_results(all_results;config;repo;serve;port;console)
     _fire_notifications(all_results;config;console)
     accelerator_command(repo;days;date_from;date_to;output;service;db_container;db_type;parallel;smart;health_url;base_url;screenshots;shutdown;serve;port;patch_dir;console)
+  rebuild/interfaces/commands/watch_command.py:
+    e: _require_wup,_build_default_wup_config,_default_on_change,watch_command
+    _require_wup()
+    _build_default_wup_config(repo;health_url;base_url)
+    _default_on_change(repo;output;health_url;base_url;console)
+    watch_command(repo;output;health_url;base_url;deps_file;cpu_throttle;debounce_seconds;cooldown_seconds;console;on_change;_watcher_factory)
   rebuild/interfaces/dashboard.py:
     e: get_cc_for_day,_extract_avg_cc,generate_dashboard,_render_html
     get_cc_for_day(repo;day)
@@ -64084,6 +64102,14 @@ D:
     test_classify_error_alembic(tmp_path)
     test_classify_error_keyerror(tmp_path)
     test_classify_error_dockerfile(tmp_path)
+  tests/test_metrics.py:
+    e: fresh_registry,metrics_module,TestRequirePrometheus,TestSetupMetrics,TestMetricsMiddleware,TestAppIntegration
+    TestRequirePrometheus: test_missing_prometheus_raises(0),test_present_prometheus_returns_module(1)
+    TestSetupMetrics: test_setup_adds_metrics_route(2),test_metrics_endpoint_returns_prometheus_format(2),test_app_state_exposes_registry_and_metrics(2)
+    TestMetricsMiddleware: test_middleware_increments_request_counter(2),test_middleware_skips_metrics_path_itself(2)
+    TestAppIntegration: test_create_app_includes_metrics(1),test_create_app_health_still_works(1)
+    fresh_registry()
+    metrics_module()
   tests/test_models.py:
     e: test_endpoint_url,test_endpoint_url_strips_trailing_slash,test_endpoint_slug,test_day_result_health_pct_empty,test_day_result_health_pct,test_walk_config_defaults,test_day_result_to_dict_truncates_long_deploy_log,test_day_result_to_dict_keeps_short_deploy_log
     test_endpoint_url()
@@ -64305,6 +64331,21 @@ D:
     test_walk_cli_health_timeout_overrides_yaml_when_explicit(tmp_path;monkeypatch)
     test_walk_uses_yaml_when_option_not_explicit(tmp_path;monkeypatch)
     test_walk_cli_output_overrides_yaml_when_explicit(tmp_path;monkeypatch)
+  tests/test_watch_command.py:
+    e: test_require_wup_raises_when_missing,test_require_wup_returns_module_when_available,test_build_default_wup_config_uses_repo_name,test_default_on_change_invokes_subprocess,test_default_on_change_reports_subprocess_failure,test_default_on_change_handles_timeout,test_default_on_change_truncates_long_change_lists,test_watch_command_invokes_watcher_with_expected_args,test_watch_command_creates_output_dir,test_watch_command_honours_explicit_deps_file,test_watch_command_uses_custom_on_change_handler,test_watch_command_handles_keyboard_interrupt,_FakeWatcher
+    _FakeWatcher: __init__(0),on_file_change(1),start_watching(0)  # Test double for ``wup.WupWatcher``.
+    test_require_wup_raises_when_missing(monkeypatch)
+    test_require_wup_returns_module_when_available()
+    test_build_default_wup_config_uses_repo_name(tmp_path)
+    test_default_on_change_invokes_subprocess(tmp_path)
+    test_default_on_change_reports_subprocess_failure(tmp_path)
+    test_default_on_change_handles_timeout(tmp_path)
+    test_default_on_change_truncates_long_change_lists(tmp_path)
+    test_watch_command_invokes_watcher_with_expected_args(tmp_path)
+    test_watch_command_creates_output_dir(tmp_path)
+    test_watch_command_honours_explicit_deps_file(tmp_path)
+    test_watch_command_uses_custom_on_change_handler(tmp_path)
+    test_watch_command_handles_keyboard_interrupt(tmp_path)
   tests/test_worktree_db.py:
     e: _mock_shell,test_worktree_path_deterministic,test_worktree_path_uses_short_sha,test_ensure_base_dir_created,test_list_worktrees_parses_output,test_list_worktrees_returns_empty_on_error,test_get_or_create_cached,test_get_or_create_creates_new,test_get_or_create_already_in_git,test_remove_worktree,test_remove_worktree_force,test_cleanup_all_removes_all,test_cleanup_all_keeps_specified,test_prepare_sequence,test_get_active_path,test_get_or_create_raises_on_failure,_mgr,test_snapshot_manager_init,test_list_snapshots_empty,test_delete_nonexistent_snapshot_returns_true,test_delete_existing_snapshot,test_ready_check_command_postgres,test_ready_check_command_mysql,test_execute_unknown_action_raises
     _mock_shell(returncode;stdout;stderr)
@@ -64335,7 +64376,7 @@ D:
 
 ## Call Graph
 
-*106 nodes · 87 edges · 28 modules · CC̄=3.4*
+*111 nodes · 90 edges · 30 modules · CC̄=3.4*
 
 ### Hubs (by degree)
 
@@ -64346,14 +64387,14 @@ D:
 | `print` *(in Makefile)* | 0 | 33 | 0 | **33** |
 | `serve_reports` *(in rebuild.interfaces.commands.helpers)* | 2 | 3 | 28 | **31** |
 | `services_command` *(in rebuild.interfaces.commands.analyze_command)* | 9 | 1 | 25 | **26** |
+| `watch_command` *(in rebuild.interfaces.commands.watch_command)* | 6 | 1 | 22 | **23** |
 | `save_timeline_index` *(in rebuild.application.services.reporting.reporter.ReporterService)* | 14 ⚠ | 0 | 23 | **23** |
 | `start` *(in rebuild.domain.mvp_protocol.MVPServer)* | 1 | 0 | 23 | **23** |
-| `print_summary_table` *(in rebuild.interfaces.commands.helpers)* | 9 | 2 | 20 | **22** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/rebuild
-# generated in 0.07s
-# nodes: 106 | edges: 87 | modules: 28
+# generated in 0.06s
+# nodes: 111 | edges: 90 | modules: 30
 # CC̄=3.4
 
 HUBS[20]:
@@ -64367,6 +64408,8 @@ HUBS[20]:
     CC=2  in:3  out:28  total:31
   rebuild.interfaces.commands.analyze_command.services_command
     CC=9  in:1  out:25  total:26
+  rebuild.interfaces.commands.watch_command.watch_command
+    CC=6  in:1  out:22  total:23
   rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
     CC=14  in:0  out:23  total:23
   rebuild.domain.mvp_protocol.MVPServer.start
@@ -64381,22 +64424,20 @@ HUBS[20]:
     CC=4  in:0  out:20  total:20
   rebuild.interfaces.commands.refactor_command.plan_command
     CC=11  in:1  out:19  total:20
+  rebuild.interfaces.api.metrics.setup_metrics
+    CC=2  in:1  out:19  total:20
   rebuild.interfaces.commands.analyze_command.truth_command
     CC=3  in:1  out:17  total:18
   scripts.bump_version.categorize_commits
     CC=14  in:1  out:15  total:16
+  scripts.bump_version.update_changelog
+    CC=5  in:1  out:14  total:15
   rebuild.interfaces.commands.refactor_command._generate_refactor_plan
     CC=5  in:3  out:12  total:15
   scripts.bump_version.build_new_section
     CC=7  in:1  out:14  total:15
-  scripts.bump_version.update_changelog
-    CC=5  in:1  out:14  total:15
   rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
     CC=12  in:1  out:12  total:13
-  rebuild.interfaces.dashboard.generate_dashboard
-    CC=5  in:3  out:9  total:12
-  rebuild.application.services.reporting.chart_builder.generate_trend_chart
-    CC=8  in:1  out:11  total:12
 
 MODULES:
   Makefile  [1 funcs]
@@ -64440,6 +64481,9 @@ MODULES:
     run  CC=7  out:10
   rebuild.domain.mvp_protocol  [1 funcs]
     start  CC=1  out:23
+  rebuild.interfaces.api.metrics  [2 funcs]
+    _require_prometheus  CC=2  out:1
+    setup_metrics  CC=2  out:19
   rebuild.interfaces.cli  [15 funcs]
     _resolve_pr_config  CC=6  out:8
     dashboard  CC=2  out:10
@@ -64478,6 +64522,10 @@ MODULES:
     _print_walk_header  CC=2  out:5
     _resolve_deploy_method  CC=3  out:4
     walk_command  CC=2  out:11
+  rebuild.interfaces.commands.watch_command  [3 funcs]
+    _build_default_wup_config  CC=1  out:7
+    _require_wup  CC=2  out:1
+    watch_command  CC=6  out:22
   rebuild.interfaces.dashboard  [4 funcs]
     _extract_avg_cc  CC=5  out:6
     _render_html  CC=4  out:4
@@ -64551,35 +64599,35 @@ EDGES:
   scripts.bump_version.main → Makefile.print
   scripts.bump_version.main → scripts.bump_version.update_init
   scripts.bump_version.main → scripts.bump_version.update_pyproject
+  rebuild.application.base_pipeline.BasePipeline.__init__ → rebuild.application.services.event_service.get_event_service
+  rebuild.application.services.pr_service.load_config_from_env → testql-scenarios.generated-from-pytests.testql.toon.all
+  rebuild.application.services.regression_service.compute_health_trend_dict → rebuild.application.services.regression_service.compute_health_trend
+  rebuild.application.services.regression_service.compute_health_trend_labels → rebuild.application.services.regression_service.compute_health_trend
+  rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore → Makefile.print
   rebuild.application.services.notification_service.NotificationService.notify → rebuild.application.services.notification_service._send_webhook
   rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_generic_payload
   rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_slack_payload
   rebuild.application.services.notification_service.NotificationService._build_body → rebuild.application.services.notification_service._build_discord_payload
+  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.application.services.reporting.reporter.ReporterService.save_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day → rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row → rebuild.application.services.reporting.formatters.classify_error
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row → rebuild.application.services.reporting.formatters.status_badge
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → rebuild.application.services.reporting.chart_builder.generate_trend_chart
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index → rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
+  rebuild.application.services.reporting.reporter.ReporterService._health_trend_by_day → rebuild.application.services.regression_service.compute_health_trend_dict
   rebuild.application.services.reporting.formatters.classify_error → rebuild.application.services.reporting.formatters._classify_error_text
   rebuild.plugins.registry.PluginRegistry.discover → rebuild.plugins.registry._load_entry_points
+  rebuild.interfaces.dashboard.get_cc_for_day → rebuild.interfaces.dashboard._extract_avg_cc
+  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard._render_html
+  rebuild.interfaces.dashboard.generate_dashboard → rebuild.interfaces.dashboard.get_cc_for_day
+  rebuild.interfaces.evolution_viz.generate_evolution_html → rebuild.interfaces.evolution_viz._render_html
+  rebuild.interfaces.commands.helpers.serve_reports → rebuild.application.services.event_service.get_event_service
   rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._ensure_git_repo
   rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._resolve_deploy_method
   rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._build_walk_config
   rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._load_yaml_config
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._apply_cli_overrides
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._print_walk_header
-  rebuild.interfaces.commands.walk_command.walk_command → rebuild.interfaces.commands.walk_command._handle_walk_results
-  rebuild.interfaces.commands.walk_command._build_walk_config → rebuild.interfaces.commands.walk_command._parse_date
-  rebuild.interfaces.commands.walk_command._apply_cli_overrides → rebuild.interfaces.commands.walk_command._parse_date
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.dashboard.generate_dashboard
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.commands.helpers.print_report_links
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.commands.helpers.print_summary_table
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.commands.walk_command._fire_notifications
-  rebuild.interfaces.commands.walk_command._handle_walk_results → rebuild.interfaces.commands.helpers.serve_reports
-  rebuild.interfaces.commands.refactor_command.plan_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  rebuild.interfaces.commands.refactor_command.pr_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  rebuild.interfaces.commands.refactor_command.execute_command → rebuild.interfaces.commands.refactor_command._generate_refactor_plan
-  rebuild.interfaces.tui.app.launch_tui → Makefile.print
-  scripts.benchmark_scanner_cache.setup_repo → scripts.benchmark_scanner_cache._gen_module
-  scripts.benchmark_scanner_cache.churn → scripts.benchmark_scanner_cache._random_suffix
-  scripts.benchmark_scanner_cache.run_walk → scripts.benchmark_scanner_cache.churn
-  scripts.benchmark_scanner_cache.main → scripts.benchmark_scanner_cache.setup_repo
-  rebuild.application.base_pipeline.BasePipeline.__init__ → rebuild.application.services.event_service.get_event_service
 ```
 
 ## Test Contracts

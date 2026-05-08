@@ -203,7 +203,101 @@ Pierwsza realna integracja `[full]` extras. Patrz [ANALYSIS.md](ANALYSIS.md) Spr
 - `python -c "import yaml; yaml.safe_load(open('.github/workflows/mutation.yml'))"` → YAML OK
 - CLI registration: `rebuild watch --help` widoczne w `app.commands` (test: `from rebuild.interfaces.cli import app`)
 
+### Sprint 5a — Prometheus /metrics Endpoint (2026-05-08)
+
+Realizacja TODO Phase 17 → "Grafana Integration". Patrz [TODO.md](TODO.md) i [ANALYSIS.md](ANALYSIS.md) Sprint 5+.
+
+#### Added
+- **`rebuild/interfaces/api/metrics.py`** — Prometheus instrumentation dla `create_app()`:
+  - `_require_prometheus()` — lazy import z czytelnym komunikatem `"Install with: pip install 'rebuild[api]'"`.
+  - `setup_metrics(app, registry=None)` — rejestruje middleware + `GET /metrics` w prometheus text format.
+  - **Metryki**:
+    - `rebuild_http_requests_total{method,path,status}` (counter)
+    - `rebuild_http_request_duration_seconds{method,path}` (histogram, buckets 5ms→5s)
+    - `rebuild_walks_total` (counter) — walk dispatched
+    - `rebuild_scan_cache_hits_total` / `rebuild_scan_cache_misses_total`
+    - `rebuild_active_ws_connections` (gauge)
+  - Middleware pomija samo `/metrics` (no feedback loop) i mierzy `time.perf_counter()` per-request.
+  - Handle'y zapisane na `app.state.prom_*` dla introspection / dependency injection.
+- **`tests/test_metrics.py`** — 9 testów: import guard, route registration, end-to-end format, middleware counter increment, `/metrics` skip, `app.state` introspection, `create_app` integration, health endpoint smoke. Każdy test używa świeżego `CollectorRegistry` (fixture `fresh_registry`) — brak monkey-patchowania prometheus internals.
+
+#### Changed
+- **`rebuild/interfaces/api/app.py:create_app`** — dodany parameter `metrics_registry=None` przekazywany do `setup_metrics()`. Domyślnie każdy app dostaje *własny* `CollectorRegistry` (zamiast globalnego `prom.REGISTRY`) co eliminuje `ValueError: Duplicated timeseries` przy wielokrotnym `create_app()` w testach / multi-app embedding. Globalny default pozostaje dostępny przez `create_app(metrics_registry=prometheus_client.REGISTRY)`.
+- **`pyproject.toml`** — `[project.optional-dependencies] api` rozszerzone o `prometheus-client>=0.20`.
+
+#### Verification
+- `pytest tests/test_metrics.py` → **9 passed**
+- `pytest tests/test_metrics.py tests/test_api_app.py tests/test_cqrs_arch.py` → **106 passed**
+- `pytest`: 813 passed (po Sprint 4: 643 → +9 metrics + ostatnie testy z innych sesji), 3 preexisting `TestCLISubprocessE2E` failures (środowiskowy `No module named rebuild`).
+- `ruff check rebuild/interfaces/api/{metrics,app}.py tests/test_metrics.py --select E,W,F --ignore E501` → **All checks passed** (po usunięciu unused `Optional` import).
+
+#### Usage
+```bash
+pip install 'rebuild[api]'
+uvicorn rebuild.interfaces.api.app:create_app --factory --host 0.0.0.0 --port 8000
+curl http://localhost:8000/metrics
+```
+Konfiguracja Prometheus scrape:
+```yaml
+scrape_configs:
+  - job_name: rebuild
+    static_configs: [{targets: ['rebuild:8000']}]
+    metrics_path: /metrics
+```
+
+### Sprint 4c — Analyze Services Bug Fixes (2026-05-07)
+
+Drobne ale uciążliwe regresje znalezione przy uruchomieniu `rebuild analyze services`
+na dużym repo (c2004 ≈ 88 podkatalogów). Fix po stronie upstream (silnik), bez workaroundów.
+
+#### Fixed
+- **`SyntaxWarning: invalid escape sequence`** w `ServiceGraphBuilder.build()`
+  ([`rebuild/analysis/service_graph.py`](rebuild/analysis/service_graph.py)). Builder rekursywnie
+  parsował **wszystkie** `*.py` w drzewie, w tym pliki w `.venv/`/`venv/` zawierające regex
+  patterny bez prefiksu `r"..."` (`\S`, `\[`, `\:` w `matplotlib`, `dotenv`, etc.).
+  → Dodany ten sam set wykluczeń, którego używa już `MultiRepoAnalyzer._iter_code_files`:
+  `{".git", ".venv", "venv", "__pycache__", "node_modules", ".rebuild"}`.
+- **Fałszywe self-loop cycles** w `detect_cycles()`. Gdy moduł `foo.py` współistnieje z
+  pakietem `foo/` o tej samej nazwie (legalne w Pythonie — pakiet wygrywa w resolverze),
+  `roles.py` z `from .roles import X` był rozwijany do `c2004.backend.api.routes.v3.roles`,
+  identycznego z `node.name` → fałszywy self-cycle w outputcie. → `_analyze_file()` filtruje
+  teraz `dep == node.name` zarówno dla `ast.Import` jak i `ast.ImportFrom`.
+
+#### Verification
+- `pytest tests/ -k "graph or services or analysis"` → **90 passed** (z `--tb=short -q`)
+- `python3 -m rebuild analyze services /home/tom/github/maskservice/c2004 --export` →
+  brak `SyntaxWarning`, brak fałszywego cyklu, czysty eksport `architecture.html`.
+
 ---
+
+## [0.1.31] - 2026-05-08
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/test_endpoint_trend_service.py
+- Update tests/test_metrics.py
+
+### Other
+- Update app.doql.less
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- Update project/duplication.toon.yaml
+- Update project/evolution.toon.yaml
+- Update project/flow.mmd
+- Update project/index.html
+- ... and 13 more files
 
 ## [0.1.30] - 2026-05-07
 

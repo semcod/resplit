@@ -1,289 +1,16 @@
 project: /home/tom/github/semcod/rebuild
 generated_from: code2llm call graph analysis
 stats:
-  total_nodes: 106
-  total_edges: 87
-  modules_count: 28
+  total_nodes: 134
+  total_edges: 118
+  modules_count: 34
 nodes:
-  rebuild.interfaces.cli.multi_repo:
-    name: multi_repo
-    module: rebuild.interfaces.cli
-    line: 450
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  rebuild.interfaces.cli.vector_query:
-    name: vector_query
-    module: rebuild.interfaces.cli
-    line: 437
-    cyclomatic_complexity: 1
-    calls_out: 8
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  rebuild.application.services.notification_service._build_discord_payload:
-    name: _build_discord_payload
-    module: rebuild.application.services.notification_service
-    line: 73
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 1
-  rebuild.application.services.notification_service._build_slack_payload:
-    name: _build_slack_payload
-    module: rebuild.application.services.notification_service
-    line: 54
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 1
-  scripts.bump_version.get_git_log_since_last_tag:
-    name: get_git_log_since_last_tag
-    module: scripts.bump_version
-    line: 99
-    cyclomatic_complexity: 7
-    calls_out: 7
-    calls_in: 1
-  rebuild.interfaces.commands.walk_command._print_walk_header:
-    name: _print_walk_header
-    module: rebuild.interfaces.commands.walk_command
-    line: 165
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 1
-  rebuild.interfaces.commands.analyze_command.truth_command:
-    name: truth_command
-    module: rebuild.interfaces.commands.analyze_command
-    line: 223
-    cyclomatic_complexity: 3
-    calls_out: 17
-    calls_in: 1
-  rebuild.interfaces.cli.tui:
-    name: tui
-    module: rebuild.interfaces.cli
-    line: 186
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 0
-  rebuild.interfaces.evolution_viz._render_html:
-    name: _render_html
-    module: rebuild.interfaces.evolution_viz
-    line: 30
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 56
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  rebuild.application.services.notification_service._build_generic_payload:
-    name: _build_generic_payload
-    module: rebuild.application.services.notification_service
-    line: 90
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 1
-  rebuild.application.services.reporting.chart_builder.generate_endpoint_diff:
-    name: generate_endpoint_diff
+  rebuild.application.services.reporting.chart_builder.generate_trend_chart:
+    name: generate_trend_chart
     module: rebuild.application.services.reporting.chart_builder
-    line: 45
-    cyclomatic_complexity: 12
-    calls_out: 12
-    calls_in: 1
-  rebuild.application.services.notification_service._send_webhook:
-    name: _send_webhook
-    module: rebuild.application.services.notification_service
-    line: 99
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 1
-  rebuild.interfaces.commands.refactor_command._generate_refactor_plan:
-    name: _generate_refactor_plan
-    module: rebuild.interfaces.commands.refactor_command
-    line: 11
-    cyclomatic_complexity: 5
-    calls_out: 12
-    calls_in: 3
-  rebuild.interfaces.commands.walk_command._fire_notifications:
-    name: _fire_notifications
-    module: rebuild.interfaces.commands.walk_command
-    line: 200
-    cyclomatic_complexity: 12
-    calls_out: 9
-    calls_in: 1
-  rebuild.interfaces.commands.analyze_command.vector_build_command:
-    name: vector_build_command
-    module: rebuild.interfaces.commands.analyze_command
-    line: 47
-    cyclomatic_complexity: 2
-    calls_out: 8
-    calls_in: 1
-  rebuild.application.services.reporting.formatters._classify_error_text:
-    name: _classify_error_text
-    module: rebuild.application.services.reporting.formatters
-    line: 81
-    cyclomatic_complexity: 4
-    calls_out: 2
-    calls_in: 1
-  rebuild.interfaces.commands.helpers.print_summary_table:
-    name: print_summary_table
-    module: rebuild.interfaces.commands.helpers
-    line: 71
-    cyclomatic_complexity: 9
-    calls_out: 20
-    calls_in: 2
-  rebuild.application.services.reporting.formatters.status_badge:
-    name: status_badge
-    module: rebuild.application.services.reporting.formatters
-    line: 45
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  rebuild.interfaces.cli.dashboard:
-    name: dashboard
-    module: rebuild.interfaces.cli
-    line: 129
-    cyclomatic_complexity: 2
-    calls_out: 10
-    calls_in: 0
-  scripts.benchmark_scanner_cache.setup_repo:
-    name: setup_repo
-    module: scripts.benchmark_scanner_cache
-    line: 68
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 1
-  scripts.bump_version.read_version:
-    name: read_version
-    module: scripts.bump_version
-    line: 33
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 2
-  scripts.benchmark_scanner_cache._gen_module:
-    name: _gen_module
-    module: scripts.benchmark_scanner_cache
-    line: 60
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  rebuild.interfaces.commands.walk_command._apply_cli_overrides:
-    name: _apply_cli_overrides
-    module: rebuild.interfaces.commands.walk_command
-    line: 143
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 1
-  scripts.bump_version.main:
-    name: main
-    module: scripts.bump_version
-    line: 203
-    cyclomatic_complexity: 4
-    calls_out: 20
-    calls_in: 0
-  rebuild.interfaces.commands.walk_command._load_yaml_config:
-    name: _load_yaml_config
-    module: rebuild.interfaces.commands.walk_command
-    line: 127
-    cyclomatic_complexity: 5
-    calls_out: 8
-    calls_in: 1
-  rebuild.interfaces.tui.app.launch_tui:
-    name: launch_tui
-    module: rebuild.interfaces.tui.app
-    line: 51
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 1
-  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index:
-    name: save_timeline_index
-    module: rebuild.application.services.reporting.reporter
-    line: 200
-    cyclomatic_complexity: 14
-    calls_out: 23
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 77
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  Makefile.print:
-    name: print
-    module: Makefile
-    line: 78
-    cyclomatic_complexity: 0
-    calls_out: 0
-    calls_in: 33
-  rebuild.interfaces.evolution_viz.generate_evolution_html:
-    name: generate_evolution_html
-    module: rebuild.interfaces.evolution_viz
-    line: 11
-    cyclomatic_complexity: 1
-    calls_out: 7
-    calls_in: 1
-  rebuild.interfaces.commands.walk_command._handle_walk_results:
-    name: _handle_walk_results
-    module: rebuild.interfaces.commands.walk_command
-    line: 174
-    cyclomatic_complexity: 4
-    calls_out: 10
-    calls_in: 1
-  rebuild.interfaces.commands.walk_command._resolve_deploy_method:
-    name: _resolve_deploy_method
-    module: rebuild.interfaces.commands.walk_command
-    line: 78
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html:
-    name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 60
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 85
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.interfaces.cli.plan:
-    name: plan
-    module: rebuild.interfaces.cli
-    line: 486
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  rebuild.application.services.notification_service.NotificationService._build_body:
-    name: _build_body
-    module: rebuild.application.services.notification_service
-    line: 209
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 0
-  rebuild.application.services.reporting.reporter.ReporterService._health_trend_by_day:
-    name: _health_trend_by_day
-    module: rebuild.application.services.reporting.reporter
-    line: 378
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  rebuild.interfaces.dashboard._extract_avg_cc:
-    name: _extract_avg_cc
-    module: rebuild.interfaces.dashboard
-    line: 45
-    cyclomatic_complexity: 5
-    calls_out: 6
+    line: 8
+    cyclomatic_complexity: 8
+    calls_out: 11
     calls_in: 1
   rebuild.interfaces.commands.analyze_command.duplicates_command:
     name: duplicates_command
@@ -292,174 +19,6 @@ nodes:
     cyclomatic_complexity: 7
     calls_out: 10
     calls_in: 1
-  rebuild.interfaces.commands.helpers.serve_reports:
-    name: serve_reports
-    module: rebuild.interfaces.commands.helpers
-    line: 109
-    cyclomatic_complexity: 2
-    calls_out: 28
-    calls_in: 3
-  rebuild.application.services.event_service.get_event_service:
-    name: get_event_service
-    module: rebuild.application.services.event_service
-    line: 112
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 2
-  rebuild.interfaces.cli.vector_build:
-    name: vector_build
-    module: rebuild.interfaces.cli
-    line: 425
-    cyclomatic_complexity: 1
-    calls_out: 8
-    calls_in: 0
-  rebuild.interfaces.cli.duplicates:
-    name: duplicates
-    module: rebuild.interfaces.cli
-    line: 411
-    cyclomatic_complexity: 1
-    calls_out: 9
-    calls_in: 0
-  rebuild.interfaces.cli.serve:
-    name: serve
-    module: rebuild.interfaces.cli
-    line: 172
-    cyclomatic_complexity: 2
-    calls_out: 9
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.interfaces.dashboard.generate_dashboard:
-    name: generate_dashboard
-    module: rebuild.interfaces.dashboard
-    line: 60
-    cyclomatic_complexity: 5
-    calls_out: 9
-    calls_in: 3
-  scripts.bump_version.update_init:
-    name: update_init
-    module: scripts.bump_version
-    line: 56
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 1
-  rebuild.interfaces.cli._resolve_pr_config:
-    name: _resolve_pr_config
-    module: rebuild.interfaces.cli
-    line: 237
-    cyclomatic_complexity: 6
-    calls_out: 8
-    calls_in: 1
-  scripts.bump_version.collect_unreleased_entries:
-    name: collect_unreleased_entries
-    module: scripts.bump_version
-    line: 82
-    cyclomatic_complexity: 7
-    calls_out: 6
-    calls_in: 1
-  scripts.benchmark_scanner_cache.run_walk:
-    name: run_walk
-    module: scripts.benchmark_scanner_cache
-    line: 89
-    cyclomatic_complexity: 4
-    calls_out: 9
-    calls_in: 2
-  rebuild.application.services.reporting.formatters.classify_error:
-    name: classify_error
-    module: rebuild.application.services.reporting.formatters
-    line: 62
-    cyclomatic_complexity: 5
-    calls_out: 2
-    calls_in: 1
-  rebuild.interfaces.commands.analyze_command.services_command:
-    name: services_command
-    module: rebuild.interfaces.commands.analyze_command
-    line: 185
-    cyclomatic_complexity: 9
-    calls_out: 25
-    calls_in: 1
-  rebuild.application.services.reporting.chart_builder.generate_trend_chart:
-    name: generate_trend_chart
-    module: rebuild.application.services.reporting.chart_builder
-    line: 8
-    cyclomatic_complexity: 8
-    calls_out: 11
-    calls_in: 1
-  rebuild.interfaces.commands.refactor_command.execute_command:
-    name: execute_command
-    module: rebuild.interfaces.commands.refactor_command
-    line: 80
-    cyclomatic_complexity: 6
-    calls_out: 7
-    calls_in: 1
-  scripts.benchmark_scanner_cache.main:
-    name: main
-    module: scripts.benchmark_scanner_cache
-    line: 109
-    cyclomatic_complexity: 6
-    calls_out: 36
-    calls_in: 0
-  scripts.benchmark_scanner_cache.churn:
-    name: churn
-    module: scripts.benchmark_scanner_cache
-    line: 79
-    cyclomatic_complexity: 2
-    calls_out: 7
-    calls_in: 1
-  scripts.bump_version.build_new_section:
-    name: build_new_section
-    module: scripts.bump_version
-    line: 146
-    cyclomatic_complexity: 7
-    calls_out: 14
-    calls_in: 1
-  rebuild.interfaces.cli.execute:
-    name: execute
-    module: rebuild.interfaces.cli
-    line: 505
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  rebuild.application.services.pr_service.load_config_from_env:
-    name: load_config_from_env
-    module: rebuild.application.services.pr_service
-    line: 153
-    cyclomatic_complexity: 4
-    calls_out: 11
-    calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row:
-    name: _endpoint_row
-    module: rebuild.application.services.reporting.reporter
-    line: 146
-    cyclomatic_complexity: 7
-    calls_out: 4
-    calls_in: 0
-  rebuild.interfaces.commands.walk_command._ensure_git_repo:
-    name: _ensure_git_repo
-    module: rebuild.interfaces.commands.walk_command
-    line: 72
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 1
-  scripts.benchmark_scanner_cache._random_suffix:
-    name: _random_suffix
-    module: scripts.benchmark_scanner_cache
-    line: 64
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 1
   rebuild.interfaces.commands.walk_command.walk_command:
     name: walk_command
     module: rebuild.interfaces.commands.walk_command
@@ -467,12 +26,138 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 11
     calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index:
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.index:
     name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
     line: 77
     cyclomatic_complexity: 1
     calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.cli.services:
+    name: services
+    module: rebuild.interfaces.cli
+    line: 494
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService._save_html_day:
+    name: _save_html_day
+    module: rebuild.application.services.reporting.reporter
+    line: 99
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  rebuild.interfaces.commands.analyze_command.multi_repo_command:
+    name: multi_repo_command
+    module: rebuild.interfaces.commands.analyze_command
+    line: 117
+    cyclomatic_complexity: 14
+    calls_out: 44
+    calls_in: 1
+  rebuild.interfaces.cli.serve:
+    name: serve
+    module: rebuild.interfaces.cli
+    line: 172
+    cyclomatic_complexity: 2
+    calls_out: 9
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_count_trend_by_day:
+    name: _endpoint_count_trend_by_day
+    module: rebuild.application.services.reporting.reporter
+    line: 115
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  rebuild.interfaces.commands.refactor_command._generate_refactor_plan:
+    name: _generate_refactor_plan
+    module: rebuild.interfaces.commands.refactor_command
+    line: 11
+    cyclomatic_complexity: 5
+    calls_out: 12
+    calls_in: 3
+  rebuild.application.services.reporting.reporter.ReporterService._deploy_section:
+    name: _deploy_section
+    module: rebuild.application.services.reporting.reporter
+    line: 108
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  rebuild.interfaces.tui.app.launch_tui:
+    name: launch_tui
+    module: rebuild.interfaces.tui.app
+    line: 51
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  rebuild.interfaces.evolution_viz._render_html:
+    name: _render_html
+    module: rebuild.interfaces.evolution_viz
+    line: 30
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  rebuild.interfaces.commands.watch_command._build_default_wup_config:
+    name: _build_default_wup_config
+    module: rebuild.interfaces.commands.watch_command
+    line: 38
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 1
+  rebuild.domain.mvp_protocol.MVPServer.start:
+    name: start
+    module: rebuild.domain.mvp_protocol
+    line: 247
+    cyclomatic_complexity: 1
+    calls_out: 23
+    calls_in: 0
+  rebuild.application.services.reporting.timeline_html.render_timeline_html:
+    name: render_timeline_html
+    module: rebuild.application.services.reporting.timeline_html
+    line: 97
+    cyclomatic_complexity: 3
+    calls_out: 10
+    calls_in: 1
+  rebuild.interfaces.dashboard.generate_dashboard:
+    name: generate_dashboard
+    module: rebuild.interfaces.dashboard
+    line: 60
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 3
+  rebuild.application.services.notification_service._send_webhook:
+    name: _send_webhook
+    module: rebuild.application.services.notification_service
+    line: 99
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  rebuild.interfaces.cli.plan:
+    name: plan
+    module: rebuild.interfaces.cli
+    line: 519
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  rebuild.interfaces.cli.duplicates:
+    name: duplicates
+    module: rebuild.interfaces.cli
+    line: 444
+    cyclomatic_complexity: 1
+    calls_out: 9
     calls_in: 0
   rebuild.plugins.registry._load_entry_points:
     name: _load_entry_points
@@ -481,20 +166,6 @@ nodes:
     cyclomatic_complexity: 4
     calls_out: 5
     calls_in: 2
-  rebuild.application.services.regression_service.compute_health_trend:
-    name: compute_health_trend
-    module: rebuild.application.services.regression_service
-    line: 60
-    cyclomatic_complexity: 6
-    calls_out: 7
-    calls_in: 2
-  scripts.bump_version.update_pyproject:
-    name: update_pyproject
-    module: scripts.bump_version
-    line: 68
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 1
   scripts.bump_version.update_changelog:
     name: update_changelog
     module: scripts.bump_version
@@ -502,9 +173,667 @@ nodes:
     cyclomatic_complexity: 5
     calls_out: 14
     calls_in: 1
-  rebuild.interfaces.commands.walk_command._parse_date:
-    name: _parse_date
+  rebuild.interfaces.dashboard._render_html:
+    name: _render_html
+    module: rebuild.interfaces.dashboard
+    line: 93
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  scripts.bump_version.categorize_commits:
+    name: categorize_commits
+    module: scripts.bump_version
+    line: 119
+    cyclomatic_complexity: 14
+    calls_out: 15
+    calls_in: 1
+  rebuild.interfaces.commands.helpers.serve_reports:
+    name: serve_reports
+    module: rebuild.interfaces.commands.helpers
+    line: 92
+    cyclomatic_complexity: 2
+    calls_out: 28
+    calls_in: 3
+  rebuild.interfaces.commands.refactor_command.pr_command:
+    name: pr_command
+    module: rebuild.interfaces.commands.refactor_command
+    line: 60
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 1
+  rebuild.domain.dsl_v2.DSLShell._process:
+    name: _process
+    module: rebuild.domain.dsl_v2
+    line: 419
+    cyclomatic_complexity: 7
+    calls_out: 11
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService.save_day:
+    name: save_day
+    module: rebuild.application.services.reporting.reporter
+    line: 59
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 0
+  rebuild.plugins.registry.PluginRegistry.discover:
+    name: discover
+    module: rebuild.plugins.registry
+    line: 65
+    cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 0
+  rebuild.interfaces.commands.analyze_command.vector_query_command:
+    name: vector_query_command
+    module: rebuild.interfaces.commands.analyze_command
+    line: 71
+    cyclomatic_complexity: 9
+    calls_out: 20
+    calls_in: 1
+  rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend:
+    name: compute_endpoint_count_trend
+    module: rebuild.application.services.endpoint_trend_service
+    line: 57
+    cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 2
+  rebuild.interfaces.cli.evolution:
+    name: evolution
+    module: rebuild.interfaces.cli
+    line: 317
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_rows:
+    name: _endpoint_rows
+    module: rebuild.application.services.reporting.reporter
+    line: 102
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService._endpoint_row:
+    name: _endpoint_row
+    module: rebuild.application.services.reporting.reporter
+    line: 105
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  rebuild.application.services.regression_service.compute_health_trend_labels:
+    name: compute_health_trend_labels
+    module: rebuild.application.services.regression_service
+    line: 134
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  rebuild.application.base_pipeline.BasePipeline.__init__:
+    name: __init__
+    module: rebuild.application.base_pipeline
+    line: 32
+    cyclomatic_complexity: 1
+    calls_out: 9
+    calls_in: 0
+  rebuild.application.services.reporting.formatters._classify_error_text:
+    name: _classify_error_text
+    module: rebuild.application.services.reporting.formatters
+    line: 81
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 1
+  rebuild.interfaces.commands.walk_command._load_yaml_config:
+    name: _load_yaml_config
     module: rebuild.interfaces.commands.walk_command
+    line: 127
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 1
+  rebuild.application.services.reporting.formatters.to_yaml:
+    name: to_yaml
+    module: rebuild.application.services.reporting.formatters
+    line: 9
+    cyclomatic_complexity: 6
+    calls_out: 14
+    calls_in: 3
+  rebuild.interfaces.cli.vector_query:
+    name: vector_query
+    module: rebuild.interfaces.cli
+    line: 470
+    cyclomatic_complexity: 1
+    calls_out: 8
+    calls_in: 0
+  rebuild.application.services.reporting.timeline_html._render_day_row:
+    name: _render_day_row
+    module: rebuild.application.services.reporting.timeline_html
+    line: 56
+    cyclomatic_complexity: 12
+    calls_out: 10
+    calls_in: 1
+  rebuild.application.services.notification_service.NotificationService.notify:
+    name: notify
+    module: rebuild.application.services.notification_service
+    line: 148
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 0
+  rebuild.interfaces.commands.analyze_command.services_command:
+    name: services_command
+    module: rebuild.interfaces.commands.analyze_command
+    line: 185
+    cyclomatic_complexity: 9
+    calls_out: 25
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  rebuild.application.services.reporting.chart_builder.generate_endpoint_diff:
+    name: generate_endpoint_diff
+    module: rebuild.application.services.reporting.chart_builder
+    line: 45
+    cyclomatic_complexity: 12
+    calls_out: 12
+    calls_in: 1
+  rebuild.interfaces.commands.walk_command._ensure_git_repo:
+    name: _ensure_git_repo
+    module: rebuild.interfaces.commands.walk_command
+    line: 72
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  rebuild.interfaces.commands.refactor_command.plan_command:
+    name: plan_command
+    module: rebuild.interfaces.commands.refactor_command
+    line: 32
+    cyclomatic_complexity: 11
+    calls_out: 19
+    calls_in: 1
+  rebuild.application.services.reporting.reporter.ReporterService._results_to_export_data:
+    name: _results_to_export_data
+    module: rebuild.application.services.reporting.reporter
+    line: 119
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  rebuild.interfaces.cli.vector_build:
+    name: vector_build
+    module: rebuild.interfaces.cli
+    line: 458
+    cyclomatic_complexity: 1
+    calls_out: 8
+    calls_in: 0
+  rebuild.interfaces.cli.truth:
+    name: truth
+    module: rebuild.interfaces.cli
+    line: 504
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.commands.analyze_command.truth_command:
+    name: truth_command
+    module: rebuild.interfaces.commands.analyze_command
+    line: 223
+    cyclomatic_complexity: 3
+    calls_out: 17
+    calls_in: 1
+  scripts.bump_version.bump:
+    name: bump
+    module: scripts.bump_version
+    line: 41
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 1
+  rebuild.application.services.notification_service.NotificationService._build_body:
+    name: _build_body
+    module: rebuild.application.services.notification_service
+    line: 209
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 0
+  rebuild.application.services.reporting.formatters.to_toon:
+    name: to_toon
+    module: rebuild.application.services.reporting.formatters
+    line: 29
+    cyclomatic_complexity: 6
+    calls_out: 3
+    calls_in: 1
+  rebuild.application.services.reporting.day_html.render_day_html:
+    name: render_day_html
+    module: rebuild.application.services.reporting.day_html
+    line: 86
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 2
+  rebuild.plugins.registry.load_plugins:
+    name: load_plugins
+    module: rebuild.plugins.registry
+    line: 139
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  rebuild.application.services.reporting.day_html.render_deploy_log:
+    name: render_deploy_log
+    module: rebuild.application.services.reporting.day_html
+    line: 52
+    cyclomatic_complexity: 3
+    calls_out: 0
+    calls_in: 1
+  rebuild.interfaces.cli.plugins:
+    name: plugins
+    module: rebuild.interfaces.cli
+    line: 548
+    cyclomatic_complexity: 7
+    calls_out: 22
+    calls_in: 0
+  rebuild.interfaces.dashboard.get_cc_for_day:
+    name: get_cc_for_day
+    module: rebuild.interfaces.dashboard
+    line: 27
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  rebuild.interfaces.commands.walk_command._resolve_deploy_method:
+    name: _resolve_deploy_method
+    module: rebuild.interfaces.commands.walk_command
+    line: 78
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  scripts.benchmark_scanner_cache.run_walk:
+    name: run_walk
+    module: scripts.benchmark_scanner_cache
+    line: 88
+    cyclomatic_complexity: 4
+    calls_out: 9
+    calls_in: 2
+  scripts.bump_version.main:
+    name: main
+    module: scripts.bump_version
+    line: 203
+    cyclomatic_complexity: 4
+    calls_out: 20
+    calls_in: 0
+  scripts.bump_version.build_new_section:
+    name: build_new_section
+    module: scripts.bump_version
+    line: 146
+    cyclomatic_complexity: 7
+    calls_out: 14
+    calls_in: 1
+  rebuild.interfaces.cli.tui:
+    name: tui
+    module: rebuild.interfaces.cli
+    line: 186
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  rebuild.interfaces.commands.helpers.print_report_links:
+    name: print_report_links
+    module: rebuild.interfaces.commands.helpers
+    line: 28
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 3
+  rebuild.domain.dsl_v2.DSLShell.run:
+    name: run
+    module: rebuild.domain.dsl_v2
+    line: 398
+    cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 0
+  scripts.benchmark_scanner_cache._random_suffix:
+    name: _random_suffix
+    module: scripts.benchmark_scanner_cache
+    line: 63
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  scripts.bump_version.get_git_log_since_last_tag:
+    name: get_git_log_since_last_tag
+    module: scripts.bump_version
+    line: 99
+    cyclomatic_complexity: 7
+    calls_out: 7
+    calls_in: 1
+  rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_dict:
+    name: compute_endpoint_count_trend_dict
+    module: rebuild.application.services.endpoint_trend_service
+    line: 114
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 4
+  scripts.benchmark_scanner_cache.churn:
+    name: churn
+    module: scripts.benchmark_scanner_cache
+    line: 78
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 1
+  rebuild.interfaces.dashboard._extract_avg_cc:
+    name: _extract_avg_cc
+    module: rebuild.interfaces.dashboard
+    line: 45
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  rebuild.application.services.reporting.reporter.ReporterService.export_csv:
+    name: export_csv
+    module: rebuild.application.services.reporting.reporter
+    line: 86
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  rebuild.interfaces.commands.watch_command.watch_command:
+    name: watch_command
+    module: rebuild.interfaces.commands.watch_command
+    line: 142
+    cyclomatic_complexity: 6
+    calls_out: 22
+    calls_in: 1
+  rebuild.application.services.notification_service._build_generic_payload:
+    name: _build_generic_payload
+    module: rebuild.application.services.notification_service
+    line: 90
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  rebuild.interfaces.commands.walk_command._apply_cli_overrides:
+    name: _apply_cli_overrides
+    module: rebuild.interfaces.commands.walk_command
+    line: 143
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  rebuild.application.services.notification_service._build_slack_payload:
+    name: _build_slack_payload
+    module: rebuild.application.services.notification_service
+    line: 54
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  rebuild.interfaces.commands.refactor_command.execute_command:
+    name: execute_command
+    module: rebuild.interfaces.commands.refactor_command
+    line: 80
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 1
+  rebuild.application.services.regression_service.compute_health_trend:
+    name: compute_health_trend
+    module: rebuild.application.services.regression_service
+    line: 60
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 2
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  rebuild.interfaces.cli.pr:
+    name: pr
+    module: rebuild.interfaces.cli
+    line: 529
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  rebuild.application.services.reporting.summary_export.write_csv:
+    name: write_csv
+    module: rebuild.application.services.reporting.summary_export
+    line: 22
+    cyclomatic_complexity: 5
+    calls_out: 17
+    calls_in: 1
+  rebuild.application.services.reporting.reporter.ReporterService.to_yaml:
+    name: to_yaml
+    module: rebuild.application.services.reporting.reporter
+    line: 51
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  scripts.benchmark_scanner_cache._gen_module:
+    name: _gen_module
+    module: scripts.benchmark_scanner_cache
+    line: 59
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  rebuild.application.services.reporting.day_html.render_deploy_section:
+    name: render_deploy_section
+    module: rebuild.application.services.reporting.day_html
+    line: 67
+    cyclomatic_complexity: 5
+    calls_out: 2
+    calls_in: 2
+  rebuild.interfaces.cli.multi_repo:
+    name: multi_repo
+    module: rebuild.interfaces.cli
+    line: 483
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  scripts.bump_version.update_init:
+    name: update_init
+    module: scripts.bump_version
+    line: 56
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  rebuild.interfaces.commands.helpers.print_summary_table:
+    name: print_summary_table
+    module: rebuild.interfaces.commands.helpers
+    line: 54
+    cyclomatic_complexity: 9
+    calls_out: 20
+    calls_in: 2
+  rebuild.application.services.pr_service.load_config_from_env:
+    name: load_config_from_env
+    module: rebuild.application.services.pr_service
+    line: 153
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 85
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService._health_trend_by_day:
+    name: _health_trend_by_day
+    module: rebuild.application.services.reporting.reporter
+    line: 111
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index:
+    name: index
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.evolution_viz.generate_evolution_html:
+    name: generate_evolution_html
+    module: rebuild.interfaces.evolution_viz
+    line: 11
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-config-network.api.main._index_html:
+    name: _index_html
+    module: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main
+    line: 60
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore:
+    name: _postgres_restore
+    module: rebuild.application.services.db_snapshot_manager
+    line: 258
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 0
+  rebuild.application.services.reporting.reporter.ReporterService.export_markdown:
+    name: export_markdown
+    module: rebuild.application.services.reporting.reporter
+    line: 89
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  rebuild.interfaces.api.metrics.setup_metrics:
+    name: setup_metrics
+    module: rebuild.interfaces.api.metrics
+    line: 27
+    cyclomatic_complexity: 2
+    calls_out: 20
+    calls_in: 1
+  scripts.bump_version.update_pyproject:
+    name: update_pyproject
+    module: scripts.bump_version
+    line: 68
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  rebuild.interfaces.commands.walk_command._build_walk_config:
+    name: _build_walk_config
+    module: rebuild.interfaces.commands.walk_command
+    line: 87
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  rebuild.interfaces.api.metrics._require_prometheus:
+    name: _require_prometheus
+    module: rebuild.interfaces.api.metrics
+    line: 15
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  rebuild.application.services.reporting.day_html.render_deploy_category:
+    name: render_deploy_category
+    module: rebuild.application.services.reporting.day_html
+    line: 58
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 1
+  restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.application.services.reporting.timeline_html._trend_dicts:
+    name: _trend_dicts
+    module: rebuild.application.services.reporting.timeline_html
+    line: 21
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  scripts.bump_version.read_version:
+    name: read_version
+    module: scripts.bump_version
+    line: 33
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 2
+  rebuild.interfaces.commands.watch_command._require_wup:
+    name: _require_wup
+    module: rebuild.interfaces.commands.watch_command
+    line: 26
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  rebuild.interfaces.commands.walk_command._handle_walk_results:
+    name: _handle_walk_results
+    module: rebuild.interfaces.commands.walk_command
+    line: 174
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 1
+  rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index:
+    name: save_timeline_index
+    module: rebuild.application.services.reporting.reporter
+    line: 73
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  rebuild.interfaces.cli.dashboard:
+    name: dashboard
+    module: rebuild.interfaces.cli
+    line: 129
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 0
+  rebuild.interfaces.commands.walk_command._print_walk_header:
+    name: _print_walk_header
+    module: rebuild.interfaces.commands.walk_command
+    line: 165
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  rebuild.application.services.reporting.reporter.ReporterService.to_toon:
+    name: to_toon
+    module: rebuild.application.services.reporting.reporter
+    line: 54
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  rebuild.interfaces.cli._resolve_pr_config:
+    name: _resolve_pr_config
+    module: rebuild.interfaces.cli
+    line: 237
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 1
+  rebuild.application.services.reporting.formatters.classify_error:
+    name: classify_error
+    module: rebuild.application.services.reporting.formatters
+    line: 62
+    cyclomatic_complexity: 5
+    calls_out: 2
+    calls_in: 1
+  scripts.benchmark_scanner_cache.setup_repo:
+    name: setup_repo
+    module: scripts.benchmark_scanner_cache
+    line: 67
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  Makefile.print:
+    name: print
+    module: Makefile
+    line: 78
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 33
+  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
+    name: module_index
+    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    line: 81
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  rebuild.interfaces.commands.walk_command._fire_notifications:
+    name: _fire_notifications
+    module: rebuild.interfaces.commands.walk_command
+    line: 200
+    cyclomatic_complexity: 12
+    calls_out: 9
+    calls_in: 1
+  rebuild.application.services.regression_service.compute_health_trend_dict:
+    name: compute_health_trend_dict
+    module: rebuild.application.services.regression_service
     line: 123
     cyclomatic_complexity: 2
     calls_out: 1
@@ -516,236 +845,103 @@ nodes:
     cyclomatic_complexity: 0
     calls_out: 0
     calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 81
+  rebuild.application.services.reporting.summary_export.write_markdown:
+    name: write_markdown
+    module: rebuild.application.services.reporting.summary_export
+    line: 54
+    cyclomatic_complexity: 6
+    calls_out: 13
+    calls_in: 1
+  rebuild.application.services.event_service.get_event_service:
+    name: get_event_service
+    module: rebuild.application.services.event_service
+    line: 112
     cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.application.base_pipeline.BasePipeline.__init__:
-    name: __init__
-    module: rebuild.application.base_pipeline
-    line: 32
-    cyclomatic_complexity: 1
-    calls_out: 9
-    calls_in: 0
-  rebuild.interfaces.cli.services:
-    name: services
-    module: rebuild.interfaces.cli
-    line: 461
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  rebuild.interfaces.cli.truth:
-    name: truth
-    module: rebuild.interfaces.cli
-    line: 471
-    cyclomatic_complexity: 1
-    calls_out: 6
-    calls_in: 0
-  rebuild.application.services.notification_service.NotificationService.notify:
-    name: notify
-    module: rebuild.application.services.notification_service
-    line: 148
-    cyclomatic_complexity: 5
-    calls_out: 6
-    calls_in: 0
-  rebuild.domain.dsl_v2.DSLShell._process:
-    name: _process
-    module: rebuild.domain.dsl_v2
-    line: 419
-    cyclomatic_complexity: 7
-    calls_out: 11
-    calls_in: 0
-  rebuild.interfaces.commands.analyze_command.multi_repo_command:
-    name: multi_repo_command
+    calls_out: 0
+    calls_in: 2
+  rebuild.interfaces.commands.analyze_command.vector_build_command:
+    name: vector_build_command
     module: rebuild.interfaces.commands.analyze_command
-    line: 117
-    cyclomatic_complexity: 14
-    calls_out: 44
-    calls_in: 1
-  rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore:
-    name: _postgres_restore
-    module: rebuild.application.services.db_snapshot_manager
-    line: 258
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 0
-  rebuild.application.services.reporting.reporter.ReporterService.to_yaml:
-    name: to_yaml
-    module: rebuild.application.services.reporting.reporter
-    line: 48
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 3
-  scripts.bump_version.categorize_commits:
-    name: categorize_commits
-    module: scripts.bump_version
-    line: 119
-    cyclomatic_complexity: 14
-    calls_out: 15
-    calls_in: 1
-  rebuild.plugins.registry.PluginRegistry.discover:
-    name: discover
-    module: rebuild.plugins.registry
-    line: 65
-    cyclomatic_complexity: 7
-    calls_out: 10
-    calls_in: 0
-  rebuild.interfaces.cli.evolution:
-    name: evolution
-    module: rebuild.interfaces.cli
-    line: 317
+    line: 47
     cyclomatic_complexity: 2
-    calls_out: 12
-    calls_in: 0
-  rebuild.interfaces.commands.analyze_command.vector_query_command:
-    name: vector_query_command
-    module: rebuild.interfaces.commands.analyze_command
-    line: 71
-    cyclomatic_complexity: 9
-    calls_out: 20
+    calls_out: 8
     calls_in: 1
-  rebuild.interfaces.cli.pr:
-    name: pr
+  rebuild.interfaces.cli.execute:
+    name: execute
     module: rebuild.interfaces.cli
-    line: 496
+    line: 538
     cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 0
-  rebuild.interfaces.commands.walk_command._build_walk_config:
-    name: _build_walk_config
-    module: rebuild.interfaces.commands.walk_command
-    line: 87
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 1
-  rebuild.domain.dsl_v2.DSLShell.run:
-    name: run
-    module: rebuild.domain.dsl_v2
-    line: 398
-    cyclomatic_complexity: 7
-    calls_out: 10
-    calls_in: 0
-  rebuild.application.services.reporting.reporter.ReporterService.to_toon:
-    name: to_toon
-    module: rebuild.application.services.reporting.reporter
-    line: 51
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 3
-  rebuild.interfaces.cli.plugins:
-    name: plugins
-    module: rebuild.interfaces.cli
-    line: 515
-    cyclomatic_complexity: 7
-    calls_out: 22
-    calls_in: 0
-  rebuild.interfaces.dashboard._render_html:
-    name: _render_html
-    module: rebuild.interfaces.dashboard
-    line: 93
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 1
-  scripts.bump_version.bump:
-    name: bump
-    module: scripts.bump_version
-    line: 41
-    cyclomatic_complexity: 5
-    calls_out: 7
-    calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main.module_index:
-    name: module_index
-    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
-    line: 81
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main.index:
-    name: index
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
-    line: 77
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  rebuild.domain.mvp_protocol.MVPServer.start:
-    name: start
-    module: rebuild.domain.mvp_protocol
-    line: 247
-    cyclomatic_complexity: 1
-    calls_out: 23
-    calls_in: 0
-  rebuild.interfaces.commands.refactor_command.pr_command:
-    name: pr_command
-    module: rebuild.interfaces.commands.refactor_command
-    line: 60
-    cyclomatic_complexity: 4
-    calls_out: 11
-    calls_in: 1
-  rebuild.interfaces.dashboard.get_cc_for_day:
-    name: get_cc_for_day
-    module: rebuild.interfaces.dashboard
-    line: 27
-    cyclomatic_complexity: 3
     calls_out: 5
+    calls_in: 0
+  rebuild.application.services.notification_service._build_discord_payload:
+    name: _build_discord_payload
+    module: rebuild.application.services.notification_service
+    line: 73
+    cyclomatic_complexity: 2
+    calls_out: 3
     calls_in: 1
-  rebuild.application.services.regression_service.compute_health_trend_dict:
-    name: compute_health_trend_dict
-    module: rebuild.application.services.regression_service
+  rebuild.interfaces.commands.walk_command._parse_date:
+    name: _parse_date
+    module: rebuild.interfaces.commands.walk_command
     line: 123
     cyclomatic_complexity: 2
     calls_out: 1
+    calls_in: 4
+  scripts.bump_version.collect_unreleased_entries:
+    name: collect_unreleased_entries
+    module: scripts.bump_version
+    line: 82
+    cyclomatic_complexity: 7
+    calls_out: 6
     calls_in: 1
-  rebuild.plugins.registry.load_plugins:
-    name: load_plugins
-    module: rebuild.plugins.registry
-    line: 139
-    cyclomatic_complexity: 2
-    calls_out: 2
+  rebuild.application.services.reporting.formatters.status_badge:
+    name: status_badge
+    module: rebuild.application.services.reporting.formatters
+    line: 45
+    cyclomatic_complexity: 1
+    calls_out: 1
     calls_in: 1
-  restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main._index_html:
+  rebuild.application.services.reporting.timeline_html.build_export_data:
+    name: build_export_data
+    module: rebuild.application.services.reporting.timeline_html
+    line: 31
+    cyclomatic_complexity: 5
+    calls_out: 15
+    calls_in: 3
+  rebuild.application.services.reporting.day_html.render_endpoint_row:
+    name: render_endpoint_row
+    module: rebuild.application.services.reporting.day_html
+    line: 21
+    cyclomatic_complexity: 7
+    calls_out: 4
+    calls_in: 2
+  scripts.benchmark_scanner_cache.main:
+    name: main
+    module: scripts.benchmark_scanner_cache
+    line: 108
+    cyclomatic_complexity: 6
+    calls_out: 36
+    calls_in: 0
+  restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main._index_html:
     name: _index_html
-    module: restored_c2004_health.api-health.backend.modules.connect-manager-library.api.main
+    module: restored_c2004_health.api-health.backend.modules.connect-id-user-list.api.main
     line: 56
     cyclomatic_complexity: 2
     calls_out: 1
     calls_in: 2
-  rebuild.interfaces.commands.refactor_command.plan_command:
-    name: plan_command
-    module: rebuild.interfaces.commands.refactor_command
-    line: 32
-    cyclomatic_complexity: 11
-    calls_out: 19
-    calls_in: 1
-  rebuild.application.services.reporting.reporter.ReporterService._save_html_day:
-    name: _save_html_day
-    module: rebuild.application.services.reporting.reporter
-    line: 66
+  rebuild.application.services.reporting.day_html.render_endpoint_rows:
+    name: render_endpoint_rows
+    module: rebuild.application.services.reporting.day_html
+    line: 47
     cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 0
-  rebuild.application.services.regression_service.compute_health_trend_labels:
-    name: compute_health_trend_labels
-    module: rebuild.application.services.regression_service
-    line: 134
+    calls_out: 2
+    calls_in: 2
+  rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_labels:
+    name: compute_endpoint_count_trend_labels
+    module: rebuild.application.services.endpoint_trend_service
+    line: 125
     cyclomatic_complexity: 2
     calls_out: 1
-    calls_in: 0
-  rebuild.interfaces.commands.helpers.print_report_links:
-    name: print_report_links
-    module: rebuild.interfaces.commands.helpers
-    line: 28
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 3
-  rebuild.application.services.reporting.reporter.ReporterService.save_day:
-    name: save_day
-    module: rebuild.application.services.reporting.reporter
-    line: 54
-    cyclomatic_complexity: 2
-    calls_out: 9
     calls_in: 0
 edges:
 - caller: restored_c2004_health.api-health.backend.modules.connect-config-network.api.main.index
@@ -771,6 +967,18 @@ edges:
   call_type: resolved
 - caller: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.module_index
   callee: restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main._index_html
+  call_type: resolved
+- caller: scripts.benchmark_scanner_cache.setup_repo
+  callee: scripts.benchmark_scanner_cache._gen_module
+  call_type: resolved
+- caller: scripts.benchmark_scanner_cache.churn
+  callee: scripts.benchmark_scanner_cache._random_suffix
+  call_type: resolved
+- caller: scripts.benchmark_scanner_cache.run_walk
+  callee: scripts.benchmark_scanner_cache.churn
+  call_type: resolved
+- caller: scripts.benchmark_scanner_cache.main
+  callee: scripts.benchmark_scanner_cache.setup_repo
   call_type: resolved
 - caller: scripts.bump_version.update_init
   callee: Makefile.print
@@ -811,6 +1019,21 @@ edges:
 - caller: scripts.bump_version.main
   callee: scripts.bump_version.update_pyproject
   call_type: resolved
+- caller: rebuild.application.base_pipeline.BasePipeline.__init__
+  callee: rebuild.application.services.event_service.get_event_service
+  call_type: resolved
+- caller: rebuild.application.services.pr_service.load_config_from_env
+  callee: testql-scenarios.generated-from-pytests.testql.toon.all
+  call_type: resolved
+- caller: rebuild.application.services.regression_service.compute_health_trend_dict
+  callee: rebuild.application.services.regression_service.compute_health_trend
+  call_type: resolved
+- caller: rebuild.application.services.regression_service.compute_health_trend_labels
+  callee: rebuild.application.services.regression_service.compute_health_trend
+  call_type: resolved
+- caller: rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore
+  callee: Makefile.print
+  call_type: resolved
 - caller: rebuild.application.services.notification_service.NotificationService.notify
   callee: rebuild.application.services.notification_service._send_webhook
   call_type: resolved
@@ -828,6 +1051,66 @@ edges:
   call_type: resolved
 - caller: rebuild.plugins.registry.PluginRegistry.discover
   callee: rebuild.plugins.registry._load_entry_points
+  call_type: resolved
+- caller: rebuild.interfaces.dashboard.get_cc_for_day
+  callee: rebuild.interfaces.dashboard._extract_avg_cc
+  call_type: resolved
+- caller: rebuild.interfaces.dashboard.generate_dashboard
+  callee: rebuild.interfaces.dashboard._render_html
+  call_type: resolved
+- caller: rebuild.interfaces.dashboard.generate_dashboard
+  callee: rebuild.interfaces.dashboard.get_cc_for_day
+  call_type: resolved
+- caller: rebuild.interfaces.cli.dashboard
+  callee: rebuild.interfaces.dashboard.generate_dashboard
+  call_type: resolved
+- caller: rebuild.interfaces.cli.serve
+  callee: rebuild.interfaces.commands.helpers.print_report_links
+  call_type: resolved
+- caller: rebuild.interfaces.cli.serve
+  callee: rebuild.interfaces.commands.helpers.serve_reports
+  call_type: resolved
+- caller: rebuild.interfaces.cli.tui
+  callee: rebuild.interfaces.tui.app.launch_tui
+  call_type: resolved
+- caller: rebuild.interfaces.cli._resolve_pr_config
+  callee: rebuild.application.services.pr_service.load_config_from_env
+  call_type: resolved
+- caller: rebuild.interfaces.cli.evolution
+  callee: rebuild.interfaces.evolution_viz.generate_evolution_html
+  call_type: resolved
+- caller: rebuild.interfaces.cli.duplicates
+  callee: rebuild.interfaces.commands.analyze_command.duplicates_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.vector_build
+  callee: rebuild.interfaces.commands.analyze_command.vector_build_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.vector_query
+  callee: rebuild.interfaces.commands.analyze_command.vector_query_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.multi_repo
+  callee: rebuild.interfaces.commands.analyze_command.multi_repo_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.services
+  callee: rebuild.interfaces.commands.analyze_command.services_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.truth
+  callee: rebuild.interfaces.commands.analyze_command.truth_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.plan
+  callee: rebuild.interfaces.commands.refactor_command.plan_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.pr
+  callee: rebuild.interfaces.commands.refactor_command.pr_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.execute
+  callee: rebuild.interfaces.commands.refactor_command.execute_command
+  call_type: resolved
+- caller: rebuild.interfaces.cli.plugins
+  callee: rebuild.plugins.registry.load_plugins
+  call_type: resolved
+- caller: rebuild.interfaces.evolution_viz.generate_evolution_html
+  callee: rebuild.interfaces.evolution_viz._render_html
   call_type: resolved
 - caller: rebuild.interfaces.commands.walk_command.walk_command
   callee: rebuild.interfaces.commands.walk_command._ensure_git_repo
@@ -880,134 +1163,140 @@ edges:
 - caller: rebuild.interfaces.commands.refactor_command.execute_command
   callee: rebuild.interfaces.commands.refactor_command._generate_refactor_plan
   call_type: resolved
+- caller: rebuild.interfaces.commands.watch_command.watch_command
+  callee: rebuild.interfaces.commands.watch_command._require_wup
+  call_type: resolved
+- caller: rebuild.interfaces.commands.watch_command.watch_command
+  callee: rebuild.interfaces.commands.watch_command._build_default_wup_config
+  call_type: resolved
 - caller: rebuild.interfaces.tui.app.launch_tui
   callee: Makefile.print
   call_type: resolved
-- caller: scripts.benchmark_scanner_cache.setup_repo
-  callee: scripts.benchmark_scanner_cache._gen_module
-  call_type: resolved
-- caller: scripts.benchmark_scanner_cache.churn
-  callee: scripts.benchmark_scanner_cache._random_suffix
-  call_type: resolved
-- caller: scripts.benchmark_scanner_cache.run_walk
-  callee: scripts.benchmark_scanner_cache.churn
-  call_type: resolved
-- caller: scripts.benchmark_scanner_cache.main
-  callee: scripts.benchmark_scanner_cache.setup_repo
-  call_type: resolved
-- caller: rebuild.application.base_pipeline.BasePipeline.__init__
-  callee: rebuild.application.services.event_service.get_event_service
-  call_type: resolved
-- caller: rebuild.interfaces.dashboard.get_cc_for_day
-  callee: rebuild.interfaces.dashboard._extract_avg_cc
-  call_type: resolved
-- caller: rebuild.interfaces.dashboard.generate_dashboard
-  callee: rebuild.interfaces.dashboard._render_html
-  call_type: resolved
-- caller: rebuild.interfaces.dashboard.generate_dashboard
-  callee: rebuild.interfaces.dashboard.get_cc_for_day
-  call_type: resolved
-- caller: rebuild.application.services.reporting.reporter.ReporterService.save_day
-  callee: rebuild.application.services.reporting.reporter.ReporterService.to_yaml
-  call_type: resolved
-- caller: rebuild.application.services.reporting.reporter.ReporterService.save_day
-  callee: rebuild.application.services.reporting.reporter.ReporterService.to_toon
-  call_type: resolved
-- caller: rebuild.application.services.reporting.reporter.ReporterService._save_html_day
-  callee: rebuild.application.services.reporting.reporter.ReporterService.to_yaml
-  call_type: resolved
-- caller: rebuild.application.services.reporting.reporter.ReporterService._save_html_day
-  callee: rebuild.application.services.reporting.reporter.ReporterService.to_toon
-  call_type: resolved
-- caller: rebuild.application.services.reporting.reporter.ReporterService._endpoint_row
-  callee: rebuild.application.services.reporting.formatters.classify_error
-  call_type: resolved
-- caller: rebuild.application.services.reporting.reporter.ReporterService._endpoint_row
-  callee: rebuild.application.services.reporting.formatters.status_badge
-  call_type: resolved
-- caller: rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
-  callee: rebuild.application.services.reporting.chart_builder.generate_trend_chart
-  call_type: resolved
-- caller: rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
-  callee: rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
-  call_type: resolved
-- caller: rebuild.application.services.reporting.reporter.ReporterService._health_trend_by_day
-  callee: rebuild.application.services.regression_service.compute_health_trend_dict
-  call_type: resolved
-- caller: rebuild.interfaces.evolution_viz.generate_evolution_html
-  callee: rebuild.interfaces.evolution_viz._render_html
-  call_type: resolved
-- caller: rebuild.interfaces.cli.dashboard
-  callee: rebuild.interfaces.dashboard.generate_dashboard
-  call_type: resolved
-- caller: rebuild.interfaces.cli.serve
-  callee: rebuild.interfaces.commands.helpers.print_report_links
-  call_type: resolved
-- caller: rebuild.interfaces.cli.serve
-  callee: rebuild.interfaces.commands.helpers.serve_reports
-  call_type: resolved
-- caller: rebuild.interfaces.cli.tui
-  callee: rebuild.interfaces.tui.app.launch_tui
-  call_type: resolved
-- caller: rebuild.interfaces.cli._resolve_pr_config
-  callee: rebuild.application.services.pr_service.load_config_from_env
-  call_type: resolved
-- caller: rebuild.interfaces.cli.evolution
-  callee: rebuild.interfaces.evolution_viz.generate_evolution_html
-  call_type: resolved
-- caller: rebuild.interfaces.cli.duplicates
-  callee: rebuild.interfaces.commands.analyze_command.duplicates_command
-  call_type: resolved
-- caller: rebuild.interfaces.cli.vector_build
-  callee: rebuild.interfaces.commands.analyze_command.vector_build_command
-  call_type: resolved
-- caller: rebuild.interfaces.cli.vector_query
-  callee: rebuild.interfaces.commands.analyze_command.vector_query_command
-  call_type: resolved
-- caller: rebuild.interfaces.cli.multi_repo
-  callee: rebuild.interfaces.commands.analyze_command.multi_repo_command
-  call_type: resolved
-- caller: rebuild.interfaces.cli.services
-  callee: rebuild.interfaces.commands.analyze_command.services_command
-  call_type: resolved
-- caller: rebuild.interfaces.cli.truth
-  callee: rebuild.interfaces.commands.analyze_command.truth_command
-  call_type: resolved
-- caller: rebuild.interfaces.cli.plan
-  callee: rebuild.interfaces.commands.refactor_command.plan_command
-  call_type: resolved
-- caller: rebuild.interfaces.cli.pr
-  callee: rebuild.interfaces.commands.refactor_command.pr_command
-  call_type: resolved
-- caller: rebuild.interfaces.cli.execute
-  callee: rebuild.interfaces.commands.refactor_command.execute_command
-  call_type: resolved
-- caller: rebuild.interfaces.cli.plugins
-  callee: rebuild.plugins.registry.load_plugins
-  call_type: resolved
-- caller: rebuild.application.services.regression_service.compute_health_trend_dict
-  callee: rebuild.application.services.regression_service.compute_health_trend
-  call_type: resolved
-- caller: rebuild.application.services.regression_service.compute_health_trend_labels
-  callee: rebuild.application.services.regression_service.compute_health_trend
-  call_type: resolved
-- caller: rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore
-  callee: Makefile.print
-  call_type: resolved
-- caller: rebuild.application.services.pr_service.load_config_from_env
-  callee: testql-scenarios.generated-from-pytests.testql.toon.all
-  call_type: resolved
 - caller: rebuild.domain.mvp_protocol.MVPServer.start
   callee: Makefile.print
-  call_type: resolved
-- caller: rebuild.interfaces.commands.helpers.serve_reports
-  callee: rebuild.application.services.event_service.get_event_service
   call_type: resolved
 - caller: rebuild.domain.dsl_v2.DSLShell.run
   callee: Makefile.print
   call_type: resolved
 - caller: rebuild.domain.dsl_v2.DSLShell._process
   callee: Makefile.print
+  call_type: resolved
+- caller: rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_dict
+  callee: rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend
+  call_type: resolved
+- caller: rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_labels
+  callee: rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend
+  call_type: resolved
+- caller: rebuild.application.services.reporting.timeline_html._trend_dicts
+  callee: rebuild.application.services.regression_service.compute_health_trend_dict
+  call_type: resolved
+- caller: rebuild.application.services.reporting.timeline_html._trend_dicts
+  callee: rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_dict
+  call_type: resolved
+- caller: rebuild.application.services.reporting.timeline_html.build_export_data
+  callee: rebuild.application.services.reporting.timeline_html._trend_dicts
+  call_type: resolved
+- caller: rebuild.application.services.reporting.timeline_html.render_timeline_html
+  callee: rebuild.application.services.reporting.timeline_html._trend_dicts
+  call_type: resolved
+- caller: rebuild.application.services.reporting.timeline_html.render_timeline_html
+  callee: rebuild.application.services.reporting.chart_builder.generate_trend_chart
+  call_type: resolved
+- caller: rebuild.application.services.reporting.timeline_html.render_timeline_html
+  callee: rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
+  call_type: resolved
+- caller: rebuild.application.services.reporting.timeline_html.render_timeline_html
+  callee: rebuild.application.services.reporting.timeline_html.build_export_data
+  call_type: resolved
+- caller: rebuild.application.services.reporting.timeline_html.render_timeline_html
+  callee: rebuild.application.services.reporting.timeline_html._render_day_row
+  call_type: resolved
+- caller: rebuild.application.services.reporting.summary_export.write_csv
+  callee: rebuild.application.services.regression_service.compute_health_trend_dict
+  call_type: resolved
+- caller: rebuild.application.services.reporting.summary_export.write_csv
+  callee: rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_dict
+  call_type: resolved
+- caller: rebuild.application.services.reporting.summary_export.write_markdown
+  callee: rebuild.application.services.regression_service.compute_health_trend_dict
+  call_type: resolved
+- caller: rebuild.application.services.reporting.summary_export.write_markdown
+  callee: rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_dict
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.save_day
+  callee: rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.save_day
+  callee: rebuild.application.services.reporting.reporter.ReporterService.to_toon
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.save_day
+  callee: rebuild.application.services.reporting.day_html.render_day_html
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
+  callee: rebuild.application.services.reporting.timeline_html.build_export_data
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
+  callee: rebuild.application.services.reporting.timeline_html.render_timeline_html
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.export_csv
+  callee: rebuild.application.services.reporting.summary_export.write_csv
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService.export_markdown
+  callee: rebuild.application.services.reporting.summary_export.write_markdown
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._save_html_day
+  callee: rebuild.application.services.reporting.day_html.render_day_html
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._endpoint_rows
+  callee: rebuild.application.services.reporting.day_html.render_endpoint_rows
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._endpoint_row
+  callee: rebuild.application.services.reporting.day_html.render_endpoint_row
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._deploy_section
+  callee: rebuild.application.services.reporting.day_html.render_deploy_section
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._health_trend_by_day
+  callee: rebuild.application.services.regression_service.compute_health_trend_dict
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._endpoint_count_trend_by_day
+  callee: rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_dict
+  call_type: resolved
+- caller: rebuild.application.services.reporting.reporter.ReporterService._results_to_export_data
+  callee: rebuild.application.services.reporting.timeline_html.build_export_data
+  call_type: resolved
+- caller: rebuild.application.services.reporting.day_html.render_endpoint_row
+  callee: rebuild.application.services.reporting.formatters.classify_error
+  call_type: resolved
+- caller: rebuild.application.services.reporting.day_html.render_endpoint_row
+  callee: rebuild.application.services.reporting.formatters.status_badge
+  call_type: resolved
+- caller: rebuild.application.services.reporting.day_html.render_endpoint_rows
+  callee: rebuild.application.services.reporting.day_html.render_endpoint_row
+  call_type: resolved
+- caller: rebuild.application.services.reporting.day_html.render_deploy_section
+  callee: rebuild.application.services.reporting.day_html.render_deploy_log
+  call_type: resolved
+- caller: rebuild.application.services.reporting.day_html.render_deploy_section
+  callee: rebuild.application.services.reporting.day_html.render_deploy_category
+  call_type: resolved
+- caller: rebuild.application.services.reporting.day_html.render_day_html
+  callee: rebuild.application.services.reporting.formatters.to_yaml
+  call_type: resolved
+- caller: rebuild.application.services.reporting.day_html.render_day_html
+  callee: rebuild.application.services.reporting.formatters.to_toon
+  call_type: resolved
+- caller: rebuild.application.services.reporting.day_html.render_day_html
+  callee: rebuild.application.services.reporting.day_html.render_endpoint_rows
+  call_type: resolved
+- caller: rebuild.application.services.reporting.day_html.render_day_html
+  callee: rebuild.application.services.reporting.day_html.render_deploy_section
+  call_type: resolved
+- caller: rebuild.interfaces.commands.helpers.serve_reports
+  callee: rebuild.application.services.event_service.get_event_service
+  call_type: resolved
+- caller: rebuild.interfaces.api.metrics.setup_metrics
+  callee: rebuild.interfaces.api.metrics._require_prometheus
   call_type: resolved
 modules:
   Makefile:
@@ -1016,6 +1305,10 @@ modules:
   - rebuild.application.base_pipeline.BasePipeline.__init__
   rebuild.application.services.db_snapshot_manager:
   - rebuild.application.services.db_snapshot_manager.DBSnapshotManager._postgres_restore
+  rebuild.application.services.endpoint_trend_service:
+  - rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend
+  - rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_dict
+  - rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_labels
   rebuild.application.services.event_service:
   - rebuild.application.services.event_service.get_event_service
   rebuild.application.services.notification_service:
@@ -1034,23 +1327,49 @@ modules:
   rebuild.application.services.reporting.chart_builder:
   - rebuild.application.services.reporting.chart_builder.generate_endpoint_diff
   - rebuild.application.services.reporting.chart_builder.generate_trend_chart
+  rebuild.application.services.reporting.day_html:
+  - rebuild.application.services.reporting.day_html.render_day_html
+  - rebuild.application.services.reporting.day_html.render_deploy_category
+  - rebuild.application.services.reporting.day_html.render_deploy_log
+  - rebuild.application.services.reporting.day_html.render_deploy_section
+  - rebuild.application.services.reporting.day_html.render_endpoint_row
+  - rebuild.application.services.reporting.day_html.render_endpoint_rows
   rebuild.application.services.reporting.formatters:
   - rebuild.application.services.reporting.formatters._classify_error_text
   - rebuild.application.services.reporting.formatters.classify_error
   - rebuild.application.services.reporting.formatters.status_badge
+  - rebuild.application.services.reporting.formatters.to_toon
+  - rebuild.application.services.reporting.formatters.to_yaml
   rebuild.application.services.reporting.reporter:
+  - rebuild.application.services.reporting.reporter.ReporterService._deploy_section
+  - rebuild.application.services.reporting.reporter.ReporterService._endpoint_count_trend_by_day
   - rebuild.application.services.reporting.reporter.ReporterService._endpoint_row
+  - rebuild.application.services.reporting.reporter.ReporterService._endpoint_rows
   - rebuild.application.services.reporting.reporter.ReporterService._health_trend_by_day
+  - rebuild.application.services.reporting.reporter.ReporterService._results_to_export_data
   - rebuild.application.services.reporting.reporter.ReporterService._save_html_day
+  - rebuild.application.services.reporting.reporter.ReporterService.export_csv
+  - rebuild.application.services.reporting.reporter.ReporterService.export_markdown
   - rebuild.application.services.reporting.reporter.ReporterService.save_day
   - rebuild.application.services.reporting.reporter.ReporterService.save_timeline_index
   - rebuild.application.services.reporting.reporter.ReporterService.to_toon
   - rebuild.application.services.reporting.reporter.ReporterService.to_yaml
+  rebuild.application.services.reporting.summary_export:
+  - rebuild.application.services.reporting.summary_export.write_csv
+  - rebuild.application.services.reporting.summary_export.write_markdown
+  rebuild.application.services.reporting.timeline_html:
+  - rebuild.application.services.reporting.timeline_html._render_day_row
+  - rebuild.application.services.reporting.timeline_html._trend_dicts
+  - rebuild.application.services.reporting.timeline_html.build_export_data
+  - rebuild.application.services.reporting.timeline_html.render_timeline_html
   rebuild.domain.dsl_v2:
   - rebuild.domain.dsl_v2.DSLShell._process
   - rebuild.domain.dsl_v2.DSLShell.run
   rebuild.domain.mvp_protocol:
   - rebuild.domain.mvp_protocol.MVPServer.start
+  rebuild.interfaces.api.metrics:
+  - rebuild.interfaces.api.metrics._require_prometheus
+  - rebuild.interfaces.api.metrics.setup_metrics
   rebuild.interfaces.cli:
   - rebuild.interfaces.cli._resolve_pr_config
   - rebuild.interfaces.cli.dashboard
@@ -1094,6 +1413,10 @@ modules:
   - rebuild.interfaces.commands.walk_command._print_walk_header
   - rebuild.interfaces.commands.walk_command._resolve_deploy_method
   - rebuild.interfaces.commands.walk_command.walk_command
+  rebuild.interfaces.commands.watch_command:
+  - rebuild.interfaces.commands.watch_command._build_default_wup_config
+  - rebuild.interfaces.commands.watch_command._require_wup
+  - rebuild.interfaces.commands.watch_command.watch_command
   rebuild.interfaces.dashboard:
   - rebuild.interfaces.dashboard._extract_avg_cc
   - rebuild.interfaces.dashboard._render_html
@@ -1326,6 +1649,7 @@ entry_points:
 - rebuild.application.services.deploy_service.DeployService.wait_healthy
 - rebuild.application.services.deploy_strategy.DeployStrategy.start
 - rebuild.application.services.deploy_strategy.DeployStrategy.stop
+- rebuild.application.services.endpoint_trend_service.compute_endpoint_count_trend_labels
 - rebuild.application.services.event_service.EventService.__init__
 - rebuild.application.services.event_service.EventService.disable
 - rebuild.application.services.event_service.EventService.emit
@@ -1403,9 +1727,6 @@ entry_points:
 - rebuild.application.services.pr_service.PRService._generate_pr_body
 - rebuild.application.services.pr_service.PRService.create_pr
 - rebuild.application.services.regression_service.compute_health_trend_labels
-- rebuild.application.services.reporting.formatters.to_toon
-- rebuild.application.services.reporting.reporter.ReporterService._deploy_category_html
-- rebuild.application.services.reporting.reporter.ReporterService._deploy_log_html
 - rebuild.application.services.reporting.reporter.ReporterService._deploy_section
 - rebuild.application.services.reporting.reporter.ReporterService._endpoint_count_trend_by_day
 - rebuild.application.services.reporting.reporter.ReporterService._endpoint_row
@@ -1607,6 +1928,7 @@ entry_points:
 - rebuild.interfaces.cli.vector_query
 - rebuild.interfaces.cli.version
 - rebuild.interfaces.cli.walk
+- rebuild.interfaces.cli.watch
 - rebuild.plugins.base.BaseReporter.configure
 - rebuild.plugins.base.BaseReporter.report
 - rebuild.plugins.base.BaseScanner.configure
@@ -1666,3 +1988,4 @@ entry_points:
 - restored_c2004_health.api-health.backend.modules.connect-reports-month.api.main.serve_ui
 - scripts.benchmark_scanner_cache.main
 - scripts.bump_version.main
+- scripts.run_c2004_full.print
