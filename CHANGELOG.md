@@ -203,6 +203,60 @@ Pierwsza realna integracja `[full]` extras. Patrz [ANALYSIS.md](ANALYSIS.md) Spr
 - `python -c "import yaml; yaml.safe_load(open('.github/workflows/mutation.yml'))"` → YAML OK
 - CLI registration: `rebuild watch --help` widoczne w `app.commands` (test: `from rebuild.interfaces.cli import app`)
 
+### Sprint 5b — Reporter Refactor + Endpoint-Trend Konsolidacja (2026-05-08)
+
+Decompozycja 434-LOC `reporter.py` na fokus-moduły + finalna eliminacja
+duplikatu `_endpoint_count_trend_by_day` ↔ `compute_endpoint_count_trend_labels`
+(odroczone z Sprint 2). Patrz [TODO.md](TODO.md) → "Refactor `reporter.py`".
+
+#### Added
+- **`rebuild/application/services/endpoint_trend_service.py`** — single source
+  of truth dla detekcji zmian liczby endpointów (analog do `regression_service`).
+  - Public: `compute_endpoint_count_trend(results, threshold) -> List[EndpointTrendPoint]`
+  - Adapter dict: `compute_endpoint_count_trend_dict(results, threshold) -> dict[day, label]`
+  - Adapter list: `compute_endpoint_count_trend_labels(results, threshold) -> List[str]`
+  - Stała: `DEFAULT_ENDPOINT_WARNING_PCT = 10.0`
+  - Frozen dataclass `EndpointTrendPoint(day, total, delta, label, is_warning)`
+- **`rebuild/application/services/reporting/_html_assets.py`** (29 LOC) —
+  współdzielone `JS_HELPERS` + `CSS_VARS`.
+- **`rebuild/application/services/reporting/day_html.py`** (168 LOC) — pure
+  funkcje `render_day_html`, `render_endpoint_row(s)`, `render_deploy_section`,
+  `render_deploy_log`, `render_deploy_category`. Każda jednostkowo testowalna,
+  bez stanu klasy.
+- **`rebuild/application/services/reporting/timeline_html.py`** (174 LOC) —
+  `render_timeline_html(results, output_dir)` + `build_export_data(results)` +
+  prywatny `_render_day_row` + `_trend_dicts` (delegujący do dwóch trend
+  serwisów).
+- **`rebuild/application/services/reporting/summary_export.py`** (84 LOC) —
+  `write_csv` / `write_markdown` jako pure functions.
+- **`tests/test_endpoint_trend_service.py`** (16 testów) — pełna pokrywalność
+  publicznego API + dwóch adapterów + delegacji `helpers.py` i wewnętrznego
+  `ReporterService._endpoint_count_trend_by_day`.
+
+#### Changed
+- **`rebuild/application/services/reporting/reporter.py`** — z 434 LOC do
+  120 LOC (-72%). `ReporterService` jest teraz fasadą:
+  - `save_day` → `render_day_html` + zapis JSON/YAML/TOON
+  - `save_timeline_index` → `build_export_data` + `render_timeline_html`
+  - `export_csv` / `export_markdown` → `write_csv` / `write_markdown`
+  - `_endpoint_count_trend_by_day` → `compute_endpoint_count_trend_dict`
+    (analogicznie jak `_health_trend_by_day` z Sprint 2)
+  - Zachowane wszystkie publiczne metody i prywatne `_save_html_day`,
+    `_endpoint_rows`, `_endpoint_row`, `_deploy_section`, `_results_to_export_data`
+    jako thin shims dla backward-compat.
+- **`rebuild/interfaces/commands/helpers.py:compute_endpoint_count_trend_labels`**
+  → cienki adapter delegujący do `endpoint_trend_service.compute_endpoint_count_trend_labels`.
+
+#### Verification
+- `pytest tests/test_endpoint_trend_service.py` → **16 passed**
+- `pytest tests/test_reporter_service.py tests/test_git_helpers_extra.py tests/test_coverage_phase16.py` → **139 passed** (zerowa regresja w testach trendu)
+- `pytest`: **829 passed** (poprzednio 813 → +16 endpoint-trend), 3 preexisting `TestCLISubprocessE2E` failures (środowiskowy)
+- `ruff check rebuild/ tests/test_endpoint_trend_service.py tests/test_metrics.py --select E,W,F --ignore E501` → **All checks passed**
+- LOC count po refaktorze:
+  - `reporter.py` 434 → 120 (fasada)
+  - `day_html.py` 168 + `timeline_html.py` 174 + `summary_export.py` 84 + `_html_assets.py` 29 = 455 LOC w focus-modułach
+  - `endpoint_trend_service.py` 134 LOC
+
 ### Sprint 5a — Prometheus /metrics Endpoint (2026-05-08)
 
 Realizacja TODO Phase 17 → "Grafana Integration". Patrz [TODO.md](TODO.md) i [ANALYSIS.md](ANALYSIS.md) Sprint 5+.
@@ -269,6 +323,13 @@ na dużym repo (c2004 ≈ 88 podkatalogów). Fix po stronie upstream (silnik), b
   brak `SyntaxWarning`, brak fałszywego cyklu, czysty eksport `architecture.html`.
 
 ---
+
+## [0.1.32] - 2026-05-08
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
 
 ## [0.1.31] - 2026-05-08
 
