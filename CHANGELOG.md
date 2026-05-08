@@ -371,6 +371,11 @@ na dużym repo (c2004 ≈ 88 podkatalogów). Fix po stronie upstream (silnik), b
 
 ---
 
+## [0.1.34] - 2026-05-08
+
+### Docs
+- Update README.md
+
 ## [0.1.33] - 2026-05-08
 
 ### Docs
