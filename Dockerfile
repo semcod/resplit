@@ -25,9 +25,7 @@ COPY pyproject.toml README.md ./
 COPY rebuild/ rebuild/
 
 RUN pip install --upgrade pip \
-    && pip install --no-cache-dir build \
-    && python -m build --wheel \
-    && pip install --no-cache-dir "dist/rebuild-*.whl[screenshots]"
+    && pip install --no-cache-dir ".[screenshots]"
 
 # Install Playwright browsers (Chromium only for lightweight image)
 RUN playwright install chromium \
