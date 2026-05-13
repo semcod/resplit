@@ -4,6 +4,7 @@ Base classes for rebuild plugins.
 Third-party packages implement these interfaces and register them via
 package entry points.
 """
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -15,6 +16,7 @@ from typing import Any, Dict, List
 @dataclass
 class ScanResult:
     """Generic result produced by a scanner plugin."""
+
     scanner: str
     path: Path
     findings: List[Dict[str, Any]] = field(default_factory=list)

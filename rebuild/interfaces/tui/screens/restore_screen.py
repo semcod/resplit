@@ -21,8 +21,11 @@ if TEXTUAL_OK:
         BINDINGS = [Binding("escape", "pop_screen", "Wstecz")]
 
         def __init__(
-            self, repo: Path, results_dir: Path,
-            preselect_day: str = "", preselect_endpoint: str = "",
+            self,
+            repo: Path,
+            results_dir: Path,
+            preselect_day: str = "",
+            preselect_endpoint: str = "",
             day_data: Optional[dict] = None,
         ) -> None:
             super().__init__()
@@ -38,12 +41,15 @@ if TEXTUAL_OK:
 
             endpoints = []
             if self._day_data:
-                endpoints = [r.get("path", "") for r in self._day_data.get("results", []) if r.get("path")]
+                endpoints = [
+                    r.get("path", "") for r in self._day_data.get("results", []) if r.get("path")
+                ]
 
             yield Label("Ścieżka endpointu:", classes="section-label")
             if endpoints:
                 yield Select(
-                    [(ep, ep) for ep in endpoints], id="endpoint-select",
+                    [(ep, ep) for ep in endpoints],
+                    id="endpoint-select",
                     value=self._preselect_endpoint or endpoints[0],
                 )
             else:
@@ -88,18 +94,29 @@ if TEXTUAL_OK:
             endpoint = self._get_endpoint()
             output = self.query_one("#output-input", Input).value or "./restored"
             port = self.query_one("#port-input", Input).value or "8099"
-            results_dir = self.query_one("#results-dir-input", Input).value or str(self._results_dir)
+            results_dir = self.query_one("#results-dir-input", Input).value or str(
+                self._results_dir
+            )
             log = self.query_one("#restore-log", Log)
 
             cmd = [
-                sys.executable, "-m", "rebuild",
-                "restore", endpoint, str(self._repo),
-                "--output", output, "--results-dir", results_dir,
+                sys.executable,
+                "-m",
+                "rebuild",
+                "restore",
+                endpoint,
+                str(self._repo),
+                "--output",
+                output,
+                "--results-dir",
+                results_dir,
             ]
             log.write_line(f"$ {' '.join(cmd)}\n")
 
             try:
-                proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                proc = subprocess.Popen(
+                    cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+                )
                 for line in proc.stdout:
                     log.write_line(line.rstrip())
                 rc = proc.wait()
@@ -135,7 +152,11 @@ if TEXTUAL_OK:
             log.write_line(f"\n$ cd {dc_dir} && {' '.join(cmd)}\n")
             try:
                 proc = subprocess.Popen(
-                    cmd, cwd=dc_dir, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                    cmd,
+                    cwd=dc_dir,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True,
                 )
                 for line in proc.stdout:
                     log.write_line(line.rstrip())

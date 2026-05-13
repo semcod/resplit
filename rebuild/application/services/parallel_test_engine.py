@@ -1,6 +1,7 @@
 """
 Parallel test execution with dependency graph and health-first strategy.
 """
+
 from __future__ import annotations
 import asyncio
 import threading
@@ -19,6 +20,7 @@ from ...domain.models import WalkConfig
 @dataclass
 class EndpointDependency:
     """Defines endpoint dependency relationship."""
+
     endpoint: str  # Path like /api/users
     depends_on: List[str]  # Paths it depends on
     is_critical: bool = False  # If this fails, skip dependents
@@ -110,7 +112,7 @@ class ParallelTestEngine:
         config: WalkConfig,
         max_concurrent: int = 10,
         timeout: float = 10.0,
-        health_first: bool = True
+        health_first: bool = True,
     ):
         self.config = config
         self.max_concurrent = max_concurrent
@@ -200,7 +202,9 @@ class ParallelTestEngine:
         self.dependency_graph.add_group("/metrics", "health")
         self.dependency_graph.add_group("/api/health", "health")
 
-    async def execute(self, endpoints: List[Endpoint], client: Optional[httpx.AsyncClient] = None) -> List[EndpointResult]:
+    async def execute(
+        self, endpoints: List[Endpoint], client: Optional[httpx.AsyncClient] = None
+    ) -> List[EndpointResult]:
         """
         Execute all endpoint tests with parallelization.
         Pass *client* to reuse an existing httpx.AsyncClient (persistent session).
@@ -221,7 +225,9 @@ class ParallelTestEngine:
         await self._run_dependency_phases(other_eps, results, failed, client)
         return list(results.values())
 
-    def _split_health_endpoints(self, endpoints: List[Endpoint]) -> Tuple[List[Endpoint], List[Endpoint]]:
+    def _split_health_endpoints(
+        self, endpoints: List[Endpoint]
+    ) -> Tuple[List[Endpoint], List[Endpoint]]:
         health_eps = []
         other_eps = []
         for ep in endpoints:
@@ -306,7 +312,7 @@ class ParallelTestEngine:
     def _is_health_endpoint(self, ep: Endpoint) -> bool:
         """Check if endpoint is a health check."""
         path_lower = ep.path.lower()
-        return any(h in path_lower for h in ['/health', '/ping', '/ready', '/alive', '/status'])
+        return any(h in path_lower for h in ["/health", "/ping", "/ready", "/alive", "/status"])
 
     async def _login_if_configured(self) -> None:
         """Perform login to obtain Bearer token if configured."""
@@ -346,8 +352,7 @@ class ParallelTestEngine:
             headers["Authorization"] = f"Bearer {self._auth_token}"
 
         limits = httpx.Limits(
-            max_connections=self.max_concurrent * 2,
-            max_keepalive_connections=self.max_concurrent
+            max_connections=self.max_concurrent * 2, max_keepalive_connections=self.max_concurrent
         )
 
         async with httpx.AsyncClient(
@@ -355,7 +360,7 @@ class ParallelTestEngine:
             timeout=self.timeout,
             limits=limits,
             headers=headers,
-            follow_redirects=True
+            follow_redirects=True,
         ) as fresh_client:
             return await self._run_with_client(fresh_client, endpoints, sequential)
 
@@ -420,7 +425,7 @@ class ParallelTestEngine:
                 status=status,
                 http_status=response.status_code,
                 error=response.text[:500] if status != EndpointStatus.OK else None,
-                response_time_ms=duration * 1000
+                response_time_ms=duration * 1000,
             )
 
         except httpx.TimeoutException:
@@ -428,14 +433,14 @@ class ParallelTestEngine:
                 endpoint=endpoint,
                 status=EndpointStatus.TIMEOUT,
                 error=f"Timeout after {self.timeout}s",
-                response_time_ms=(time.perf_counter() - start) * 1000
+                response_time_ms=(time.perf_counter() - start) * 1000,
             )
         except Exception as e:
             return EndpointResult(
                 endpoint=endpoint,
                 status=EndpointStatus.FAIL,
                 error=str(e)[:200],
-                response_time_ms=(time.perf_counter() - start) * 1000
+                response_time_ms=(time.perf_counter() - start) * 1000,
             )
 
     def execute_sync(self, endpoints: List[Endpoint]) -> List[EndpointResult]:

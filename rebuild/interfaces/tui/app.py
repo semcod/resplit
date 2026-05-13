@@ -35,8 +35,10 @@ if TEXTUAL_OK:
 
         def on_mount(self) -> None:
             from .screens.project_screen import ProjectScreen
+
             self.push_screen(ProjectScreen())
 else:
+
     class RebuildTUI:
         """Fallback export used when Textual is not installed."""
 

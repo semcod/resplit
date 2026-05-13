@@ -4,11 +4,13 @@ from typing import Optional
 import shutil
 from .base import Service
 
+
 class OverrideService(Service[Path, int]):
     """
     Service for applying manual overrides (patches) to the repo clone.
     Allows fixing historical bugs by copying files from a patch directory.
     """
+
     def execute(self, repo: Path, patch_source: Optional[Path] = None) -> int:
         if not patch_source or not patch_source.exists():
             return 0

@@ -7,6 +7,7 @@ Provides:
                             compatible with the existing ConfigLoader.validate() contract
   - load_and_validate     — convenience: load YAML file → RebuildConfig or list[str] errors
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -98,8 +99,7 @@ class ProjectConfig(BaseModel):
                     self.deploy = DeployConfig.model_validate(d)
                 except ValidationError as exc:
                     msgs = "; ".join(
-                        f"{'.'.join(str(p) for p in e['loc'])}: {e['msg']}"
-                        for e in exc.errors()
+                        f"{'.'.join(str(p) for p in e['loc'])}: {e['msg']}" for e in exc.errors()
                     )
                     raise ValueError(f"project.deploy: {msgs}") from exc
             else:
@@ -113,8 +113,7 @@ class ProjectConfig(BaseModel):
                     self.output = OutputConfig.model_validate(o)
                 except ValidationError as exc:
                     msgs = "; ".join(
-                        f"{'.'.join(str(p) for p in e['loc'])}: {e['msg']}"
-                        for e in exc.errors()
+                        f"{'.'.join(str(p) for p in e['loc'])}: {e['msg']}" for e in exc.errors()
                     )
                     raise ValueError(f"project.output: {msgs}") from exc
             elif not isinstance(o, str):
@@ -161,6 +160,7 @@ class RebuildConfig(BaseModel):
 # Validator helper — compatible with ConfigLoader.validate() return type
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 class ConfigSchemaValidator:
     """
     Drop-in pydantic-based replacement for ConfigLoader.validate().
@@ -191,6 +191,7 @@ class ConfigSchemaValidator:
 # ─────────────────────────────────────────────────────────────────────────────
 # Convenience loader
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def load_and_validate(path: Path) -> tuple[Optional[RebuildConfig], List[str]]:
     """

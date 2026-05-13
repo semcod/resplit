@@ -13,6 +13,7 @@ formats and dispatches messages; it does *not* duplicate the detection logic.
 
 See ANALYSIS.md §P1.3 for the rationale.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -86,13 +87,15 @@ def compute_health_trend(
     for r in sorted(results, key=lambda x: x.day):
         day_key = str(r.day)
         if previous is None:
-            points.append(HealthTrendPoint(
-                day=day_key,
-                health_pct=r.health_pct,
-                delta=None,
-                label="—",
-                is_regression=False,
-            ))
+            points.append(
+                HealthTrendPoint(
+                    day=day_key,
+                    health_pct=r.health_pct,
+                    delta=None,
+                    label="—",
+                    is_regression=False,
+                )
+            )
             previous = r.health_pct
             continue
 
@@ -108,13 +111,15 @@ def compute_health_trend(
         else:
             label = "0.0pp"
 
-        points.append(HealthTrendPoint(
-            day=day_key,
-            health_pct=r.health_pct,
-            delta=delta,
-            label=label,
-            is_regression=is_regression,
-        ))
+        points.append(
+            HealthTrendPoint(
+                day=day_key,
+                health_pct=r.health_pct,
+                delta=delta,
+                label=label,
+                is_regression=is_regression,
+            )
+        )
         previous = r.health_pct
 
     return points

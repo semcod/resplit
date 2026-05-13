@@ -3,6 +3,7 @@ rebuild.tui_data_service — domain logic extracted from TUI for reusability.
 
 Provides data loading, calculation, and diff operations for the TUI interface.
 """
+
 from __future__ import annotations
 import json
 from pathlib import Path
@@ -22,6 +23,7 @@ class TUIDataService:
                 continue
             try:
                 from datetime import date
+
                 date.fromisoformat(d.name)
             except ValueError:
                 continue
@@ -29,13 +31,17 @@ class TUIDataService:
                 results = json.loads(rf.read_text())
             except (json.JSONDecodeError, OSError):
                 results = []
-            commit_txt = (d / "commit.txt").read_text().strip() if (d / "commit.txt").exists() else ""
-            days.append({
-                "day": d.name,
-                "results": results,
-                "commit": commit_txt.split("\n")[0][:50] if commit_txt else "—",
-                "path": d,
-            })
+            commit_txt = (
+                (d / "commit.txt").read_text().strip() if (d / "commit.txt").exists() else ""
+            )
+            days.append(
+                {
+                    "day": d.name,
+                    "results": results,
+                    "commit": commit_txt.split("\n")[0][:50] if commit_txt else "—",
+                    "path": d,
+                }
+            )
         return days
 
     @staticmethod
@@ -52,11 +58,13 @@ class TUIDataService:
             if key not in prev_map:
                 changes.append({**r, "change": "added"})
             elif prev_map[key]["status"] != r["status"]:
-                changes.append({
-                    **r,
-                    "change": "status_changed",
-                    "prev_status": prev_map[key]["status"],
-                })
+                changes.append(
+                    {
+                        **r,
+                        "change": "status_changed",
+                        "prev_status": prev_map[key]["status"],
+                    }
+                )
         for key, r in prev_map.items():
             if key not in curr_map:
                 changes.append({**r, "change": "removed"})
@@ -83,10 +91,13 @@ class TUIDataService:
     def get_git_repo_toplevel(cwd: Path = Path(".")) -> Optional[str]:
         """Get the git repository toplevel path."""
         import subprocess
+
         try:
             result = subprocess.run(
                 ["git", "rev-parse", "--show-toplevel"],
-                capture_output=True, text=True, cwd=cwd,
+                capture_output=True,
+                text=True,
+                cwd=cwd,
             )
             if result.returncode == 0:
                 return result.stdout.strip()

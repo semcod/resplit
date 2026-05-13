@@ -46,9 +46,7 @@ class VectorSearchIndex:
                 )
                 """
             )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_vectors_file ON vectors(file)"
-            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_vectors_file ON vectors(file)")
             conn.commit()
 
     def build_from_path(self, path: Path, min_lines: int = 4) -> int:
@@ -194,8 +192,7 @@ class VectorSearchIndex:
 
     def _fragment_id(self, fragment: CodeFragment) -> str:
         return (
-            f"{fragment.file}:{fragment.start_line}:{fragment.end_line}:"
-            f"{fragment.structural_hash}"
+            f"{fragment.file}:{fragment.start_line}:{fragment.end_line}:{fragment.structural_hash}"
         )
 
     def _to_text(self, fragment: CodeFragment) -> str:

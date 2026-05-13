@@ -34,7 +34,8 @@ if TEXTUAL_OK:
                     ("uvicorn", "uvicorn"),
                     ("none (tylko skanuj)", "none"),
                 ],
-                id="deploy-select", value="auto",
+                id="deploy-select",
+                value="auto",
             )
             yield Label("Health URL:", classes="section-label")
             yield Input("http://localhost:8003/api/health", id="health-url-input")
@@ -77,20 +78,35 @@ if TEXTUAL_OK:
             screenshots = self.query_one("#screenshots-switch", Switch).value
             dry_run = self.query_one("#dryrun-switch", Switch).value
 
-            self.app.push_screen(WalkProgressScreen(
-                repo=self._repo, days=int(days), deploy=deploy,
-                health_url=health_url, base_url=base_url,
-                output=Path(output), screenshots=screenshots, dry_run=dry_run,
-            ))
+            self.app.push_screen(
+                WalkProgressScreen(
+                    repo=self._repo,
+                    days=int(days),
+                    deploy=deploy,
+                    health_url=health_url,
+                    base_url=base_url,
+                    output=Path(output),
+                    screenshots=screenshots,
+                    dry_run=dry_run,
+                )
+            )
 
     class WalkProgressScreen(Screen):
         """Live progress walk — subprocess rebuild walk."""
 
         BINDINGS = [Binding("ctrl+c", "cancel", "Cancel")]
 
-        def __init__(self, repo: Path, days: int, deploy: str,
-                     health_url: str, base_url: str, output: Path,
-                     screenshots: bool, dry_run: bool) -> None:
+        def __init__(
+            self,
+            repo: Path,
+            days: int,
+            deploy: str,
+            health_url: str,
+            base_url: str,
+            output: Path,
+            screenshots: bool,
+            dry_run: bool,
+        ) -> None:
             super().__init__()
             self._repo = repo
             self._days = days
@@ -119,13 +135,21 @@ if TEXTUAL_OK:
 
         def _start_walk(self) -> None:
             cmd = [
-                sys.executable, "-m", "rebuild",
-                "walk", str(self._repo),
-                "--days", str(self._days),
-                "--deploy", self._deploy,
-                "--health-url", self._health_url,
-                "--base-url", self._base_url,
-                "--output", str(self._output),
+                sys.executable,
+                "-m",
+                "rebuild",
+                "walk",
+                str(self._repo),
+                "--days",
+                str(self._days),
+                "--deploy",
+                self._deploy,
+                "--health-url",
+                self._health_url,
+                "--base-url",
+                self._base_url,
+                "--output",
+                str(self._output),
             ]
             if self._dry_run:
                 cmd.append("--dry-run")
@@ -137,8 +161,11 @@ if TEXTUAL_OK:
 
             try:
                 self._proc = subprocess.Popen(
-                    cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                    text=True, bufsize=1,
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                    bufsize=1,
                 )
             except Exception as exc:
                 log.write_line(f"[ERROR] {exc}")
@@ -160,6 +187,7 @@ if TEXTUAL_OK:
         def on_button_pressed(self, event: Button.Pressed) -> None:
             if event.button.id == "btn-history":
                 from .history_screen import HistoryScreen
+
                 self.app.push_screen(HistoryScreen(repo=self._repo, results_dir=self._output))
             elif event.button.id == "btn-cancel":
                 if self._proc:
@@ -171,6 +199,7 @@ if TEXTUAL_OK:
                 self._proc.terminate()
             self.app.pop_screen()
 else:
+
     class WalkConfigScreen:
         """Fallback export used when Textual is not installed."""
 

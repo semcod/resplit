@@ -1,6 +1,7 @@
 """
 Base pipeline: shared state, event emit, and common services.
 """
+
 from __future__ import annotations
 
 import json
@@ -88,7 +89,9 @@ class BasePipeline:
                 "LOG": EventType.LOG,
             }
             rt_type = event_map.get(event_type, EventType.LOG)
-            self._event_service.emit(rt_type, kwargs, day=kwargs.get("day"), commit=kwargs.get("commit_sha"))
+            self._event_service.emit(
+                rt_type, kwargs, day=kwargs.get("day"), commit=kwargs.get("commit_sha")
+            )
         except Exception:
             pass
 

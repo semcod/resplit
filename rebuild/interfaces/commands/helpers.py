@@ -19,10 +19,7 @@ def collect_cli_overrides(ctx: Any, names: Iterable[str]) -> Dict[str, bool]:
     Replaces ~14 lines of duplicated ``ctx.get_parameter_source(...) ==
     ParameterSource.COMMANDLINE`` boilerplate per command.
     """
-    return {
-        name: ctx.get_parameter_source(name) == ParameterSource.COMMANDLINE
-        for name in names
-    }
+    return {name: ctx.get_parameter_source(name) == ParameterSource.COMMANDLINE for name in names}
 
 
 def print_report_links(output: Path, port: Optional[int], console: Console) -> None:
@@ -33,21 +30,27 @@ def print_report_links(output: Path, port: Optional[int], console: Console) -> N
     console.print(f"  [dim]Per-day:     {base}/YYYY-MM-DD/report.html[/dim]")
 
 
-def compute_health_trend_labels(results: List[DayResult], regression_threshold: float = 20.0) -> List[str]:
+def compute_health_trend_labels(
+    results: List[DayResult], regression_threshold: float = 20.0
+) -> List[str]:
     # Delegated to the canonical implementation (Sprint 2 / 2026-05-07).
     # See `rebuild.application.services.regression_service` for details.
     from ...application.services.regression_service import (
         compute_health_trend_labels as _compute,
     )
+
     return _compute(results, regression_threshold)
 
 
-def compute_endpoint_count_trend_labels(results: List[DayResult], warning_threshold_pct: float = 10.0) -> List[str]:
+def compute_endpoint_count_trend_labels(
+    results: List[DayResult], warning_threshold_pct: float = 10.0
+) -> List[str]:
     # Delegated to the canonical implementation (Sprint 5b / 2026-05-08).
     # See `rebuild.application.services.endpoint_trend_service` for details.
     from ...application.services.endpoint_trend_service import (
         compute_endpoint_count_trend_labels as _compute,
     )
+
     return _compute(results, warning_threshold_pct)
 
 
@@ -75,7 +78,9 @@ def print_summary_table(results: List[DayResult], console: Console) -> None:
             if trend.startswith("+")
             else f"[dim]{trend}[/dim]"
         )
-        ep_trend_cell = f"[yellow]{ep_trend}[/yellow]" if ep_trend.startswith("⚠") else f"[dim]{ep_trend}[/dim]"
+        ep_trend_cell = (
+            f"[yellow]{ep_trend}[/yellow]" if ep_trend.startswith("⚠") else f"[dim]{ep_trend}[/dim]"
+        )
         table.add_row(
             str(r.day),
             r.commit.sha[:8] if r.commit else "—",

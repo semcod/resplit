@@ -12,6 +12,7 @@ Triggered on:
   - health regression (configurable threshold)
   - walk completion summary
 """
+
 from __future__ import annotations
 
 import json
@@ -61,8 +62,7 @@ def _build_slack_payload(payload: NotificationPayload) -> Dict[str, Any]:
                 "pretext": f"{icon.get(payload.severity, '')} *rebuild* — {payload.event.value}",
                 "text": payload.message,
                 "fields": [
-                    {"title": k, "value": str(v), "short": True}
-                    for k, v in payload.details.items()
+                    {"title": k, "value": str(v), "short": True} for k, v in payload.details.items()
                 ],
                 "footer": "rebuild",
             }
@@ -79,8 +79,7 @@ def _build_discord_payload(payload: NotificationPayload) -> Dict[str, Any]:
                 "description": payload.message,
                 "color": color_map.get(payload.severity, 0x36A64F),
                 "fields": [
-                    {"name": k, "value": str(v), "inline": True}
-                    for k, v in payload.details.items()
+                    {"name": k, "value": str(v), "inline": True} for k, v in payload.details.items()
                 ],
             }
         ]
@@ -162,13 +161,17 @@ class NotificationService:
                 logger.debug("Notification sent to %r (%s)", cfg.url, payload.event.value)
         return results
 
-    def notify_deploy_fail(self, day: Any, commit: Optional[str], error: Optional[str] = None) -> List[bool]:
-        return self.notify(NotificationPayload(
-            event=NotificationEvent.DEPLOY_FAIL,
-            message=f"Deploy failed for {day}" + (f" @ {commit[:8]}" if commit else ""),
-            details={"day": str(day), "commit": commit or "—", "error": error or "—"},
-            severity="error",
-        ))
+    def notify_deploy_fail(
+        self, day: Any, commit: Optional[str], error: Optional[str] = None
+    ) -> List[bool]:
+        return self.notify(
+            NotificationPayload(
+                event=NotificationEvent.DEPLOY_FAIL,
+                message=f"Deploy failed for {day}" + (f" @ {commit[:8]}" if commit else ""),
+                details={"day": str(day), "commit": commit or "—", "error": error or "—"},
+                severity="error",
+            )
+        )
 
     def notify_health_regression(
         self,
@@ -178,13 +181,20 @@ class NotificationService:
         commit: Optional[str] = None,
     ) -> List[bool]:
         delta = round(to_pct - from_pct, 1)
-        return self.notify(NotificationPayload(
-            event=NotificationEvent.HEALTH_REGRESSION,
-            message=f"Health regression on {day}: {from_pct:.0f}% → {to_pct:.0f}% ({delta:+.1f}pp)",
-            details={"day": str(day), "from": f"{from_pct:.1f}%", "to": f"{to_pct:.1f}%",
-                     "delta": f"{delta:+.1f}pp", "commit": commit or "—"},
-            severity="warning",
-        ))
+        return self.notify(
+            NotificationPayload(
+                event=NotificationEvent.HEALTH_REGRESSION,
+                message=f"Health regression on {day}: {from_pct:.0f}% → {to_pct:.0f}% ({delta:+.1f}pp)",
+                details={
+                    "day": str(day),
+                    "from": f"{from_pct:.1f}%",
+                    "to": f"{to_pct:.1f}%",
+                    "delta": f"{delta:+.1f}pp",
+                    "commit": commit or "—",
+                },
+                severity="warning",
+            )
+        )
 
     def notify_walk_complete(
         self,
@@ -193,17 +203,19 @@ class NotificationService:
         avg_health_pct: float,
         output_dir: Optional[Path] = None,
     ) -> List[bool]:
-        return self.notify(NotificationPayload(
-            event=NotificationEvent.WALK_COMPLETE,
-            message=f"Walk complete: {healthy_days}/{total_days} days healthy, avg {avg_health_pct:.0f}%",
-            details={
-                "total_days": total_days,
-                "healthy_days": healthy_days,
-                "avg_health": f"{avg_health_pct:.1f}%",
-                "output": str(output_dir) if output_dir else "—",
-            },
-            severity="info",
-        ))
+        return self.notify(
+            NotificationPayload(
+                event=NotificationEvent.WALK_COMPLETE,
+                message=f"Walk complete: {healthy_days}/{total_days} days healthy, avg {avg_health_pct:.0f}%",
+                details={
+                    "total_days": total_days,
+                    "healthy_days": healthy_days,
+                    "avg_health": f"{avg_health_pct:.1f}%",
+                    "output": str(output_dir) if output_dir else "—",
+                },
+                severity="info",
+            )
+        )
 
     @staticmethod
     def _build_body(cfg: WebhookConfig, payload: NotificationPayload) -> Dict[str, Any]:

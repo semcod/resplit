@@ -33,17 +33,26 @@ def plan_command(path: Path, ai: bool, console: Console) -> None:
     suggestions = _generate_refactor_plan(path)
 
     if not suggestions:
-        console.print("[green]✓ System nie znalazł krytycznych problemów wymagających refaktoru.[/green]")
+        console.print(
+            "[green]✓ System nie znalazł krytycznych problemów wymagających refaktoru.[/green]"
+        )
         return
 
     if ai:
         from ...application.services.llm_service import LLMService
+
         llm = LLMService(console)
         if llm.is_available():
             with console.status("[bold cyan]AI analizuje plan...[/bold cyan]"):
                 plan_text = "\n".join([f"- {s.title}: {s.description}" for s in suggestions])
                 summary = llm.summarize_refactor_plan(plan_text)
-                console.print(Panel(summary, title="[bold cyan]AI Executive Summary[/bold cyan]", border_style="cyan"))
+                console.print(
+                    Panel(
+                        summary,
+                        title="[bold cyan]AI Executive Summary[/bold cyan]",
+                        border_style="cyan",
+                    )
+                )
 
     console.print(f"\n[bold yellow]Zaproponowane działania ({len(suggestions)}):[/bold yellow]\n")
     for i, s in enumerate(suggestions, 1):
@@ -64,13 +73,16 @@ def pr_command(path: Path, console: Console) -> None:
         return
 
     from ...application.services.llm_service import LLMService
+
     llm = LLMService(console)
     if not llm.is_available():
         console.print("[red]✗ AI Service niedostępny. Sprawdź .env i OPENROUTER_API_KEY.[/red]")
         return
 
     with console.status("[bold cyan]Generowanie opisu PR...[/bold cyan]"):
-        plan_text = "\n".join([f"- {s.title}: {s.description} (Rationale: {s.rationale})" for s in suggestions])
+        plan_text = "\n".join(
+            [f"- {s.title}: {s.description} (Rationale: {s.rationale})" for s in suggestions]
+        )
         description = llm.generate_pr_description(plan_text)
 
     console.print("\n[bold green]Gotowy opis Pull Requesta:[/bold green]\n")

@@ -3,6 +3,7 @@ In-process EventBus with async subscriber support.
 
 Subscribers receive DomainEvents synchronously or via asyncio queues (for WS).
 """
+
 from __future__ import annotations
 
 import asyncio

@@ -15,6 +15,7 @@ NLP examples (mapped to DSL):
   "walk the repo at /srv/app for the last 7 days without deploying"
   "show me the last 30 walk results"
 """
+
 from __future__ import annotations
 
 import re
@@ -27,11 +28,13 @@ from ..application.commands.base import Command
 from ..application.commands.walk_commands import WalkCommand
 from ..application.commands.analyze_commands import AnalyzeCommand
 from ..application.commands.snapshot_commands import (
-    CreateSnapshotCommand, PruneSnapshotsCommand,
+    CreateSnapshotCommand,
+    PruneSnapshotsCommand,
 )
 
 
 # ─── DSL Schema (Pydantic) ────────────────────────────────────────────────────
+
 
 class WalkDSL(BaseModel):
     repo: str = "."
@@ -112,6 +115,7 @@ _ALIAS_MAP: Dict[str, str] = {
 
 # ─── Parser ───────────────────────────────────────────────────────────────────
 
+
 class DSLParseError(ValueError):
     pass
 
@@ -140,8 +144,7 @@ class DSLParser:
         command_str = parts[0].lower()
         if command_str not in _COMMAND_SCHEMAS:
             raise DSLParseError(
-                f"Unknown command '{command_str}'. "
-                f"Valid: {sorted(_COMMAND_SCHEMAS)}"
+                f"Unknown command '{command_str}'. Valid: {sorted(_COMMAND_SCHEMAS)}"
             )
 
         kwargs: Dict[str, Any] = {}
@@ -179,9 +182,7 @@ class DSLParser:
         try:
             return schema_cls(**kwargs)
         except ValidationError as e:
-            raise DSLParseError(
-                f"DSL validation error for '{command_str}': {e}"
-            ) from e
+            raise DSLParseError(f"DSL validation error for '{command_str}': {e}") from e
 
     def to_cqrs_command(self, dsl_string: str) -> Optional[Command]:
         """Parse DSL and convert to a CQRS Command (or None for non-command verbs)."""
@@ -287,8 +288,7 @@ class NLPMapper:
         self._use_llm = use_llm
         self._llm_service = llm_service
         self._compiled = [
-            (re.compile(pattern, re.IGNORECASE), replacement)
-            for pattern, replacement in _NLP_RULES
+            (re.compile(pattern, re.IGNORECASE), replacement) for pattern, replacement in _NLP_RULES
         ]
 
     def to_dsl(self, text: str) -> str:
@@ -354,6 +354,7 @@ class NLPMapper:
 
 
 # ─── Shell REPL ───────────────────────────────────────────────────────────────
+
 
 class DSLShell:
     """

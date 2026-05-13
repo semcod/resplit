@@ -5,6 +5,7 @@ Both writers consume already-validated ``DayResult`` objects and use the
 canonical :mod:`regression_service` / :mod:`endpoint_trend_service` for trend
 labels — they never duplicate the threshold logic.
 """
+
 from __future__ import annotations
 
 import csv
@@ -28,25 +29,37 @@ def write_csv(results: List["DayResult"], output_dir: Path) -> Path:
     endpoint_trend_by_day = compute_endpoint_count_trend_dict(rows)
     buf = io.StringIO()
     writer = csv.writer(buf)
-    writer.writerow([
-        "day", "commit", "health_pct", "health_trend", "ok", "fail",
-        "total", "endpoint_count_trend", "deploy_success",
-        "deploy_error_category", "duration_seconds",
-    ])
+    writer.writerow(
+        [
+            "day",
+            "commit",
+            "health_pct",
+            "health_trend",
+            "ok",
+            "fail",
+            "total",
+            "endpoint_count_trend",
+            "deploy_success",
+            "deploy_error_category",
+            "duration_seconds",
+        ]
+    )
     for r in rows:
-        writer.writerow([
-            str(r.day),
-            r.commit.sha[:8] if r.commit else "",
-            r.health_pct,
-            trend_by_day.get(str(r.day), "—"),
-            r.ok_count,
-            r.fail_count,
-            len(r.endpoints),
-            endpoint_trend_by_day.get(str(r.day), "—"),
-            "true" if r.deploy_success else "false",
-            r.deploy_error_category.value if r.deploy_error_category else "",
-            round(r.duration_seconds, 2),
-        ])
+        writer.writerow(
+            [
+                str(r.day),
+                r.commit.sha[:8] if r.commit else "",
+                r.health_pct,
+                trend_by_day.get(str(r.day), "—"),
+                r.ok_count,
+                r.fail_count,
+                len(r.endpoints),
+                endpoint_trend_by_day.get(str(r.day), "—"),
+                "true" if r.deploy_success else "false",
+                r.deploy_error_category.value if r.deploy_error_category else "",
+                round(r.duration_seconds, 2),
+            ]
+        )
     dest.write_text(buf.getvalue(), encoding="utf-8")
     return dest
 
@@ -66,7 +79,11 @@ def write_markdown(results: List["DayResult"], output_dir: Path) -> Path:
     ]
     for r in rows:
         dep = "✓" if r.deploy_success else "✗"
-        cat = f" ({r.deploy_error_category.value})" if r.deploy_error_category and not r.deploy_success else ""
+        cat = (
+            f" ({r.deploy_error_category.value})"
+            if r.deploy_error_category and not r.deploy_success
+            else ""
+        )
         lines.append(
             f"| {r.day} "
             f"| `{r.commit.sha[:8] if r.commit else '—'}` "

@@ -15,6 +15,7 @@ Protocol Message Format:
     "payload": { ... }
   }
 """
+
 from __future__ import annotations
 import json
 import uuid
@@ -26,6 +27,7 @@ from typing import Dict, Any
 
 class MessageType(Enum):
     """MVP protocol message types."""
+
     COMMAND = "command"
     EVENT = "event"
     RESPONSE = "response"
@@ -36,6 +38,7 @@ class MessageType(Enum):
 @dataclass
 class MVPMessage:
     """MVP protocol message."""
+
     version: str = "1.0"
     message_type: MessageType = MessageType.COMMAND
     message_id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -44,13 +47,15 @@ class MVPMessage:
 
     def to_json(self) -> str:
         """Convert to JSON string."""
-        return json.dumps({
-            "version": self.version,
-            "type": self.message_type.value,
-            "id": self.message_id,
-            "timestamp": self.timestamp,
-            "payload": self.payload,
-        })
+        return json.dumps(
+            {
+                "version": self.version,
+                "type": self.message_type.value,
+                "id": self.message_id,
+                "timestamp": self.timestamp,
+                "payload": self.payload,
+            }
+        )
 
     @classmethod
     def from_json(cls, json_str: str) -> "MVPMessage":

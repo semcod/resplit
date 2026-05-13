@@ -38,7 +38,9 @@ def to_toon(result: DayResult) -> str:
     ]
     for r in result.endpoint_results:
         err = f" ({r.error})" if r.error else ""
-        lines.append(f"{r.endpoint.method} {r.endpoint.path} [{r.status.value}] {r.http_status or ''}{err}")
+        lines.append(
+            f"{r.endpoint.method} {r.endpoint.path} [{r.status.value}] {r.http_status or ''}{err}"
+        )
     return "\n".join(lines)
 
 

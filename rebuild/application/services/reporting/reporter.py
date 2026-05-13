@@ -19,6 +19,7 @@ The public API of :class:`ReporterService` (``execute``, ``save_day``,
 ``save_timeline_index``, ``export_csv``, ``export_markdown``, ``to_yaml``,
 ``to_toon``) is preserved unchanged for backward compatibility.
 """
+
 from __future__ import annotations
 
 import json
@@ -108,12 +109,18 @@ class ReporterService(Service[DayResult, None]):
     def _deploy_section(self, result: DayResult) -> str:
         return render_deploy_section(result)
 
-    def _health_trend_by_day(self, results_asc: List[DayResult], regression_threshold: float = 20.0) -> dict:
+    def _health_trend_by_day(
+        self, results_asc: List[DayResult], regression_threshold: float = 20.0
+    ) -> dict:
         from ..regression_service import compute_health_trend_dict
+
         return compute_health_trend_dict(results_asc, regression_threshold)
 
-    def _endpoint_count_trend_by_day(self, results_asc: List[DayResult], warning_threshold_pct: float = 10.0) -> dict:
+    def _endpoint_count_trend_by_day(
+        self, results_asc: List[DayResult], warning_threshold_pct: float = 10.0
+    ) -> dict:
         from ..endpoint_trend_service import compute_endpoint_count_trend_dict
+
         return compute_endpoint_count_trend_dict(results_asc, warning_threshold_pct)
 
     def _results_to_export_data(self, results: List[DayResult]) -> list:

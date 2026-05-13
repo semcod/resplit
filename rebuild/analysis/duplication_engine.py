@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, List, Dict, Set, Optional
 
+
 @dataclass
 class CodeFragment:
     file: Path
@@ -17,6 +18,7 @@ class CodeFragment:
     docstring_hash: str = ""
     name: Optional[str] = None
 
+
 @dataclass
 class DuplicateGroup:
     fragments: List[CodeFragment]
@@ -24,11 +26,13 @@ class DuplicateGroup:
     representative_hash: str
     reason: str = "Exact structural match"
 
+
 class DuplicationEngine:
     """
     Engine for detecting structural and semantic duplication in codebases.
     Supports Python (AST) and JS/TS (Regex-based structural normalization).
     """
+
     def __init__(
         self,
         min_lines: int = 4,
@@ -78,7 +82,10 @@ class DuplicationEngine:
         fragments: List[CodeFragment] = []
         files = list(path.rglob("*.*"))
         for f in files:
-            if any(p in f.parts for p in (".venv", "venv", "__pycache__", ".rebuild", ".git", "node_modules")):
+            if any(
+                p in f.parts
+                for p in (".venv", "venv", "__pycache__", ".rebuild", ".git", "node_modules")
+            ):
                 continue
 
             if f.suffix not in (".py", ".js", ".ts", ".jsx", ".tsx"):
@@ -90,7 +97,9 @@ class DuplicationEngine:
                 continue
         return fragments
 
-    def _find_semantic_groups(self, fragments: List[CodeFragment], seen_frags: Set[int]) -> List[DuplicateGroup]:
+    def _find_semantic_groups(
+        self, fragments: List[CodeFragment], seen_frags: Set[int]
+    ) -> List[DuplicateGroup]:
         if not self.semantic_enabled:
             return []
 
@@ -255,23 +264,25 @@ class DuplicationEngine:
         fragments = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                lineno = getattr(node, 'lineno', 0)
-                end_lineno = getattr(node, 'end_lineno', 0)
+                lineno = getattr(node, "lineno", 0)
+                end_lineno = getattr(node, "end_lineno", 0)
 
                 if lineno and end_lineno and (end_lineno - lineno + 1) >= self.min_lines:
                     s_hash = self._compute_structural_hash_py(node)
                     f_sig = self._compute_fuzzy_signature_py(node)
 
-                    lines = content.splitlines()[lineno-1:end_lineno]
-                    fragments.append(CodeFragment(
-                        file=file_path,
-                        start_line=lineno,
-                        end_line=end_lineno,
-                        content="\n".join(lines),
-                        structural_hash=s_hash,
-                        fuzzy_signature=f_sig,
-                        name=node.name
-                    ))
+                    lines = content.splitlines()[lineno - 1 : end_lineno]
+                    fragments.append(
+                        CodeFragment(
+                            file=file_path,
+                            start_line=lineno,
+                            end_line=end_lineno,
+                            content="\n".join(lines),
+                            structural_hash=s_hash,
+                            fuzzy_signature=f_sig,
+                            name=node.name,
+                        )
+                    )
         return fragments
 
     def _extract_regex_fragments(self, file_path: Path) -> List[CodeFragment]:
@@ -284,7 +295,9 @@ class DuplicationEngine:
 
         # Simple heuristic: find functions/methods via braces
         # This is a fallback and not as accurate as AST
-        matches = re.finditer(r'(?:function|const|let|async)?\s*([a-zA-Z0-9_]+)\s*\(.*?\)\s*\{', content)
+        matches = re.finditer(
+            r"(?:function|const|let|async)?\s*([a-zA-Z0-9_]+)\s*\(.*?\)\s*\{", content
+        )
         for match in matches:
             name = match.group(1)
             start_pos = match.start()
@@ -293,9 +306,9 @@ class DuplicationEngine:
             brace_count = 0
             end_pos = -1
             for i in range(start_pos, len(content)):
-                if content[i] == '{':
+                if content[i] == "{":
                     brace_count += 1
-                elif content[i] == '}':
+                elif content[i] == "}":
                     brace_count -= 1
                     if brace_count == 0:
                         end_pos = i + 1
@@ -306,34 +319,44 @@ class DuplicationEngine:
                 lines = frag_content.splitlines()
                 if len(lines) >= self.min_lines:
                     # Normalize for hashing
-                    normalized = re.sub(r'[a-zA-Z0-9_]+', 'ID', frag_content)
-                    normalized = re.sub(r'\s+', '', normalized)
+                    normalized = re.sub(r"[a-zA-Z0-9_]+", "ID", frag_content)
+                    normalized = re.sub(r"\s+", "", normalized)
                     s_hash = hashlib.md5(normalized.encode()).hexdigest()
 
-                    start_line = content.count('\n', 0, start_pos) + 1
-                    fragments.append(CodeFragment(
-                        file=file_path,
-                        start_line=start_line,
-                        end_line=start_line + len(lines) - 1,
-                        content=frag_content,
-                        structural_hash=s_hash,
-                        name=name
-                    ))
+                    start_line = content.count("\n", 0, start_pos) + 1
+                    fragments.append(
+                        CodeFragment(
+                            file=file_path,
+                            start_line=start_line,
+                            end_line=start_line + len(lines) - 1,
+                            content=frag_content,
+                            structural_hash=s_hash,
+                            name=name,
+                        )
+                    )
         return fragments
 
     def _compute_structural_hash_py(self, node: ast.AST) -> str:
         class StructuralNormalizer(ast.NodeTransformer):
-            def visit_Name(self, n): return ast.Name(id="VAR", ctx=n.ctx)
-            def visit_Constant(self, n): return ast.Constant(value="VAL")
-            def visit_arg(self, n): return ast.arg(arg="ARG", annotation=None)
+            def visit_Name(self, n):
+                return ast.Name(id="VAR", ctx=n.ctx)
+
+            def visit_Constant(self, n):
+                return ast.Constant(value="VAL")
+
+            def visit_arg(self, n):
+                return ast.arg(arg="ARG", annotation=None)
+
             def visit_FunctionDef(self, n):
                 n.name = "FUNC"
                 return self.generic_visit(n)
+
             def visit_AsyncFunctionDef(self, n):
                 n.name = "FUNC"
                 return self.generic_visit(n)
 
         import copy
+
         node_copy = copy.deepcopy(node)
         normalized = StructuralNormalizer().visit(node_copy)
         structure = ast.dump(normalized, annotate_fields=False, include_attributes=False)

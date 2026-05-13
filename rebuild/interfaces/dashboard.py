@@ -9,6 +9,7 @@ Dane CC pobierane przez:
   1. subprocess `toon <repo> --format json --date <day>` (jeśli dostępny)
   2. Fallback: statyczne CC = None (brak danych)
 """
+
 from __future__ import annotations
 
 import json
@@ -24,6 +25,7 @@ from ..domain.day_result import DayResult
 # CC via toon
 # ──────────────────────────────────────────────
 
+
 def get_cc_for_day(repo: Path, day: date) -> Optional[float]:
     """
     Wywołuje `toon <repo> --format json` i zwraca średnie CC dla danego dnia.
@@ -32,7 +34,9 @@ def get_cc_for_day(repo: Path, day: date) -> Optional[float]:
     try:
         result = subprocess.run(
             ["toon", str(repo), "--format", "json", "--date", str(day)],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         if result.returncode != 0:
             return None
@@ -56,6 +60,7 @@ def _extract_avg_cc(data: dict) -> Optional[float]:
 # ──────────────────────────────────────────────
 # Główny generator
 # ──────────────────────────────────────────────
+
 
 def generate_dashboard(
     results: list[DayResult],
@@ -89,6 +94,7 @@ def generate_dashboard(
 # ──────────────────────────────────────────────
 # HTML rendering (inline Chart.js via CDN)
 # ──────────────────────────────────────────────
+
 
 def _render_html(
     days: list[str],

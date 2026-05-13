@@ -2,6 +2,7 @@
 Database snapshot/restore for instant state reset.
 Eliminates DB seed time between test runs.
 """
+
 from __future__ import annotations
 import time
 import json
@@ -17,6 +18,7 @@ from ...infrastructure.shell_adapter import ShellAdapter
 @dataclass
 class SnapshotInfo:
     """Metadata about a database snapshot."""
+
     name: str
     created_at: str
     commit_sha: Optional[str] = None
@@ -116,13 +118,14 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
             return 0
         protected = {"baseline"}
         prunable = [
-            (name, info) for name, info in self._snapshots.items()
+            (name, info)
+            for name, info in self._snapshots.items()
             if name not in protected and not name.startswith("baseline_")
         ]
         prunable.sort(key=lambda x: x[1].created_at)
         excess = len(self._snapshots) - self.max_snapshots
         pruned = 0
-        for name, _ in prunable[:max(0, excess)]:
+        for name, _ in prunable[: max(0, excess)]:
             self.delete(name)
             pruned += 1
         return pruned
@@ -140,7 +143,8 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
             key=lambda x: x[1].created_at,
         )
         to_delete = [
-            name for name, _ in all_sorted
+            name
+            for name, _ in all_sorted
             if name not in protected and not name.startswith("baseline_")
         ]
         # Keep newest `limit` non-protected snapshots
@@ -165,27 +169,27 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
     def _postgres_dump(self, output_path: Path):
         """Create PostgreSQL dump using pg_dump in container."""
         cmd = [
-            "docker", "exec", self.db_container,
-            "pg_dump", "-U", self.db_user, "-d", self.db_name,
-            "-f", "/tmp/snapshot.sql"
+            "docker",
+            "exec",
+            self.db_container,
+            "pg_dump",
+            "-U",
+            self.db_user,
+            "-d",
+            self.db_name,
+            "-f",
+            "/tmp/snapshot.sql",
         ]
         result = self.shell.run(cmd)
         if result.returncode != 0:
             raise RuntimeError(f"pg_dump failed: {result.stderr}")
 
         # Copy from container to host
-        self.shell.run([
-            "docker", "cp",
-            f"{self.db_container}:/tmp/snapshot.sql",
-            str(output_path)
-        ])
+        self.shell.run(["docker", "cp", f"{self.db_container}:/tmp/snapshot.sql", str(output_path)])
 
     def _mysql_dump(self, output_path: Path):
         """Create MySQL dump."""
-        cmd = [
-            "docker", "exec", self.db_container,
-            "mysqldump", "-u", self.db_user, self.db_name
-        ]
+        cmd = ["docker", "exec", self.db_container, "mysqldump", "-u", self.db_user, self.db_name]
         result = self.shell.run(cmd)
         if result.returncode == 0:
             output_path.write_text(result.stdout)
@@ -245,33 +249,65 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
     def _ready_check_command(self) -> list[str]:
         if self.db_type == "postgres":
             return [
-                "docker", "exec", self.db_container,
-                "pg_isready", "-U", self.db_user, "-d", self.db_name,
+                "docker",
+                "exec",
+                self.db_container,
+                "pg_isready",
+                "-U",
+                self.db_user,
+                "-d",
+                self.db_name,
             ]
         if self.db_type == "mysql":
             return [
-                "docker", "exec", self.db_container,
-                "mysqladmin", "ping", "-u", self.db_user, "--silent",
+                "docker",
+                "exec",
+                self.db_container,
+                "mysqladmin",
+                "ping",
+                "-u",
+                self.db_user,
+                "--silent",
             ]
         return ["true"]
 
     def _postgres_restore(self, snapshot_path: Path) -> bool:
         """Restore PostgreSQL from SQL dump."""
         # Copy dump to container
-        cp_result = self.shell.run([
-            "docker", "cp", str(snapshot_path),
-            f"{self.db_container}:/tmp/restore.sql"
-        ])
+        cp_result = self.shell.run(
+            ["docker", "cp", str(snapshot_path), f"{self.db_container}:/tmp/restore.sql"]
+        )
         if cp_result.returncode != 0:
             return False
 
         # Restore - terminate connections first, then restore
         cmds = [
             # Drop and recreate DB (fastest for test scenarios)
-            ["docker", "exec", self.db_container, "psql", "-U", self.db_user, "-d", "postgres", "-c",
-             f"DROP DATABASE IF EXISTS {self.db_name}; CREATE DATABASE {self.db_name};"],
+            [
+                "docker",
+                "exec",
+                self.db_container,
+                "psql",
+                "-U",
+                self.db_user,
+                "-d",
+                "postgres",
+                "-c",
+                f"DROP DATABASE IF EXISTS {self.db_name}; CREATE DATABASE {self.db_name};",
+            ],
             # Restore data
-            ["docker", "exec", self.db_container, "psql", "-U", self.db_user, "-d", self.db_name, "-f", "/tmp/restore.sql"]
+            [
+                "docker",
+                "exec",
+                self.db_container,
+                "psql",
+                "-U",
+                self.db_user,
+                "-d",
+                self.db_name,
+                "-f",
+                "/tmp/restore.sql",
+            ],
         ]
 
         for cmd in cmds:
@@ -287,10 +323,15 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
         Stops container, replaces volume data, starts container.
         """
         # Get volume name
-        result = self.shell.run([
-            "docker", "inspect", "-f", "{{ range .Mounts }}{{ if eq .Type \"volume\" }}{{ .Name }}{{ end }}{{ end }}",
-            self.db_container
-        ])
+        result = self.shell.run(
+            [
+                "docker",
+                "inspect",
+                "-f",
+                '{{ range .Mounts }}{{ if eq .Type "volume" }}{{ .Name }}{{ end }}{{ end }}',
+                self.db_container,
+            ]
+        )
         volume_name = result.stdout.strip()
 
         if not volume_name:
@@ -302,14 +343,19 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
 
         # Run postgres in temporary container to load data
         load_cmd = [
-            "docker", "run", "--rm",
-            "-v", f"{volume_name}:/var/lib/postgresql/data",
-            "-v", f"{snapshot_path}:/restore.sql",
+            "docker",
+            "run",
+            "--rm",
+            "-v",
+            f"{volume_name}:/var/lib/postgresql/data",
+            "-v",
+            f"{snapshot_path}:/restore.sql",
             "postgres:15",
-            "bash", "-c",
+            "bash",
+            "-c",
             "rm -rf /var/lib/postgresql/data/* && pg_ctl initdb -D /var/lib/postgresql/data && "
             "pg_ctl start -D /var/lib/postgresql/data && "
-            "psql -U postgres -f /restore.sql"
+            "psql -U postgres -f /restore.sql",
         ]
         result = self.shell.run(load_cmd)
 
@@ -320,26 +366,32 @@ class DBSnapshotManager(Service[str, SnapshotInfo]):
 
     def _mysql_restore(self, snapshot_path: Path) -> bool:
         """Restore MySQL database."""
-        cp_result = self.shell.run([
-            "docker", "cp", str(snapshot_path),
-            f"{self.db_container}:/tmp/restore.sql"
-        ])
+        cp_result = self.shell.run(
+            ["docker", "cp", str(snapshot_path), f"{self.db_container}:/tmp/restore.sql"]
+        )
         if cp_result.returncode != 0:
             return False
 
-        result = self.shell.run([
-            "docker", "exec", self.db_container,
-            "mysql", "-u", self.db_user, self.db_name,
-            "-e", "source /tmp/restore.sql"
-        ])
+        result = self.shell.run(
+            [
+                "docker",
+                "exec",
+                self.db_container,
+                "mysql",
+                "-u",
+                self.db_user,
+                self.db_name,
+                "-e",
+                "source /tmp/restore.sql",
+            ]
+        )
         return result.returncode == 0
 
     def _sqlite_restore(self, snapshot_path: Path) -> bool:
         """Restore SQLite database."""
-        result = self.shell.run([
-            "docker", "cp", str(snapshot_path),
-            f"{self.db_container}:/app/data.db"
-        ])
+        result = self.shell.run(
+            ["docker", "cp", str(snapshot_path), f"{self.db_container}:/app/data.db"]
+        )
         return result.returncode == 0
 
     def create_baseline(self, commit_sha: Optional[str] = None) -> SnapshotInfo:

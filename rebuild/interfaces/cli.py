@@ -1,6 +1,7 @@
 """
 rebuild CLI — główny punkt wejścia.
 """
+
 from __future__ import annotations
 
 import json
@@ -39,7 +40,11 @@ def init(
     config_file = path / "rebuild.yaml"
     if not config_file.exists() or force:
         template_path = Path(__file__).parent.parent / "infrastructure" / "config_template.yaml"
-        config_content = template_path.read_text() if template_path.exists() else "project:\n  name: 'service'\n  repo: '.'"
+        config_content = (
+            template_path.read_text()
+            if template_path.exists()
+            else "project:\n  name: 'service'\n  repo: '.'"
+        )
         config_file.write_text(config_content)
         console.print(f"[green]✓ Wygenerowano {config_file}[/green]")
 
@@ -65,30 +70,76 @@ def walk(
     date_to: Optional[str] = typer.Option(None, "--to", help="Data do YYYY-MM-DD"),
     output: Path = typer.Option(Path(".rebuild"), help="Katalog wyjściowy"),
     deploy: str = typer.Option("auto", help="Metoda deploy: auto|docker-compose|uvicorn|none"),
-    replay: bool = typer.Option(False, "--replay", help="Tryb Replay: stały Docker + szybki restart"),
-    service: Optional[str] = typer.Option(None, "--service", help="Nazwa serwisu Docker do restartu (w trybie --replay)"),
+    replay: bool = typer.Option(
+        False, "--replay", help="Tryb Replay: stały Docker + szybki restart"
+    ),
+    service: Optional[str] = typer.Option(
+        None, "--service", help="Nazwa serwisu Docker do restartu (w trybie --replay)"
+    ),
     health_url: str = typer.Option("http://localhost:8003/api/health", help="URL health check"),
     base_url: str = typer.Option("http://localhost:8003", help="Bazowy URL usługi"),
     screenshots: bool = typer.Option(True, help="Rób zrzuty ekranu (wymaga playwright)"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Tylko skanuj, bez deploy"),
-    serve: bool = typer.Option(False, "--serve", help="Uruchom serwer HTTP po zakończeniu i otwórz przeglądarkę"),
+    serve: bool = typer.Option(
+        False, "--serve", help="Uruchom serwer HTTP po zakończeniu i otwórz przeglądarkę"
+    ),
     port: int = typer.Option(7821, "--port", help="Port serwera HTTP (--serve)"),
-    accelerator: bool = typer.Option(False, "--accelerator", help="⚡ Przyspieszony tryb: użyj aktualnych node_modules i patchuj Dockerfile"),
-    patch_dir: Optional[Path] = typer.Option(None, "--patch-dir", help="Folder z poprawkami do nałożenia na klon"),
-    health_timeout: int = typer.Option(60, "--health-timeout", help="Timeout health check w sekundach [default: 60]"),
+    accelerator: bool = typer.Option(
+        False,
+        "--accelerator",
+        help="⚡ Przyspieszony tryb: użyj aktualnych node_modules i patchuj Dockerfile",
+    ),
+    patch_dir: Optional[Path] = typer.Option(
+        None, "--patch-dir", help="Folder z poprawkami do nałożenia na klon"
+    ),
+    health_timeout: int = typer.Option(
+        60, "--health-timeout", help="Timeout health check w sekundach [default: 60]"
+    ),
 ) -> None:
     """Przejdź historię git dzień po dniu, deployuj i testuj endpointy."""
     from .commands.helpers import collect_cli_overrides
     from .commands.walk_command import walk_command
 
-    cli_overrides = collect_cli_overrides(ctx, [
-        "output", "days", "date_from", "date_to", "deploy", "replay", "service",
-        "health_url", "base_url", "screenshots", "dry_run", "accelerator",
-        "patch_dir", "health_timeout",
-    ])
-    walk_command(repo, days, date_from, date_to, output, deploy, replay, service,
-                 health_url, base_url, screenshots, dry_run, serve, port, accelerator, patch_dir, console,
-                 health_timeout=health_timeout, cli_overrides=cli_overrides)
+    cli_overrides = collect_cli_overrides(
+        ctx,
+        [
+            "output",
+            "days",
+            "date_from",
+            "date_to",
+            "deploy",
+            "replay",
+            "service",
+            "health_url",
+            "base_url",
+            "screenshots",
+            "dry_run",
+            "accelerator",
+            "patch_dir",
+            "health_timeout",
+        ],
+    )
+    walk_command(
+        repo,
+        days,
+        date_from,
+        date_to,
+        output,
+        deploy,
+        replay,
+        service,
+        health_url,
+        base_url,
+        screenshots,
+        dry_run,
+        serve,
+        port,
+        accelerator,
+        patch_dir,
+        console,
+        health_timeout=health_timeout,
+        cli_overrides=cli_overrides,
+    )
 
 
 @app.command()
@@ -132,6 +183,7 @@ def dashboard(
 ) -> None:
     """Wygeneruj dashboard porównawczy: timeline health% + CC."""
     from .dashboard import generate_dashboard
+
     history_svc = HistoryService()
     all_results = history_svc.execute(results_dir)
     if not all_results:
@@ -159,13 +211,33 @@ def accelerator(
     shutdown: bool = typer.Option(False, "--shutdown", help="Wyłącz infrastrukturę po zakończeniu"),
     serve: bool = typer.Option(False, "--serve", help="Uruchom serwer HTTP po zakończeniu"),
     port: int = typer.Option(7821, "--port", help="Port serwera HTTP"),
-    patch_dir: Optional[Path] = typer.Option(None, "--patch-dir", help="Folder z poprawkami do nałożenia na klon"),
+    patch_dir: Optional[Path] = typer.Option(
+        None, "--patch-dir", help="Folder z poprawkami do nałożenia na klon"
+    ),
 ) -> None:
     """⚡ Ultra-szybki tryb 10x - worktree + hot reload + parallel testing."""
     from .commands.walk_command import accelerator_command
-    accelerator_command(repo, days, date_from, date_to, output, service, db_container, db_type,
-                        parallel, smart, health_url, base_url, screenshots, shutdown, serve, port,
-                        patch_dir, console)
+
+    accelerator_command(
+        repo,
+        days,
+        date_from,
+        date_to,
+        output,
+        service,
+        db_container,
+        db_type,
+        parallel,
+        smart,
+        health_url,
+        base_url,
+        screenshots,
+        shutdown,
+        serve,
+        port,
+        patch_dir,
+        console,
+    )
 
 
 @app.command()
@@ -175,9 +247,12 @@ def serve(
 ) -> None:
     """Uruchom lokalny serwer HTTP z raportami i otwórz przeglądarkę."""
     if not results_dir.exists():
-        console.print(f"[red]✗ Katalog {results_dir} nie istnieje. Uruchom najpierw 'rebuild walk'.[/red]")
+        console.print(
+            f"[red]✗ Katalog {results_dir} nie istnieje. Uruchom najpierw 'rebuild walk'.[/red]"
+        )
         raise typer.Exit(1)
     from .commands.helpers import print_report_links, serve_reports
+
     print_report_links(results_dir, port, console)
     serve_reports(results_dir, port, console)
 
@@ -186,6 +261,7 @@ def serve(
 def tui() -> None:
     """Interaktywne menu TUI: wybór projektu → walk → historia → diff → restore."""
     from .tui import launch_tui
+
     launch_tui()
 
 
@@ -197,7 +273,9 @@ def version() -> None:
 
 @app.command()
 def auto_pr(
-    analysis_file: Path = typer.Argument(..., help="Plik JSON z wynikami analizy (duplicates lub services)"),
+    analysis_file: Path = typer.Argument(
+        ..., help="Plik JSON z wynikami analizy (duplicates lub services)"
+    ),
     platform: str = typer.Option("github", help="Platforma: github lub gitlab"),
     token: Optional[str] = typer.Option(None, "--token", help="Token API GitHub/GitLab"),
     repo_owner: Optional[str] = typer.Option(None, "--repo-owner", help="Właściciel repozytorium"),
@@ -321,6 +399,7 @@ def evolution(
 ) -> None:
     """Generuj wizualizację D3.js Code Evolution playback z timeline snapshots."""
     from .evolution_viz import generate_evolution_html
+
     if not timeline_file.exists():
         console.print(f"[red]✗ Plik {timeline_file} nie istnieje.[/red]")
         raise typer.Exit(1)
@@ -338,6 +417,7 @@ def dsl(
 ) -> None:
     """Wykonaj DSL (Domain Specific Language) komendy rebuild."""
     from ..domain.dsl import DSLParser, DSLInterpreter
+
     if not script and not command:
         console.print("[red]✗ Podaj --script lub --command[/red]")
         raise typer.Exit(1)
@@ -375,6 +455,7 @@ def nlp(
 ) -> None:
     """Parsuj komendę w języku naturalnym i konwertuj na DSL/CLI."""
     from ..application.services.nlp_service import NLPService
+
     nlp_svc = NLPService()
     cmd = nlp_svc.parse(text)
     console.print(f"[bold]Zinterpretowana komenda:[/bold] {cmd.intent.value}")
@@ -395,6 +476,7 @@ def mvp(
 ) -> None:
     """Uruchom MVP protocol server."""
     from ..domain.mvp_protocol import MVPServer
+
     console.print("[bold cyan]Uruchamianie MVP Server...[/bold cyan]")
     console.print(f"  Host: {host}")
     console.print(f"  Port: {port}")
@@ -409,16 +491,23 @@ def watch(
     output: Path = typer.Option(Path(".rebuild"), help="Katalog wyjściowy"),
     health_url: str = typer.Option("http://localhost:8003/api/health", help="URL health check"),
     base_url: str = typer.Option("http://localhost:8003", help="Bazowy URL usługi"),
-    deps_file: Optional[Path] = typer.Option(None, "--deps-file", help="Ścieżka pliku deps.json (domyślnie: <output>/wup_deps.json)"),
-    cpu_throttle: float = typer.Option(0.8, "--cpu-throttle", help="Pomiń test gdy CPU > X (0.0-1.0)"),
+    deps_file: Optional[Path] = typer.Option(
+        None, "--deps-file", help="Ścieżka pliku deps.json (domyślnie: <output>/wup_deps.json)"
+    ),
+    cpu_throttle: float = typer.Option(
+        0.8, "--cpu-throttle", help="Pomiń test gdy CPU > X (0.0-1.0)"
+    ),
     debounce: int = typer.Option(2, "--debounce", help="Debounce w sekundach"),
-    cooldown: int = typer.Option(60, "--cooldown", help="Minimalny czas między testami tej samej usługi"),
+    cooldown: int = typer.Option(
+        60, "--cooldown", help="Minimalny czas między testami tej samej usługi"
+    ),
 ) -> None:
     """[Long-running] Obserwuj zmiany w repo i uruchamiaj rebuild walk (--dry-run) automatycznie.
 
     Wymaga pakietu wup: pip install 'rebuild[watch]'
     """
     from .commands.watch_command import watch_command
+
     try:
         watch_command(
             repo=repo,
@@ -440,42 +529,72 @@ def watch(
 # analyze commands
 # ──────────────────────────────────────────────
 
+
 @analyze_app.command()
 def duplicates(
     path: Path = typer.Argument(Path("."), help="Ścieżka do skanowania"),
     min_lines: int = typer.Option(4, help="Minimalna liczba linii dla duplikatu"),
-    semantic: bool = typer.Option(False, "--semantic", help="Włącz semantyczne wykrywanie duplikatów (embeddings)"),
-    semantic_model: str = typer.Option("sentence-transformers/all-MiniLM-L6-v2", "--semantic-model", help="Model sentence-transformers"),
-    semantic_threshold: float = typer.Option(0.82, "--semantic-threshold", help="Próg podobieństwa kosinusowego"),
-    semantic_max_fragments: int = typer.Option(300, "--semantic-max-fragments", help="Maksymalna liczba fragmentów"),
+    semantic: bool = typer.Option(
+        False, "--semantic", help="Włącz semantyczne wykrywanie duplikatów (embeddings)"
+    ),
+    semantic_model: str = typer.Option(
+        "sentence-transformers/all-MiniLM-L6-v2",
+        "--semantic-model",
+        help="Model sentence-transformers",
+    ),
+    semantic_threshold: float = typer.Option(
+        0.82, "--semantic-threshold", help="Próg podobieństwa kosinusowego"
+    ),
+    semantic_max_fragments: int = typer.Option(
+        300, "--semantic-max-fragments", help="Maksymalna liczba fragmentów"
+    ),
 ) -> None:
     """[Query] Znajdź strukturalne i semantyczne duplikaty kodu."""
     from .commands.analyze_command import duplicates_command
-    duplicates_command(path, min_lines, semantic, semantic_model, semantic_threshold, semantic_max_fragments, console)
+
+    duplicates_command(
+        path,
+        min_lines,
+        semantic,
+        semantic_model,
+        semantic_threshold,
+        semantic_max_fragments,
+        console,
+    )
 
 
 @analyze_app.command()
 def vector_build(
     path: Path = typer.Argument(Path("."), help="Ścieżka do skanowania i indeksowania"),
-    index: Path = typer.Option(Path(".rebuild/semantic_index.sqlite"), "--index", help="Plik SQLite z indeksem wektorowym"),
+    index: Path = typer.Option(
+        Path(".rebuild/semantic_index.sqlite"), "--index", help="Plik SQLite z indeksem wektorowym"
+    ),
     min_lines: int = typer.Option(4, help="Minimalna liczba linii fragmentu"),
-    model: str = typer.Option("sentence-transformers/all-MiniLM-L6-v2", "--model", help="Model sentence-transformers"),
+    model: str = typer.Option(
+        "sentence-transformers/all-MiniLM-L6-v2", "--model", help="Model sentence-transformers"
+    ),
 ) -> None:
     """[Query] Zbuduj lokalny indeks wektorowy fragmentów kodu."""
     from .commands.analyze_command import vector_build_command
+
     vector_build_command(path, index, min_lines, model, console)
 
 
 @analyze_app.command()
 def vector_query(
     query: str = typer.Argument(..., help="Zapytanie semantyczne"),
-    index: Path = typer.Option(Path(".rebuild/semantic_index.sqlite"), "--index", help="Plik SQLite z indeksem wektorowym"),
+    index: Path = typer.Option(
+        Path(".rebuild/semantic_index.sqlite"), "--index", help="Plik SQLite z indeksem wektorowym"
+    ),
     top_k: int = typer.Option(10, "--top-k", help="Liczba najlepszych wyników"),
     min_score: float = typer.Option(0.0, "--min-score", help="Minimalny score podobieństwa"),
-    model: str = typer.Option("sentence-transformers/all-MiniLM-L6-v2", "--model", help="Model sentence-transformers"),
+    model: str = typer.Option(
+        "sentence-transformers/all-MiniLM-L6-v2", "--model", help="Model sentence-transformers"
+    ),
 ) -> None:
     """[Query] Wyszukaj semantycznie podobne fragmenty w indeksie wektorowym."""
     from .commands.analyze_command import vector_query_command
+
     vector_query_command(query, index, top_k, min_score, model, console)
 
 
@@ -483,20 +602,26 @@ def vector_query(
 def multi_repo(
     repos: List[Path] = typer.Argument(..., help="Lista repozytoriów do analizy (min 2)"),
     min_lines: int = typer.Option(6, help="Minimalna długość fragmentu dla clone detection"),
-    export: Optional[Path] = typer.Option(None, "--export", help="Opcjonalny plik JSON z pełnym raportem"),
+    export: Optional[Path] = typer.Option(
+        None, "--export", help="Opcjonalny plik JSON z pełnym raportem"
+    ),
 ) -> None:
     """[Query] Analiza zależności i klonów kodu między wieloma repozytoriami."""
     from .commands.analyze_command import multi_repo_command
+
     multi_repo_command(repos, min_lines, export, console)
 
 
 @analyze_app.command()
 def services(
     path: Path = typer.Argument(Path("rebuild/application/services"), help="Katalog z serwisami"),
-    export: bool = typer.Option(False, "--export", help="Wygeneruj interaktywny graf architecture.html"),
+    export: bool = typer.Option(
+        False, "--export", help="Wygeneruj interaktywny graf architecture.html"
+    ),
 ) -> None:
     """[Query] Wykryj nakładające się odpowiedzialności i powiązania między serwisami."""
     from .commands.analyze_command import services_command
+
     services_command(path, export, console)
 
 
@@ -508,12 +633,14 @@ def truth(
 ) -> None:
     """[Query] Znajdź 'najprawdziwszą' wersję funkcji w historii git."""
     from .commands.analyze_command import truth_command
+
     truth_command(file, function, repo, console)
 
 
 # ──────────────────────────────────────────────
 # refactor commands
 # ──────────────────────────────────────────────
+
 
 @refactor_app.command()
 def plan(
@@ -522,6 +649,7 @@ def plan(
 ) -> None:
     """[Query] Wygeneruj plan refaktoryzacji z opcjonalnym wsparciem AI."""
     from .commands.refactor_command import plan_command
+
     plan_command(path, ai, console)
 
 
@@ -531,6 +659,7 @@ def pr(
 ) -> None:
     """[Query] Wygeneruj profesjonalny opis Pull Requesta (wymaga AI)."""
     from .commands.refactor_command import pr_command
+
     pr_command(path, console)
 
 
@@ -541,6 +670,7 @@ def execute(
 ) -> None:
     """[Command] Wykonaj automatycznie plan refaktoryzacji."""
     from .commands.refactor_command import execute_command
+
     execute_command(path, force, console)
 
 
@@ -578,6 +708,5 @@ def plugins(
 
     console.print(table)
     console.print(
-        f"\n  [dim]{len(registry.scanners)} scanner(s), "
-        f"{len(registry.reporters)} reporter(s)[/dim]"
+        f"\n  [dim]{len(registry.scanners)} scanner(s), {len(registry.reporters)} reporter(s)[/dim]"
     )

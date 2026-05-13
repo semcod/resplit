@@ -5,6 +5,7 @@ from typing import Optional
 from .endpoint import Endpoint, EndpointResult
 from .commit import CommitInfo
 
+
 @dataclass
 class EndpointContext:
     endpoint: Endpoint

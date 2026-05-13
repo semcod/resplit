@@ -1,4 +1,5 @@
 """Graceful Textual import guard."""
+
 from __future__ import annotations
 
 try:
@@ -7,10 +8,22 @@ try:
     from textual.containers import Container, Horizontal, ScrollableContainer, Vertical
     from textual.screen import ModalScreen, Screen
     from textual.widgets import (
-        Button, DataTable, Footer, Header, Input, Label,
-        ListItem, ListView, Log, Markdown, ProgressBar,
-        Select, Static, Switch,
+        Button,
+        DataTable,
+        Footer,
+        Header,
+        Input,
+        Label,
+        ListItem,
+        ListView,
+        Log,
+        Markdown,
+        ProgressBar,
+        Select,
+        Static,
+        Switch,
     )
+
     TEXTUAL_OK = True
 except ImportError:
     TEXTUAL_OK = False

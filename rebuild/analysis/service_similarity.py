@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict, Set
 
+
 @dataclass
 class ServiceSimilarity:
     service_a: str
@@ -11,10 +12,12 @@ class ServiceSimilarity:
     overlap: float
     common_methods: List[str]
 
+
 class ServiceSimilarityAnalyzer:
     """
     Analyzer for detecting overlapping responsibilities between services.
     """
+
     def analyze_directory(self, services_dir: Path) -> List[ServiceSimilarity]:
         services_data: Dict[str, Set[str]] = {}
 
@@ -39,12 +42,14 @@ class ServiceSimilarityAnalyzer:
                 overlap = len(intersection) / len(union) if union else 0
 
                 if overlap > 0:
-                    results.append(ServiceSimilarity(
-                        service_a=s1,
-                        service_b=s2,
-                        overlap=overlap,
-                        common_methods=list(intersection)
-                    ))
+                    results.append(
+                        ServiceSimilarity(
+                            service_a=s1,
+                            service_b=s2,
+                            overlap=overlap,
+                            common_methods=list(intersection),
+                        )
+                    )
 
         return sorted(results, key=lambda r: r.overlap, reverse=True)
 

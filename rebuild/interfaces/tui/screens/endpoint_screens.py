@@ -39,7 +39,9 @@ if TEXTUAL_OK:
             Binding("f", "filter", "Filtruj"),
         ]
 
-        def __init__(self, day_data: dict, prev_data: Optional[dict], show_diff: bool = False) -> None:
+        def __init__(
+            self, day_data: dict, prev_data: Optional[dict], show_diff: bool = False
+        ) -> None:
             super().__init__()
             self._day = day_data
             self._prev = prev_data
@@ -48,7 +50,9 @@ if TEXTUAL_OK:
         def compose(self) -> ComposeResult:
             yield Header(show_clock=True)
             mode = "Diff vs poprzedni" if self._show_diff else "Endpointy"
-            yield Label(f"{'🔍' if self._show_diff else '📋'} {mode} — {self._day['day']}", id="title")
+            yield Label(
+                f"{'🔍' if self._show_diff else '📋'} {mode} — {self._day['day']}", id="title"
+            )
             yield Label(f"Commit: {self._day['commit']}", classes="section-label")
             yield DataTable(id="ep-table", cursor_type="row")
             yield Horizontal(
@@ -62,7 +66,9 @@ if TEXTUAL_OK:
             table = self.query_one("#ep-table", DataTable)
 
             if self._show_diff and self._prev:
-                table.add_columns("Zmiana", "Method", "Path", "Status teraz", "Status poprzednio", "HTTP", "ms")
+                table.add_columns(
+                    "Zmiana", "Method", "Path", "Status teraz", "Status poprzednio", "HTTP", "ms"
+                )
                 changes = TUIDataService.endpoint_diff(self._prev["results"], self._day["results"])
                 for c in changes:
                     change_label = {
@@ -71,8 +77,11 @@ if TEXTUAL_OK:
                         "status_changed": "[yellow]~changed[/yellow]",
                     }.get(c["change"], c["change"])
                     table.add_row(
-                        change_label, c.get("method", ""), c.get("path", ""),
-                        c.get("status", ""), c.get("prev_status", "—"),
+                        change_label,
+                        c.get("method", ""),
+                        c.get("path", ""),
+                        c.get("status", ""),
+                        c.get("prev_status", "—"),
                         str(c.get("http_status", "—")),
                         f"{c.get('response_time_ms', 0):.0f}" if c.get("response_time_ms") else "—",
                     )
@@ -84,14 +93,19 @@ if TEXTUAL_OK:
                 for r in self._day["results"]:
                     status = r.get("status", "unknown")
                     status_colored = _STATUS_COLORS.get(status, status)
-                    tql = "[green]✓[/green]" if r.get("testql_passed") else (
-                        "[red]✗[/red]" if r.get("testql_passed") is False else "—"
+                    tql = (
+                        "[green]✓[/green]"
+                        if r.get("testql_passed")
+                        else ("[red]✗[/red]" if r.get("testql_passed") is False else "—")
                     )
                     table.add_row(
-                        r.get("method", "GET"), r.get("path", ""),
-                        status_colored, str(r.get("http_status", "—")),
+                        r.get("method", "GET"),
+                        r.get("path", ""),
+                        status_colored,
+                        str(r.get("http_status", "—")),
                         f"{r.get('response_time_ms', 0):.0f}" if r.get("response_time_ms") else "—",
-                        (r.get("error") or r.get("fail_reason") or "")[:40], tql,
+                        (r.get("error") or r.get("fail_reason") or "")[:40],
+                        tql,
                     )
 
         def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -102,18 +116,21 @@ if TEXTUAL_OK:
 
         def action_restore_selected(self) -> None:
             from .restore_screen import RestoreScreen
+
             table = self.query_one("#ep-table", DataTable)
             idx = table.cursor_row
             results = self._day["results"]
             if 0 <= idx < len(results):
                 ep = results[idx]
-                self.app.push_screen(RestoreScreen(
-                    repo=Path("."),
-                    results_dir=Path(self._day.get("path", ".")).parent,
-                    preselect_day=self._day["day"],
-                    preselect_endpoint=ep.get("path", ""),
-                    day_data=self._day,
-                ))
+                self.app.push_screen(
+                    RestoreScreen(
+                        repo=Path("."),
+                        results_dir=Path(self._day.get("path", ".")).parent,
+                        preselect_day=self._day["day"],
+                        preselect_endpoint=ep.get("path", ""),
+                        day_data=self._day,
+                    )
+                )
 
         def action_cursor_down(self) -> None:
             table = self.query_one("#ep-table", DataTable)
@@ -138,12 +155,15 @@ if TEXTUAL_OK:
             # TODO: Implement filter dialog for endpoints
             pass
 else:
+
     class EndpointDetailScreen:
         """Fallback export used when Textual is not installed."""
 
         BINDINGS = []
 
-        def __init__(self, day_data: dict, prev_data: Optional[dict], show_diff: bool = False) -> None:
+        def __init__(
+            self, day_data: dict, prev_data: Optional[dict], show_diff: bool = False
+        ) -> None:
             self._day = day_data
             self._prev = prev_data
             self._show_diff = show_diff

@@ -14,6 +14,7 @@ DSL Syntax Examples:
   evolution timeline:/path/to/timeline.json output:evolution.html
   auto-pr analysis:/path/to/analysis.json platform:github dry-run:true
 """
+
 from __future__ import annotations
 import warnings
 from dataclasses import dataclass, field
@@ -32,6 +33,7 @@ warnings.warn(
 
 class Command(Enum):
     """DSL command types."""
+
     WALK = "walk"
     ANALYZE = "analyze"
     EVOLUTION = "evolution"
@@ -43,6 +45,7 @@ class Command(Enum):
 
 class AnalyzeType(Enum):
     """Analysis types for DSL."""
+
     DUPLICATES = "duplicates"
     SERVICES = "services"
     TRUTH = "truth"
@@ -52,6 +55,7 @@ class AnalyzeType(Enum):
 @dataclass
 class DSLCommand:
     """Parsed DSL command."""
+
     command: Command
     parameters: Dict[str, Any] = field(default_factory=dict)
     flags: Dict[str, bool] = field(default_factory=dict)

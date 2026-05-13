@@ -3,17 +3,20 @@ from pathlib import Path
 from typing import Dict
 from .service_graph import ServiceNode
 
+
 class GraphExporter:
     """
     Exports ServiceGraph to an interactive D3.js HTML visualization.
     """
+
     def __init__(self, nodes: Dict[str, ServiceNode]):
         self.nodes = nodes
 
     def export_html(self, output_path: Path):
         data = self._prepare_d3_data()
 
-        template = """
+        template = (
+            """
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,7 +37,9 @@ class GraphExporter:
     <svg width="100%" height="100vh"></svg>
 
     <script>
-        const data = """ + json.dumps(data) + """;
+        const data = """
+            + json.dumps(data)
+            + """;
         const svg = d3.select("svg");
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -118,6 +123,7 @@ class GraphExporter:
 </body>
 </html>
         """
+        )
         output_path.write_text(template)
 
     def _prepare_d3_data(self) -> Dict:
@@ -126,19 +132,13 @@ class GraphExporter:
 
         # Add primary nodes
         for name, node in self.nodes.items():
-            nodes.append({
-                "id": name,
-                "methods": node.methods,
-                "group": 1 if "service" in name else 2
-            })
+            nodes.append(
+                {"id": name, "methods": node.methods, "group": 1 if "service" in name else 2}
+            )
 
             # Add links
             for dep in node.dependencies:
                 if dep in self.nodes:
-                    links.append({
-                        "source": name,
-                        "target": dep,
-                        "value": 1
-                    })
+                    links.append({"source": name, "target": dep, "value": 1})
 
         return {"nodes": nodes, "links": links}

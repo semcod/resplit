@@ -12,6 +12,7 @@ walk-and-report logic. They meet at a single callback (``on_change``).
 The ``wup`` package is an **optional dependency**. Install with
 ``pip install 'rebuild[watch]'`` or ``pip install wup``.
 """
+
 from __future__ import annotations
 
 import shutil
@@ -27,6 +28,7 @@ def _require_wup() -> Any:
     """Import wup or raise a friendly error."""
     try:
         import wup  # noqa: F401
+
         return wup
     except ImportError as exc:
         raise RuntimeError(
@@ -60,10 +62,7 @@ def _build_default_wup_config(
     # not via wup's quick_tests.
     project = ProjectConfig(
         name=repo.name,
-        description=(
-            f"rebuild watch session on {repo} "
-            f"(health={health_url}, base={base_url})"
-        ),
+        description=(f"rebuild watch session on {repo} (health={health_url}, base={base_url})"),
     )
 
     watch = WatchConfig(
@@ -114,11 +113,20 @@ def _default_on_change(
             console.print(f"  [dim]· ... +{len(changed_files) - 5} more[/dim]")
 
         cmd = [
-            rebuild_bin, "walk", str(repo),
-            "--dry-run", "--days", "1", "--deploy", "none",
-            "--output", str(output),
-            "--health-url", health_url,
-            "--base-url", base_url,
+            rebuild_bin,
+            "walk",
+            str(repo),
+            "--dry-run",
+            "--days",
+            "1",
+            "--deploy",
+            "none",
+            "--output",
+            str(output),
+            "--health-url",
+            health_url,
+            "--base-url",
+            base_url,
         ]
         console.print(f"[dim]$ {' '.join(cmd)}[/dim]")
         start = time.perf_counter()
@@ -178,6 +186,7 @@ def watch_command(
 
     if _watcher_factory is None:
         from wup import WupWatcher
+
         _watcher_factory = WupWatcher
 
     watcher = _watcher_factory(
@@ -200,7 +209,7 @@ def watch_command(
             except Exception as exc:
                 console.print(f"[yellow]wup: {exc}[/yellow]")
 
-        watcher.on_file_change = _bridge   # type: ignore[assignment]
+        watcher.on_file_change = _bridge  # type: ignore[assignment]
 
     console.print(f"[bold cyan]rebuild watch[/bold cyan] — {repo}")
     console.print(f"  [dim]output:[/dim]      {output}")

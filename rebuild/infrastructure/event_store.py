@@ -4,6 +4,7 @@ SQLite-backed EventStore for Event Sourcing.
 Persists all DomainEvents with full JSON payload.
 Supports replay, streaming by aggregate, and pruning.
 """
+
 from __future__ import annotations
 
 import json
@@ -80,8 +81,14 @@ class EventStore:
     def append_many(self, events: List[DomainEvent]) -> None:
         """Bulk append events in a single transaction."""
         rows = [
-            (e.event_id, e.event_type, e.aggregate_id, e.occurred_at, e.version,
-             json.dumps(e.to_dict()))
+            (
+                e.event_id,
+                e.event_type,
+                e.aggregate_id,
+                e.occurred_at,
+                e.version,
+                json.dumps(e.to_dict()),
+            )
             for e in events
         ]
         with self._conn() as conn:
@@ -172,7 +179,5 @@ class EventStore:
     def prune_before(self, before_iso: str) -> int:
         """Delete events older than *before_iso*. Returns count deleted."""
         with self._conn() as conn:
-            cur = conn.execute(
-                "DELETE FROM events WHERE occurred_at < ?", (before_iso,)
-            )
+            cur = conn.execute("DELETE FROM events WHERE occurred_at < ?", (before_iso,))
             return cur.rowcount

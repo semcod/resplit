@@ -4,6 +4,7 @@ Prometheus metrics for rebuild API.
 Exposes standard counters, gauges and histograms for observability.
 Requires ``prometheus-client`` (included in the ``api`` extras group).
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -16,11 +17,11 @@ def _require_prometheus():
     """Import prometheus_client or raise a helpful error."""
     try:
         import prometheus_client  # noqa: F401
+
         return prometheus_client
     except ImportError as exc:
         raise ImportError(
-            "prometheus-client is required for /metrics. "
-            "Install with: pip install 'rebuild[api]'"
+            "prometheus-client is required for /metrics. Install with: pip install 'rebuild[api]'"
         ) from exc
 
 

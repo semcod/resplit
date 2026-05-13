@@ -13,6 +13,7 @@ Built-in groups:
   rebuild.scanners  — classes with .scan(path) -> list[ScanResult]
   rebuild.reporters — classes with .report(results, output_dir) -> None
 """
+
 from .registry import PluginRegistry, load_plugins
 
 __all__ = ["PluginRegistry", "load_plugins"]

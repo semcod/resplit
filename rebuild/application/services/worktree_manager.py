@@ -2,6 +2,7 @@
 Worktree-based branch switching for 10x speedup.
 Eliminates git checkout overhead by using multiple worktrees.
 """
+
 from __future__ import annotations
 from pathlib import Path
 from typing import Optional, Dict, List
@@ -14,6 +15,7 @@ from ...infrastructure.shell_adapter import ShellAdapter
 @dataclass
 class WorktreeInfo:
     """Information about a git worktree."""
+
     path: Path
     commit_sha: str
     branch_name: Optional[str] = None
@@ -64,8 +66,7 @@ class WorktreeManager(Service[Path, WorktreeInfo]):
 
         # Create new worktree - this is FAST (no file copy, just git metadata)
         result = self.shell.run(
-            ["git", "worktree", "add", "--detach", str(wt_path), sha],
-            cwd=self.repo_path
+            ["git", "worktree", "add", "--detach", str(wt_path), sha], cwd=self.repo_path
         )
 
         if result.returncode != 0:
@@ -73,8 +74,7 @@ class WorktreeManager(Service[Path, WorktreeInfo]):
             if wt_path.exists():
                 self._remove_worktree(sha, force=True)
                 result = self.shell.run(
-                    ["git", "worktree", "add", "--detach", str(wt_path), sha],
-                    cwd=self.repo_path
+                    ["git", "worktree", "add", "--detach", str(wt_path), sha], cwd=self.repo_path
                 )
 
             if result.returncode != 0:

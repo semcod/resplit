@@ -56,17 +56,22 @@ def create_app(
         from fastapi.responses import StreamingResponse
     except ImportError as exc:
         raise ImportError(
-            "FastAPI is required for the API server. "
-            "Install with: pip install 'rebuild[api]'"
+            "FastAPI is required for the API server. Install with: pip install 'rebuild[api]'"
         ) from exc
 
     from ...application.commands import (
-        CommandBus, WalkCommand, AnalyzeCommand,
-        CreateSnapshotCommand, PruneSnapshotsCommand,
+        CommandBus,
+        WalkCommand,
+        AnalyzeCommand,
+        CreateSnapshotCommand,
+        PruneSnapshotsCommand,
     )
     from ...application.queries import (
-        QueryBus, GetWalkHistoryQuery, GetDayResultQuery,
-        GetSnapshotStatsQuery, GetPluginsQuery,
+        QueryBus,
+        GetWalkHistoryQuery,
+        GetDayResultQuery,
+        GetSnapshotStatsQuery,
+        GetPluginsQuery,
     )
     from ...infrastructure.event_bus import EventBus, get_event_bus
     from ...domain.dsl_v2 import DSLParser, NLPMapper
@@ -135,7 +140,12 @@ def create_app(
         except Exception as exc:
             return {"error": str(exc), "dsl": req.dsl, "success": False, "command_id": ""}
         if cmd is None:
-            return {"error": "Non-command DSL (query verb)", "dsl": req.dsl, "success": False, "command_id": ""}
+            return {
+                "error": "Non-command DSL (query verb)",
+                "dsl": req.dsl,
+                "success": False,
+                "command_id": "",
+            }
         result = _command_bus.dispatch(cmd)
         return result.model_dump()
 
@@ -145,7 +155,12 @@ def create_app(
         mapper = NLPMapper()
         dsl_str = mapper.to_dsl(req.text)
         if not dsl_str:
-            return {"error": "Could not interpret request", "text": req.text, "success": False, "command_id": ""}
+            return {
+                "error": "Could not interpret request",
+                "text": req.text,
+                "success": False,
+                "command_id": "",
+            }
         parser = DSLParser()
         try:
             cmd = parser.to_cqrs_command(dsl_str)
@@ -166,8 +181,10 @@ def create_app(
         date_to: Optional[str] = None,
     ) -> Dict[str, Any]:
         q = GetWalkHistoryQuery(
-            results_dir=results_dir, limit=limit,
-            date_from=date_from, date_to=date_to,
+            results_dir=results_dir,
+            limit=limit,
+            date_from=date_from,
+            date_to=date_to,
         )
         result = _query_bus.dispatch(q)
         return result.model_dump()
@@ -251,6 +268,7 @@ def create_app(
 
     try:
         from .metrics import setup_metrics
+
         setup_metrics(app, registry=metrics_registry)
     except ImportError:
         pass  # prometheus-client not installed — /metrics disabled

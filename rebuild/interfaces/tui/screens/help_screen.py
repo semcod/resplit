@@ -43,6 +43,7 @@ if TEXTUAL_OK:
         def on_button_pressed(self, event: Button.Pressed) -> None:
             self.dismiss()
 else:
+
     class HelpScreen:
         """Fallback export used when Textual is not installed."""
 

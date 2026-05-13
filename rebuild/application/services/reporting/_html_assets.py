@@ -1,4 +1,5 @@
 """Shared HTML/CSS/JS snippets used by the day and timeline reporters."""
+
 from __future__ import annotations
 
 JS_HELPERS = """

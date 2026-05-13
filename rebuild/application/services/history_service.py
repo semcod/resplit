@@ -10,10 +10,12 @@ from ...domain.endpoint import Endpoint, EndpointResult, EndpointStatus
 from ...domain.models import DeployMethod
 from .base import Service
 
+
 class HistoryService(Service[Path, List[DayResult]]):
     """
     Service for loading and managing historical scan results from disk.
     """
+
     def execute(self, results_dir: Path) -> List[DayResult]:
         return self.load_history(results_dir)
 
@@ -43,7 +45,9 @@ class HistoryService(Service[Path, List[DayResult]]):
                         sha=c.get("sha", ""),
                         message=c.get("message", ""),
                         author=c.get("author", ""),
-                        timestamp=datetime.fromisoformat(c["timestamp"]) if c.get("timestamp") else datetime.now(),
+                        timestamp=datetime.fromisoformat(c["timestamp"])
+                        if c.get("timestamp")
+                        else datetime.now(),
                         date=day_date,
                     )
                 deploy_success = raw.get("deploy", {}).get("success", True)
@@ -58,15 +62,17 @@ class HistoryService(Service[Path, List[DayResult]]):
             for r in ep_list:
                 ep = Endpoint(method=r["method"], path=r["path"], base_url=r.get("url", ""))
                 endpoints.append(ep)
-                ep_results.append(EndpointResult(
-                    endpoint=ep,
-                    status=EndpointStatus(r["status"]),
-                    http_status=r.get("http_status"),
-                    response_time_ms=r.get("response_time_ms") or r.get("time_ms"),
-                    screenshot_path=Path(r["screenshot"]) if r.get("screenshot") else None,
-                    testql_passed=r.get("testql_passed"),
-                    error=r.get("error"),
-                ))
+                ep_results.append(
+                    EndpointResult(
+                        endpoint=ep,
+                        status=EndpointStatus(r["status"]),
+                        http_status=r.get("http_status"),
+                        response_time_ms=r.get("response_time_ms") or r.get("time_ms"),
+                        screenshot_path=Path(r["screenshot"]) if r.get("screenshot") else None,
+                        testql_passed=r.get("testql_passed"),
+                        error=r.get("error"),
+                    )
+                )
 
             result = DayResult(
                 day=day_date,

@@ -7,6 +7,7 @@ from typing import List
 from ...domain.endpoint import EndpointResult, EndpointStatus
 from .base import Service
 
+
 @dataclass
 class ScreenshotConfig:
     output_dir: Path
@@ -16,10 +17,12 @@ class ScreenshotConfig:
     full_page: bool = True
     wait_until: str = "networkidle"
 
+
 class ScreenshotService(Service[List[EndpointResult], List[EndpointResult]]):
     """
     Service for capturing screenshots of endpoints.
     """
+
     def __init__(self, config: ScreenshotConfig):
         self.config = config
 
@@ -32,7 +35,10 @@ class ScreenshotService(Service[List[EndpointResult], List[EndpointResult]]):
         # Filter GET endpoints that succeeded or failed (not skipped/timeout)
         targets = []
         for er in endpoint_results:
-            if er.endpoint.method == "GET" and er.status in (EndpointStatus.OK, EndpointStatus.FAIL):
+            if er.endpoint.method == "GET" and er.status in (
+                EndpointStatus.OK,
+                EndpointStatus.FAIL,
+            ):
                 targets.append(er)
 
         if not targets:
@@ -56,7 +62,11 @@ class ScreenshotService(Service[List[EndpointResult], List[EndpointResult]]):
                         try:
                             page = browser.new_page()
                             try:
-                                page.goto(er.endpoint.url, wait_until=self.config.wait_until, timeout=self.config.timeout_ms)
+                                page.goto(
+                                    er.endpoint.url,
+                                    wait_until=self.config.wait_until,
+                                    timeout=self.config.timeout_ms,
+                                )
                                 page.screenshot(path=str(path), full_page=self.config.full_page)
                                 er.screenshot_path = path
                                 break

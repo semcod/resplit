@@ -2,6 +2,7 @@
 Git-diff driven test selection.
 Only test endpoints affected by code changes.
 """
+
 from __future__ import annotations
 import re
 from pathlib import Path
@@ -16,6 +17,7 @@ from ...infrastructure.shell_adapter import ShellAdapter
 @dataclass
 class ChangedModule:
     """Information about a changed module/file."""
+
     path: Path
     change_type: str  # A=added, M=modified, D=deleted, R=renamed
     old_path: Optional[Path] = None
@@ -24,6 +26,7 @@ class ChangedModule:
 @dataclass
 class TestSelection:
     """Result of test selection process."""
+
     endpoints_to_test: List[Endpoint]
     skipped_endpoints: List[Tuple[Endpoint, str]]  # (endpoint, reason)
     changed_modules: List[ChangedModule]
@@ -61,17 +64,14 @@ class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
         }
 
         # Always-test endpoints (critical paths)
-        self._critical_endpoints: Set[str] = {
-            "/health", "/api/health", "/metrics"
-        }
+        self._critical_endpoints: Set[str] = {"/health", "/api/health", "/metrics"}
 
     def analyze_changes(self, commit_from: str, commit_to: str) -> List[ChangedModule]:
         """
         Get list of changed files between two commits.
         """
         result = self.shell.run(
-            ["git", "diff", "--name-status", f"{commit_from}..{commit_to}"],
-            cwd=self.repo_path
+            ["git", "diff", "--name-status", f"{commit_from}..{commit_to}"], cwd=self.repo_path
         )
 
         if result.returncode != 0:
@@ -103,7 +103,7 @@ class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
         self,
         all_endpoints: List[Endpoint],
         changed_modules: List[ChangedModule],
-        previous_commit: Optional[str] = None
+        previous_commit: Optional[str] = None,
     ) -> TestSelection:
         """
         Select which endpoints to test based on changed files.
@@ -172,10 +172,7 @@ class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
                 to_test.append(ep)
                 continue
 
-            should_test = any(
-                self._path_matches(ep.path, pattern)
-                for pattern in affected_patterns
-            )
+            should_test = any(self._path_matches(ep.path, pattern) for pattern in affected_patterns)
             if should_test:
                 to_test.append(ep)
             else:
@@ -205,10 +202,7 @@ class SmartTestSelector(Service[Tuple[str, str], TestSelection]):
         # The actual endpoint selection happens with select_tests()
 
         return TestSelection(
-            endpoints_to_test=[],
-            skipped_endpoints=[],
-            changed_modules=changes,
-            confidence="high"
+            endpoints_to_test=[], skipped_endpoints=[], changed_modules=changes, confidence="high"
         )
 
     def get_changed_modules(self, commit_from: str, commit_to: str) -> List[ChangedModule]:

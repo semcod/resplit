@@ -3,15 +3,14 @@ rebuild.evolution_viz — D3.js Code Evolution playback visualization.
 
 Generates HTML with D3.js force-directed graph showing dependency evolution over time.
 """
+
 from __future__ import annotations
 import json
 from pathlib import Path
 
 
 def generate_evolution_html(
-    timeline_path: Path,
-    output_path: Path,
-    title: str = "Code Evolution"
+    timeline_path: Path, output_path: Path, title: str = "Code Evolution"
 ) -> Path:
     """Generate HTML file with D3.js evolution playback visualization."""
     # Load timeline data
@@ -176,7 +175,7 @@ def _render_html(snapshots: list, repo_path: str, title: str) -> str:
       <button class="btn btn-secondary" id="prevBtn">◀ Previous</button>
       <button class="btn" id="playBtn">▶ Play</button>
       <button class="btn btn-secondary" id="nextBtn">Next ▶</button>
-      <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="{len(snapshots)-1}" value="0">
+      <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="{len(snapshots) - 1}" value="0">
       <div class="timeline-info">
         <span id="timestamp">Snapshot 1 / {len(snapshots)}</span>
         <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;" id="commit"></div>

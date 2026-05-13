@@ -9,6 +9,7 @@ Examples:
   "generate evolution timeline" -> evolution
   "create PR with analysis" -> auto-pr
 """
+
 from __future__ import annotations
 import re
 from dataclasses import dataclass
@@ -18,6 +19,7 @@ from enum import Enum
 
 class Intent(Enum):
     """Intents for natural language commands."""
+
     WALK = "walk"
     ANALYZE = "analyze"
     EVOLUTION = "evolution"
@@ -31,6 +33,7 @@ class Intent(Enum):
 @dataclass
 class NLPCommand:
     """Parsed natural language command."""
+
     intent: Intent
     parameters: Dict[str, str]
     confidence: float

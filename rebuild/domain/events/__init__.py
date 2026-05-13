@@ -1,4 +1,5 @@
 """Domain events for Event Sourcing."""
+
 from .domain_events import (
     DomainEvent,
     WalkStartedEvent,

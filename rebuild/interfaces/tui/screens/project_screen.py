@@ -62,6 +62,7 @@ if TEXTUAL_OK:
 
         def _open_history(self) -> None:
             from .history_screen import HistoryScreen
+
             repo = self._repo_path()
             results_dir = self._results_dir()
             err = self.query_one("#repo-error", Label)
@@ -73,6 +74,7 @@ if TEXTUAL_OK:
 
         def _new_walk(self) -> None:
             from .walk_screens import WalkConfigScreen
+
             repo = self._repo_path()
             err = self.query_one("#repo-error", Label)
             if not (repo / ".git").exists():
@@ -83,8 +85,10 @@ if TEXTUAL_OK:
 
         def action_help(self) -> None:
             from .help_screen import HelpScreen
+
             self.app.push_screen(HelpScreen())
 else:
+
     class ProjectScreen:
         """Fallback export used when Textual is not installed."""
 

@@ -1,6 +1,7 @@
 """
 Plugin registry — discovers and manages rebuild plugins via entry points.
 """
+
 from __future__ import annotations
 
 import importlib
@@ -69,14 +70,18 @@ class PluginRegistry:
             if isinstance(cls, type) and issubclass(cls, BaseScanner):
                 self._scanners[name] = cls
             else:
-                logger.warning("Plugin %r in %r is not a BaseScanner subclass", name, _SCANNER_GROUP)
+                logger.warning(
+                    "Plugin %r in %r is not a BaseScanner subclass", name, _SCANNER_GROUP
+                )
 
         reporter_eps = _load_entry_points(_REPORTER_GROUP)
         for name, cls in reporter_eps.items():
             if isinstance(cls, type) and issubclass(cls, BaseReporter):
                 self._reporters[name] = cls
             else:
-                logger.warning("Plugin %r in %r is not a BaseReporter subclass", name, _REPORTER_GROUP)
+                logger.warning(
+                    "Plugin %r in %r is not a BaseReporter subclass", name, _REPORTER_GROUP
+                )
 
         self._discovered = True
         return self
@@ -124,11 +129,7 @@ class PluginRegistry:
         return sorted(self._reporters)
 
     def __repr__(self) -> str:
-        return (
-            f"PluginRegistry("
-            f"scanners={self.scanner_names()}, "
-            f"reporters={self.reporter_names()})"
-        )
+        return f"PluginRegistry(scanners={self.scanner_names()}, reporters={self.reporter_names()})"
 
 
 # ── Module-level convenience ──────────────────────────────────────────────────

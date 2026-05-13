@@ -1,6 +1,7 @@
 """
 10x Faster Pipeline using worktrees, volume mounts, and parallel testing.
 """
+
 from __future__ import annotations
 import time
 import json
@@ -48,12 +49,12 @@ class AcceleratedPipeline(BasePipeline):
         self.deploy = AcceleratorDeployService(config, self.worktrees, console)
         self.db_snapshots = DBSnapshotManager(
             self.snapshot_dir,
-            db_container=getattr(config, 'db_container', 'db'),
-            db_type=getattr(config, 'db_type', 'postgres'),
+            db_container=getattr(config, "db_container", "db"),
+            db_type=getattr(config, "db_type", "postgres"),
         )
         self.tester = ParallelTestEngine(
             config,
-            max_concurrent=getattr(config, 'max_parallel_tests', 10),
+            max_concurrent=getattr(config, "max_parallel_tests", 10),
             health_first=True,
         )
         self.smart_selector = SmartTestSelector(config.repo_path)
@@ -97,17 +98,15 @@ class AcceleratedPipeline(BasePipeline):
         # Cache: (from_sha, to_sha) -> diff file list.  Avoids redundant git calls.
         self._diff_cache: Dict[tuple, Optional[List[str]]] = {}
 
-
     def _save_state(self):
         """Persist processed SHAs."""
         self.output_dir.mkdir(parents=True, exist_ok=True)
         data = {
             "processed_shas": list(self._processed_shas),
             "baseline_snapshot": self._baseline_snapshot,
-            "mode": "accelerated"
+            "mode": "accelerated",
         }
         self._state_file.write_text(json.dumps(data, indent=2))
-
 
     def run(self) -> List[DayResult]:
         """
@@ -118,10 +117,12 @@ class AcceleratedPipeline(BasePipeline):
             self.log("[yellow]Brak commitów w podanym przedziale.[/yellow]")
             return []
 
-        self._emit("PIPELINE_STARTED",
-                   days=len(commits),
-                   mode="accelerated",
-                   repo=str(self.config.repo_path))
+        self._emit(
+            "PIPELINE_STARTED",
+            days=len(commits),
+            mode="accelerated",
+            repo=str(self.config.repo_path),
+        )
 
         self.log(f"[bold cyan]⚡ ACCELERATOR MODE[/bold cyan] - {len(commits)} commits")
         self.log(f"  Worktrees: {self.worktree_dir}")
@@ -170,7 +171,7 @@ class AcceleratedPipeline(BasePipeline):
         finally:
             self.tester.close_session()
             # In accelerator mode, keep infrastructure running by default
-            if not getattr(self.config, 'shutdown_after', False):
+            if not getattr(self.config, "shutdown_after", False):
                 self.log("[dim]Accelerator: keeping infrastructure running[/dim]")
                 self.deploy.stop(self.config.repo_path)
 
@@ -240,8 +241,9 @@ class AcceleratedPipeline(BasePipeline):
             self._test_and_save_fast_day(result, day_dir, endpoints_to_test)
 
             duration = time.perf_counter() - t0
-            self.log(f"  [green]✓ Done in {duration:.1f}s[/green] "
-                    f"({result.health_pct:.0f}% healthy)")
+            self.log(
+                f"  [green]✓ Done in {duration:.1f}s[/green] ({result.health_pct:.0f}% healthy)"
+            )
 
         except Exception as exc:
             result.error = str(exc)
@@ -291,9 +293,7 @@ class AcceleratedPipeline(BasePipeline):
         if not self._previous_commit:
             return [], None
 
-        changed_modules = self.smart_selector.get_changed_modules(
-            self._previous_commit, commit.sha
-        )
+        changed_modules = self.smart_selector.get_changed_modules(self._previous_commit, commit.sha)
         changed_paths = [str(m.path).lower() for m in changed_modules]
         self._diff_cache[(self._previous_commit, commit.sha)] = changed_paths
         return changed_modules, changed_paths
@@ -340,7 +340,7 @@ class AcceleratedPipeline(BasePipeline):
 
     def _select_fast_endpoints(self, result: DayResult, changed_modules) -> List[Endpoint]:
         endpoints_to_test = result.endpoints
-        if self._previous_commit and getattr(self.config, 'smart_select', True):
+        if self._previous_commit and getattr(self.config, "smart_select", True):
             selection = self.smart_selector.select_tests(
                 result.endpoints,
                 changed_modules,
@@ -364,7 +364,9 @@ class AcceleratedPipeline(BasePipeline):
 
         self.reporter.save_day(result)
 
-    def _needs_rescan(self, from_sha: Optional[str], to_sha: str, changed_paths: Optional[List[str]] = None) -> bool:
+    def _needs_rescan(
+        self, from_sha: Optional[str], to_sha: str, changed_paths: Optional[List[str]] = None
+    ) -> bool:
         """
         Return True when the endpoint list must be rebuilt by running the scanner.
         False when the diff contains no route-relevant files and a cached result exists.
@@ -384,7 +386,9 @@ class AcceleratedPipeline(BasePipeline):
                 return True
         return False
 
-    def _needs_db_restore(self, from_sha: Optional[str], to_sha: str, changed_paths: Optional[List[str]] = None) -> bool:
+    def _needs_db_restore(
+        self, from_sha: Optional[str], to_sha: str, changed_paths: Optional[List[str]] = None
+    ) -> bool:
         """
         Return True when the diff between *from_sha* and *to_sha* touches any
         file that matches one of `_db_patterns`.  Falls back to True (safe) on
@@ -409,9 +413,7 @@ class AcceleratedPipeline(BasePipeline):
         key = (from_sha, to_sha)
         if key not in self._diff_cache:
             result = self.git.diff_names(from_sha, to_sha)
-            self._diff_cache[key] = (
-                [p.lower() for p in result] if result is not None else None
-            )
+            self._diff_cache[key] = [p.lower() for p in result] if result is not None else None
         return self._diff_cache[key]
 
     def _restore_db_fast(self):

@@ -1,6 +1,7 @@
 """
 CQRS base: Query, QueryResult, QueryHandler, QueryBus.
 """
+
 from __future__ import annotations
 
 import uuid
@@ -17,9 +18,7 @@ class Query(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     query_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    issued_at: str = Field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    issued_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 class QueryResult(BaseModel):
@@ -38,8 +37,7 @@ class QueryHandler(ABC, Generic[TQuery, TResult]):
     """Handle a single Query type and return a QueryResult."""
 
     @abstractmethod
-    def handle(self, query: TQuery) -> TResult:
-        ...
+    def handle(self, query: TQuery) -> TResult: ...
 
 
 class QueryBus:
@@ -62,7 +60,5 @@ class QueryBus:
     def dispatch(self, query: Query) -> QueryResult:
         handler = self._handlers.get(type(query))
         if handler is None:
-            raise ValueError(
-                f"No handler registered for {type(query).__name__}"
-            )
+            raise ValueError(f"No handler registered for {type(query).__name__}")
         return handler.handle(query)

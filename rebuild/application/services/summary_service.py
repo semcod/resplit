@@ -7,6 +7,7 @@ from pathlib import Path
 @dataclass
 class RefactorSuggestion:
     """A single refactor suggestion."""
+
     file_path: str
     line_start: int
     line_end: int
@@ -18,6 +19,7 @@ class RefactorSuggestion:
 @dataclass
 class SummaryResult:
     """Result of AI summary generation."""
+
     summary: str
     suggestions: List[RefactorSuggestion]
     total_duplication: float
@@ -53,7 +55,9 @@ class SummaryService:
                 line_start = fragment.get("start_line", 0)
                 line_end = fragment.get("end_line", line_start)
 
-                severity = "high" if len(fragments) > 3 else "medium" if len(fragments) > 2 else "low"
+                severity = (
+                    "high" if len(fragments) > 3 else "medium" if len(fragments) > 2 else "low"
+                )
 
                 suggestion = RefactorSuggestion(
                     file_path=file_path,
@@ -78,7 +82,9 @@ class SummaryService:
             high_priority_count=high_priority_count,
         )
 
-    def _generate_summary_text(self, suggestions: List[RefactorSuggestion], total_duplication: float) -> str:
+    def _generate_summary_text(
+        self, suggestions: List[RefactorSuggestion], total_duplication: float
+    ) -> str:
         """Generate human-readable summary text."""
         total_suggestions = len(suggestions)
         high_count = sum(1 for s in suggestions if s.severity == "high")

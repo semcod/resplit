@@ -21,6 +21,7 @@ class DeployErrorCategory(str, Enum):
     MISSING_ENV = "missing_env"
     UNKNOWN = "unknown"
 
+
 @dataclass
 class DayResult:
     day: date
@@ -42,8 +43,13 @@ class DayResult:
 
     @property
     def fail_count(self) -> int:
-        _fail = {EndpointStatus.FAIL, EndpointStatus.FAIL_AUTH, EndpointStatus.FAIL_SERVER,
-                 EndpointStatus.FAIL_NETWORK, EndpointStatus.FAIL_TEMPLATE}
+        _fail = {
+            EndpointStatus.FAIL,
+            EndpointStatus.FAIL_AUTH,
+            EndpointStatus.FAIL_SERVER,
+            EndpointStatus.FAIL_NETWORK,
+            EndpointStatus.FAIL_TEMPLATE,
+        }
         return sum(1 for r in self.endpoint_results if r.status in _fail)
 
     @property
@@ -70,23 +76,25 @@ class DayResult:
                 "sha": self.commit.sha,
                 "message": self.commit.message,
                 "author": self.commit.author,
-                "timestamp": self.commit.timestamp.isoformat()
-            } if self.commit else None,
+                "timestamp": self.commit.timestamp.isoformat(),
+            }
+            if self.commit
+            else None,
             "health": {
                 "percentage": self.health_pct,
                 "ok": self.ok_count,
                 "fail": self.fail_count,
-                "total": len(self.endpoints)
+                "total": len(self.endpoints),
             },
-            "performance": {
-                "duration_seconds": round(self.duration_seconds, 3)
-            },
+            "performance": {"duration_seconds": round(self.duration_seconds, 3)},
             "deploy": {
                 "method": self.deploy_method.value,
                 "success": self.deploy_success,
                 "is_dry_run": self.is_dry_run,
                 "log": deploy_log,
-                "error_category": self.deploy_error_category.value if self.deploy_error_category else None
+                "error_category": self.deploy_error_category.value
+                if self.deploy_error_category
+                else None,
             },
             "results": [
                 {
@@ -97,6 +105,7 @@ class DayResult:
                     "time_ms": r.response_time_ms,
                     "fail_reason": r.fail_reason,
                     "template_path": r.endpoint.template_path,
-                } for r in self.endpoint_results
-            ]
+                }
+                for r in self.endpoint_results
+            ],
         }

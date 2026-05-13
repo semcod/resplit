@@ -12,6 +12,7 @@ Both now delegate to :func:`compute_endpoint_count_trend` here.
 Mirrors :mod:`rebuild.application.services.regression_service` for the
 analogous health-pct trend.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -71,25 +72,29 @@ def compute_endpoint_count_trend(
         current_total = len(r.endpoints)
 
         if previous_total is None or previous_total == 0:
-            points.append(EndpointTrendPoint(
-                day=day_key,
-                total=current_total,
-                delta=None,
-                label="—",
-                is_warning=False,
-            ))
+            points.append(
+                EndpointTrendPoint(
+                    day=day_key,
+                    total=current_total,
+                    delta=None,
+                    label="—",
+                    is_warning=False,
+                )
+            )
             previous_total = current_total
             continue
 
         delta = current_total - previous_total
         if delta == 0:
-            points.append(EndpointTrendPoint(
-                day=day_key,
-                total=current_total,
-                delta=0,
-                label="0",
-                is_warning=False,
-            ))
+            points.append(
+                EndpointTrendPoint(
+                    day=day_key,
+                    total=current_total,
+                    delta=0,
+                    label="0",
+                    is_warning=False,
+                )
+            )
             previous_total = current_total
             continue
 
@@ -99,13 +104,15 @@ def compute_endpoint_count_trend(
         is_warning = pct > warning_threshold_pct
         label = f"⚠ {base}" if is_warning else base
 
-        points.append(EndpointTrendPoint(
-            day=day_key,
-            total=current_total,
-            delta=delta,
-            label=label,
-            is_warning=is_warning,
-        ))
+        points.append(
+            EndpointTrendPoint(
+                day=day_key,
+                total=current_total,
+                delta=delta,
+                label=label,
+                is_warning=is_warning,
+            )
+        )
         previous_total = current_total
 
     return points
@@ -119,7 +126,9 @@ def compute_endpoint_count_trend_dict(
 
     Used by the HTML reporter which keys its rendering by ISO date string.
     """
-    return {p.day: p.label for p in compute_endpoint_count_trend(results_asc, warning_threshold_pct)}
+    return {
+        p.day: p.label for p in compute_endpoint_count_trend(results_asc, warning_threshold_pct)
+    }
 
 
 def compute_endpoint_count_trend_labels(

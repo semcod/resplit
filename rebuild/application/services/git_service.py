@@ -8,11 +8,13 @@ from ...domain.models import WalkConfig
 from .base import Service
 from ...infrastructure.shell_adapter import ShellAdapter
 
+
 class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
     """
     Service for interacting with Git repositories and history.
     Uses ShellAdapter for all git commands.
     """
+
     def __init__(self, repo_path: Path, shell: Optional[ShellAdapter] = None):
         self.repo_path = repo_path
         self.shell = shell or ShellAdapter()
@@ -46,13 +48,7 @@ class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
 
                 if day not in seen_days:
                     seen_days.add(day)
-                    info = CommitInfo(
-                        sha=sha,
-                        message=msg,
-                        author=author,
-                        timestamp=ts,
-                        date=day
-                    )
+                    info = CommitInfo(sha=sha, message=msg, author=author, timestamp=ts, date=day)
                     results.append((day, info))
                     if len(results) >= config.days:
                         break
@@ -95,10 +91,18 @@ class GitService(Service[WalkConfig, List[Tuple[date, CommitInfo]]]):
 
         # Use rsync to overlay the current state (node_modules, untracked files)
         # We exclude .git during rsync to avoid messing up the target repo's git state
-        self.shell.run([
-            "rsync", "-av", "--exclude", ".rebuild", "--exclude", ".git",
-            str(self.repo_path) + "/", str(target_path) + "/"
-        ])
+        self.shell.run(
+            [
+                "rsync",
+                "-av",
+                "--exclude",
+                ".rebuild",
+                "--exclude",
+                ".git",
+                str(self.repo_path) + "/",
+                str(target_path) + "/",
+            ]
+        )
 
     def checkout(self, sha: str):
         self._run_git(["checkout", "--force", "--quiet", sha])

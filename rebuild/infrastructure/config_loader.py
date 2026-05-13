@@ -14,6 +14,7 @@ class ConfigLoader:
     Loader for rebuild.yaml configuration files.
     Merges file configuration with CLI defaults.
     """
+
     @staticmethod
     def load(path: Path) -> Dict[str, Any]:
         if not path.exists():
@@ -51,7 +52,7 @@ class ConfigLoader:
     @staticmethod
     def _project_section(yaml_data: Dict[str, Any]) -> Dict[str, Any]:
         project = yaml_data.get("project", {})
-        if not project: # Support flat structure too
+        if not project:  # Support flat structure too
             project = yaml_data
         return project
 

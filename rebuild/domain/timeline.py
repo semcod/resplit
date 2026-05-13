@@ -6,6 +6,7 @@ from enum import Enum
 
 class SnapshotType(Enum):
     """Type of dependency snapshot."""
+
     FULL = "full"
     INCREMENTAL = "incremental"
 
@@ -13,6 +14,7 @@ class SnapshotType(Enum):
 @dataclass
 class DependencyEdge:
     """A single dependency relationship between modules."""
+
     source: str
     target: str
     edge_type: str  # "import", "function_call", "class_inheritance", etc.
@@ -21,6 +23,7 @@ class DependencyEdge:
 @dataclass
 class ModuleNode:
     """A module in the dependency graph."""
+
     name: str
     file_path: str
     complexity: float = 0.0
@@ -30,6 +33,7 @@ class ModuleNode:
 @dataclass
 class GraphSnapshot:
     """A snapshot of the dependency graph at a specific point in time."""
+
     timestamp: str
     commit_sha: Optional[str] = None
     nodes: List[ModuleNode] = field(default_factory=list)
@@ -63,6 +67,7 @@ class GraphSnapshot:
 @dataclass
 class Timeline:
     """Timeline of dependency graph snapshots for evolution playback."""
+
     repo_path: str
     snapshots: List[GraphSnapshot] = field(default_factory=list)
 
@@ -119,9 +124,7 @@ class Timeline:
                 for n in snap_data["nodes"]
             ]
             edges = [
-                DependencyEdge(
-                    source=e["source"], target=e["target"], edge_type=e["edge_type"]
-                )
+                DependencyEdge(source=e["source"], target=e["target"], edge_type=e["edge_type"])
                 for e in snap_data["edges"]
             ]
             snapshot = GraphSnapshot(

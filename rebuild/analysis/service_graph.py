@@ -9,6 +9,7 @@ from typing import List, Dict, Set, Tuple
 
 from .duplication_engine import DuplicationEngine
 
+
 @dataclass
 class ServiceNode:
     name: str
@@ -17,10 +18,12 @@ class ServiceNode:
     dependents: Set[str] = field(default_factory=set)
     methods: List[str] = field(default_factory=list)
 
+
 class ServiceGraphBuilder:
     """
     Builds a dependency graph of services within the application layer.
     """
+
     def __init__(self, services_dir: Path, base_package: str = "rebuild"):
         self.services_dir = services_dir
         self.base_package = base_package
@@ -31,7 +34,10 @@ class ServiceGraphBuilder:
         for f in self.services_dir.glob("**/*.py"):
             if f.name == "__init__.py":
                 continue
-            if any(p in f.parts for p in (".git", ".venv", "venv", "__pycache__", "node_modules", ".rebuild")):
+            if any(
+                p in f.parts
+                for p in (".git", ".venv", "venv", "__pycache__", "node_modules", ".rebuild")
+            ):
                 continue
 
             # Use relative path as name (e.g. services.git_service)
@@ -70,7 +76,9 @@ class ServiceGraphBuilder:
                     if subnode.level > 0:
                         # Simple relative import resolver
                         parts = node.name.split(".")
-                        module_name = ".".join(parts[: -subnode.level]) + "." + (subnode.module or "")
+                        module_name = (
+                            ".".join(parts[: -subnode.level]) + "." + (subnode.module or "")
+                        )
                     resolved = module_name.strip(".")
                     # Skip self-dependencies (e.g., when a module file coexists
                     # with a same-named package and uses relative imports).
@@ -231,10 +239,7 @@ class MultiRepoAnalyzer:
                     edge = (source_key, target_key)
                     counts[edge] = counts.get(edge, 0) + 1
 
-        edges = [
-            CrossRepoDependency(src, dst, amount)
-            for (src, dst), amount in counts.items()
-        ]
+        edges = [CrossRepoDependency(src, dst, amount) for (src, dst), amount in counts.items()]
         edges.sort(key=lambda dep: dep.imports_count, reverse=True)
         return edges
 
@@ -288,7 +293,9 @@ class MultiRepoAnalyzer:
                 )
             )
 
-        groups.sort(key=lambda group: (len(group.repositories), group.fragments_count), reverse=True)
+        groups.sort(
+            key=lambda group: (len(group.repositories), group.fragments_count), reverse=True
+        )
         return groups
 
     def _iter_python_files(self, source_key: str, repo_path: Path) -> List[Path]:
@@ -332,7 +339,10 @@ class MultiRepoAnalyzer:
                 continue
             if f.suffix not in exts:
                 continue
-            if any(p in f.parts for p in (".git", ".venv", "venv", "__pycache__", "node_modules", ".rebuild")):
+            if any(
+                p in f.parts
+                for p in (".git", ".venv", "venv", "__pycache__", "node_modules", ".rebuild")
+            ):
                 continue
             fallback.append(f.resolve())
         return fallback

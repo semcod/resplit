@@ -13,18 +13,28 @@ from .base import Service
 from ...infrastructure.shell_adapter import ShellAdapter
 from ...infrastructure.http_adapter import HttpAdapter
 
+
 class DeployService(Service[Path, bool]):
     """
     Service for managing the lifecycle of the service being analyzed.
     Supports 'Replay Mode' (Invariant Infrastructure).
     """
-    def __init__(self, config: WalkConfig, console: Optional[Console] = None, shell: Optional[ShellAdapter] = None, http: Optional[HttpAdapter] = None):
+
+    def __init__(
+        self,
+        config: WalkConfig,
+        console: Optional[Console] = None,
+        shell: Optional[ShellAdapter] = None,
+        http: Optional[HttpAdapter] = None,
+    ):
         self.config = config
         self.console = console or Console()
         self.shell = shell or ShellAdapter(self.console)
         self.http = http or HttpAdapter(timeout=5)
         self._uvicorn_proc: Optional[Any] = None
-        self._project_name = f"rebuild-{hashlib.md5(str(config.repo_path.resolve()).encode()).hexdigest()[:8]}"
+        self._project_name = (
+            f"rebuild-{hashlib.md5(str(config.repo_path.resolve()).encode()).hexdigest()[:8]}"
+        )
         self.last_log: Optional[str] = None
         self.last_error_category: Optional[DeployErrorCategory] = None
         self.day_dir: Optional[Path] = None
@@ -58,7 +68,9 @@ class DeployService(Service[Path, bool]):
         """Implements Service protocol."""
         return self.start(repo)
 
-    def wait_healthy(self, timeout: Optional[float] = None, interval: Optional[float] = None) -> bool:
+    def wait_healthy(
+        self, timeout: Optional[float] = None, interval: Optional[float] = None
+    ) -> bool:
         """Public health gate for callers that need to re-check app readiness."""
         return self._wait_healthy(timeout=timeout, interval=interval)
 
@@ -89,8 +101,7 @@ class DeployService(Service[Path, bool]):
                 try:
                     cf = self._compose_file(repo)
                     result = self.shell.run(
-                        ["docker", "compose", "-f", str(cf), "restart", service],
-                        cwd=repo
+                        ["docker", "compose", "-f", str(cf), "restart", service], cwd=repo
                     )
                 except FileNotFoundError:
                     pass
@@ -127,8 +138,21 @@ class DeployService(Service[Path, bool]):
 
     def _compose_up(self, repo: Path) -> bool:
         cf = self._compose_file(repo)
-        cmd = ["docker", "compose", "-p", self._project_name, "-f", str(cf), "up", "-d", "--build", "--force-recreate"]
-        self.console.print(f"  [bold cyan]docker compose up[/bold cyan] (project: {self._project_name})")
+        cmd = [
+            "docker",
+            "compose",
+            "-p",
+            self._project_name,
+            "-f",
+            str(cf),
+            "up",
+            "-d",
+            "--build",
+            "--force-recreate",
+        ]
+        self.console.print(
+            f"  [bold cyan]docker compose up[/bold cyan] (project: {self._project_name})"
+        )
         result = self.shell.run(cmd, cwd=repo)
         combined = (result.stdout or "") + (result.stderr or "")
         if result.returncode != 0:
@@ -145,7 +169,17 @@ class DeployService(Service[Path, bool]):
     def _compose_down(self, repo: Path) -> None:
         try:
             cf = self._compose_file(repo)
-            cmd = ["docker", "compose", "-p", self._project_name, "-f", str(cf), "down", "--remove-orphans", "-v"]
+            cmd = [
+                "docker",
+                "compose",
+                "-p",
+                self._project_name,
+                "-f",
+                str(cf),
+                "down",
+                "--remove-orphans",
+                "-v",
+            ]
             self.shell.run(cmd, cwd=repo)
         except Exception as e:
             self.console.print(f"  [yellow]docker compose down error: {e}[/yellow]")
@@ -164,13 +198,32 @@ class DeployService(Service[Path, bool]):
 
     def _classify_deploy_error(self, log: str) -> DeployErrorCategory:
         log_lower = log.lower()
-        if any(p in log_lower for p in ("bind: address already in use", "port is already allocated", "address already in use")):
+        if any(
+            p in log_lower
+            for p in (
+                "bind: address already in use",
+                "port is already allocated",
+                "address already in use",
+            )
+        ):
             return DeployErrorCategory.PORT_CONFLICT
-        if any(p in log_lower for p in ("build failed", "dockerfile", "error building", "step ", "failed to build")):
+        if any(
+            p in log_lower
+            for p in ("build failed", "dockerfile", "error building", "step ", "failed to build")
+        ):
             return DeployErrorCategory.COMPOSE_BUILD_FAIL
         if any(p in log_lower for p in ("migration", "alembic", "flyway", "migrate")):
             return DeployErrorCategory.MIGRATION_FAIL
-        if any(p in log_lower for p in ("missing required env", "environment variable", "no such variable", "env not set", "keyerror")):
+        if any(
+            p in log_lower
+            for p in (
+                "missing required env",
+                "environment variable",
+                "no such variable",
+                "env not set",
+                "keyerror",
+            )
+        ):
             return DeployErrorCategory.MISSING_ENV
         return DeployErrorCategory.UNKNOWN
 
@@ -180,6 +233,7 @@ class DeployService(Service[Path, bool]):
             debug_file.parent.mkdir(parents=True, exist_ok=True)
             with open(debug_file, "a", encoding="utf-8") as f:
                 import datetime
+
                 f.write(f"\n=== {datetime.datetime.now().isoformat()} repo={repo} ===\n")
                 f.write(log[:5000])
                 f.write("\n")
@@ -195,7 +249,9 @@ class DeployService(Service[Path, bool]):
             ok = action()
             if ok:
                 if attempt > 1:
-                    self.console.print(f"  [green]✓ {action_label} recovered on retry {attempt}/{attempts}[/green]")
+                    self.console.print(
+                        f"  [green]✓ {action_label} recovered on retry {attempt}/{attempts}[/green]"
+                    )
                 return True
 
             if attempt < attempts:
@@ -215,7 +271,9 @@ class DeployService(Service[Path, bool]):
         for attempt in range(1, attempts + 1):
             if self.wait_healthy():
                 if attempt > 1:
-                    self.console.print(f"  [green]✓ health recovered on retry {attempt}/{attempts}[/green]")
+                    self.console.print(
+                        f"  [green]✓ health recovered on retry {attempt}/{attempts}[/green]"
+                    )
                 return True
 
             if attempt < attempts:
@@ -227,7 +285,9 @@ class DeployService(Service[Path, bool]):
 
         return False
 
-    def _wait_healthy(self, timeout: Optional[float] = None, interval: Optional[float] = None) -> bool:
+    def _wait_healthy(
+        self, timeout: Optional[float] = None, interval: Optional[float] = None
+    ) -> bool:
         health_timeout = self.config.health_timeout if timeout is None else timeout
         health_interval = self.config.health_interval if interval is None else interval
         deadline = time.time() + health_timeout
@@ -296,6 +356,7 @@ class DeployService(Service[Path, bool]):
             debug_file.parent.mkdir(parents=True, exist_ok=True)
             with open(debug_file, "a", encoding="utf-8") as f:
                 import datetime
+
                 f.write(
                     f"\n=== health timeout {datetime.datetime.now().isoformat()} "
                     f"url={self.config.health_url} ===\n"
@@ -359,7 +420,9 @@ class DeployService(Service[Path, bool]):
             ["docker", "update", "-e", f"PYTHONPATH={overlay_dir}:$PYTHONPATH", container]
         )
         if update.returncode != 0:
-            self.console.print(f"  [yellow]Failed to update PYTHONPATH:[/yellow] {update.stderr[:200]}")
+            self.console.print(
+                f"  [yellow]Failed to update PYTHONPATH:[/yellow] {update.stderr[:200]}"
+            )
             return False
 
         return True

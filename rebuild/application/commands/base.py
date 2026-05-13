@@ -1,6 +1,7 @@
 """
 CQRS base: Command, CommandResult, CommandHandler, CommandBus.
 """
+
 from __future__ import annotations
 
 import uuid
@@ -17,9 +18,7 @@ class Command(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     command_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    issued_at: str = Field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    issued_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 class CommandResult(BaseModel):
@@ -41,8 +40,7 @@ class CommandHandler(ABC, Generic[TCommand, TResult]):
     """Handle a single Command type and return a CommandResult."""
 
     @abstractmethod
-    def handle(self, command: TCommand) -> TResult:
-        ...
+    def handle(self, command: TCommand) -> TResult: ...
 
 
 class CommandBus:
@@ -66,7 +64,5 @@ class CommandBus:
     def dispatch(self, command: Command) -> CommandResult:
         handler = self._handlers.get(type(command))
         if handler is None:
-            raise ValueError(
-                f"No handler registered for {type(command).__name__}"
-            )
+            raise ValueError(f"No handler registered for {type(command).__name__}")
         return handler.handle(command)

@@ -7,6 +7,7 @@ from enum import Enum
 
 class Platform(Enum):
     """Git platform for PR operations."""
+
     GITHUB = "github"
     GITLAB = "gitlab"
 
@@ -14,6 +15,7 @@ class Platform(Enum):
 @dataclass
 class PRConfig:
     """Configuration for creating a pull/merge request."""
+
     platform: Platform
     token: str
     repo_owner: str
@@ -27,6 +29,7 @@ class PRConfig:
 @dataclass
 class PRResult:
     """Result of PR creation."""
+
     success: bool
     pr_url: Optional[str] = None
     pr_number: Optional[int] = None

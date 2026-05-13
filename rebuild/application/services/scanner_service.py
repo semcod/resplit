@@ -14,6 +14,7 @@ from ...domain.models import WalkConfig
 from ...domain.endpoint import Endpoint
 from .base import Service
 
+
 class ScannerService(Service[Path, List[Endpoint]]):
     """
     Service for discovering API endpoints in a repository.
@@ -35,6 +36,7 @@ class ScannerService(Service[Path, List[Endpoint]]):
     The cache is process-local and reset by :meth:`reset_cache`. There is no
     on-disk persistence; that is reserved for a later phase (Sprint 5+).
     """
+
     def __init__(self, config: WalkConfig):
         self.config = config
         # Content-hash → endpoints discovered in that file.
@@ -91,7 +93,9 @@ class ScannerService(Service[Path, List[Endpoint]]):
 
         # 5. Minimalny fallback: /api/health
         if not endpoints:
-            endpoints.append(Endpoint(method="GET", path="/api/health", base_url=self.config.base_url))
+            endpoints.append(
+                Endpoint(method="GET", path="/api/health", base_url=self.config.base_url)
+            )
 
         return endpoints
 
@@ -99,7 +103,9 @@ class ScannerService(Service[Path, List[Endpoint]]):
         try:
             result = subprocess.run(
                 ["deta", "scan", str(repo), "--formats", "json"],
-                capture_output=True, text=True, timeout=30,
+                capture_output=True,
+                text=True,
+                timeout=30,
             )
             if result.returncode != 0:
                 return []
@@ -241,7 +247,11 @@ class ScannerService(Service[Path, List[Endpoint]]):
 
             prefix = ""
             for kw in node.value.keywords:
-                if kw.arg == "prefix" and isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
+                if (
+                    kw.arg == "prefix"
+                    and isinstance(kw.value, ast.Constant)
+                    and isinstance(kw.value.value, str)
+                ):
                     prefix = kw.value.value
                     break
 
@@ -258,7 +268,11 @@ class ScannerService(Service[Path, List[Endpoint]]):
                 return arg.value
 
         for kw in decorator.keywords:
-            if kw.arg == "path" and isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
+            if (
+                kw.arg == "path"
+                and isinstance(kw.value, ast.Constant)
+                and isinstance(kw.value.value, str)
+            ):
                 return kw.value.value
 
         return None
@@ -283,12 +297,14 @@ class ScannerService(Service[Path, List[Endpoint]]):
                 if host_port:
                     url = f"http://localhost:{host_port}"
                     for path in ("/api/health", "/health", "/"):
-                        endpoints.append(Endpoint(
-                            method="GET",
-                            path=path,
-                            base_url=url,
-                            service=name,
-                        ))
+                        endpoints.append(
+                            Endpoint(
+                                method="GET",
+                                path=path,
+                                base_url=url,
+                                service=name,
+                            )
+                        )
         return endpoints
 
     def _scan_via_openapi(self, base_url: str, repo: Path) -> List[Endpoint]:
@@ -366,7 +382,9 @@ class ScannerService(Service[Path, List[Endpoint]]):
             for method, details in methods.items():
                 if method.upper() in ("GET", "POST", "PUT", "DELETE", "PATCH"):
                     desc = details.get("summary", "")
-                    resolved_body = self._resolve_test_body(method.upper(), actual_path, path_template)
+                    resolved_body = self._resolve_test_body(
+                        method.upper(), actual_path, path_template
+                    )
                     ep = Endpoint(
                         method=method.upper(),
                         path=actual_path,
@@ -380,7 +398,9 @@ class ScannerService(Service[Path, List[Endpoint]]):
                     endpoints.append(ep)
         return endpoints
 
-    def _resolve_test_body(self, method: str, actual_path: str, template_path: str) -> Optional[dict]:
+    def _resolve_test_body(
+        self, method: str, actual_path: str, template_path: str
+    ) -> Optional[dict]:
         bodies = getattr(self.config, "test_bodies", {}) or {}
         candidates = [
             f"{method} {actual_path}",
@@ -414,11 +434,13 @@ class ScannerService(Service[Path, List[Endpoint]]):
                 for label in labels:
                     for match in _TRAEFIK_RULE.finditer(str(label)):
                         prefix = match.group(1)
-                        endpoints.append(Endpoint(
-                            method="GET",
-                            path=prefix,
-                            base_url=self.config.base_url,
-                            service=svc_name,
-                        ))
+                        endpoints.append(
+                            Endpoint(
+                                method="GET",
+                                path=prefix,
+                                base_url=self.config.base_url,
+                                service=svc_name,
+                            )
+                        )
             return endpoints
         return []

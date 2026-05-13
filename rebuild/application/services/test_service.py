@@ -7,11 +7,13 @@ from ...domain.endpoint import Endpoint, EndpointResult, EndpointStatus
 from .base import Service
 from ...infrastructure.http_adapter import HttpAdapter
 
+
 class TestService(Service[List[Endpoint], List[EndpointResult]]):
     """
     Service for testing endpoints using various strategies.
     Uses HttpAdapter for standard probes.
     """
+
     def __init__(self, config: WalkConfig, http: Optional[HttpAdapter] = None):
         self.config = config
         self.http = http or HttpAdapter()
@@ -95,11 +97,21 @@ class TestService(Service[List[Endpoint], List[EndpointResult]]):
                 endpoint=ep,
                 status=status,
                 http_status=resp.status_code,
-                response_time_ms=resp.elapsed.total_seconds() * 1000 if getattr(resp, "elapsed", None) else None,
+                response_time_ms=resp.elapsed.total_seconds() * 1000
+                if getattr(resp, "elapsed", None)
+                else None,
             )
         except Exception as e:
             err_str = str(e)
-            net_keywords = ("connect", "connection", "network", "refused", "timeout", "timed out", "name or service")
+            net_keywords = (
+                "connect",
+                "connection",
+                "network",
+                "refused",
+                "timeout",
+                "timed out",
+                "name or service",
+            )
             if any(k in err_str.lower() for k in net_keywords):
                 status = EndpointStatus.FAIL_NETWORK
             else:

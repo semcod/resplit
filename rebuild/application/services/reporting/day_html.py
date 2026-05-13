@@ -5,6 +5,7 @@ Pure functions extracted from :class:`ReporterService` (Sprint 5b / 2026-05-08).
 helpers (`render_endpoint_rows`, `render_deploy_section`) are unit-testable in
 isolation and reused by tests / future template engines.
 """
+
 from __future__ import annotations
 
 import json
@@ -35,12 +36,12 @@ def render_endpoint_row(endpoint_result: "EndpointResult") -> str:
         f'<td><span class="method-tag method-{r.endpoint.method.lower()}">{r.endpoint.method}</span></td>'
         f'<td class="path-cell">'
         f'<div class="path-text" title="{r.endpoint.url}">{r.endpoint.path}</div>'
-        f'{template_html}</td>'
-        f'<td>{status_badge(r.status)}</td>'
+        f"{template_html}</td>"
+        f"<td>{status_badge(r.status)}</td>"
         f'<td><span class="status-code code-{code_class}">{r.http_status or "—"}</span></td>'
         f'<td class="time-cell">{rt}</td>'
-        f'<td>{cat_badge}</td>'
-        f'</tr>'
+        f"<td>{cat_badge}</td>"
+        f"</tr>"
     )
 
 
@@ -60,7 +61,7 @@ def render_deploy_category(result: "DayResult") -> str:
         return ""
     return (
         f'<div style="margin-top:8px;color:var(--warn)">Category: '
-        f'<strong>{result.deploy_error_category.value}</strong></div>'
+        f"<strong>{result.deploy_error_category.value}</strong></div>"
     )
 
 
@@ -93,7 +94,7 @@ def render_day_html(result: "DayResult", data: dict) -> str:
     commit_chip = (
         f'<span style="background:rgba(99,102,241,0.15);color:#a5b4fc;padding:4px 12px;'
         f'border-radius:20px;font-family:JetBrains Mono,monospace;font-size:0.85rem;">'
-        f'{result.commit.sha[:8]} · {result.commit.message[:50]}</span>'
+        f"{result.commit.sha[:8]} · {result.commit.message[:50]}</span>"
         if result.commit
         else ""
     )

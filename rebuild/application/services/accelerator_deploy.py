@@ -2,6 +2,7 @@
 Accelerated deployment using volume mounts + worktrees.
 No container recreation - code is swapped via bind mount.
 """
+
 from __future__ import annotations
 import time
 from pathlib import Path
@@ -37,7 +38,7 @@ class AcceleratorDeployService(DeployService):
         worktree_manager: WorktreeManager,
         console=None,
         shell: Optional[ShellAdapter] = None,
-        http: Optional[HttpAdapter] = None
+        http: Optional[HttpAdapter] = None,
     ):
         super().__init__(config, console, shell, http)
         self.worktrees = worktree_manager
@@ -101,8 +102,15 @@ class AcceleratorDeployService(DeployService):
         # Use -d but NOT --build --force-recreate
         # Containers will start with placeholder or empty /app
         cmd = [
-            "docker", "compose", "-p", self._project_name, "-f", str(cf),
-            "up", "-d", "--no-build"
+            "docker",
+            "compose",
+            "-p",
+            self._project_name,
+            "-f",
+            str(cf),
+            "up",
+            "-d",
+            "--no-build",
         ]
 
         result = self.shell.run(cmd, cwd=repo)
@@ -212,21 +220,15 @@ class AcceleratorDeployService(DeployService):
         if sha and repo and self._current_sha and self._current_sha != sha:
             changed = self._get_changed_files(repo, self._current_sha, sha)
             if changed is not None and len(changed) <= self._INCREMENTAL_FILE_THRESHOLD:
-                self.console.print(
-                    f"  [dim]incremental sync: {len(changed)} file(s)[/dim]"
-                )
+                self.console.print(f"  [dim]incremental sync: {len(changed)} file(s)[/dim]")
                 return self._copy_changed_files(container_name, code_path, changed)
 
         # Full copy fallback
         self.shell.run(["docker", "exec", container_name, "mkdir", "-p", "/app"])
-        result = self.shell.run(
-            ["docker", "cp", str(code_path) + "/.", f"{container_name}:/app/"]
-        )
+        result = self.shell.run(["docker", "cp", str(code_path) + "/.", f"{container_name}:/app/"])
         return result.returncode == 0
 
-    def _get_changed_files(
-        self, repo: Path, from_sha: str, to_sha: str
-    ) -> Optional[list]:
+    def _get_changed_files(self, repo: Path, from_sha: str, to_sha: str) -> Optional[list]:
         """Return list of files changed between two commits, or None on error."""
         result = self.shell.run(
             ["git", "diff", "--name-only", from_sha, to_sha],
@@ -236,17 +238,13 @@ class AcceleratorDeployService(DeployService):
             return None
         return [f for f in result.stdout.strip().splitlines() if f]
 
-    def _copy_changed_files(
-        self, container_name: str, code_path: Path, files: list
-    ) -> bool:
+    def _copy_changed_files(self, container_name: str, code_path: Path, files: list) -> bool:
         """Copy only the listed relative paths into /app in the container."""
         for rel_path in files:
             src = code_path / rel_path
             if not src.exists():
                 # Deleted in this commit - remove from container
-                self.shell.run(
-                    ["docker", "exec", container_name, "rm", "-f", f"/app/{rel_path}"]
-                )
+                self.shell.run(["docker", "exec", container_name, "rm", "-f", f"/app/{rel_path}"])
             else:
                 parent = Path(rel_path).parent
                 if str(parent) != ".":
@@ -280,10 +278,9 @@ class AcceleratorDeployService(DeployService):
                 return name
 
         # Fallback: try to get from compose
-        result = self.shell.run([
-            "docker", "compose", "-p", self._project_name,
-            "ps", "-q", service
-        ])
+        result = self.shell.run(
+            ["docker", "compose", "-p", self._project_name, "ps", "-q", service]
+        )
         if result.returncode == 0 and result.stdout.strip():
             container_name = result.stdout.strip()[:12]
             self._container_name_cache[service] = container_name
@@ -326,15 +323,19 @@ class AcceleratorDeployService(DeployService):
         time.sleep(0.5)
 
     def _send_hup_signal(self, container_name: str):
-        return self.shell.run([
-            "docker", "kill", "--signal=HUP", container_name
-        ])
+        return self.shell.run(["docker", "kill", "--signal=HUP", container_name])
 
     def _send_exec_hup(self, container_name: str):
-        return self.shell.run([
-            "docker", "exec", container_name,
-            "sh", "-c", "kill -HUP $(pgrep -f 'uvicorn|python' | head -1) 2>/dev/null || true"
-        ])
+        return self.shell.run(
+            [
+                "docker",
+                "exec",
+                container_name,
+                "sh",
+                "-c",
+                "kill -HUP $(pgrep -f 'uvicorn|python' | head -1) 2>/dev/null || true",
+            ]
+        )
 
     def _write_runtime_marker(self, code_path: Path, sha: str) -> None:
         code_path.mkdir(parents=True, exist_ok=True)
@@ -400,7 +401,7 @@ class AcceleratorDeployService(DeployService):
         In accelerator mode with --keep-alive flag, don't stop.
         Otherwise, normal shutdown.
         """
-        if getattr(self.config, 'keep_alive', False):
+        if getattr(self.config, "keep_alive", False):
             self.console.print("  [dim]Accelerator mode: keeping infrastructure alive[/dim]")
             return
 
@@ -413,6 +414,7 @@ class AcceleratorDeployService(DeployService):
         """
         # Read original compose
         import yaml
+
         compose_data = yaml.safe_load(compose_file.read_text())
 
         service = self.config.app_service or "backend"

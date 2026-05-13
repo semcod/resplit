@@ -5,6 +5,7 @@ Pure functions extracted from :class:`ReporterService` (Sprint 5b / 2026-05-08).
 ``build_export_data(results)`` computes the JSON-friendly shape used by
 ``history.json`` and the in-page ``DATA`` blob.
 """
+
 from __future__ import annotations
 
 import json
@@ -46,7 +47,9 @@ def build_export_data(results: List["DayResult"]) -> list:
             "fail": r.fail_count,
             "total": len(r.endpoints),
             "deploy_success": r.deploy_success,
-            "deploy_error_category": r.deploy_error_category.value if r.deploy_error_category else None,
+            "deploy_error_category": r.deploy_error_category.value
+            if r.deploy_error_category
+            else None,
             "duration_seconds": r.duration_seconds,
         }
         for r in sorted(results, key=lambda x: x.day, reverse=True)
@@ -61,7 +64,13 @@ def _render_day_row(
 ) -> str:
     day_dir = r.output_dir or (output_dir / str(r.day))
     rel = day_dir.relative_to(output_dir) if day_dir.is_relative_to(output_dir) else day_dir
-    hc = "var(--success)" if r.health_pct >= 80 else "var(--warn)" if r.health_pct >= 50 else "var(--fail)"
+    hc = (
+        "var(--success)"
+        if r.health_pct >= 80
+        else "var(--warn)"
+        if r.health_pct >= 50
+        else "var(--fail)"
+    )
     dep_cls = "tag-ok" if r.deploy_success else "tag-fail"
     dep_txt = "✓ OK" if r.deploy_success else "✗ FAIL"
     cat_txt = (
@@ -89,8 +98,8 @@ def _render_day_row(
         f'<span style="color:{hc};font-weight:700;font-size:0.85rem">{r.health_pct}%</span>{trend_html}</td>'
         f'<td><span class="stat-ok">{r.ok_count}</span> / <span class="stat-total">{len(r.endpoints)}</span>{endpoint_trend_html}</td>'
         f'<td><span class="deploy-tag {dep_cls}">{dep_txt}</span>{cat_txt}</td>'
-        f'<td>{r.duration_seconds:.1f}s</td>'
-        f'</tr>'
+        f"<td>{r.duration_seconds:.1f}s</td>"
+        f"</tr>"
     )
 
 

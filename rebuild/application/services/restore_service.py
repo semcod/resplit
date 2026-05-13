@@ -9,10 +9,12 @@ from typing import List, Optional, Tuple
 from rich.console import Console
 from .base import Service
 
+
 class RestoreService(Service[Tuple[str, Path], Optional[date]]):
     """
     Service for restoring a working endpoint from git history.
     """
+
     def __init__(self, repo_path: Path, console: Optional[Console] = None):
         self.repo_path = repo_path
         self.console = console or Console()
@@ -93,7 +95,9 @@ class RestoreService(Service[Tuple[str, Path], Optional[date]]):
 
         for ext in ("*.py", "*.js", "*.ts", "*.jsx", "*.tsx"):
             for f in self.repo_path.rglob(ext):
-                if any(p in f.parts for p in ("node_modules", ".venv", "venv", "__pycache__", ".git")):
+                if any(
+                    p in f.parts for p in ("node_modules", ".venv", "venv", "__pycache__", ".git")
+                ):
                     continue
                 try:
                     content = f.read_text(errors="replace")
@@ -106,7 +110,9 @@ class RestoreService(Service[Tuple[str, Path], Optional[date]]):
     def _is_page_endpoint(self, path: str) -> bool:
         return "/api/" not in path and "/webhook/" not in path
 
-    def _write_readme(self, target: Path, endpoint_path: str, working_day: date, backend_files: List[Path]) -> None:
+    def _write_readme(
+        self, target: Path, endpoint_path: str, working_day: date, backend_files: List[Path]
+    ) -> None:
         slug = endpoint_path.strip("/").replace("/", "-") or "root"
         files_list = "\n".join(f"- `{f.name}`" for f in backend_files[:10])
 

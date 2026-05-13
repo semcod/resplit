@@ -38,9 +38,13 @@ def duplicates_command(
 
     console.print(f"\n[bold red]Znaleziono {len(groups)} grup duplikatów:[/bold red]\n")
     for i, group in enumerate(groups, 1):
-        console.print(f"[bold]Grupa {i} (Similarity: {group.similarity:.2f}, Reason: {group.reason})[/bold]")
+        console.print(
+            f"[bold]Grupa {i} (Similarity: {group.similarity:.2f}, Reason: {group.reason})[/bold]"
+        )
         for frag in group.fragments:
-            console.print(f"  - {frag.file}:{frag.start_line} ([cyan]{frag.name or 'block'}[/cyan])")
+            console.print(
+                f"  - {frag.file}:{frag.start_line} ([cyan]{frag.name or 'block'}[/cyan])"
+            )
         console.print("")
 
 
@@ -215,9 +219,13 @@ def services_command(path: Path, export: bool, console: Console) -> None:
     analyzer = ServiceSimilarityAnalyzer()
     similarities = analyzer.analyze_directory(path)
     if similarities:
-        console.print(f"\n[bold yellow]Wykryto {len(similarities)} nakładających się usług:[/bold yellow]")
+        console.print(
+            f"\n[bold yellow]Wykryto {len(similarities)} nakładających się usług:[/bold yellow]"
+        )
         for sim in similarities:
-            console.print(f"  [bold]{sim.service_a}[/bold] ↔ [bold]{sim.service_b}[/bold] (Overlap: [red]{sim.overlap:.2f}[/red])")
+            console.print(
+                f"  [bold]{sim.service_a}[/bold] ↔ [bold]{sim.service_b}[/bold] (Overlap: [red]{sim.overlap:.2f}[/red])"
+            )
 
 
 def truth_command(file: Path, function: str, repo: Path, console: Console) -> None:
@@ -228,7 +236,9 @@ def truth_command(file: Path, function: str, repo: Path, console: Console) -> No
     qualities = analyzer.analyze_function_history(file, function)
 
     if not qualities:
-        console.print(f"[yellow]Nie znaleziono historii dla funkcji {function} w pliku {file}[/yellow]")
+        console.print(
+            f"[yellow]Nie znaleziono historii dla funkcji {function} w pliku {file}[/yellow]"
+        )
         return
 
     console.print(f"\n[bold green]Historia jakości funkcji {function}:[/bold green]\n")
@@ -246,7 +256,7 @@ def truth_command(file: Path, function: str, repo: Path, console: Console) -> No
             q.timestamp.strftime("%Y-%m-%d"),
             str(q.complexity),
             str(q.size_lines),
-            f"{q.test_pass_rate*100:.0f}%",
+            f"{q.test_pass_rate * 100:.0f}%",
             f"{q.score:.1f}",
         )
     console.print(table)

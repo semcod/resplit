@@ -3,6 +3,7 @@ Domain Events for rebuild Event Sourcing.
 
 All events are immutable Pydantic models.
 """
+
 from __future__ import annotations
 
 import json
@@ -23,11 +24,7 @@ class PipelineEvent:
 
     @classmethod
     def create(cls, event_type: str, **kwargs) -> PipelineEvent:
-        return cls(
-            event_type=event_type,
-            timestamp=datetime.now().isoformat(),
-            data=kwargs
-        )
+        return cls(event_type=event_type, timestamp=datetime.now().isoformat(), data=kwargs)
 
     def to_json(self) -> str:
         return json.dumps(asdict(self))
@@ -39,9 +36,7 @@ class DomainEvent(BaseModel):
     event_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     event_type: str = ""
     aggregate_id: str = ""  # e.g. walk run ID
-    occurred_at: str = Field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    occurred_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     version: int = 1
 
     model_config = ConfigDict(frozen=True)
@@ -56,6 +51,7 @@ class DomainEvent(BaseModel):
 
 # ─── Walk events ──────────────────────────────────────────────────────────────
 
+
 class WalkStartedEvent(DomainEvent):
     repo: str
     days: int
@@ -64,7 +60,7 @@ class WalkStartedEvent(DomainEvent):
 
 
 class CommitCheckedOutEvent(DomainEvent):
-    day: str          # ISO date
+    day: str  # ISO date
     commit_sha: str
     commit_message: str
 
@@ -129,6 +125,7 @@ class WalkFinishedEvent(DomainEvent):
 
 # ─── Analysis events ──────────────────────────────────────────────────────────
 
+
 class AnalysisStartedEvent(DomainEvent):
     repo: str
     analysis_type: str
@@ -143,6 +140,7 @@ class AnalysisFinishedEvent(DomainEvent):
 
 # ─── Snapshot events ──────────────────────────────────────────────────────────
 
+
 class SnapshotCreatedEvent(DomainEvent):
     snapshot_name: str
     db_type: str
@@ -156,6 +154,7 @@ class SnapshotPrunedEvent(DomainEvent):
 
 
 # ─── Notification events ──────────────────────────────────────────────────────
+
 
 class NotificationSentEvent(DomainEvent):
     notification_event: str

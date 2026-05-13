@@ -13,11 +13,13 @@ from .services.deploy_service import DeployService
 from .services.git_service import GitService
 from .services.test_service import TestService
 
+
 class Pipeline(BasePipeline):
     """
     Orchestrates the analysis process (Command).
     Supports Incremental Walking, Event Sourcing, and Replay Mode.
     """
+
     def __init__(self, config: WalkConfig, console=None):
         super().__init__(config, console)
         self.deploy = DeployService(config, console=self.console)
@@ -69,13 +71,20 @@ class Pipeline(BasePipeline):
             return []
 
         self._event_service.enable()
-        self._emit("PIPELINE_STARTED", days=len(commits), repo=str(self.config.repo_path), replay=self.config.replay)
+        self._emit(
+            "PIPELINE_STARTED",
+            days=len(commits),
+            repo=str(self.config.repo_path),
+            replay=self.config.replay,
+        )
         self.log(f"Znaleziono [bold]{len(commits)}[/bold] dni z commitami.\n")
 
         # Clone repo into output_dir/repo/ so original is never modified
         if not self.config.dry_run:
             if self.config.accelerator:
-                self.log("[bold cyan]⚡ Accelerator Mode: Synchronizowanie stanu aktualnego (node_modules)...[/bold cyan]")
+                self.log(
+                    "[bold cyan]⚡ Accelerator Mode: Synchronizowanie stanu aktualnego (node_modules)...[/bold cyan]"
+                )
                 clone_path = self.config.output_dir / "repo"
                 self.git.sync_current_state(clone_path)
                 self._walk_git = GitService(clone_path)
@@ -86,7 +95,9 @@ class Pipeline(BasePipeline):
             self._walk_git = self.git
 
         if self.config.replay:
-            self.log("[bold magenta]⚡ Replay Mode: Utrzymywanie stałej infrastruktury.[/bold magenta]")
+            self.log(
+                "[bold magenta]⚡ Replay Mode: Utrzymywanie stałej infrastruktury.[/bold magenta]"
+            )
             self.deploy.start(self._walk_git.repo_path)
 
         all_results: List[DayResult] = []
@@ -94,13 +105,17 @@ class Pipeline(BasePipeline):
         try:
             for day, commit in commits:
                 if commit.sha in self._processed_shas:
-                    self.log(f"--- [bold]{day}[/bold]  {commit.sha[:8]}  [dim](skipped — already processed)[/dim]")
+                    self.log(
+                        f"--- [bold]{day}[/bold]  {commit.sha[:8]}  [dim](skipped — already processed)[/dim]"
+                    )
                     continue
 
                 result = self.run_day(day, commit)
                 all_results.append(result)
 
-                failed = bool(result.error) or (not result.deploy_success and not self.config.dry_run)
+                failed = bool(result.error) or (
+                    not result.deploy_success and not self.config.dry_run
+                )
                 if failed:
                     self.log(
                         f"  [yellow]Recovery pending for {commit.sha[:8]}[/yellow] "
@@ -199,9 +214,7 @@ class Pipeline(BasePipeline):
             return
         overridden = self.overrider.execute(scan_repo, self.config.patch_dir)
         if overridden:
-            self.log(
-                f"  [bold green]✓ Zastosowano {overridden} poprawek manualnych.[/bold green]"
-            )
+            self.log(f"  [bold green]✓ Zastosowano {overridden} poprawek manualnych.[/bold green]")
 
     def _deploy_day(self, repo_path: Path, day_dir: Path, result: DayResult) -> None:
         self.deploy.day_dir = day_dir

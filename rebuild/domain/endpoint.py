@@ -4,6 +4,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional, Any, Dict
 
+
 class EndpointStatus(str, Enum):
     OK = "ok"
     FAIL = "fail"
@@ -17,14 +18,15 @@ class EndpointStatus(str, Enum):
     SKIP_AUTH = "skip_auth"
     UNKNOWN = "unknown"
 
+
 @dataclass
 class Endpoint:
-    method: str           # GET / POST / ...
-    path: str             # /api/health
-    base_url: str         # http://localhost:8003
-    service: str = ""     # nazwa usługi z deta scan
+    method: str  # GET / POST / ...
+    path: str  # /api/health
+    base_url: str  # http://localhost:8003
+    service: str = ""  # nazwa usługi z deta scan
     description: str = ""
-    template_path: Optional[str] = None # Oryginalna ścieżka z {param}
+    template_path: Optional[str] = None  # Oryginalna ścieżka z {param}
     body: Optional[Dict[str, Any]] = None
 
     @property
@@ -36,6 +38,7 @@ class Endpoint:
         """Bezpieczna nazwa pliku: GET_api_health"""
         safe = self.path.replace("/", "_").replace("?", "_").strip("_")
         return f"{self.method}_{safe}"
+
 
 @dataclass
 class EndpointResult:

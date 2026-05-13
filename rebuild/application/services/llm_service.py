@@ -5,11 +5,13 @@ import litellm
 from dotenv import load_dotenv
 from rich.console import Console
 
+
 class LLMService:
     """
     Service for interacting with LLMs via LiteLLM.
     Supports summarizing refactor plans and generating PR descriptions.
     """
+
     def __init__(self, console: Optional[Console] = None):
         self.console = console or Console()
         load_dotenv()
@@ -17,7 +19,9 @@ class LLMService:
         self.api_key = os.getenv("OPENROUTER_API_KEY")
 
         if not self.api_key:
-            self.console.print("[yellow]⚠ OPENROUTER_API_KEY nie został znaleziony w .env. Funkcje AI będą wyłączone.[/yellow]")
+            self.console.print(
+                "[yellow]⚠ OPENROUTER_API_KEY nie został znaleziony w .env. Funkcje AI będą wyłączone.[/yellow]"
+            )
 
     def is_available(self) -> bool:
         return bool(self.api_key)
@@ -40,7 +44,7 @@ class LLMService:
             response = litellm.completion(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
-                api_key=self.api_key
+                api_key=self.api_key,
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
@@ -68,7 +72,7 @@ class LLMService:
             response = litellm.completion(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
-                api_key=self.api_key
+                api_key=self.api_key,
             )
             return response.choices[0].message.content.strip()
         except Exception as e:

@@ -5,11 +5,13 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional, Dict, List, Any
 
+
 class DeployMethod(Enum):
     AUTO = "auto"
     DOCKER_COMPOSE = "docker-compose"
     UVICORN = "uvicorn"
     NONE = "none"
+
 
 @dataclass
 class WalkConfig:

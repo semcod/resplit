@@ -10,6 +10,7 @@ from enum import Enum
 
 class EventType(Enum):
     """Types of pipeline events for real-time monitoring."""
+
     PIPELINE_START = "pipeline_start"
     PIPELINE_END = "pipeline_end"
     DAY_START = "day_start"
@@ -28,6 +29,7 @@ class EventType(Enum):
 @dataclass
 class PipelineEvent:
     """A single pipeline event for real-time streaming."""
+
     event_type: EventType
     timestamp: str
     data: Dict[str, Any]
@@ -93,7 +95,13 @@ class EventService:
             for q in dead_subscribers:
                 self._subscribers.remove(q)
 
-    def emit(self, event_type: EventType, data: Dict[str, Any], day: Optional[str] = None, commit: Optional[str] = None) -> None:
+    def emit(
+        self,
+        event_type: EventType,
+        data: Dict[str, Any],
+        day: Optional[str] = None,
+        commit: Optional[str] = None,
+    ) -> None:
         """Convenience method to emit an event."""
         event = PipelineEvent(
             event_type=event_type,

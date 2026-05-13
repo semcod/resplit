@@ -41,8 +41,21 @@ def walk_command(
 
     method = _resolve_deploy_method(repo, deploy, dry_run)
     config = _build_walk_config(
-        repo, output, days, date_from, date_to, method, health_url, base_url,
-        screenshots, dry_run, replay, service, accelerator, patch_dir, health_timeout,
+        repo,
+        output,
+        days,
+        date_from,
+        date_to,
+        method,
+        health_url,
+        base_url,
+        screenshots,
+        dry_run,
+        replay,
+        service,
+        accelerator,
+        patch_dir,
+        health_timeout,
     )
     _load_yaml_config(config, repo, console)
     _apply_cli_overrides(
@@ -164,6 +177,7 @@ def _apply_cli_overrides(config: WalkConfig, overrides: Dict[str, bool], **value
 
 def _print_walk_header(config: WalkConfig, repo: Path, console: Console) -> None:
     from ... import __version__
+
     console.print(f"\n[bold]rebuild walk[/bold] v{__version__}")
     console.print(f"  repo:   {repo}")
     console.print(f"  output: {config.output_dir}")
@@ -182,12 +196,15 @@ def _handle_walk_results(
     if all_results:
         console.print("\n[bold green]✓ Gotowe![/bold green]")
         from ..dashboard import generate_dashboard
+
         generate_dashboard(all_results, config.output_dir, repo=repo)
         from ...application.services.reporting.reporter import ReporterService
+
         reporter = ReporterService()
         reporter.export_csv(all_results, config.output_dir)
         reporter.export_markdown(all_results, config.output_dir)
         from .helpers import print_report_links, print_summary_table, serve_reports
+
         print_report_links(config.output_dir, port if serve else None, console)
         print_summary_table(all_results, console)
         _fire_notifications(all_results, config, console)
@@ -199,6 +216,7 @@ def _handle_walk_results(
 
 def _fire_notifications(all_results, config, console: Console) -> None:
     from ...application.services.notification_service import NotificationService
+
     hooks_cfg = getattr(config, "notifications", None)
     if not hooks_cfg:
         return
@@ -267,6 +285,7 @@ def accelerator_command(
     )
 
     from ... import __version__
+
     console.print(f"\n[bold cyan]⚡ REBUILD ACCELERATOR[/bold cyan] v{__version__}")
     console.print(f"  repo:     {repo}")
     console.print(f"  output:   {output}")
@@ -286,8 +305,10 @@ def accelerator_command(
     if all_results:
         console.print("\n[bold green]✓ Accelerator done![/bold green]")
         from ..dashboard import generate_dashboard
+
         generate_dashboard(all_results, output, repo=repo)
         from .helpers import print_report_links, print_summary_table, serve_reports
+
         print_report_links(output, port if serve else None, console)
         print_summary_table(all_results, console)
         if serve:

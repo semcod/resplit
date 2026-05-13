@@ -55,7 +55,11 @@ if TEXTUAL_OK:
                 results = d["results"]
                 health = TUIDataService.calc_health(results)
                 ok = sum(1 for r in results if r.get("status") == "ok")
-                fail = sum(1 for r in results if r.get("status") not in ("ok", "skip", "skip_method", "skip_auth"))
+                fail = sum(
+                    1
+                    for r in results
+                    if r.get("status") not in ("ok", "skip", "skip_method", "skip_auth")
+                )
                 total = len(results)
 
                 if i > 0:
@@ -80,9 +84,13 @@ if TEXTUAL_OK:
                     health_str = f"[red]{health_str}[/red]"
 
                 table.add_row(
-                    d["day"], d["commit"], str(total),
-                    f"[green]{ok}[/green]", f"[red]{fail}[/red]",
-                    health_str, delta,
+                    d["day"],
+                    d["commit"],
+                    str(total),
+                    f"[green]{ok}[/green]",
+                    f"[red]{fail}[/red]",
+                    health_str,
+                    delta,
                 )
 
             self.query_one("#status-bar", Static).update(
@@ -99,11 +107,14 @@ if TEXTUAL_OK:
                 idx = self._selected_idx()
                 if 0 <= idx < len(self._days):
                     from .endpoint_screens import EndpointDetailScreen
-                    self.app.push_screen(EndpointDetailScreen(
-                        day_data=self._days[idx],
-                        prev_data=self._days[idx - 1] if idx > 0 else None,
-                        show_diff=(event.button.id == "btn-diff"),
-                    ))
+
+                    self.app.push_screen(
+                        EndpointDetailScreen(
+                            day_data=self._days[idx],
+                            prev_data=self._days[idx - 1] if idx > 0 else None,
+                            show_diff=(event.button.id == "btn-diff"),
+                        )
+                    )
             elif event.button.id == "btn-restore":
                 self.action_restore()
 
@@ -111,31 +122,40 @@ if TEXTUAL_OK:
             idx = event.cursor_row
             if 0 <= idx < len(self._days):
                 from .endpoint_screens import EndpointDetailScreen
-                self.app.push_screen(EndpointDetailScreen(
-                    day_data=self._days[idx],
-                    prev_data=self._days[idx - 1] if idx > 0 else None,
-                    show_diff=False,
-                ))
+
+                self.app.push_screen(
+                    EndpointDetailScreen(
+                        day_data=self._days[idx],
+                        prev_data=self._days[idx - 1] if idx > 0 else None,
+                        show_diff=False,
+                    )
+                )
 
         def action_show_diff(self) -> None:
             idx = self._selected_idx()
             if 0 <= idx < len(self._days):
                 from .endpoint_screens import EndpointDetailScreen
-                self.app.push_screen(EndpointDetailScreen(
-                    day_data=self._days[idx],
-                    prev_data=self._days[idx - 1] if idx > 0 else None,
-                    show_diff=True,
-                ))
+
+                self.app.push_screen(
+                    EndpointDetailScreen(
+                        day_data=self._days[idx],
+                        prev_data=self._days[idx - 1] if idx > 0 else None,
+                        show_diff=True,
+                    )
+                )
 
         def action_show_endpoints(self) -> None:
             idx = self._selected_idx()
             if 0 <= idx < len(self._days):
                 from .endpoint_screens import EndpointDetailScreen
-                self.app.push_screen(EndpointDetailScreen(
-                    day_data=self._days[idx],
-                    prev_data=self._days[idx - 1] if idx > 0 else None,
-                    show_diff=False,
-                ))
+
+                self.app.push_screen(
+                    EndpointDetailScreen(
+                        day_data=self._days[idx],
+                        prev_data=self._days[idx - 1] if idx > 0 else None,
+                        show_diff=False,
+                    )
+                )
 
         def action_cursor_down(self) -> None:
             table = self.query_one("#history-table", DataTable)
@@ -159,11 +179,17 @@ if TEXTUAL_OK:
             idx = self._selected_idx()
             if 0 <= idx < len(self._days):
                 from .restore_screen import RestoreScreen
-                self.app.push_screen(RestoreScreen(
-                    repo=self._repo, results_dir=self._results_dir,
-                    preselect_day=self._days[idx]["day"], day_data=self._days[idx],
-                ))
+
+                self.app.push_screen(
+                    RestoreScreen(
+                        repo=self._repo,
+                        results_dir=self._results_dir,
+                        preselect_day=self._days[idx]["day"],
+                        day_data=self._days[idx],
+                    )
+                )
 else:
+
     class HistoryScreen:
         """Fallback export used when Textual is not installed."""
 
