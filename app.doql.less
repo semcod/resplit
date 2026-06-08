@@ -2,11 +2,23 @@
 
 app {
   name: rebuild;
-  version: 0.1.30;
+  version: 0.1.35;
+  description: "Historical deployment analysis — walk git history, deploy per day, test all endpoints, capture screenshots, restore working fragments";
+  license: Apache-2.0;
+  authors: "Tom Sapletta <tom@sapletta.com>";
+  keywords: "deployment, regression, git, testing, endpoints, history, rebuild";
+  homepage: https://github.com/semcod/resplit;
+  repository: https://github.com/semcod/resplit;
 }
 
 dependencies {
   runtime: "typer>=0.12, rich>=13, gitpython>=3.1, httpx>=0.27, pyyaml>=6, pydantic>=2, deta>=0.1, astor>=0.8, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
+  screenshots: playwright>=1.44;
+  tui: textual>=0.60;
+  semantic: sentence-transformers>=2.7;
+  watch: wup>=0.2.21;
+  api: "fastapi>=0.115, uvicorn[standard]>=0.30, prometheus-client>=0.20";
+  full: "playwright>=1.44, textual>=0.60, sentence-transformers>=2.7, wup>=0.2.21, regres, testql, fastapi>=0.115, uvicorn[standard]>=0.30";
   dev: "pytest>=8, pytest-cov, pytest-asyncio, ruff, mypy, mutmut>=2.5, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
 }
 
@@ -149,7 +161,7 @@ interface[type="cli"] {
   framework: argparse;
 }
 interface[type="cli"] page[name="rebuild"] {
-
+  entry: rebuild.interfaces.cli:app;
 }
 
 workflow[name="install"] {
@@ -213,14 +225,6 @@ workflow[name="coverage"] {
   trigger: manual;
   step-1: run cmd=python -m pytest --cov=rebuild --cov-report=term-missing --cov-report=xml -q;
   step-2: run cmd=python - <<'EOF';
-  step-3: run cmd=import xml.etree.ElementTree as ET;
-  step-4: run cmd=tree = ET.parse("coverage.xml");
-  step-5: run cmd=rate = float(tree.getroot().attrib.get("line-rate", 0)) * 100;
-  step-6: run cmd=print(f"\nCoverage: {rate:.1f}%");
-  step-7: run cmd=if rate < 70:;
-  step-8: run cmd=raise SystemExit(f"Coverage {rate:.1f}% < 70% required");
-  step-9: run cmd=print("PASS: Coverage gate met ✓");
-  step-10: run cmd=EOF;
 }
 
 workflow[name="version"] {
@@ -274,24 +278,89 @@ workflow[name="docker-run"] {
   step-4: run cmd=ghcr.io/semcod/rebuild:latest $(ARGS);
 }
 
-role[name="operator"] {
 
+
+
+
+
+tests {
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/.testql/generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/backend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/connect-encoder/encoder-control/tests/auto-generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/connect-template/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/frontend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/modules/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/testql-testing/scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/testql-testing/scenarios/generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/testql-testing/scenarios/generated-configs/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/testql-testing/scenarios/generated-new/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.rebuild/repo/testql-testing/scenarios/generated-pages/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/.testql/generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/backend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/connect-encoder/encoder-control/tests/auto-generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/connect-template/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/frontend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/modules/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/testql-testing/scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/testql-testing/scenarios/generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/testql-testing/scenarios/generated-configs/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/testql-testing/scenarios/generated-new/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/repo_clone/testql-testing/scenarios/generated-pages/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/.testql/generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/backend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/connect-encoder/encoder-control/tests/auto-generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/connect-template/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/frontend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/modules/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/testql-testing/scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/testql-testing/scenarios/generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/testql-testing/scenarios/generated-configs/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/testql-testing/scenarios/generated-new/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results/repo/testql-testing/scenarios/generated-pages/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/.testql/generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/backend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/connect-encoder/encoder-control/tests/auto-generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/connect-template/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/frontend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/modules/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/testql-testing/scenarios/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/testql-testing/scenarios/generated/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/testql-testing/scenarios/generated-configs/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/testql-testing/scenarios/generated-new/**/*.testql.toon.yaml;
+  import: .rebuild/c2004/results_new/repo/testql-testing/scenarios/generated-pages/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/.testql/generated/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/backend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/connect-encoder/encoder-control/tests/auto-generated/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/connect-template/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/frontend/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/modules/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/testql-scenarios/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/testql-testing/scenarios/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/testql-testing/scenarios/generated/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/testql-testing/scenarios/generated-configs/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/testql-testing/scenarios/generated-new/**/*.testql.toon.yaml;
+  import: .rebuild_realtime_test2/repo/testql-testing/scenarios/generated-pages/**/*.testql.toon.yaml;
+  import: c2004/repo/.testql/generated/**/*.testql.toon.yaml;
+  import: c2004/repo/backend/testql-scenarios/**/*.testql.toon.yaml;
+  import: c2004/repo/connect-encoder/encoder-control/tests/auto-generated/**/*.testql.toon.yaml;
+  import: c2004/repo/connect-template/testql-scenarios/**/*.testql.toon.yaml;
+  import: c2004/repo/frontend/testql-scenarios/**/*.testql.toon.yaml;
+  import: c2004/repo/modules/testql-scenarios/**/*.testql.toon.yaml;
+  import: c2004/repo/testql-scenarios/**/*.testql.toon.yaml;
+  import: c2004/repo/testql-testing/scenarios/**/*.testql.toon.yaml;
+  import: c2004/repo/testql-testing/scenarios/generated/**/*.testql.toon.yaml;
+  import: c2004/repo/testql-testing/scenarios/generated-configs/**/*.testql.toon.yaml;
+  import: c2004/repo/testql-testing/scenarios/generated-new/**/*.testql.toon.yaml;
+  import: c2004/repo/testql-testing/scenarios/generated-pages/**/*.testql.toon.yaml;
+  import: testql-scenarios/**/*.testql.toon.yaml;
 }
 
-role[name="admin"] {
-
-}
-
-role[name="manager"] {
-
-}
-
-role[name="viewer"] {
-
-}
-
-role[name="editor"] {
-
+env_vars {
+  keys: OPENROUTER_API_KEY, LLM_MODEL;
 }
 
 deploy {
@@ -302,4 +371,6 @@ environment[name="local"] {
   runtime: docker-compose;
   env_file: .env;
   python_version: >=3.11;
+  vars: LLM_MODEL, OPENROUTER_API_KEY;
+  runtime_llm: OPENROUTER_API_KEY;
 }
