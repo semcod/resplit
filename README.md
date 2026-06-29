@@ -2,7 +2,7 @@
 
 ## Code Evolution Intelligence Engine
 
-![Version](https://img.shields.io/badge/version-0.1.35-blue) ![Python](https://img.shields.io/badge/python-3.11+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-634%20passing-brightgreen) ![Coverage](https://img.shields.io/badge/coverage-72%25-brightgreen)
+![Version](https://img.shields.io/badge/version-0.1.36-blue) ![Python](https://img.shields.io/badge/python-3.11+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green) ![Tests](https://img.shields.io/badge/tests-634%20passing-brightgreen) ![Coverage](https://img.shields.io/badge/coverage-72%25-brightgreen)
 
 **Historical deployment analysis & Code Intelligence** — walk git history day by day, deploy per commit, test all endpoints, capture screenshots, and **analyze code evolution** to find duplicates, rank quality, and generate refactor plans.
 
@@ -12,13 +12,11 @@
 
 ### AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.35-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$96.60-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-16.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$482.24-red) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fqwen%2Fqwen3-coder-next-lightgrey)
 
-- 🤖 **LLM usage:** $96.6002 (59 commits)
-- 👤 **Human dev:** ~$1659 (16.6h @ $100/h, 30min dedup)
+This project uses AI-generated code. Total cost: **$482.2376** with **62** AI commits.
 
-Generated on 2026-05-12 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
+Generated on 2026-06-29 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/models/openrouter/qwen/qwen3-coder-next)
 
 ---
 

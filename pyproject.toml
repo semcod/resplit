@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rebuild"
-version = "0.1.35"
+version = "0.1.36"
 description = "Historical deployment analysis — walk git history, deploy per day, test all endpoints, capture screenshots, restore working fragments"
 readme = "README.md"
 authors = [{ name = "Tom Sapletta", email = "tom@sapletta.com" }]
@@ -70,7 +70,7 @@ include = ["rebuild*"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "--tb=short -q"
-norecursedirs = ["rebuild", "examples", ".rebuild", "dist", "build"]
+norecursedirs = [".*", "rebuild", "examples", "dist", "build", "node_modules", "venv", "c2004", "restored_*", "*.egg-info"]
 filterwarnings = ["ignore::pytest.PytestCollectionWarning"]
 
 [tool.ruff]
