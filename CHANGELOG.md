@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.1.25] - 2026-06-29
+
+### Changed
+- Version bump to 0.1.25
+
 ## [0.1.24] - 2026-06-29
 
 ### Test
@@ -290,3 +295,4 @@
 [0.1.20]: https://github.com/semcod/resplit/compare/v0.1.20...v0.1.20
 [0.1.22]: https://github.com/semcod/resplit/compare/v0.1.22...v0.1.22
 [0.1.23]: https://github.com/semcod/resplit/compare/v0.1.23...v0.1.23
+[0.1.25]: https://github.com/semcod/resplit/compare/v0.1.25...v0.1.25
