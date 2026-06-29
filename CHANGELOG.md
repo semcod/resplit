@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [0.1.24] - 2026-06-29
+
+### Test
+- Update tests/test_e2e_tui.py
+
+### Other
+- Update VERSION
+
 ## [0.1.23] - 2026-05-02
 
 ### Changed
