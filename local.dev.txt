@@ -1,0 +1,16 @@
+# local.dev.txt — locally developed dependencies of this project (generated 2026-07-04)
+# by ~/github/local.dev.sh — DO NOT EDIT; see ~/github/local.dev.md
+# project: rebuild 0.1.36 (python) at /home/tom/github/semcod/rebuild
+# deps declared: 26 | with local source: 8
+
+## LOCAL DEPS  (dep | required | local source (version) | installed | status)
+costs | >=0.1.20 | /home/tom/github/semcod/costs (0.1.53) | 0.1.50 non-editable | STALE-INSTALL (local 0.1.53) -> fix: pip install -e /home/tom/github/semcod/costs  [pyproject.toml]
+deta | >=0.1 | /home/tom/github/semcod/deta (0.2.53) | 0.2.51 non-editable | STALE-INSTALL (local 0.2.53) -> fix: pip install -e /home/tom/github/semcod/deta  [pyproject.toml]
+deta | >=0.1 | /home/tom/github/tom-sapletta-com/py (0.1.8) | 0.2.51 non-editable | STALE-INSTALL (local 0.1.8) -> fix: pip install -e /home/tom/github/tom-sapletta-com/py  [pyproject.toml]
+goal | >=2.1.0 | /home/tom/github/semcod/goal (2.1.266) | 2.1.218 non-editable | STALE-INSTALL (local 2.1.266) -> fix: pip install -e /home/tom/github/semcod/goal  [pyproject.toml]
+pfix | >=0.1.60 | /home/tom/github/semcod/pfix (0.1.76) | 0.1.72 non-editable | STALE-INSTALL (local 0.1.76) -> fix: pip install -e /home/tom/github/semcod/pfix  [pyproject.toml]
+regres | * | /home/tom/github/semcod/regres (0.1.58) | - | NOT-INSTALLED  [pyproject.toml[full]]
+testql | * | /home/tom/github/oqlos/testql (1.2.60) | - | NOT-INSTALLED  [pyproject.toml[full]]
+wup | >=0.2.21 | /home/tom/github/semcod/wup (0.2.68) | - | NOT-INSTALLED  [pyproject.toml[watch]]
+
+## EXTERNAL DEPS (no local source, 19): astor, fastapi, gitpython, httpx, mutmut, mypy, playwright, prometheus-client, pydantic, pytest, pytest-asyncio, pytest-cov, pyyaml, rich, ruff, sentence-transformers, textual, typer, uvicorn
