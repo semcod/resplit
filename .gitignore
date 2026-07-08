@@ -250,3 +250,5 @@ __marimo__/
 .swop/
 swop-drift.log
 site/
+.github/
+.rebuild_realtime_test2/
