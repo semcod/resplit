@@ -22,36 +22,36 @@ import pytest
 class TestTUIScreensE2E:
     def test_tui_app_initialization(self, tmp_path):
         """Test that TUI app can be initialized."""
-        from rebuild.interfaces.tui.app import RebuildTUI
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.app import RebuildTUI
+
         app = RebuildTUI()
         assert app is not None
         assert hasattr(app, 'TITLE')
 
     def test_project_screen_initialization(self, tmp_path):
         """Test that ProjectScreen can be initialized."""
-        from rebuild.interfaces.tui.screens.project_screen import ProjectScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.project_screen import ProjectScreen
+
         screen = ProjectScreen()
         assert screen is not None
         assert hasattr(screen, 'BINDINGS')
 
     def test_history_screen_initialization(self, tmp_path):
         """Test that HistoryScreen can be initialized."""
-        from rebuild.interfaces.tui.screens.history_screen import HistoryScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.history_screen import HistoryScreen
+
         repo = tmp_path / "repo"
         results_dir = tmp_path / "results"
         screen = HistoryScreen(repo, results_dir)
@@ -61,12 +61,12 @@ class TestTUIScreensE2E:
 
     def test_endpoint_detail_screen_initialization(self, tmp_path):
         """Test that EndpointDetailScreen can be initialized."""
-        from rebuild.interfaces.tui.screens.endpoint_screens import EndpointDetailScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.endpoint_screens import EndpointDetailScreen
+
         day_data = {"day": "2025-01-01", "commit": "abc123"}
         screen = EndpointDetailScreen(day_data=day_data, prev_data=None)
         assert screen is not None
@@ -74,24 +74,24 @@ class TestTUIScreensE2E:
 
     def test_walk_config_screen_initialization(self, tmp_path):
         """Test that WalkConfigScreen can be initialized."""
-        from rebuild.interfaces.tui.screens.walk_screens import WalkConfigScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.walk_screens import WalkConfigScreen
+
         screen = WalkConfigScreen(repo=tmp_path / "repo")
         assert screen is not None
         assert hasattr(screen, 'BINDINGS')
 
     def test_help_screen_initialization(self, tmp_path):
         """Test that HelpScreen can be initialized."""
-        from rebuild.interfaces.tui.screens.help_screen import HelpScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.help_screen import HelpScreen
+
         screen = HelpScreen()
         assert screen is not None
         assert hasattr(screen, 'BINDINGS')
@@ -104,16 +104,16 @@ class TestTUIScreensE2E:
 class TestTUINavigationE2E:
     def test_history_screen_key_bindings(self, tmp_path):
         """Test that HistoryScreen has correct key bindings."""
-        from rebuild.interfaces.tui.screens.history_screen import HistoryScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.history_screen import HistoryScreen
+
         repo = tmp_path / "repo"
         results_dir = tmp_path / "results"
         screen = HistoryScreen(repo, results_dir)
-        
+
         # Check for expected bindings
         binding_keys = [b.key for b in screen.BINDINGS]
         assert "escape" in binding_keys
@@ -125,15 +125,15 @@ class TestTUINavigationE2E:
 
     def test_endpoint_screen_key_bindings(self, tmp_path):
         """Test that EndpointDetailScreen has correct key bindings."""
-        from rebuild.interfaces.tui.screens.endpoint_screens import EndpointDetailScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.endpoint_screens import EndpointDetailScreen
+
         day_data = {"day": "2025-01-01", "commit": "abc123"}
         screen = EndpointDetailScreen(day_data=day_data, prev_data=None)
-        
+
         # Check for expected bindings
         binding_keys = [b.key for b in screen.BINDINGS]
         assert "escape" in binding_keys
@@ -151,16 +151,16 @@ class TestTUINavigationE2E:
 class TestTUIDataDisplayE2E:
     def test_history_screen_table_population(self, tmp_path):
         """Test that HistoryScreen table is created."""
-        from rebuild.interfaces.tui.screens.history_screen import HistoryScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.history_screen import HistoryScreen
+
         repo = tmp_path / "repo"
         results_dir = tmp_path / "results"
         screen = HistoryScreen(repo, results_dir)
-        
+
         # Check that table widget exists
         assert hasattr(screen, 'compose')
         # The table should be created during compose
@@ -168,27 +168,27 @@ class TestTUIDataDisplayE2E:
 
     def test_endpoint_screen_table_population(self, tmp_path):
         """Test that EndpointDetailScreen table is created."""
-        from rebuild.interfaces.tui.screens.endpoint_screens import EndpointDetailScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.endpoint_screens import EndpointDetailScreen
+
         day_data = {"day": "2025-01-01", "commit": "abc123"}
         screen = EndpointDetailScreen(day_data=day_data, prev_data=None)
-        
+
         # Check that table widget exists
         assert hasattr(screen, 'compose')
         assert screen.BINDINGS is not None
 
     def test_help_screen_content_display(self, tmp_path):
         """Test that HelpScreen can be created."""
-        from rebuild.interfaces.tui.screens.help_screen import HelpScreen
         from rebuild.interfaces.tui.compat import TEXTUAL_OK
-        
+
         if not TEXTUAL_OK:
             pytest.skip("Textual not available")
-        
+        from rebuild.interfaces.tui.screens.help_screen import HelpScreen
+
         screen = HelpScreen()
         assert screen is not None
         assert hasattr(screen, 'compose')
