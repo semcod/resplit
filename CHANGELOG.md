@@ -82,6 +82,9 @@ Detailed per-version notes appear in entries below.
 
 ## [Unreleased]
 
+### Merged
+- Merged divergent origin/main history (bump chain up to 0.1.25, including a `tests/test_e2e_tui.py` update); local version numbering (0.1.36) kept as authoritative.
+
 ### Sprint 1 — Quality Gates + Infra Foundation (2026-05-07)
 
 Hardening pipeline'u CI bez zmian architektury. Patrz [ANALYSIS.md](ANALYSIS.md) Sprint 1.
