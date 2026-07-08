@@ -82,33 +82,28 @@ Detailed per-version notes appear in entries below.
 
 ## [Unreleased]
 
+## [0.1.37] - 2026-07-08
+
+### Unreleased
 ### Merged
 - Merged divergent origin/main history (bump chain up to 0.1.25, including a `tests/test_e2e_tui.py` update); local version numbering (0.1.36) kept as authoritative.
-
 ### Sprint 1 — Quality Gates + Infra Foundation (2026-05-07)
-
 Hardening pipeline'u CI bez zmian architektury. Patrz [ANALYSIS.md](ANALYSIS.md) Sprint 1.
-
 #### Added
 - **`.pre-commit-config.yaml`** — ruff (lint+format), mypy (non-blocking), built-in hygiene hooks (trailing-ws, eof, check-yaml/toml/large-files, debug-statements)
 - **`docker-compose.example.yml`** — przykład deployment z rebuild + dashboard + repo mount na `localhost:7821`
 - **`ANALYSIS.md`** — kompletna analiza P1–P4 + plan sprintów 1–5+ wzorowana na metodologii Semcod GitHub App
-
 #### Changed
 - **`.github/workflows/ci.yml`** — dodany krok `mypy` jako `continue-on-error` (non-blocking, gotowy do promowania w Sprincie 3)
 - **`.github/workflows/docker.yml`** — multi-arch build `linux/amd64,linux/arm64` + `setup-qemu-action@v3`. Krytyczne dla testowania na ARM (case c2004).
 - **`TODO.md`** — przeniesione Phasy 10–16 do [CHANGELOG: Completed Roadmap](#completed-roadmap--phases-1016); zostawione tylko Phase 17 + plan sprintów
-
 #### Fixed
 - **Ruff config bug** w [`.github/workflows/ci.yml`](.github/workflows/ci.yml): usunięte `--ignore W503` (W503 to flake8 pseudo-rule, nieistniejąca w ruff). CI fail-ował natychmiast przy lint step.
 - **354 błędów stylu w `rebuild/`**: 302 auto-fix (whitespace, redundant f-strings, etc.) + 52 unsafe-fix (W291, W293) + 7 ręcznych E701 (`if x: continue` → wieloliniowe) + 3 brakujące importy F821:
   - `rebuild/application/services/override_service.py`: `Optional` z `typing`
   - `rebuild/infrastructure/shell_adapter.py`: `Path` z `pathlib` (×2)
-
 ### Sprint 2 — Konsolidacja Duplikatów (2026-05-07)
-
 Refactor niskiego ryzyka eliminujący duplikaty wskazane w [ANALYSIS.md](ANALYSIS.md) §P1.
-
 #### Added
 - **`rebuild/application/services/regression_service.py`** — single source of truth dla detekcji regresji health-pct.
   - Public: `compute_health_trend(results, threshold) -> List[HealthTrendPoint]`
@@ -117,25 +112,19 @@ Refactor niskiego ryzyka eliminujący duplikaty wskazane w [ANALYSIS.md](ANALYSI
   - Stała: `DEFAULT_REGRESSION_THRESHOLD_PP = 20.0`
   - Frozen dataclass `HealthTrendPoint(day, health_pct, delta, label, is_regression)`
 - **`collect_cli_overrides(ctx, names)`** w `rebuild/interfaces/commands/helpers.py` — eliminuje 14× duplikat `ctx.get_parameter_source(name) == ParameterSource.COMMANDLINE` w typer commands.
-
 #### Changed
 - **`rebuild/application/services/reporting/reporter.py:_health_trend_by_day`** → cienki adapter delegujący do `regression_service.compute_health_trend_dict`. Public method signature i zachowanie zachowane (subclass-safe).
 - **`rebuild/interfaces/commands/helpers.py:compute_health_trend_labels`** → cienki adapter delegujący do `regression_service.compute_health_trend_labels`. Public function signature zachowana — wszystkie istniejące testy i importy działają bez zmian.
 - **`rebuild/interfaces/cli.py:walk()`** zredukowane z 44 LOC body do 13 LOC. Usunięty nieużywany import `from click.core import ParameterSource`.
-
 #### Deprecated
 - **`rebuild.domain.dsl`** (legacy v1): dodany `DeprecationWarning` przy imporcie modułu + `.. deprecated:: 0.1.26` w docstringu. Pełne usunięcie odroczone do Sprintu 4 — `dsl_v2` nie pokrywa wszystkich komend (`evolution`, `auto_pr`, `restore`, `serve`); pełnym zamiennikiem będzie `testql` (PyPI v0.6.18).
 - **`Endpoint.testql_passed`** field: explicit komentarz że to placeholder na Sprint 4 (currently never populated by walk/test pipelines).
-
 #### Verification
 - `ruff check rebuild/ --select E,W,F --ignore E501` → **All checks passed**
 - `pytest -k "trend or regression or health"` → 8 passed (pełna pokrywalność migracji)
 - `pytest`: 631 passed, 3 preexisting failures (`TestCLISubprocessE2E.*` — środowiskowy `No module named rebuild`, nie regresja)
-
 ### Sprint 3 — Showcase + Performance (2026-05-07)
-
 Materiał case-study + dowód wydajności. Patrz [ANALYSIS.md](ANALYSIS.md) Sprint 3.
-
 #### Added
 - **`scripts/benchmark_scanner_cache.py`** — kompletny benchmark diff-aware cache: synthetic FastAPI fixture, parametry `--commits/--files/--churn/--seed`, output text albo JSON (`-q`). Mierzy speedup, hit rate, i `cache_stats`.
 - **`docs/benchmarks.md`** — zmierzone wyniki: **5.5–6.6× speedup** przy realistycznych parametrach (200-500 plików, 5% churn, hit rate 91.8%). Tabela rozdzielczo-zależna od churn (5-50%).
@@ -147,7 +136,6 @@ Materiał case-study + dowód wydajności. Patrz [ANALYSIS.md](ANALYSIS.md) Spri
   - `README.md` z customisation guide
 - **`tests/test_plugins.py`** — 25 testów pokrywających `rebuild/plugins/` (registry, BaseScanner, BaseReporter, ScanResult, entry-point discovery z mockowanym `importlib.metadata`).
 - **`tests/test_api_app.py`** — 15 testów dla command + query endpointów (`/commands/{walk,analyze,snapshot,prune,dsl,nlp}`, `/queries/{history,day,snapshots,plugins}`).
-
 #### Changed
 - **`rebuild/application/services/scanner_service.py`** — content-hash cache:
   - Nowa metoda `_endpoints_for_python_file(py_file) -> List[Endpoint]` cache'uje wynik AST parse + decorator scan po SHA-1 zawartości pliku.
@@ -156,10 +144,8 @@ Materiał case-study + dowód wydajności. Patrz [ANALYSIS.md](ANALYSIS.md) Spri
   - Cykliczne typowanie: dodany `Dict` + `hashlib` import.
   - Hit rate na poziomie 91.8% przy 5% churn (typowy commit).
 - **`rebuild/interfaces/api/app.py`** — naprawiony realny bug: usunięte `from __future__ import annotations` (powodowało, że FastAPI traktował pydantic Command modele jako query params, zwracając 422 dla każdego POST `/commands/*`). Wszystkie 4 endpointy (`/commands/walk|analyze|snapshot|prune`) teraz akceptują JSON body. Dodany `Body(...)` + `model_rebuild()` dla forward-ref resolution.
-
 #### Fixed
 - **API command endpoints zwracały 422** — szczegóły wyżej w Changed. Bug był present od Phase 16 (pierwsze CQRS API), nigdy niepokryty testem POST.
-
 #### Verification
 - `ruff check rebuild/ scripts/benchmark_scanner_cache.py --select E,W,F --ignore E501` → **All checks passed**
 - `pytest tests/test_plugins.py` → 25 passed
@@ -168,11 +154,8 @@ Materiał case-study + dowód wydajności. Patrz [ANALYSIS.md](ANALYSIS.md) Spri
 - **Coverage**: 75% → 77% (`plugins/` 0→100%, `api/app.py` 58→78%)
 - `bash -n scripts/run_c2004_full.sh` → syntax OK
 - Benchmark realny: `python scripts/benchmark_scanner_cache.py --commits 30 --files 200 --churn 0.05` → **5.5× speedup, 91.8% hit rate**
-
 ### Sprint 4 — Reuse Bibliotek + Watch Mode (2026-05-07) [partial]
-
 Pierwsza realna integracja `[full]` extras. Patrz [ANALYSIS.md](ANALYSIS.md) Sprint 4.
-
 #### Added
 - **`rebuild watch` command** ([`watch_command.py`](rebuild/interfaces/commands/watch_command.py)) — long-running mode oparty o `wup.WupWatcher`:
   - File-watching, debouncing (default 2s), CPU throttling, test cooldowns delegowane do `wup`.
@@ -186,18 +169,15 @@ Pierwsza realna integracja `[full]` extras. Patrz [ANALYSIS.md](ANALYSIS.md) Spr
   - **[`scripts/run_mutation_tests.sh`](scripts/run_mutation_tests.sh)** — wrapper z baseline-check + Markdown report + threshold gate (default 75% mutation score).
   - **[`.github/workflows/mutation.yml`](.github/workflows/mutation.yml)** — nightly @ 03:00 UTC + `workflow_dispatch`. Non-blocking dla PRs (zbyt wolne dla feedback loop). Artifacts: `mutation-report-<run_id>` + `mutmut-cache-<run_id>` (incremental).
   - **[`docs/mutation_testing.md`](docs/mutation_testing.md)** — kompletny guide: rationale, lokalne uruchamianie, inspekcja survivor-ów, plany rozszerzeń (differential PR-aware mutation, parallel jobs).
-
 #### Changed
 - **`pyproject.toml`** — nowe `[project.optional-dependencies]`:
   - **`watch`** = `["wup>=0.2.21"]` (instalacja: `pip install 'rebuild[watch]'`)
   - **`api`** = `["fastapi>=0.115", "uvicorn[standard]>=0.30"]`
   - **`full`** zaktualizowany — dodano FastAPI/uvicorn, pinnięty `wup>=0.2.21`
   - **`dev`** dodano `mutmut>=2.5`
-
 #### Deferred to Sprint 5+
 - **`testql` integracja** — `testql 1.x` ma puste top-level eksporty; wymaga osobnej sesji eksploracji submodułów + jasnej decyzji jakich verb-ów potrzebujemy.
 - **`regres` integracja** — pakiet eksportuje moduły CLI (`doctor`, `defscan`, `refactor`, `regres`), brak czystego Python API; integracja wymaga adaptera shell-runner albo czekania na API stabilizację.
-
 #### Verification
 - `ruff check rebuild/ scripts/benchmark_scanner_cache.py --select E,W,F --ignore E501` → **All checks passed**
 - `pytest tests/test_watch_command.py` → 12 passed (z mockowanym wup; 12 = `_require_wup` × 2, `_build_default_wup_config` × 1, `_default_on_change` × 4, `watch_command` × 5)
@@ -205,11 +185,8 @@ Pierwsza realna integracja `[full]` extras. Patrz [ANALYSIS.md](ANALYSIS.md) Spr
 - `bash -n scripts/run_mutation_tests.sh` → syntax OK
 - `python -c "import yaml; yaml.safe_load(open('.github/workflows/mutation.yml'))"` → YAML OK
 - CLI registration: `rebuild watch --help` widoczne w `app.commands` (test: `from rebuild.interfaces.cli import app`)
-
 ### Sprint 5c — Coverage ≥80% + Dead-Code Removal (2026-05-08)
-
 Realizacja TODO Phase 17 → "Test Coverage ≥80%". Patrz [TODO.md](TODO.md).
-
 #### Added
 - **`tests/test_coverage_sprint5c.py`** (76 testów) — pokrycie wcześniej
   martwych ścieżek w:
@@ -235,13 +212,11 @@ Realizacja TODO Phase 17 → "Test Coverage ≥80%". Patrz [TODO.md](TODO.md).
     `SSEHandler.do_GET` przez stub-server, KeyboardInterrupt graceful shutdown.
   - `interfaces/commands/walk_command.py:_fire_notifications` + `_resolve_deploy_method`
     (62% → ~78%) — 3 ścieżki dla każdego helpera.
-
 #### Removed
 - **`rebuild/domain/events.py`** — martwy moduł (14 LOC) shadow'owany przez
   pakiet `rebuild/domain/events/` od Phase 14. `PipelineEvent` żyje
   w `events/domain_events.py` (re-eksport z `__init__.py`). Usunięcie eliminuje
   fałszywy 0% coverage entry i potencjalny pułapkę dla kontrybutorów.
-
 #### Verification
 - `pytest tests/test_coverage_sprint5c.py` → **76 passed**
 - `pytest`: **905 passed** (poprzednio 829 → +76), 3 preexisting `TestCLISubprocessE2E`
@@ -252,13 +227,10 @@ Realizacja TODO Phase 17 → "Test Coverage ≥80%". Patrz [TODO.md](TODO.md).
   `metrics.py`.
 - `ruff check tests/test_coverage_sprint5c.py rebuild/ --select E,W,F --ignore E501`
   → **All checks passed**.
-
 ### Sprint 5b — Reporter Refactor + Endpoint-Trend Konsolidacja (2026-05-08)
-
 Decompozycja 434-LOC `reporter.py` na fokus-moduły + finalna eliminacja
 duplikatu `_endpoint_count_trend_by_day` ↔ `compute_endpoint_count_trend_labels`
 (odroczone z Sprint 2). Patrz [TODO.md](TODO.md) → "Refactor `reporter.py`".
-
 #### Added
 - **`rebuild/application/services/endpoint_trend_service.py`** — single source
   of truth dla detekcji zmian liczby endpointów (analog do `regression_service`).
@@ -282,7 +254,6 @@ duplikatu `_endpoint_count_trend_by_day` ↔ `compute_endpoint_count_trend_label
 - **`tests/test_endpoint_trend_service.py`** (16 testów) — pełna pokrywalność
   publicznego API + dwóch adapterów + delegacji `helpers.py` i wewnętrznego
   `ReporterService._endpoint_count_trend_by_day`.
-
 #### Changed
 - **`rebuild/application/services/reporting/reporter.py`** — z 434 LOC do
   120 LOC (-72%). `ReporterService` jest teraz fasadą:
@@ -296,7 +267,6 @@ duplikatu `_endpoint_count_trend_by_day` ↔ `compute_endpoint_count_trend_label
     jako thin shims dla backward-compat.
 - **`rebuild/interfaces/commands/helpers.py:compute_endpoint_count_trend_labels`**
   → cienki adapter delegujący do `endpoint_trend_service.compute_endpoint_count_trend_labels`.
-
 #### Verification
 - `pytest tests/test_endpoint_trend_service.py` → **16 passed**
 - `pytest tests/test_reporter_service.py tests/test_git_helpers_extra.py tests/test_coverage_phase16.py` → **139 passed** (zerowa regresja w testach trendu)
@@ -306,11 +276,8 @@ duplikatu `_endpoint_count_trend_by_day` ↔ `compute_endpoint_count_trend_label
   - `reporter.py` 434 → 120 (fasada)
   - `day_html.py` 168 + `timeline_html.py` 174 + `summary_export.py` 84 + `_html_assets.py` 29 = 455 LOC w focus-modułach
   - `endpoint_trend_service.py` 134 LOC
-
 ### Sprint 5a — Prometheus /metrics Endpoint (2026-05-08)
-
 Realizacja TODO Phase 17 → "Grafana Integration". Patrz [TODO.md](TODO.md) i [ANALYSIS.md](ANALYSIS.md) Sprint 5+.
-
 #### Added
 - **`rebuild/interfaces/api/metrics.py`** — Prometheus instrumentation dla `create_app()`:
   - `_require_prometheus()` — lazy import z czytelnym komunikatem `"Install with: pip install 'rebuild[api]'"`.
@@ -324,17 +291,14 @@ Realizacja TODO Phase 17 → "Grafana Integration". Patrz [TODO.md](TODO.md) i [
   - Middleware pomija samo `/metrics` (no feedback loop) i mierzy `time.perf_counter()` per-request.
   - Handle'y zapisane na `app.state.prom_*` dla introspection / dependency injection.
 - **`tests/test_metrics.py`** — 9 testów: import guard, route registration, end-to-end format, middleware counter increment, `/metrics` skip, `app.state` introspection, `create_app` integration, health endpoint smoke. Każdy test używa świeżego `CollectorRegistry` (fixture `fresh_registry`) — brak monkey-patchowania prometheus internals.
-
 #### Changed
 - **`rebuild/interfaces/api/app.py:create_app`** — dodany parameter `metrics_registry=None` przekazywany do `setup_metrics()`. Domyślnie każdy app dostaje *własny* `CollectorRegistry` (zamiast globalnego `prom.REGISTRY`) co eliminuje `ValueError: Duplicated timeseries` przy wielokrotnym `create_app()` w testach / multi-app embedding. Globalny default pozostaje dostępny przez `create_app(metrics_registry=prometheus_client.REGISTRY)`.
 - **`pyproject.toml`** — `[project.optional-dependencies] api` rozszerzone o `prometheus-client>=0.20`.
-
 #### Verification
 - `pytest tests/test_metrics.py` → **9 passed**
 - `pytest tests/test_metrics.py tests/test_api_app.py tests/test_cqrs_arch.py` → **106 passed**
 - `pytest`: 813 passed (po Sprint 4: 643 → +9 metrics + ostatnie testy z innych sesji), 3 preexisting `TestCLISubprocessE2E` failures (środowiskowy `No module named rebuild`).
 - `ruff check rebuild/interfaces/api/{metrics,app}.py tests/test_metrics.py --select E,W,F --ignore E501` → **All checks passed** (po usunięciu unused `Optional` import).
-
 #### Usage
 ```bash
 pip install 'rebuild[api]'
@@ -348,12 +312,9 @@ scrape_configs:
     static_configs: [{targets: ['rebuild:8000']}]
     metrics_path: /metrics
 ```
-
 ### Sprint 4c — Analyze Services Bug Fixes (2026-05-07)
-
 Drobne ale uciążliwe regresje znalezione przy uruchomieniu `rebuild analyze services`
 na dużym repo (c2004 ≈ 88 podkatalogów). Fix po stronie upstream (silnik), bez workaroundów.
-
 #### Fixed
 - **`SyntaxWarning: invalid escape sequence`** w `ServiceGraphBuilder.build()`
   ([`rebuild/analysis/service_graph.py`](rebuild/analysis/service_graph.py)). Builder rekursywnie
@@ -366,13 +327,41 @@ na dużym repo (c2004 ≈ 88 podkatalogów). Fix po stronie upstream (silnik), b
   `roles.py` z `from .roles import X` był rozwijany do `c2004.backend.api.routes.v3.roles`,
   identycznego z `node.name` → fałszywy self-cycle w outputcie. → `_analyze_file()` filtruje
   teraz `dep == node.name` zarówno dla `ast.Import` jak i `ast.ImportFrom`.
-
 #### Verification
 - `pytest tests/ -k "graph or services or analysis"` → **90 passed** (z `--tb=short -q`)
 - `python3 -m rebuild analyze services /home/tom/github/maskservice/c2004 --export` →
   brak `SyntaxWarning`, brak fałszywego cyklu, czysty eksport `architecture.html`.
-
 ---
+
+### Added
+- feat(docs): deep code analysis engine with 3 supporting modules
+- feat(docs): output formatting with 2 supporting modules
+- ci: add org metadata sync trigger workflow
+- feat(docs): CLI interface improvements
+
+### Changed
+- refactor(examples): configuration management system
+
+### Fixed
+- Regenerate app.doql.less with adopt fixes (entry points, env_vars, no empty pages).
+- refactor: ruff check --fix + ruff format autofixes
+
+### Docs
+- docs: note merge of divergent origin/main history in CHANGELOG
+- docs(docs): deep code analysis engine with 3 supporting modules
+- docs(docs): changelog generation
+- refactor(docs): configuration management system
+- docs(docs): configuration management system
+- refactor(docs): code analysis engine
+- docs(docs): configuration management system
+- refactor(docs): code analysis engine
+- refactor(docs): intelligent code analysis pipeline
+- refactor(docs): configuration management system
+- refactor(docs): code analysis engine
+- refactor(docs): intelligent code analysis pipeline
+
+### Other
+- refaktor
 
 ## [0.1.36] - 2026-06-29
 
@@ -878,3 +867,4 @@ na dużym repo (c2004 ≈ 88 podkatalogów). Fix po stronie upstream (silnik), b
 [0.1.10]: https://github.com/semcod/resplit/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/semcod/resplit/compare/v0.1.0...v0.1.9
 [0.1.0]: https://github.com/semcod/resplit/releases/tag/v0.1.0
+[0.1.37]: https://github.com/semcod/resplit/compare/v0.1.37...v0.1.37
