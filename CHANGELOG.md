@@ -82,6 +82,15 @@ Detailed per-version notes appear in entries below.
 
 ## [Unreleased]
 
+## [0.1.38] - 2026-07-20
+
+### Fixed
+- fix(tests): catch Typer vendored exit type
+
+### Test
+- chore(deps): require testql 1.2.64
+- chore(deps): require testql 1.2.63
+
 ## [0.1.37] - 2026-07-08
 
 ### Unreleased
@@ -868,3 +877,4 @@ na dużym repo (c2004 ≈ 88 podkatalogów). Fix po stronie upstream (silnik), b
 [0.1.9]: https://github.com/semcod/resplit/compare/v0.1.0...v0.1.9
 [0.1.0]: https://github.com/semcod/resplit/releases/tag/v0.1.0
 [0.1.37]: https://github.com/semcod/resplit/compare/v0.1.37...v0.1.37
+[0.1.38]: https://github.com/semcod/resplit/compare/v0.1.38...v0.1.38
