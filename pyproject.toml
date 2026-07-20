@@ -30,7 +30,7 @@ dependencies = [
     "astor>=0.8",        # code generation for refactor executor
     # "wup>=0.1",        # optional: regression watcher
     # "regres>=0.1",     # optional: regression analysis
-    # "testql>=1.2.63; python_version < '3.14'",  # optional: endpoint testing DSL,
+    # "testql>=1.2.64; python_version < '3.14'",  # optional: endpoint testing DSL,
     "goal>=2.1.0",
     "costs>=0.1.20",
     "pfix>=0.1.60",
@@ -43,7 +43,7 @@ tui = ["textual>=0.60"]
 semantic = ["sentence-transformers>=2.7"]
 watch = ["wup>=0.2.21"]
 api = ["fastapi>=0.115", "uvicorn[standard]>=0.30", "prometheus-client>=0.20"]
-full = ["playwright>=1.44", "textual>=0.60", "sentence-transformers>=2.7", "wup>=0.2.21", "regres", "testql>=1.2.63; python_version < '3.14'", "fastapi>=0.115", "uvicorn[standard]>=0.30"]
+full = ["playwright>=1.44", "textual>=0.60", "sentence-transformers>=2.7", "wup>=0.2.21", "regres", "testql>=1.2.64; python_version < '3.14'", "fastapi>=0.115", "uvicorn[standard]>=0.30"]
 dev = ["pytest>=8", "pytest-cov", "pytest-asyncio", "ruff", "mypy",
     "mutmut>=2.5",
     "goal>=2.1.0",
