@@ -264,7 +264,7 @@ def test_compute_endpoint_count_first_zero():
 # ─────────────────────────────────────────────
 
 from rebuild.interfaces.commands.walk_command import walk_command
-import click
+import typer
 
 
 def _make_repo(tmp_path: Path) -> Path:
@@ -279,7 +279,7 @@ def test_walk_command_no_git_repo_exits(tmp_path):
     repo.mkdir()
     buf = StringIO()
     console = Console(file=buf, highlight=False)
-    with pytest.raises((click.exceptions.Exit, SystemExit)):
+    with pytest.raises(typer.Exit):
         walk_command(repo=repo, days=1, date_from=None, date_to=None,
                      output=tmp_path/"out", deploy="none", replay=False,
                      service=None, health_url="http://x/h", base_url="http://x",
@@ -500,16 +500,14 @@ def test_duplicates_command_semantic_warning(tmp_path):
 def test_multi_repo_command_less_than_2_repos(tmp_path):
     buf = StringIO()
     console = RConsole(file=buf, highlight=False)
-    import click
-    with pytest.raises((click.exceptions.Exit, SystemExit)):
+    with pytest.raises(typer.Exit):
         multi_repo_command([tmp_path], 5, None, console)
 
 
 def test_multi_repo_command_missing_repos(tmp_path):
     buf = StringIO()
     console = RConsole(file=buf, highlight=False)
-    import click
-    with pytest.raises((click.exceptions.Exit, SystemExit)):
+    with pytest.raises(typer.Exit):
         multi_repo_command([tmp_path / "a", tmp_path / "b"], 5, None, console)
 
 
@@ -551,8 +549,7 @@ def test_services_command_with_cycles(tmp_path):
 def test_vector_query_no_index(tmp_path):
     buf = StringIO()
     console = RConsole(file=buf, highlight=False)
-    import click
-    with pytest.raises((click.exceptions.Exit, SystemExit)):
+    with pytest.raises(typer.Exit):
         vector_query_command("query", tmp_path / "nonexistent.db", 5, 0.5, "m", console)
 
 

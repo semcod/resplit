@@ -255,8 +255,7 @@ def test_config_validate_walk_command_aborts_on_invalid_yaml(tmp_path):
     buf = StringIO()
     console = Console(file=buf, highlight=False)
 
-    import click
-    with pytest.raises((click.exceptions.Exit, SystemExit)):
+    with pytest.raises(typer.Exit):
         walk_command(
             repo=repo,
             days=1,
