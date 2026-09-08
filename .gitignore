@@ -252,3 +252,12 @@ swop-drift.log
 site/
 .github/
 .rebuild_realtime_test2/
+
+# Local ticket worktrees and private recovery state
+/.worktrees/
+/.subactor/leases/
+/.subactor/sessions/
+/.subactor/recovery/
+/.subactor/receipts/
+/.subactor/cache/
+/.subactor/snapshots/
