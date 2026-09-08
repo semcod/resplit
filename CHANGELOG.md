@@ -82,6 +82,11 @@ Detailed per-version notes appear in entries below.
 
 ## [Unreleased]
 
+## [0.1.39] - 2026-09-08
+
+### Docs
+- docs: adopt pinned local OneDev and Validator publication policy
+
 ## [0.1.38] - 2026-07-20
 
 ### Fixed
@@ -878,3 +883,4 @@ na dużym repo (c2004 ≈ 88 podkatalogów). Fix po stronie upstream (silnik), b
 [0.1.0]: https://github.com/semcod/resplit/releases/tag/v0.1.0
 [0.1.37]: https://github.com/semcod/resplit/compare/v0.1.37...v0.1.37
 [0.1.38]: https://github.com/semcod/resplit/compare/v0.1.38...v0.1.38
+[0.1.39]: https://github.com/semcod/resplit/compare/v0.1.39...v0.1.39
